@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\PersonalDataSheetController;
 use App\Http\Controllers\ProfileController;
@@ -36,9 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/general-search', [SearchController::class, 'index'])->name('general-search');
     Route::get('/general-search/view/{user}', [SearchController::class, 'view_searched'])->name('general-search.view');
 
-    Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::prefix('staff')->group(function () {
         Route::controller(StaffController::class)->group(function () {

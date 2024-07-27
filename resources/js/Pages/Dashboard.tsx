@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router } from "@inertiajs/react";
-import { PageProps } from "@/types";
+import { Head, router, usePage } from "@inertiajs/react";
+import { PageProps, PaginateData } from "@/types";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import {
     Menubar,
@@ -9,12 +9,16 @@ import {
     MenubarContent,
     MenubarItem,
 } from "@/Components/ui/menubar";
-import { EllipsisVertical, Eye, Trash2 } from "lucide-react";
+import { EllipsisVertical, Eye, Trash2, Upload } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import LeaveStatus from "@/Components/LeaveStatus";
 import { format } from "date-fns";
+import { useEffect } from "react";
 
-export default function Dashboard({ auth }: PageProps) {
+export default function Dashboard({
+    auth,
+    leaves,
+}: PageProps<{ leaves: PaginateData }>) {
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -49,7 +53,9 @@ export default function Dashboard({ auth }: PageProps) {
                 ) : (
                     <div className="border-t pt-4 space-y-1.5">
                         <div className="font-medium">Credits remaining</div>
-                        <div className="text-xl font-semibold">{auth.user.leave_credits??0} Credit/s</div>
+                        <div className="text-xl font-semibold">
+                            {auth.user.leave_credits ?? 0} Credit/s
+                        </div>
                         <div className="text-xs font-medium space-x-1">
                             <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
                                 + 1
@@ -112,39 +118,82 @@ export default function Dashboard({ auth }: PageProps) {
                         <div className="">HR status</div>
                         <div className=""></div>
                     </div>
-                    <RecentLeaveRow />
-                    <RecentLeaveRow />
-                    <RecentLeaveRow />
+
+                    {leaves.data.length === 0 && (
+                        <div className="text-center py-5 text-foreground/60">
+                            No record.
+                        </div>
+                    )}
+
+                    {leaves.data.map((list, index) => (
+                        <RecentLeaveRow key={index} leave={list} />
+                    ))}
                 </div>
             </div>
         </AuthenticatedLayout>
     );
 }
 
-const RecentLeaveRow = () => {
+type LeaveType = {
+    id: number;
+    leave_type: string;
+    date_of_filing: Date;
+    principal_status: "Approved" | "Rejected" | "Pending";
+    hr_status: "Approved" | "Rejected" | "Pending";
+    user: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        profile?: string;
+    };
+    medical_certificate: {
+        id: number;
+        file_path: string;
+        file_name: string;
+    };
+};
+
+const RecentLeaveRow: React.FC<{ leave: LeaveType }> = ({
+    leave: {
+        id,
+        leave_type,
+        date_of_filing,
+        principal_status,
+        hr_status,
+        user,
+        medical_certificate,
+    },
+}) => {
+    const {
+        props: { auth },
+    } = usePage<PageProps>();
+
+    useEffect(() => {
+    }, []);
+
     return (
         <div className="hover:bg-secondary transition-colors">
             <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
                 <div className="">
                     <div className="flex items-center gap-2">
                         <AvatarProfile className="size-8" />
-                        <div className="line-clamp-1">John Doe</div>
+                        <div className="line-clamp-1">{user.first_name + " " + user.last_name}</div>
                     </div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">Sick leave</div>
+                    <div className="line-clamp-1">{leave_type}</div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">June 2, 2024</div>
+                    <div className="line-clamp-1">{format(date_of_filing, "PP")}</div>
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        <LeaveStatus status="Approved" />
+                        <LeaveStatus status={principal_status} />
                     </div>
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        <LeaveStatus status="Pending" />
+                        <LeaveStatus status={hr_status} />
                     </div>
                 </div>
                 <div className="">
@@ -154,16 +203,14 @@ const RecentLeaveRow = () => {
                                 <EllipsisVertical className="size-5" />
                             </MenubarTrigger>
                             <MenubarContent className="w-52" align="end">
-                                <MenubarItem className="px-4 gap-5" onClick={() => router.get(route('leave.view'))}>
+                                <MenubarItem
+                                    className="px-4 gap-5"
+                                    onClick={() =>
+                                        router.get(route("leave.view", [id, user.id]))
+                                    }
+                                >
                                     <Eye className="size-5" strokeWidth={1.8} />
                                     <div>View</div>
-                                </MenubarItem>
-                                <MenubarItem className="px-4 gap-5">
-                                    <Trash2
-                                        className="size-5"
-                                        strokeWidth={1.8}
-                                    />
-                                    <div>Delete</div>
                                 </MenubarItem>
                             </MenubarContent>
                         </MenubarMenu>

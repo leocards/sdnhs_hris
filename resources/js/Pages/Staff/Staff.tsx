@@ -78,6 +78,8 @@ export default function Staff({ auth, staffs }: StaffProps) {
         } else if (action === "view") {
             setSelectedStaff(id)
             setShowStaffDetails(true)
+        } else if(action === "messages") {
+            router.get(route('messages') + `?user=${id}`)
         }
     };
 
@@ -313,7 +315,7 @@ const StaffRow: React.FC<StaffListProps & { auth: string }> = ({
                                 <MenubarItem
                                     className="px-4 gap-5"
                                     onClick={() =>
-                                        onClick && onClick("message", user.id)
+                                        onClick && onClick("messages", user.id)
                                     }
                                 >
                                     <MessageCircle

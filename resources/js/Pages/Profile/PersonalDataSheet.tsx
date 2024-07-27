@@ -6,7 +6,7 @@ import C3 from "./Partials/C3";
 import C4 from "./Partials/C4";
 
 export default function PersonalDataSheet() {
-    const [activeTab, setActiveTab] = useState<"c1"|"c2"|"c3"|"c4"|string>("c4")
+    const [activeTab, setActiveTab] = useState<"c1"|"c2"|"c3"|"c4"|string>("c1")
 
     return (
         <div className="mt-8">

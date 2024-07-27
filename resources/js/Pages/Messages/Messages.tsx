@@ -63,7 +63,7 @@ export default function Messages({ auth }: PageProps) {
                             <div className="p-1.5">
                                 {Array.from({ length: 4 }).map(() => (
                                     <div
-                                        className="hover:bg-secondary p-2 h-14 flex items-center rounded transition gap-2"
+                                        className="hover:bg-secondary p-2 h-14 flex items-center rounded transition gap-2 [&>div>*]:cursor-pointer"
                                         role="button"
                                     >
                                         <div>

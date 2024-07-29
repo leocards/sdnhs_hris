@@ -93,89 +93,141 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                 />
             </div>
             <div className="mb-5">
-                <div className="shadow p-3 px-3.5 flex rounded-lg">
-                    <div>
-                        <Label>Application of Leave status:</Label>
-                        <div className="flex items-center gap-3">
-                            <Label className="w-28 flex justify-between">
-                                HR <span>:</span>
-                            </Label>
-                            <LeaveStatus status={leave.hr_status} />
+                <div className="shadow p-3 px-3.5 rounded-lg">
+                    <div className="flex">
+                        <div>
+                            <Label>Application of Leave status:</Label>
+                            <div className="flex items-center gap-3">
+                                <Label className="w-28 flex justify-between">
+                                    HR <span>:</span>
+                                </Label>
+                                <LeaveStatus status={leave.hr_status} />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Label className="w-28 flex justify-between">
+                                    Principal <span>:</span>
+                                </Label>
+                                <LeaveStatus status={leave.principal_status} />
+                            </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <Label className="w-28 flex justify-between">
-                                Principal <span>:</span>
-                            </Label>
-                            <LeaveStatus status={leave.principal_status} />
-                        </div>
-                    </div>
-                    <div className="ml-auto flex h-fit space-x-4">
-                        {PDFLoaded &&
-                            (auth.user.role === PRINCIPAL ||
-                                auth.user.role === "HR") && (
-                                <>
-                                    {auth.user.role === "HR" &&
-                                        leave.hr_status !== "Pending" && (
-                                            <LeaveStatus
-                                                className="my-auto ml-auto"
-                                                status={leave.hr_status}
-                                            />
+                        <div className="ml-auto flex h-fit space-x-4">
+                            {PDFLoaded &&
+                                (auth.user.role === PRINCIPAL ||
+                                    auth.user.role === "HR") && (
+                                    <>
+                                        {auth.user.role === "HR" &&
+                                            leave.hr_status !== "Pending" && (
+                                                <LeaveStatus
+                                                    className="my-auto ml-auto"
+                                                    status={leave.hr_status}
+                                                />
+                                            )}
+                                        {auth.user.role === PRINCIPAL &&
+                                            leave.principal_status !==
+                                                "Pending" && (
+                                                <LeaveStatus
+                                                    className="my-auto ml-auto"
+                                                    status={
+                                                        leave.principal_status
+                                                    }
+                                                />
+                                            )}
+                                        {((leave.hr_status === "Pending" &&
+                                            auth.user.role === "HR") ||
+                                            (leave.principal_status ===
+                                                "Pending" &&
+                                                auth.user.role ===
+                                                    PRINCIPAL)) && (
+                                            <>
+                                                <Button
+                                                    variant="destructive"
+                                                    className="gap-3 hover:bg-destructive ml-auto"
+                                                    onClick={() => {
+                                                        setShowRespond(true);
+                                                        setRespondLeave(
+                                                            "rejected"
+                                                        );
+                                                    }}
+                                                >
+                                                    <Ban className="size-5" />
+                                                    <span>Reject</span>
+                                                </Button>
+                                                <Button
+                                                    className="gap-3 bg-green-700"
+                                                    onClick={() => {
+                                                        setShowRespond(true);
+                                                        setRespondLeave(
+                                                            "approved"
+                                                        );
+                                                    }}
+                                                >
+                                                    <Check className="size-5" />
+                                                    <span>Approved</span>
+                                                </Button>
+                                            </>
                                         )}
-                                    {auth.user.role === PRINCIPAL &&
-                                        leave.principal_status !==
-                                            "Pending" && (
-                                            <LeaveStatus
-                                                className="my-auto ml-auto"
-                                                status={leave.principal_status}
-                                            />
-                                        )}
-                                    {((leave.hr_status === "Pending" &&
-                                        auth.user.role === "HR") ||
-                                        (leave.principal_status === "Pending" &&
-                                            auth.user.role === PRINCIPAL)) && (
-                                        <>
-                                            <Button
-                                                variant="destructive"
-                                                className="gap-3 hover:bg-destructive ml-auto"
-                                                onClick={() => {
-                                                    setShowRespond(true);
-                                                    setRespondLeave("rejected");
-                                                }}
-                                            >
-                                                <Ban className="size-5" />
-                                                <span>Reject</span>
-                                            </Button>
-                                            <Button
-                                                className="gap-3 bg-green-700"
-                                                onClick={() => {
-                                                    setShowRespond(true);
-                                                    setRespondLeave("approved");
-                                                }}
-                                            >
-                                                <Check className="size-5" />
-                                                <span>Approved</span>
-                                            </Button>
-                                        </>
-                                    )}
-                                </>
-                            )}
+                                    </>
+                                )}
 
-                        <PDFDownloadLink
-                            document={<PDFLeave />}
-                            fileName="Application for Leave.pdf"
-                        >
-                            {({ loading }) =>
-                                loading ? (
-                                    ""
-                                ) : (
-                                    <Button className="gap-3" variant="ghost">
-                                        <Download className="size-5" />
-                                        <span>Download</span>
-                                    </Button>
-                                )
-                            }
-                        </PDFDownloadLink>
+                            <PDFDownloadLink
+                                document={<PDFLeave />}
+                                fileName="Application for Leave.pdf"
+                            >
+                                {({ loading }) =>
+                                    loading ? (
+                                        ""
+                                    ) : (
+                                        <Button
+                                            className="gap-3"
+                                            variant="ghost"
+                                        >
+                                            <Download className="size-5" />
+                                            <span>Download</span>
+                                        </Button>
+                                    )
+                                }
+                            </PDFDownloadLink>
+                        </div>
                     </div>
+                    {leave.hr_reject_msg && leave.principal_reject_msg && (
+                        <div className="space-y-3 mt-5">
+                            <Label>Response for rejection:</Label>
+                            {leave.hr_reject_msg && (
+                                <div className="flex sm:flex-row flex-col sm:gap-3 gap-1 ml-2 items-start">
+                                    <Label className="shrink-0 w-40 flex leading-5">
+                                        HR's response{" "}
+                                        <span className="ml-auto">:</span>
+                                    </Label>
+                                    <div>
+                                        {leave.hr_reject_msg} Lorem ipsum dolor
+                                        sit amet consectetur, adipisicing elit.
+                                        Omnis nisi possimus illo suscipit
+                                        tenetur id reprehenderit vitae neque
+                                        qui, harum facere aliquam obcaecati
+                                        nostrum incidunt explicabo eos ratione
+                                        porro mollitia.
+                                    </div>
+                                </div>
+                            )}
+                            {leave.principal_reject_msg && (
+                                <div className="flex sm:flex-row flex-col sm:gap-3 gap-1 ml-2 items-start">
+                                    <Label className="shrink-0 w-40 flex leading-5">
+                                        Principal's response{" "}
+                                        <span className="ml-auto">:</span>
+                                    </Label>
+                                    <div>
+                                        {leave.principal_reject_msg} Lorem ipsum
+                                        dolor sit amet consectetur, adipisicing
+                                        elit. Omnis nisi possimus illo suscipit
+                                        tenetur id reprehenderit vitae neque
+                                        qui, harum facere aliquam obcaecati
+                                        nostrum incidunt explicabo eos ratione
+                                        porro mollitia.
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
             </div>
             <div className="flex h-fit">

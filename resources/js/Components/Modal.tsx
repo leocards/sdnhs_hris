@@ -16,8 +16,8 @@ export default function Modal({
     closeable = true,
     onClose = () => {},
 }: PropsWithChildren<{
-    maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl';
-    center?: boolean;
+    maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | '6xl' | 'fit';
+    center?: boolean|string;
     dialogStyle?: string;
 } & ModalProps>) {
     const close = () => {
@@ -36,6 +36,7 @@ export default function Modal({
         '4xl': 'sm:max-w-4xl',
         '5xl': 'sm:max-w-5xl',
         '6xl': 'sm:max-w-6xl',
+        'fit': 'sm:max-w-fit',
     }[maxWidth];
 
     return (
@@ -56,7 +57,7 @@ export default function Modal({
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <DialogPanel
-                        className={`my-6 h-fit bg-white rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:mx-auto ${center&&"my-auto"} ${dialogStyle} ${maxWidthClass}`}
+                        className={`my-6 h-fit bg-white rounded-lg overflow-hidd en shadow-xl transform transition-all sm:w-full sm:mx-auto ${typeof center === 'string' ? center : center &&"my-auto"} ${dialogStyle} ${maxWidthClass}`}
                     >
                         {children}
                     </DialogPanel>

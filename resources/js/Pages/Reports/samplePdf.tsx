@@ -19,6 +19,7 @@ import useWindowSize from "@/hooks/useWindowResize";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import IPCRPDF from "./IPCRPDF";
+import EmployeeListPDF from "./EmployeeListPDF";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
     "pdfjs-dist/build/pdf.worker.min.mjs",
     import.meta.url

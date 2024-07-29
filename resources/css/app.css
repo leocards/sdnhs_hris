@@ -81,12 +81,16 @@
 
 @layer components {
     .form-input {
-        @apply h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:!ring-destructive shadow-sm
+        @apply h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:!ring-destructive shadow-sm;
     }
     .required {
-        @apply after:content-['*'] after:ml-0.5 after:text-red-500
+        @apply after:content-['*'] after:ml-0.5 after:text-red-500;
     }
     .notification {
-        @apply rounded-lg hover:bg-secondary p-2 flex items-center gap-3 transition [&>div>*]:!cursor-pointer
+        @apply rounded-lg hover:bg-secondary p-2 flex items-center gap-3 transition [&>div>*]:!cursor-pointer;
     }
+}
+
+@layer utilities {
+    
 }

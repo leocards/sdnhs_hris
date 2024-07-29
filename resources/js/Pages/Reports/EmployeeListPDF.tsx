@@ -8,7 +8,6 @@ import {
     Font,
 } from "@react-pdf/renderer";
 import { SALN } from "./Reports";
-import { PageSize } from "@react-pdf/types";
 
 Font.register({
     family: "Inter-ExtraLight",
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function SALNPDF({size}: {size: PageSize}) {
+export default function EmployeeListPDF() {
     return (
         <Document title="SALN">
             <Page size={"LEGAL"} orientation={"landscape"} style={styles.body}>

@@ -73,7 +73,6 @@ const ApplyLeave = ({ auth }: PageProps) => {
         form.setValue("middleName", middle_name ?? "");
         form.setValue("department", department);
         form.setValue("position", position);
-        form.setValue("salary", "24,000");
         form.setValue("dateOfFiling", new Date());
     }, []);
 

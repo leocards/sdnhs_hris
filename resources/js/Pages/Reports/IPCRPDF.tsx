@@ -8,6 +8,7 @@ import {
     Font,
 } from "@react-pdf/renderer";
 import { IPCR, SALN } from "./Reports";
+import { PageSize } from "@react-pdf/types";
 
 Font.register({
     family: "Inter-ExtraLight",
@@ -108,10 +109,10 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function IPCRPDF() {
+export default function IPCRPDF({size}: {size: PageSize}) {
     return (
         <Document title="IPCR">
-            <Page size="LETTER" style={styles.body}>
+            <Page size={size} style={styles.body}>
                 <Table style={{borderBottom: 0}}>
                     <Row>
                         <Cell style={{borderRight: 1, height: 40, flex: 1, justifyContent: "center", maxWidth: 30 }}>

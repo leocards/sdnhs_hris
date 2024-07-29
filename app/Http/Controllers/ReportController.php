@@ -11,9 +11,4 @@ class ReportController extends Controller
     {
         return Inertia::render('Reports/Reports');
     }
-
-    public function saln_index()
-    {
-        return Inertia::render("Reports/SALNPrint");
-    }
 }

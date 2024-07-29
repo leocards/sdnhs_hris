@@ -79,8 +79,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('reports')->group(function () {
         Route::controller(ReportController::class)->group(function () {
             Route::get('/', 'index')->name('reports');
-            Route::get('/saln', 'saln_index')->name('reports.saln');
-            
         });
     });
 

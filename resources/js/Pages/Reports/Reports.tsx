@@ -4,10 +4,24 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
 import { router } from "@inertiajs/react";
-import { Upload } from "lucide-react";
-import { Fragment } from "react";
+import { ChevronDown, Plus, Printer, Upload } from "lucide-react";
+import { Fragment, useState } from "react";
+import IPCRPrint from "./IPCRPrint";
+import SALNPrint from "./SALNPrint";
+import UploadIPCR from "./UploadIPCR";
+import UploadSALN from "./UploadSALN";
 
 export default function Reports({ auth }: PageProps) {
+    const [showIPCRPrint, setShowIPCRPrint] = useState<boolean>(false);
+    const [showSALNPrint, setShowSALNPrint] = useState<boolean>(false);
+    const [showList, setShowList] = useState<{
+        showEmployee: boolean;
+        showIPCR: boolean;
+        showSALN: boolean;
+    }>({ showEmployee: true, showIPCR: true, showSALN: true });
+    const [showIPCRUpload, setShowIPCRUpload] = useState<{upload: boolean, add: boolean}>({upload: false, add: false})
+    const [showSALNUpload, setShowSALNUpload] = useState<{upload: boolean, add: boolean}>({upload: false, add: false})
+
     return (
         <Authenticated
             user={auth.user}
@@ -19,237 +33,355 @@ export default function Reports({ auth }: PageProps) {
         >
             <div className="mt-10">
                 <div className="flex justify-between items-center mb-5">
-                    <div className="font-semibold text-lg ">
-                        List of Employees
+                    <div className="flex items-center gap-3">
+                        <Button
+                            className="size-6"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() =>
+                                setShowList({
+                                    ...showList,
+                                    showEmployee: !showList.showEmployee,
+                                })
+                            }
+                        >
+                            <ChevronDown
+                                className={cn(
+                                    "size-5 transition duration-200",
+                                    showList.showEmployee && "rotate-180"
+                                )}
+                            />
+                        </Button>
+                        <div className="font-semibold text-lg">
+                            List of Employees
+                        </div>
                     </div>
-                    <Button className="h-8">Print</Button>
+                    <Button className="h-8 hidden">Print</Button>
                 </div>
 
-                <div className="border mb-4 divide-y rounded-md [&>div>div:nth-child(4)]:text-red-500">
-                    <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5 font-semibold">
-                        <div></div>
-                        <div>MALE</div>
-                        <div>FEMALE</div>
-                        <div>TOTAL</div>
-                    </div>
-                    <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                        <div className="text-left uppercase">
-                            Junior high school
-                        </div>
-                        <div>10</div>
-                        <div>36</div>
-                        <div>47</div>
-                    </div>
-                    <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                        <div className="text-left uppercase">
-                            Senior high school
-                        </div>
-                        <div>3</div>
-                        <div>7</div>
-                        <div>10</div>
-                    </div>
-                    <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                        <div className="text-left uppercase">Accounting</div>
-                        <div>0</div>
-                        <div>4</div>
-                        <div>4</div>
-                    </div>
-                    <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                        <div className="text-left uppercase">Principal</div>
-                        <div>0</div>
-                        <div>1</div>
-                        <div>1</div>
-                    </div>
-                    <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                        <div></div>
-                        <div>13</div>
-                        <div>48</div>
-                        <div>61</div>
-                    </div>
-                </div>
-
-                <div className="grid grid-cols-[repeat(3,minmax(17rem,1fr))] gap-2">
-                    <div className="rounded-lg overflow-hidden">
-                        <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
-                            Junior High School
-                        </div>
-                        <div className="divide-y border rounded-b-lg">
-                            <ScrollArea className="h-[40rem]">
-                                <div className="divide-y">
-                                    {JuniorHighList.map((name, index) => (
-                                        <Fragment key={index}>
-                                            <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
-                                                <div className="text-right pr-1 border-r">
-                                                    {++index}
-                                                </div>
-                                                <div className="pl-2">
-                                                    {name}
-                                                </div>
-                                            </div>
-                                        </Fragment>
-                                    ))}
+                {showList.showEmployee && (
+                    <>
+                        <div className="border mb-4 divide-y rounded-md [&>div>div:nth-child(4)]:text-red-500">
+                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5 font-semibold">
+                                <div></div>
+                                <div>MALE</div>
+                                <div>FEMALE</div>
+                                <div>TOTAL</div>
+                            </div>
+                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
+                                <div className="text-left uppercase">
+                                    Junior high school
                                 </div>
-                            </ScrollArea>
-                        </div>
-                    </div>
-
-                    <div className="">
-                        <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
-                            Senior High School
-                        </div>
-                        <div className="divide-y border rounded-b-lg">
-                            <ScrollArea className="h-[40rem]">
-                                <div className="divide-y">
-                                    {SeniorHighList.map((name, index) => (
-                                        <Fragment key={index}>
-                                            <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
-                                                <div className="text-right pr-1 border-r">
-                                                    {++index}
-                                                </div>
-                                                <div className="pl-2">
-                                                    {name}
-                                                </div>
-                                            </div>
-                                        </Fragment>
-                                    ))}
+                                <div>10</div>
+                                <div>36</div>
+                                <div>47</div>
+                            </div>
+                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
+                                <div className="text-left uppercase">
+                                    Senior high school
                                 </div>
-                            </ScrollArea>
-                        </div>
-                    </div>
-
-                    <div className="">
-                        <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
-                            Accounting
-                        </div>
-                        <div className="divide-y border rounded-b-lg">
-                            <ScrollArea className="h-[40rem]">
-                                <div className="divide-y">
-                                    {Accounting.map((name, index) => (
-                                        <Fragment key={index}>
-                                            <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
-                                                <div className="text-right pr-1 border-r">
-                                                    {++index}
-                                                </div>
-                                                <div className="pl-2">
-                                                    {name}
-                                                </div>
-                                            </div>
-                                        </Fragment>
-                                    ))}
+                                <div>3</div>
+                                <div>7</div>
+                                <div>10</div>
+                            </div>
+                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
+                                <div className="text-left uppercase">
+                                    Accounting
                                 </div>
-                            </ScrollArea>
+                                <div>0</div>
+                                <div>4</div>
+                                <div>4</div>
+                            </div>
+                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
+                                <div className="text-left uppercase">
+                                    Principal
+                                </div>
+                                <div>0</div>
+                                <div>1</div>
+                                <div>1</div>
+                            </div>
+                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
+                                <div></div>
+                                <div>13</div>
+                                <div>48</div>
+                                <div>61</div>
+                            </div>
                         </div>
-                    </div>
-                </div>
+
+                        <div className="grid grid-cols-[repeat(3,minmax(17rem,1fr))] gap-2">
+                            <div className="rounded-lg overflow-hidden">
+                                <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
+                                    Junior High School
+                                </div>
+                                <div className="divide-y border rounded-b-lg">
+                                    <ScrollArea className="h-[40rem]">
+                                        <div className="divide-y">
+                                            {JuniorHighList.map(
+                                                (name, index) => (
+                                                    <Fragment key={index}>
+                                                        <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
+                                                            <div className="text-right pr-1 border-r">
+                                                                {++index}
+                                                            </div>
+                                                            <div className="pl-2">
+                                                                {name}
+                                                            </div>
+                                                        </div>
+                                                    </Fragment>
+                                                )
+                                            )}
+                                        </div>
+                                    </ScrollArea>
+                                </div>
+                            </div>
+
+                            <div className="">
+                                <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
+                                    Senior High School
+                                </div>
+                                <div className="divide-y border rounded-b-lg">
+                                    <ScrollArea className="h-[40rem]">
+                                        <div className="divide-y">
+                                            {SeniorHighList.map(
+                                                (name, index) => (
+                                                    <Fragment key={index}>
+                                                        <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
+                                                            <div className="text-right pr-1 border-r">
+                                                                {++index}
+                                                            </div>
+                                                            <div className="pl-2">
+                                                                {name}
+                                                            </div>
+                                                        </div>
+                                                    </Fragment>
+                                                )
+                                            )}
+                                        </div>
+                                    </ScrollArea>
+                                </div>
+                            </div>
+
+                            <div className="">
+                                <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
+                                    Accounting
+                                </div>
+                                <div className="divide-y border rounded-b-lg">
+                                    <ScrollArea className="h-[40rem]">
+                                        <div className="divide-y">
+                                            {Accounting.map((name, index) => (
+                                                <Fragment key={index}>
+                                                    <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
+                                                        <div className="text-right pr-1 border-r">
+                                                            {++index}
+                                                        </div>
+                                                        <div className="pl-2">
+                                                            {name}
+                                                        </div>
+                                                    </div>
+                                                </Fragment>
+                                            ))}
+                                        </div>
+                                    </ScrollArea>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
             </div>
 
             <div className="mt-8">
                 <div className="flex justify-between items-center mb-5">
-                    <div className="font-semibold text-lg ">IPCR</div>
-                    <div className="flex gap-3">
-                        <Button className="h-8 gap-2" variant="secondary">
-                            <Upload className="size-4" strokeWidth={2.7} />
-                            <span>Upload</span>
+                    <div className="flex items-center gap-3">
+                        <Button
+                            className="size-6"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() =>
+                                setShowList({
+                                    ...showList,
+                                    showIPCR: !showList.showIPCR,
+                                })
+                            }
+                        >
+                            <ChevronDown
+                                className={cn(
+                                    "size-5 transition duration-200",
+                                    showList.showIPCR && "rotate-180"
+                                )}
+                            />
                         </Button>
-                        <Button className="h-8">Print</Button>
-                    </div>
+                        <div className="font-semibold text-lg ">IPCR</div>
+                        </div>
+                    {showList.showIPCR && (    
+                        <div className="flex gap-3">
+                            <Button
+                                className="h-8 gap-2"
+                                variant="ghost"
+                                onClick={() => setShowIPCRPrint(true)}
+                            >
+                                <Printer className="size-4" strokeWidth={2.3} />
+                                <span>Print</span>
+                            </Button>
+                            <Button className="h-8 gap-2" variant="secondary" onClick={() => setShowIPCRUpload({...showIPCRUpload, upload: true})}>
+                                <Upload className="size-4" strokeWidth={2.7} />
+                                <span>Upload</span>
+                            </Button>
+                            <Button className="h-8 gap-2" onClick={() => setShowIPCRUpload({...showIPCRUpload, add: true})}>
+                                <Plus className="size-4" strokeWidth={2.7} />
+                                <span>Add</span>
+                            </Button>
+                        </div>
+                    )}
                 </div>
-                <div className="border divide-y rounded-lg">
-                    <div className="grid grid-cols-[4rem,repeat(4,1fr)] [&>div:not(:nth-child(2))]:text-center h-11 [&>div]:my-auto [&>div]:font-medium opacity-60">
-                        <div className="">No.</div>
-                        <div className="">Name of Personnel</div>
-                        <div className="">Position</div>
-                        <div className="">Performance Rating</div>
-                        <div className="">Adjectival Equivalent</div>
+                {showList.showIPCR && (
+                    <div className="border divide-y rounded-lg">
+                        <div className="grid grid-cols-[4rem,repeat(4,1fr)] [&>div:not(:nth-child(2))]:text-center h-11 [&>div]:my-auto [&>div]:font-medium opacity-60">
+                            <div className="">No.</div>
+                            <div className="">Name of Personnel</div>
+                            <div className="">Position</div>
+                            <div className="">Performance Rating</div>
+                            <div className="">Adjectival Equivalent</div>
+                        </div>
+                        <ScrollArea className="h-[30rem]">
+                            <div className="divide-y">
+                                {IPCR.map((list, index) => (
+                                    <div key={index}>
+                                        <div className="grid grid-cols-[4rem,repeat(4,1fr)] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
+                                            <div className="">{++index}</div>
+                                            <div className="">{list.name}</div>
+                                            <div className="">
+                                                {list.position}
+                                            </div>
+                                            <div className="">{list.rate}</div>
+                                            <div className="">
+                                                {list.equivalent}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </ScrollArea>
                     </div>
-                    <ScrollArea className="h-[30rem]">
-                        <div className="divide-y">
-                            {IPCR.map((list, index) => (
+                )}
+
+                <UploadIPCR show={(showIPCRUpload.add || showIPCRUpload.upload)} onClose={setShowIPCRUpload} isAdd={showIPCRUpload.add} />
+            </div>
+
+            <div className="mt-8">
+                <div className="flex justify-between items-center mb-5">
+                    <div className="flex items-center gap-3">
+                        <Button
+                            className="size-6"
+                            size="icon"
+                            variant="ghost"
+                            onClick={() =>
+                                setShowList({
+                                    ...showList,
+                                    showSALN: !showList.showSALN,
+                                })
+                            }
+                        >
+                            <ChevronDown
+                                className={cn(
+                                    "size-5 transition duration-200",
+                                    showList.showSALN && "rotate-180"
+                                )}
+                            />
+                        </Button>
+                        <div className="font-semibold text-lg ">SALN</div>
+                    </div>
+                    {showList.showSALN && (
+                        <div className="flex gap-3">
+                            <Button
+                                className="h-8 gap-2"
+                                variant="ghost"
+                                onClick={() => setShowSALNPrint(true)}
+                            >
+                                <Printer className="size-4" strokeWidth={2.3} />
+                                <span>Print</span>
+                            </Button>
+                            <Button className="h-8 gap-2" variant="secondary" onClick={() => setShowSALNUpload({...showSALNUpload, upload: true})}>
+                                <Upload className="size-4" strokeWidth={2.7} />
+                                <span>Upload</span>
+                            </Button>
+                            <Button className="h-8 gap-2" onClick={() => setShowSALNUpload({...showSALNUpload, add: true})}>
+                                <Plus className="size-4" strokeWidth={2.7} />
+                                <span>Add</span>
+                            </Button>
+                        </div>
+                    )}
+                </div>
+                {showList.showSALN && (
+                    <ScrollArea className="border rounded-md h-[30rem]">
+                        <div className="divide-y w-max relative">
+                            <div className="grid grid-cols-[3rem,repeat(6,12rem),20rem,10rem] border-b [&>div]:text-center h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 bg-white">
+                                <div className=""></div>
+                                <div className="">Last name</div>
+                                <div className="">First name</div>
+                                <div className="">Middle name</div>
+                                <div className="">TIN</div>
+                                <div className="">Position</div>
+                                <div className="">Net worth</div>
+                                <div className="">
+                                    If spouse is with government service, Please
+                                    indicate Name of Spouse/Employer/Address
+                                </div>
+                                <div className="">
+                                    Please check (/) if Joint Filing
+                                </div>
+                            </div>
+                            {SALN.map((list, index) => (
                                 <div
                                     key={index}
+                                    className={cn(
+                                        "hover:bg-secondary",
+                                        index === 0 && "!border-t-0"
+                                    )}
                                 >
-                                    <div className="grid grid-cols-[4rem,repeat(4,1fr)] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
+                                    <div className="grid grid-cols-[3rem,repeat(6,12rem),20rem,10rem] [&>div]:text-center [&>div]:py-3">
                                         <div className="">{++index}</div>
-                                        <div className="">{list.name}</div>
-                                        <div className="">{list.position}</div>
-                                        <div className="">{list.rate}</div>
-                                        <div className="">{list.equivalent}</div>
+                                        <div className="">
+                                            {list["First Name"]}
+                                        </div>
+                                        <div className="">
+                                            {list["Last Name"]}
+                                        </div>
+                                        <div className="">
+                                            {list["Middle Name"]}
+                                        </div>
+                                        <div className="">{list["TIN"]}</div>
+                                        <div className="">
+                                            {list["Position"]}
+                                        </div>
+                                        <div className="">
+                                            {list["Net Worth"]}
+                                        </div>
+                                        <div className="">
+                                            {
+                                                list[
+                                                    "Name of Spouse/Employer/Address"
+                                                ]
+                                            }
+                                        </div>
+                                        <div className="">
+                                            {list["Joint Filing"]}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
+                        <ScrollBar
+                            orientation="horizontal"
+                            className="h-3"
+                            forceMount
+                        />
                     </ScrollArea>
-                </div>
-            </div>
+                )}
 
-            <div className="mt-8">
-                <div className="flex justify-between items-center mb-5">
-                    <div className="font-semibold text-lg ">SALN</div>
-                    <div className="flex gap-3">
-                        <Button className="h-8 gap-2" variant="secondary">
-                            <Upload className="size-4" strokeWidth={2.7} />
-                            <span>Upload</span>
-                        </Button>
-                        <Button className="h-8" onClick={() => router.get(route('reports.saln'))}>Print</Button>
-                    </div>
-                </div>
-                <ScrollArea className="border rounded-md h-[30rem]">
-                    <div className="divide-y w-max relative">
-                        <div className="grid grid-cols-[3rem,repeat(6,12rem),20rem,10rem] border-b [&>div]:text-center h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 bg-white">
-                            <div className=""></div>
-                            <div className="">Last name</div>
-                            <div className="">First name</div>
-                            <div className="">Middle name</div>
-                            <div className="">TIN</div>
-                            <div className="">Position</div>
-                            <div className="">Net worth</div>
-                            <div className="">
-                                If spouse is with government service, Please
-                                indicate Name of Spouse/Employer/Address
-                            </div>
-                            <div className="">
-                                Please check (/) if Joint Filing
-                            </div>
-                        </div>
-                        {SALN.map((list, index) => (
-                            <div
-                                key={index}
-                                className={cn(
-                                    "hover:bg-secondary",
-                                    index === 0 && "!border-t-0"
-                                )}
-                            >
-                                <div className="grid grid-cols-[3rem,repeat(6,12rem),20rem,10rem] [&>div]:text-center [&>div]:py-3">
-                                    <div className="">{++index}</div>
-                                    <div className="">{list["First Name"]}</div>
-                                    <div className="">{list["Last Name"]}</div>
-                                    <div className="">
-                                        {list["Middle Name"]}
-                                    </div>
-                                    <div className="">{list["TIN"]}</div>
-                                    <div className="">{list["Position"]}</div>
-                                    <div className="">{list["Net Worth"]}</div>
-                                    <div className="">
-                                        {
-                                            list[
-                                                "Name of Spouse/Employer/Address"
-                                            ]
-                                        }
-                                    </div>
-                                    <div className="">
-                                        {list["Joint Filing"]}
-                                    </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                    <ScrollBar
-                        orientation="horizontal"
-                        className="h-3"
-                        forceMount
-                    />
-                </ScrollArea>
+                <UploadSALN show={(showSALNUpload.add || showSALNUpload.upload)} onClose={setShowSALNUpload} isAdd={showSALNUpload.add} />
             </div>
+            <IPCRPrint show={showIPCRPrint} onClose={setShowIPCRPrint} />
+            <SALNPrint show={showSALNPrint} onClose={setShowSALNPrint} />
         </Authenticated>
     );
 }

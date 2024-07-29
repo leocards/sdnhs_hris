@@ -12,7 +12,7 @@ import { useToast } from "@/Components/ui/use-toast";
 
 const UPLOADPDSSCHEMA = z.object({
     file: z
-        .instanceof(File, { message: "Please choose a excel file format of your PDS."})
+        .instanceof(File, { message: "Please choose an excel file format of your PDS."})
         .refine((file) => file.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", {
             message: "Only excel files are allowed.",
         })
@@ -91,7 +91,7 @@ const UploadPDS: React.FC<{ show: boolean, onClose: (close: false) => void }> = 
                                             <FormControl>
                                                 <Input
                                                     type="file"
-                                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                    className="form-input"
                                                     onChange={(e) => {
                                                         const file = e.target.files?.[0];
                                                         if (file) {

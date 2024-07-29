@@ -143,10 +143,11 @@ class LeaveController extends Controller
             } else {
                 if(Auth::user()->role === "HR") {
                     $leave->hr_status = "Rejected";
+                    $leave->hr_reject_msg = $request->message;
                 } else {
                     $leave->principal_status = "Rejected";
+                    $leave->principal_reject_msg = $request->message;
                 }
-                $leave->reject_msg = $request->message;
             }
             $leave->save();
 

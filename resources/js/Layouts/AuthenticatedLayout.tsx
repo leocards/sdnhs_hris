@@ -85,7 +85,7 @@ export default function Authenticated({
                 <Navigation user={user} openNavigation={openNavigation} setOpenNavigation={setOpenNavigation} />
             </NavigationModal>
 
-            <header className="flex items-center px-4 lg:hidden">
+            <header className="flex items-center px-4 lg:hidden sticky top-0 bg-white z-50">
                 <div className="py-2.5">
                     <span className="relative">
                         <Button

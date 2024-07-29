@@ -1,4 +1,5 @@
 import { PDFViewer } from "@react-pdf/renderer";
+import IPCRPDF from "./IPCRPDF";
 import Modal from "@/Components/Modal";
 import { Button } from "@/Components/ui/button";
 import { Check, ChevronDown, X } from "lucide-react";
@@ -10,9 +11,14 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
-import SALNPDF from "./SALNPDF";
 
-export default function SALNPrint({show, onClose}: {show: boolean, onClose: (close: false) => void}) {
+export default function IPCRPrint({
+    show,
+    onClose,
+}: {
+    show: boolean;
+    onClose: (close: false) => void;
+}) {
     const { width } = useWindowSize();
     const [size, setSize] = useState<number>(950);
     const [pageSize, setPageSize] = useState<{
@@ -37,12 +43,19 @@ export default function SALNPrint({show, onClose}: {show: boolean, onClose: (clo
         } else {
             setSize(250);
         }
+
     }, [width]);
 
     return (
-        <Modal show={show} onClose={() => onClose(false)} closeable={false} maxWidth="fit" center="!mx-auto">
+        <Modal
+            show={show}
+            onClose={() => onClose(false)}
+            closeable={false}
+            maxWidth="fit"
+            center="!mx-auto"
+        >
             <div className="p-6 relative">
-            <div className="mb-6 flex justify-between">
+                <div className="mb-6 flex justify-between">
                     <Popover
                         open={showSelectSize}
                         onOpenChange={setShowSelectSize}
@@ -121,10 +134,14 @@ export default function SALNPrint({show, onClose}: {show: boolean, onClose: (clo
                         <X className="size-5" />
                     </Button>
                 </div>
-                <PDFViewer className="h-[100vh] rounded-md" width={size}>
-                    <SALNPDF size={pageSize.size} />
+
+                <PDFViewer
+                    className="h-[100vh] rounded-md"
+                    width={size}
+                >
+                    <IPCRPDF size={pageSize.size} />
                 </PDFViewer>
             </div>
         </Modal>
-    )
+    );
 }

@@ -57,7 +57,7 @@ export default function StaffTardiness({
         useState<PaginateData>(attendance);
     const [selectedStaff, setSelectedStaff] = useState<Staff>();
 
-    const [filter, setFilter] = useState<string>("");
+    const [filter, setFilter] = useState<string>("All");
     const [sort, setSort] = useState<{ sort: string; order: string }>({
         sort: "Name",
         order: "ASC",
@@ -68,9 +68,9 @@ export default function StaffTardiness({
     };
 
     const onEditStaff = (staff: Staff) => {
-        setSelectedStaff(staff)
-        setShowAddAttendance(true)
-    }
+        setSelectedStaff(staff);
+        setShowAddAttendance(true);
+    };
 
     useEffect(() => {
         const succ = router.on("success", (event) => {
@@ -83,10 +83,10 @@ export default function StaffTardiness({
     }, []);
 
     useEffect(() => {
-        if(!showAddAttendance) {
-            setTimeout(() => setSelectedStaff(undefined), 300)
+        if (!showAddAttendance) {
+            setTimeout(() => setSelectedStaff(undefined), 300);
         }
-    }, [showAddAttendance])
+    }, [showAddAttendance]);
 
     return (
         <Authenticated
@@ -110,6 +110,21 @@ export default function StaffTardiness({
             </div>
 
             <div className="w-full flex items-center mb-7">
+                <Filter
+                    size="lg"
+                    filter="Filter"
+                    position="BOTTOMLEFT"
+                    active={filter}
+                    items={[
+                        { filter: "All", onClick: setFilter },
+                        { filter: "2024", onClick: setFilter },
+                        { filter: "2023", onClick: setFilter },
+                        { filter: "2022", onClick: setFilter },
+                        { filter: "2021", onClick: setFilter },
+                    ]}
+                    onClear={() => setFilter("All")}
+                />
+
                 <Button
                     className="ml-auto gap-3"
                     onClick={() => setShowAddAttendance(true)}
@@ -143,7 +158,12 @@ export default function StaffTardiness({
                 </div>
 
                 {staffAttendance.data.map((staff, index) => (
-                    <StaffRow key={index} staff={staff} onEdit={onEditStaff} onDelete={setSelectedStaff} />
+                    <StaffRow
+                        key={index}
+                        staff={staff}
+                        onEdit={onEditStaff}
+                        onDelete={setSelectedStaff}
+                    />
                 ))}
 
                 {attendance.data.length > 50 && (
@@ -181,7 +201,7 @@ export default function StaffTardiness({
     );
 }
 
-type StaffRowProps = { 
+type StaffRowProps = {
     staff: Staff;
     onEdit: (staff: Staff) => void;
     onDelete: (staff: Staff) => void;
@@ -215,14 +235,20 @@ const StaffRow: React.FC<StaffRowProps> = ({ staff, onEdit, onDelete }) => {
                                 <EllipsisVertical className="size-5" />
                             </MenubarTrigger>
                             <MenubarContent className="w-52" align="end">
-                                <MenubarItem className="px-4 gap-5" onClick={() => onEdit(staff)}>
+                                <MenubarItem
+                                    className="px-4 gap-5"
+                                    onClick={() => onEdit(staff)}
+                                >
                                     <PenLine
                                         className="size-5"
                                         strokeWidth={1.8}
                                     />
                                     <div>Edit</div>
                                 </MenubarItem>
-                                <MenubarItem className="px-4 gap-5" onClick={() => onDelete(staff)}>
+                                <MenubarItem
+                                    className="px-4 gap-5"
+                                    onClick={() => onDelete(staff)}
+                                >
                                     <Trash2
                                         className="size-5"
                                         strokeWidth={1.8}

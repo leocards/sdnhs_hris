@@ -34,7 +34,7 @@ class StaffController extends Controller
 
     public function tardiness() 
     {
-        return Inertia::render('Staff/StaffTardiness', ['attendance' => StaffTardiness::paginate(50)]);
+        return Inertia::render('Staff/StaffTardiness', ['attendance' => StaffTardiness::orderBy('created_at', 'desc')->paginate(50)]);
     }
 
     public function staff_list() 

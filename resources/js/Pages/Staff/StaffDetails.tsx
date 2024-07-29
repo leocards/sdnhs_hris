@@ -1,11 +1,13 @@
 import Modal from "@/Components/Modal";
 import { Button } from "@/Components/ui/button";
+import { Label } from "@/Components/ui/label";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 type StaffDetailsProps = {
     user?: User | null;
     show: boolean;
-    onClose: (close: false) => void;
+    onClose: CallableFunction;
     onViewPDS: (view: true) => void;
 };
 
@@ -23,18 +25,75 @@ export default function StaffDetails({
                 <div className="flex flex-row items-center">
                     <div className="font-semibold text-xl">{staff?.name}</div>
 
-                    <Button variant="ghost" className="ml-auto h-9" onClick={() => {
-                        onClose(false)
-                        setTimeout(() => {
-                            onViewPDS(true)
-                        }, 300)
-                    }}>
+                    <Button
+                        variant="ghost"
+                        className="ml-auto h-9"
+                        onClick={() => {
+                            onClose(false);
+                            setTimeout(() => {
+                                onViewPDS(true);
+                            }, 300);
+                        }}
+                    >
                         <span>View PDS</span>
                     </Button>
                 </div>
 
+                <div className="mt-5">
+                    <div className="">
+                        <div className="flex items-center">
+                            <Label className="w-40 flex items-center">
+                                Role <span className="ml-auto mr-3">:</span>{" "}
+                            </Label>
+                            <div>{user?.role}</div>
+                        </div>
+                        <div className="flex items-center">
+                            <Label className="w-40 flex items-center">
+                                Position <span className="ml-auto mr-3">:</span>{" "}
+                            </Label>
+                            <div>{user?.position}</div>
+                        </div>
+                        <div className="flex items-center">
+                            <Label className="w-40 flex items-center">
+                                Date of Birth{" "}
+                                <span className="ml-auto mr-3">:</span>{" "}
+                            </Label>
+                            <div>{user?.date_of_birth && format(user?.date_of_birth, "PPP")}</div>
+                        </div>
+                        <div className="flex items-center">
+                            <Label className="w-40 flex items-center">
+                                Sex <span className="ml-auto mr-3">:</span>{" "}
+                            </Label>
+                            <div>{user?.sex}</div>
+                        </div>
+                        <div className="flex items-center">
+                            <Label className="w-40 flex items-center">
+                                Address <span className="ml-auto mr-3">:</span>{" "}
+                            </Label>
+                            <div>{user?.address}</div>
+                        </div>
+                        <div className="flex items-center">
+                            <Label className="w-40 flex items-center">
+                                Email <span className="ml-auto mr-3">:</span>{" "}
+                            </Label>
+                            <div>{user?.email}</div>
+                        </div>
+                        <div className="flex items-center">
+                            <Label className="w-40 flex items-center">
+                                Phone number{" "}
+                                <span className="ml-auto mr-3">:</span>{" "}
+                            </Label>
+                            <div>{user?.phone_number}</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="flex mt-8">
-                    <Button className="ml-auto px-8" variant="secondary">
+                    <Button
+                        className="ml-auto px-8"
+                        variant="secondary"
+                        onClick={() => onClose(false)}
+                    >
                         <span>Close</span>
                     </Button>
                 </div>

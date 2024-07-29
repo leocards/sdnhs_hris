@@ -41,7 +41,7 @@ export default function SearchedEmployee({
 }: PageProps & { user: any }) {
     const [activeTab, setActiveTab] = useState<string>("attendance");
     const { width } = useWindowSize();
-    const [size, setSize] = useState<number>(1024);
+    const [size, setSize] = useState<number>(900);
     const [numPages, setNumPages] = useState<number>();
     const [pages, setPages] = useState<PagesType>(initialPages);
 
@@ -55,21 +55,23 @@ export default function SearchedEmployee({
     }
 
     useEffect(() => {
-        if (width >= 1125) {
-            setSize(1024);
-        } else if (width <= 1124 && width >= 1024) {
-            setSize(850);
-        } else if (width <= 1023 && width >= 866) {
+        if (width >= 1289) {
+            setSize(900);
+        } else if (width <= 1288 && width >= 1199) {
             setSize(800);
-        } else if (width <= 865 && width >= 668) {
-            setSize(600);
-        } else if (width <= 667 && width >= 562) {
+        } else if (width <= 1997 && width >= 1046) {
+            setSize(650);
+        } else if (width <= 1045 && width >= 1024) {
+            setSize(450);
+        } else if (width <= 1023 && width >= 810) {
+            setSize(700);
+        } else if (width <= 809 && width >= 598) {
             setSize(500);
-        } else if (width <= 561 && width >= 466) {
-            setSize(400);
         } else {
             setSize(350);
         }
+
+        console.log(width)
     }, [width]);
 
     return (

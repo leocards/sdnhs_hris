@@ -186,12 +186,12 @@ export default function Staff({ auth, staffs }: StaffProps) {
             </div>
 
             <div className="divide-y min-h-[22rem] flex flex-col ">
-                <div className="grid grid-cols-[repeat(4,minmax(6rem,1fr)),5rem,3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
+                <div className="grid grid-cols-[repeat(4,minmax(6rem,1fr)),8rem,3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Name</div>
                     <div className="">Email</div>
                     <div className="">Department</div>
                     <div className="">Position</div>
-                    <div className="">Leave</div>
+                    <div className="">Leave Credits</div>
                     <div className=""></div>
                 </div>
                 {staffList.data.length === 0 && (
@@ -275,7 +275,7 @@ const StaffRow: React.FC<StaffListProps & { auth: string }> = ({
 }) => {
     return (
         <div className="hover:bg-secondary transition-colors">
-            <div className="grid grid-cols-[repeat(4,minmax(6rem,1fr)),5rem,3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1">
+            <div className="grid grid-cols-[repeat(4,minmax(6rem,1fr)),8rem,3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1">
                 <div className="">
                     <div className="flex items-center gap-2">
                         <AvatarProfile className="size-8" />

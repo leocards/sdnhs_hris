@@ -38,7 +38,7 @@ export default function Authenticated({
     const {
         props: { auth, message },
     } = usePage<any>();
-    const [openNavigation, setOpenNavigation] = useState<boolean>(false)
+    const [openNavigation, setOpenNavigation] = useState<boolean>(false);
     const { width } = useWindowSize();
 
     const { toast } = useToast();
@@ -79,10 +79,20 @@ export default function Authenticated({
 
     return (
         <div className="relative isolate flex min-h-svh w-full bg-white max-lg:flex-col lg:bg-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
-            { width > 1024 && <Navigation user={user} openNavigation={openNavigation} setOpenNavigation={setOpenNavigation} />}
+            {width > 1024 && (
+                <Navigation
+                    user={user}
+                    openNavigation={openNavigation}
+                    setOpenNavigation={setOpenNavigation}
+                />
+            )}
 
             <NavigationModal show={openNavigation} onClose={setOpenNavigation}>
-                <Navigation user={user} openNavigation={openNavigation} setOpenNavigation={setOpenNavigation} />
+                <Navigation
+                    user={user}
+                    openNavigation={openNavigation}
+                    setOpenNavigation={setOpenNavigation}
+                />
             </NavigationModal>
 
             <header className="flex items-center px-4 lg:hidden sticky top-0 bg-white z-50">
@@ -202,7 +212,7 @@ const Navigation: React.FC<{
     return (
         <div
             className={cn(
-                "lg:fixed inset-y-0 left-0 w-72 overflow-hidden max-lg:rounded-lg max-lg:ring-1 max-lg:ring-ring/5",
+                "lg:fixed inset-y-0 left-0 w-72 overflow-hidden max-lg:rounded-lg max-lg:ring-1 max-lg:ring-ring/5"
             )}
         >
             <nav
@@ -309,7 +319,12 @@ const Navigation: React.FC<{
                                 >
                                     <UserRound className="size-5" /> My account
                                 </li>
-                                <li className="hover:bg-primary hover:text-primary-foreground">
+                                <li
+                                    className="hover:bg-primary hover:text-primary-foreground"
+                                    onClick={() =>
+                                        router.get(route("profile.settings"))
+                                    }
+                                >
                                     <Settings className="size-5" /> Settings
                                 </li>
                                 <hr />

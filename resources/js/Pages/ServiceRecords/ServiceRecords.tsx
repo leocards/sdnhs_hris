@@ -23,6 +23,7 @@ import UploadCertificate from "./UploadCartificate";
 import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { format } from "date-fns";
+import ViewCertificate from "./ViewCertificate";
 
 export default function ServiceRecords({
     auth,
@@ -35,6 +36,8 @@ export default function ServiceRecords({
         useState<boolean>(false);
 
     const { props } = usePage();
+
+    const [selectedCertificate, setSelectedCertificate] = useState<string|null>(null)
 
     useEffect(() => {
         if (isUploadCertificate) {
@@ -77,7 +80,7 @@ export default function ServiceRecords({
                 )}
 
                 {records.data.map((record, index) => (
-                    <CertificateRow key={index} data={record} />
+                    <CertificateRow key={index} data={record} onView={setSelectedCertificate} />
                 ))}
 
                 {records.total >= 50 && (
@@ -126,6 +129,11 @@ export default function ServiceRecords({
                 show={isUploadCertificate}
                 onClose={setIsUploadCertificate}
             />
+            <ViewCertificate
+                img={selectedCertificate}
+                show={!!selectedCertificate}
+                onClose={() => setSelectedCertificate(null)}
+            />
         </Authenticated>
     );
 }
@@ -138,7 +146,7 @@ type CertificateRowData = {
     date_to: string
     updated_at: string
 };
-const CertificateRow: React.FC<{ data: CertificateRowData }> = ({ data }) => {
+const CertificateRow: React.FC<{ data: CertificateRowData, onView: CallableFunction }> = ({ data, onView }) => {
     const type = data.file_path.split('.')[1]
 
     return (
@@ -162,7 +170,7 @@ const CertificateRow: React.FC<{ data: CertificateRowData }> = ({ data }) => {
                             <MenubarContent className="w-52" align="end">
                                 <MenubarItem
                                     className="px-4 gap-5"
-                                    onClick={() => null}
+                                    onClick={() => onView(data.file_path)}
                                 >
                                     <Eye className="size-5" strokeWidth={1.8} />
                                     <div>View</div>

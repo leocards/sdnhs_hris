@@ -1,10 +1,11 @@
+import { Dot } from "lucide-react";
 import { Choices } from "./Choices";
 
 export default function Question34({ form }: { form: any }) {
     return (
         <div>
             <div className="mb-3 flex items-start gap-3">
-                <span>34.</span>
+                <span>&#8226;</span>
                 Are you related by consanguinity or affinity to the appointing
                 or recommending authority, or to the chief of bureau or office
                 or to the person who has immediate supervision over you in the

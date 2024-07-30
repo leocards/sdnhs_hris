@@ -12,7 +12,7 @@ import { Input } from "@/Components/ui/input";
 export default function Question38({ form }: { form: any }) {
     return (
         <div className="flex items-start gap-3 mt-10">
-            38.
+            &#8226;
             <div className="">
                 <Choices
                     form={form}

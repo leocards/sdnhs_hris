@@ -13,7 +13,7 @@ export default function Question35to37({ form }: { form: any }) {
     return (
         <>
             <div className="flex items-start gap-3 mt-10">
-                35.
+                &#8226;
                 <div className="">
                     <Choices
                         form={form}
@@ -75,7 +75,7 @@ export default function Question35to37({ form }: { form: any }) {
             </div>
 
             <div className="flex items-start gap-3 mt-10">
-                36.
+                &#8226;
                 <div className="">
                     <Choices
                         form={form}
@@ -88,7 +88,7 @@ export default function Question35to37({ form }: { form: any }) {
                 </div>
             </div>
             <div className="flex items-start gap-3 mt-10">
-                37.
+                &#8226;
                 <div className="">
                     <Choices
                         form={form}

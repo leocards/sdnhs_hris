@@ -21,7 +21,7 @@ export default function Question41({ form }: { form: any }) {
     return (
         <div className="mt-10">
             <div className="mb-4">
-                41. REFERENCES{" "}
+                &#8226; REFERENCES{" "}
                 <span className="text-destructive">
                     (Person not related by consanguinity or affinity to
                     applicant /appointee)

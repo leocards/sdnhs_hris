@@ -14,7 +14,7 @@ export default function Question39to40({ form }: { form: any }) {
         <>
             <div className="mt-10">
                 <div className="mb-3 flex items-start gap-3">
-                    <span>39.</span>
+                    <span>&#8226;</span>
                     Have you acquired the status of an immigrant or permanent
                     resident of another country?
                 </div>
@@ -33,7 +33,7 @@ export default function Question39to40({ form }: { form: any }) {
 
             <div className="mt-10">
                 <div className="mb-3 flex items-start gap-3">
-                    <span>40.</span>
+                    <span>&#8226;</span>
                     Pursuant to: (a) Indigenous People's Act (RA 8371); (b)
                     Magna Carta for Disabled Persons (RA 7277); and (c) Solo
                     Parents Welfare Act of 2000 (RA 8972), please answer the

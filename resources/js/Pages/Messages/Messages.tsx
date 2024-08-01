@@ -61,8 +61,9 @@ export default function Messages({ auth }: PageProps) {
                         </div>
                         <ScrollArea className="">
                             <div className="p-1.5">
-                                {Array.from({ length: 4 }).map(() => (
+                                {Array.from({ length: 4 }).map((_, index) => (
                                     <div
+                                        key={index}
                                         className="hover:bg-secondary p-2 h-14 flex items-center rounded transition gap-2 [&>div>*]:cursor-pointer"
                                         role="button"
                                     >
@@ -93,7 +94,7 @@ export default function Messages({ auth }: PageProps) {
                         </ScrollArea>
                     </div>
 
-                    <ChatBox />
+                    <ChatBox user={auth.user} />
                 </div>
             </div>
         </Authenticated>

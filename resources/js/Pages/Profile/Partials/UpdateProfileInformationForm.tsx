@@ -1,28 +1,17 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
 import { Link, useForm, usePage } from "@inertiajs/react";
-import { Transition } from "@headlessui/react";
 import { useEffect, useState } from "react";
-import { Input } from "@/Components/ui/input";
 import { z } from "zod";
 import { requiredError } from "@/Pages/types";
 import { useForm as reactForm } from "react-hook-form";
-import { ROLE, STAFFPOSITIONS } from "@/Pages/Staff/types";
+import { ROLE, PERSONNELPOSITIONS } from "@/Pages/Personnel/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useToast } from "@/Components/ui/use-toast";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/Components/ui/form";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/Components/ui/popover";
+import { Form } from "@/Components/ui/form";
 import { Button } from "@/Components/ui/button";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/Components/ui/calendar";
-import DatePicker from "@/Components/ui/date-picker";
-import PersonalInformation from "@/Pages/Staff/Partials/PersonalInformation";
-import ContactInformation from "@/Pages/Staff/Partials/ContactInformation";
-import StaffInformation from "@/Pages/Staff/Partials/StaffInformation";
+import PersonalInformation from "@/Pages/Personnel/Partials/PersonalInformation";
+import ContactInformation from "@/Pages/Personnel/Partials/ContactInformation";
+import PersonnelInformation from "@/Pages/Personnel/Partials/PersonnelInformation";
 
 export const PROFILESCHEMA = z.object({
     firstName: z.string().min(1, requiredError("first name")).default(""),
@@ -40,10 +29,10 @@ export const PROFILESCHEMA = z.object({
         .startsWith("09", "Must starts with 09")
         .length(11, "Must be 11 characters long")
         .default(""),
-    position: z.enum(STAFFPOSITIONS, {
+    position: z.enum(PERSONNELPOSITIONS, {
         required_error: requiredError("position"),
     }),
-    staffId: z.string().min(1, requiredError("staff Id")).default(""),
+    personnelId: z.string().min(1, requiredError("personnel Id")).default(""),
     department: z.string().min(1, requiredError("department")).default(""),
     userRole: z.enum(ROLE, { required_error: requiredError("user role") }),
     dateHired: z
@@ -76,7 +65,7 @@ interface User {
     sex?: "Male" | "Female";
     address?: string;
     phone_number: string;
-    staff_id?: string;
+    personnel_id?: string;
     date_hired?: Date | null;
     date_of_birth: Date;
     role?: "HOD" | "Teaching" | "Non-teaching";
@@ -106,7 +95,7 @@ export default function UpdateProfileInformation({
             address: user?.address,
             phoneNumber: user.phone_number,
             position: user.position,
-            staffId: user.staff_id,
+            personnelId: user.personnel_id,
             department: user.department,
             dateHired: user.date_hired && new Date(user.date_hired),
             userRole: user.role,
@@ -115,12 +104,9 @@ export default function UpdateProfileInformation({
         },
     });
     const {
-        data,
         setData,
         patch,
-        errors,
         processing,
-        recentlySuccessful,
         reset,
     } = useForm<IFormProfile>();
     const { toast } = useToast();
@@ -178,7 +164,7 @@ export default function UpdateProfileInformation({
 
                     <ContactInformation form={form} />
 
-                    <StaffInformation form={form} />
+                    <PersonnelInformation form={form} />
 
                     {mustVerifyEmail && user.email_verified_at === null && (
                         <div>

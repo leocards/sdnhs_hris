@@ -36,11 +36,11 @@ import { useEffect, useState } from "react";
 import TeacherAttendance from "./TeacherAttendance";
 import { format } from "date-fns";
 
-interface StaffTardinessProps extends PageProps {
+interface PersonnelTardinessProps extends PageProps {
     attendance: PaginateData;
 }
 
-export type Staff = {
+export type Personnel = {
     id: number;
     name: string;
     present: string;
@@ -48,14 +48,14 @@ export type Staff = {
     updated_at: string;
 };
 
-export default function StaffTardiness({
+export default function PersonnelTardiness({
     auth,
     attendance,
-}: StaffTardinessProps) {
+}: PersonnelTardinessProps) {
     const [showAddAttendance, setShowAddAttendance] = useState<boolean>(false);
-    const [staffAttendance, setStaffAttendance] =
+    const [personnelAttendance, setPersonnelAttendance] =
         useState<PaginateData>(attendance);
-    const [selectedStaff, setSelectedStaff] = useState<Staff>();
+    const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel>();
 
     const [filter, setFilter] = useState<string>("All");
     const [sort, setSort] = useState<{ sort: string; order: string }>({
@@ -67,14 +67,14 @@ export default function StaffTardiness({
         router.get(route(nav));
     };
 
-    const onEditStaff = (staff: Staff) => {
-        setSelectedStaff(staff);
+    const onEditPersonnel = (personnel: Personnel) => {
+        setSelectedPersonnel(personnel);
         setShowAddAttendance(true);
     };
 
     useEffect(() => {
         const succ = router.on("success", (event) => {
-            setStaffAttendance(
+            setPersonnelAttendance(
                 event.detail.page.props.attendance as PaginateData
             );
         });
@@ -84,7 +84,7 @@ export default function StaffTardiness({
 
     useEffect(() => {
         if (!showAddAttendance) {
-            setTimeout(() => setSelectedStaff(undefined), 300);
+            setTimeout(() => setSelectedPersonnel(undefined), 300);
         }
     }, [showAddAttendance]);
 
@@ -93,18 +93,18 @@ export default function StaffTardiness({
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
-                    Staff <ChevronRight className="size-5" /> Tardiness
+                    Personnel <ChevronRight className="size-5" /> Tardiness
                 </h2>
             }
         >
             <div className="divide-x flex mt-5 text-sm border-b-2 mb-7">
                 <Tabs
-                    id="staff-tab"
-                    active="staff.tardiness"
+                    id="personnel-tab"
+                    active="personnel.tardiness"
                     navigate={navigateTo}
                     tabs={[
-                        { id: "staff", label: "Staff" },
-                        { id: "staff.tardiness", label: "Tardiness" },
+                        { id: "personnel", label: "Personnel" },
+                        { id: "personnel.tardiness", label: "Tardiness" },
                     ]}
                 />
             </div>
@@ -136,7 +136,7 @@ export default function StaffTardiness({
                 <TeacherAttendance
                     show={showAddAttendance}
                     onClose={setShowAddAttendance}
-                    user={selectedStaff}
+                    user={selectedPersonnel}
                 />
             </div>
 
@@ -148,7 +148,7 @@ export default function StaffTardiness({
                     <div className="">Date modified</div>
                     <div className=""></div>
                 </div>
-                {staffAttendance.data.length === 0 && (
+                {personnelAttendance.data.length === 0 && (
                     <div className="text-center py-4 opacity-65">
                         No records
                     </div>
@@ -157,12 +157,12 @@ export default function StaffTardiness({
                     No results found for "lorem ipsum"
                 </div>
 
-                {staffAttendance.data.map((staff, index) => (
-                    <StaffRow
+                {personnelAttendance.data.map((personnel, index) => (
+                    <PersonnelRow
                         key={index}
-                        staff={staff}
-                        onEdit={onEditStaff}
-                        onDelete={setSelectedStaff}
+                        personnel={personnel}
+                        onEdit={onEditPersonnel}
+                        onDelete={setSelectedPersonnel}
                     />
                 ))}
 
@@ -201,31 +201,31 @@ export default function StaffTardiness({
     );
 }
 
-type StaffRowProps = {
-    staff: Staff;
-    onEdit: (staff: Staff) => void;
-    onDelete: (staff: Staff) => void;
+type PersonnelRowProps = {
+    personnel: Personnel;
+    onEdit: (personnel: Personnel) => void;
+    onDelete: (personnel: Personnel) => void;
 };
 
-const StaffRow: React.FC<StaffRowProps> = ({ staff, onEdit, onDelete }) => {
+const PersonnelRow: React.FC<PersonnelRowProps> = ({ personnel, onEdit, onDelete }) => {
     return (
         <div className="hover:bg-secondary transition-colors">
             <div className="grid grid-cols-[repeat(4,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1">
                 <div className="">
                     <div className="flex items-center gap-2">
                         <AvatarProfile className="size-8" />
-                        <div className="line-clamp-1">{staff.name}</div>
+                        <div className="line-clamp-1">{personnel.name}</div>
                     </div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">{staff.present}</div>
+                    <div className="line-clamp-1">{personnel.present}</div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">{staff.absent}</div>
+                    <div className="line-clamp-1">{personnel.absent}</div>
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        {format(new Date(staff.updated_at), "PP")}
+                        {format(new Date(personnel.updated_at), "PP")}
                     </div>
                 </div>
                 <div className="">
@@ -237,7 +237,7 @@ const StaffRow: React.FC<StaffRowProps> = ({ staff, onEdit, onDelete }) => {
                             <MenubarContent className="w-52" align="end">
                                 <MenubarItem
                                     className="px-4 gap-5"
-                                    onClick={() => onEdit(staff)}
+                                    onClick={() => onEdit(personnel)}
                                 >
                                     <PenLine
                                         className="size-5"
@@ -247,7 +247,7 @@ const StaffRow: React.FC<StaffRowProps> = ({ staff, onEdit, onDelete }) => {
                                 </MenubarItem>
                                 <MenubarItem
                                     className="px-4 gap-5"
-                                    onClick={() => onDelete(staff)}
+                                    onClick={() => onDelete(personnel)}
                                 >
                                     <Trash2
                                         className="size-5"

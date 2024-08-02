@@ -14,7 +14,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 import NumberInput from "@/Components/NumberInput";
-import { STAFFPOSITIONS } from "../types";
+import { PERSONNELPOSITIONS } from "../types";
 import { Input } from "@/Components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/Components/ui/popover";
 import { Button } from "@/Components/ui/button";
@@ -24,14 +24,14 @@ import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/Components/ui/calendar";
 import { useState } from "react";
 
-const StaffInformation: React.FC<FormProps> = ({ form }) => {
+const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false)
 
     return (
         <>
             <div className="mt-8 mb-4 py-3 relative">
                 <div className="bg-background absolute top-1/2 -translate-y-1/2 h-fit pr-3 text-foreground/75">
-                    Staff information
+                Personnel information
                 </div>
                 <hr className="border-t-2 border-border" />
             </div>
@@ -57,11 +57,11 @@ const StaffInformation: React.FC<FormProps> = ({ form }) => {
                 />
                 <FormField
                     control={form.control}
-                    name="staffId"
+                    name="personnelId"
                     render={({ field }) => (
                         <FormItem className="grow">
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                Staff Id
+                                Personnel Id
                             </FormLabel>
                             <FormControl>
                                 <Input
@@ -213,7 +213,7 @@ const StaffInformation: React.FC<FormProps> = ({ form }) => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent className="!max-h-80">
-                                    {STAFFPOSITIONS.map((pos, index) => (
+                                    {PERSONNELPOSITIONS.map((pos, index) => (
                                         <SelectItem key={index} value={pos}>
                                             {pos}
                                         </SelectItem>
@@ -229,4 +229,4 @@ const StaffInformation: React.FC<FormProps> = ({ form }) => {
     );
 };
 
-export default StaffInformation;
+export default PersonnelInformation;

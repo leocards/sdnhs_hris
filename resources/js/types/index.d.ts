@@ -1,5 +1,3 @@
-import { STAFFPOSITIONS } from './../Pages/Staff/types';
-
 export interface User {
     id: number;
     first_name: string;

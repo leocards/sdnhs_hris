@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('staff_tardinesses', function (Blueprint $table) {
+        Schema::create('performance_ratings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained()->onUpdate('cascade')->onDelete('cascade');
-            $table->string('name');
-            $table->string('present');
-            $table->string('absent');
             $table->timestamps();
         });
     }
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('staff_tardinesses');
+        Schema::dropIfExists('performance_ratings');
     }
 };

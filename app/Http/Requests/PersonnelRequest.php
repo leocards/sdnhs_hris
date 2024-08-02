@@ -6,7 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StaffRequest extends FormRequest
+class PersonnelRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -34,7 +34,7 @@ class StaffRequest extends FormRequest
             'address' => ['required', 'max:1000'],
             'email' => ['required', 'email', 'string', 'lowercase', 'max:255', $userId ? Rule::unique(User::class)->ignore($userId) : Rule::unique(User::class)],
             'phoneNumber' => ['required', 'string', 'size:11'],
-            'staffId' => ['required'],
+            'personnelId' => ['required'],
             'department' => ['required'],
             'userRole' => ['required'],
             'dateHired' => ['required', 'date'],

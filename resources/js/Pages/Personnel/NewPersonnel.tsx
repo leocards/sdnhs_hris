@@ -10,9 +10,9 @@ import { Button } from "@/Components/ui/button";
 import { Breadcrumbs } from "@/Components/ui/breadcrumb";
 import PersonalInformation from "./Partials/PersonalInformation";
 import ContactInformation from "./Partials/ContactInformation";
-import StaffInformation from "./Partials/StaffInformation";
+import PersonnelInformation from "./Partials/PersonnelInformation";
 import UserCredentials from "./Partials/UserCredentials";
-import { NEWSTAFFSCHEMA } from "./types";
+import { NEWPERSONNELSCHEMA } from "./types";
 import { useToast } from "@/Components/ui/use-toast";
 import Processing from "@/Components/Processing";
 
@@ -23,7 +23,7 @@ const initialValue = {
     email: "",
     address: "",
     phoneNumber: "",
-    staffId: "",
+    personnelId: "",
     department: "",
     curretCredits: "",
     password: "12345678",
@@ -31,27 +31,27 @@ const initialValue = {
     dateHired: null,
 };
 
-type IFormNewStaff = z.infer<typeof NEWSTAFFSCHEMA>;
+type IFormNewPersonnel = z.infer<typeof NEWPERSONNELSCHEMA>;
 
-export default function NewStaff({ auth, user }: PageProps & { user?: any }) {
-    const form = reactForm<IFormNewStaff>({
-        resolver: zodResolver(NEWSTAFFSCHEMA),
+export default function NewPersonnel({ auth, user }: PageProps & { user?: any }) {
+    const form = reactForm<IFormNewPersonnel>({
+        resolver: zodResolver(NEWPERSONNELSCHEMA),
         defaultValues: initialValue,
     });
-    const { setData, post, processing, reset } = useForm<IFormNewStaff>();
+    const { setData, post, processing, reset } = useForm<IFormNewPersonnel>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
     const { toast } = useToast();
 
-    const onFormSubmit = (formDate: IFormNewStaff) => {
+    const onFormSubmit = (formDate: IFormNewPersonnel) => {
         setIsSubmit(true);
         setData(formDate);
     };
 
     useEffect(() => {
         if (isSubmit) {
-            const routestaff = !user ? route("staff.new.store") : route("staff.update", [user.id])
-            post(routestaff, {
+            const routepersonnel = !user ? route("personnel.new.store") : route("personnel.update", [user.id])
+            post(routepersonnel, {
                 onSuccess: (page) => {
                     toast({
                         variant: "success",
@@ -60,11 +60,11 @@ export default function NewStaff({ auth, user }: PageProps & { user?: any }) {
                     form.reset();
                     reset();
                     setIsSubmit(true);
-                    router.get(route('staff'))
+                    router.get(route('personnel'))
                 },
                 onError: (error) => {
                     for (const key in error) {
-                        form.setError(key as keyof IFormNewStaff, {
+                        form.setError(key as keyof IFormNewPersonnel, {
                             type: "manual",
                             message: error[key],
                         });
@@ -88,7 +88,7 @@ export default function NewStaff({ auth, user }: PageProps & { user?: any }) {
                 address,
                 email,
                 phone_number,
-                staff_id,
+                personnel_id,
                 department,
                 role,
                 position,
@@ -104,7 +104,7 @@ export default function NewStaff({ auth, user }: PageProps & { user?: any }) {
             form.setValue("address", address);
             form.setValue("email", email);
             form.setValue("phoneNumber", phone_number);
-            form.setValue("staffId", staff_id);
+            form.setValue("personnelId", personnel_id);
             form.setValue("department", department);
             form.setValue("userRole", role);
             form.setValue("position", position);
@@ -118,15 +118,15 @@ export default function NewStaff({ auth, user }: PageProps & { user?: any }) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Staff
+                    Personnel
                 </h2>
             }
         >
             <div className="mt-3">
                 <Breadcrumbs
-                    home="Staff"
-                    homeLink="staff"
-                    links={[{ link: "staff.new", linkname: "New staff" }]}
+                    home="Personnel"
+                    homeLink="personnel"
+                    links={[{ link: "personnel.new", linkname: "New personnel" }]}
                 />
             </div>
             <div className="mt-10">
@@ -142,7 +142,7 @@ export default function NewStaff({ auth, user }: PageProps & { user?: any }) {
 
                         <ContactInformation form={form} />
 
-                        <StaffInformation form={form} />
+                        <PersonnelInformation form={form} />
 
                         <UserCredentials form={form} />
 
@@ -159,7 +159,7 @@ export default function NewStaff({ auth, user }: PageProps & { user?: any }) {
                                 </Button>
                             )}
                             <Button className="ml-auto" disabled={processing}>
-                                {user ? "Update Staff" : "Create Staff"}
+                                {user ? "Update Personnel" : "Create Personnel"}
                             </Button>
                         </div>
                     </form>

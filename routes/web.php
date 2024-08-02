@@ -7,7 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceRecordController;
-use App\Http\Controllers\StaffController;
+use App\Http\Controllers\PersonnelController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
@@ -39,23 +39,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('staff')->group(function () {
-        Route::controller(StaffController::class)->group(function () {
-            Route::get('/', 'index')->middleware(['role:HR,HOD'])->name('staff');
-            Route::get('/new-staff/edit/{user?}', 'edit')->name('staff.edit');
+    Route::prefix('personnel')->group(function () {
+        Route::controller(PersonnelController::class)->group(function () {
+            Route::get('/', 'index')->middleware(['role:HR,HOD'])->name('personnel');
+            Route::get('/new-personnel/edit/{user?}', 'edit')->name('personnel.edit');
 
             Route::middleware(['role:HR'])->group(function () {
-                Route::get('/tardiness', 'tardiness')->name('staff.tardiness');
-                Route::get('/new-staff', 'create')->name('staff.new');
+                Route::get('/tardiness', 'tardiness')->name('personnel.tardiness');
+                Route::get('/new-personnel', 'create')->name('personnel.new');
     
-                Route::post('/new-staff', 'store')->name('staff.new.store');
-                Route::post('/update-staff/{user?}', 'update')->name('staff.update');
-                Route::post('/tardiness', 'store_tardiness')->name('staff.tardiness.add');
+                Route::post('/new-personnel', 'store')->name('personnel.new.store');
+                Route::post('/update-personnel/{user?}', 'update')->name('personnel.update');
+                Route::post('/tardiness', 'store_tardiness')->name('personnel.tardiness.add');
             });
         });
 
-        Route::controller(StaffController::class)->group(function () {
-            Route::get('/list', 'staff_list')->name('staff.list');
+        Route::controller(PersonnelController::class)->group(function () {
+            Route::get('/list', 'personnel_list')->name('personnel.list');
         })/* ->middleware(['role:HR,HOD']) */;
     });
     

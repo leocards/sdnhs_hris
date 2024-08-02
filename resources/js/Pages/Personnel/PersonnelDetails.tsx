@@ -4,26 +4,26 @@ import { Label } from "@/Components/ui/label";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
-type StaffDetailsProps = {
+type PersonnelDetailsProps = {
     user?: User | null;
     show: boolean;
     onClose: CallableFunction;
     onViewPDS: (view: true) => void;
 };
 
-export default function StaffDetails({
+export default function PersonnelDetails({
     user = null,
     show,
     onClose,
     onViewPDS,
-}: StaffDetailsProps) {
-    const staff = useUserDetails(user ?? null);
+}: PersonnelDetailsProps) {
+    const personnel = useUserDetails(user ?? null);
 
     return (
         <Modal show={show} onClose={() => onClose(false)}>
             <div className="p-6">
                 <div className="flex flex-row items-center">
-                    <div className="font-semibold text-xl">{staff?.name}</div>
+                    <div className="font-semibold text-xl">{personnel?.name}</div>
 
                     <Button
                         variant="ghost"
@@ -118,11 +118,11 @@ type User = {
     position: any;
     role: string;
     sex: string;
-    staff_id: string;
+    personnel_id: string;
 };
 
 const useUserDetails = (user: User | null) => {
-    const [staff, setStaff] = useState<{
+    const [personnel, setPersonnel] = useState<{
         address: string;
         date_hired: string;
         date_of_birth: string;
@@ -136,12 +136,12 @@ const useUserDetails = (user: User | null) => {
         position: any;
         role: string;
         sex: string;
-        staff_id: string;
+        personnel_id: string;
     }>();
 
     useEffect(() => {
         if (user)
-            setStaff({
+            setPersonnel({
                 address: user.address,
                 date_hired: user.date_hired,
                 date_of_birth: user.date_of_birth,
@@ -155,10 +155,10 @@ const useUserDetails = (user: User | null) => {
                 position: user.position,
                 role: user.role,
                 sex: user.sex,
-                staff_id: user.staff_id,
+                personnel_id: user.personnel_id,
             });
         else
-            setStaff({
+            setPersonnel({
                 address: "",
                 date_hired: "",
                 date_of_birth: "",
@@ -172,9 +172,9 @@ const useUserDetails = (user: User | null) => {
                 position: "",
                 role: "",
                 sex: "",
-                staff_id: "",
+                personnel_id: "",
             });
     }, [user]);
 
-    return staff;
+    return personnel;
 };

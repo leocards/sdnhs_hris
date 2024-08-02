@@ -39,7 +39,7 @@ class ProfileController extends Controller
             'address' => $request->address,
             'email' => $request->email,
             'phone_number' => $request->phoneNumber,
-            'staff_id' => $request->staffId,
+            'peronnel_id' => $request->personnelId,
             'department' => $request->department,
             'role' => $request->userRole,
             'position' => $request->position,

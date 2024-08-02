@@ -25,7 +25,7 @@ class User extends Authenticatable
         'address',
         'email',
         'phone_number',
-        'staff_id',
+        'personnel_id',
         'department',
         'role',
         'position',

@@ -39,7 +39,7 @@ export default function Dashboard({
             <div className="mt-10 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
                 {["HR", "HOD"].includes(auth.user.role) ? (
                     <div className="border-t pt-4 space-y-1.5">
-                        <div className="font-medium">Total staffs</div>
+                        <div className="font-medium">Total peronnel</div>
                         <div className="text-xl font-semibold">
                             120 Employees
                         </div>

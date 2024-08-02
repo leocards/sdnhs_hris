@@ -19,7 +19,7 @@ import { X } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm as reactForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
-import { Staff } from "./StaffTardiness";
+import { Personnel } from "./PersonnelTardiness";
 
 const ATTENDANCEOBJECTSCHEMA = z.object({
     id: z.string().optional(),
@@ -38,7 +38,7 @@ export default function TeacherAttendance({
     show,
     user,
     onClose,
-}: ModalProps & { user?: Staff }) {
+}: ModalProps & { user?: Personnel }) {
     const form = reactForm<IFormAttendance>({
         resolver: zodResolver(ATTENDANCESCHEMA),
         defaultValues: {
@@ -81,7 +81,7 @@ export default function TeacherAttendance({
 
     useEffect(() => {
         if (isSubmit) {
-            post(route("staff.tardiness.add"), {
+            post(route("personnel.tardiness.add"), {
                 onSuccess: (page) => {
                     toast({
                         variant: "success",

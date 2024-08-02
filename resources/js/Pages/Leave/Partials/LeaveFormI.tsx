@@ -25,7 +25,7 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/Components/ui/calendar";
 import NumberInput from "@/Components/NumberInput";
-import { STAFFPOSITIONS } from "@/Pages/Staff/types";
+import { PERSONNELPOSITIONS } from "@/Pages/Personnel/types";
 import { useEffect } from "react";
 
 const LeaveFormI: React.FC<FormProps> = ({ form }) => {
@@ -196,7 +196,7 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent className="!max-h-80">
-                                    {STAFFPOSITIONS.map((pos, index) => (
+                                    {PERSONNELPOSITIONS.map((pos, index) => (
                                         <SelectItem key={index} value={pos}>
                                             {pos}
                                         </SelectItem>

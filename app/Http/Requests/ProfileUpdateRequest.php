@@ -24,7 +24,7 @@ class ProfileUpdateRequest extends FormRequest
             'address' => ['required', 'max:1000'],
             'email' => ['required', 'email', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
             'phoneNumber' => ['required', 'string', 'size:11'],
-            'staffId' => ['required'],
+            'personnelId' => ['required'],
             'department' => ['required'],
             'userRole' => ['required'],
             'dateHired' => ['required', 'date'],

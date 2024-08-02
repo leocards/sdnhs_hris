@@ -2,7 +2,7 @@ import { z } from "zod";
 import { requiredError } from "../types";
 import { User } from "@/types"
 
-export const STAFFPOSITIONS = [
+export const PERSONNELPOSITIONS = [
     "Teacher I",
     "Teacher II",
     "Teacher III",
@@ -20,7 +20,7 @@ export const STAFFPOSITIONS = [
 
 export const ROLE = ["HOD", "Teaching", "Non-teaching"] as const;
 
-export const NEWSTAFFSCHEMA = z.object({
+export const NEWPERSONNELSCHEMA = z.object({
     firstName: z.string().min(1, requiredError("first name")).default(""),
     middleName: z.string().optional().default(""),
     lastName: z.string().min(1, requiredError("last name")).default(""),
@@ -33,8 +33,8 @@ export const NEWSTAFFSCHEMA = z.object({
         .startsWith("09", "Must starts with 09")
         .length(11, "Must be 11 characters long")
         .default(""),
-    position: z.enum(STAFFPOSITIONS, { required_error: requiredError("position") }),
-    staffId: z.string().min(1, requiredError("staff Id")).default(""),
+    position: z.enum(PERSONNELPOSITIONS, { required_error: requiredError("position") }),
+    personnelId: z.string().min(1, requiredError("personnel Id")).default(""),
     department: z.string().min(1, requiredError("department")).default(""),
     userRole: z.enum(ROLE, { required_error: requiredError("user role") }),
     dateHired: z.date({ required_error: requiredError("date hired") }).nullable().default(null),
@@ -45,7 +45,7 @@ export const NEWSTAFFSCHEMA = z.object({
         .default("12345678"),
 });
 
-export type StaffListProps = {
+export type PersonnelListProps = {
     user: User
     onClick?: (action: string, id: any) => void
 }

@@ -159,8 +159,8 @@ const Navigation: React.FC<{
             icon: <Home className="size-5" />,
         },
         {
-            id: "staff",
-            label: "Staffs",
+            id: "personnel",
+            label: "Personnel",
             icon: <UsersRound className="size-5" />,
         },
         {
@@ -183,14 +183,14 @@ const Navigation: React.FC<{
     const roles = {
         HR: [
             "dashboard",
-            "staff",
+            "personnel",
             "leave",
             "reports",
             "general-search",
             "notification",
             "messages",
         ],
-        HOD: ["dashboard", "staff", "leave", "notification", "messages"],
+        HOD: ["dashboard", "personnel", "leave", "notification", "messages"],
         Teaching: [
             "dashboard",
             "service-records",

@@ -35,17 +35,17 @@ import {
     UserRoundPlus,
 } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
-import { StaffListProps } from "./types";
+import { PersonnelListProps } from "./types";
 import UploadPDS from "./UploadPDS";
 import ViewPDS from "./ViewPds";
-import StaffDetails from "./StaffDetails";
+import PersonnelDetails from "./PersonnelDetails";
 
-interface StaffProps extends PageProps {
-    staffs: PaginateData;
+interface PersonnelProps extends PageProps {
+    personnel: PaginateData;
 }
 
-export default function Staff({ auth, staffs }: StaffProps) {
-    const [staffList, setStaffList] = useState<PaginateData>(staffs);
+export default function Personnel({ auth, personnel }: PersonnelProps) {
+    const [personnelList, setPersonnelList] = useState<PaginateData>(personnel);
     const [filter, setFilter] = useState<string>("");
     const [sort, setSort] = useState<{ sort: string; order: string }>({
         sort: "Name",
@@ -53,8 +53,8 @@ export default function Staff({ auth, staffs }: StaffProps) {
     });
     const [showUploadPDS, setShowUploadPDS] = useState<boolean>(false);
     const [showPDS, setShowPDS] = useState<boolean>(false)
-    const [showStaffDetails, setShowStaffDetails] = useState<boolean>(false)
-    const [selectedStaff, setSelectedStaff] = useState<any>(null)
+    const [showPersonnelDetails, setShowPersonnelDetails] = useState<boolean>(false)
+    const [selectedPersonnel, setSelectedPersonnel] = useState<any>(null)
 
     const navigateTo = (nav: string) => {
         router.get(route(nav));
@@ -62,34 +62,34 @@ export default function Staff({ auth, staffs }: StaffProps) {
 
     const processData = (response: any) => {
         const { data } = response;
-        setStaffList(data);
+        setPersonnelList(data);
     };
 
     const getNextPage = () => {
-        if (staffList.next_page_url)
-            axios.get(staffList.next_page_url).then(processData);
+        if (personnelList.next_page_url)
+            axios.get(personnelList.next_page_url).then(processData);
     };
 
     const onClickMenu = (action: string, id: any) => {
         if (action === "upload_pds") {
             setShowUploadPDS(true);
         } else if (action === "edit") {
-            router.get(route('staff.edit', [id]))
+            router.get(route('personnel.edit', [id]))
         } else if (action === "view") {
-            setSelectedStaff(id)
-            setShowStaffDetails(true)
+            setSelectedPersonnel(id)
+            setShowPersonnelDetails(true)
         } else if(action === "messages") {
             router.get(route('messages') + `?user=${id}`)
         }
     };
 
     const tabs = {
-        HR: ["staff", "staff.tardiness"],
-        HOD: ["staff"],
+        HR: ["personnel", "personnel.tardiness"],
+        HOD: ["personnel"],
     }[auth.user.role];
 
     useEffect(() => {
-        axios.get(route("staff.list")).then(processData);
+        axios.get(route("personnel.list")).then(processData);
     }, []);
 
     return (
@@ -97,18 +97,18 @@ export default function Staff({ auth, staffs }: StaffProps) {
             user={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Staff
+                    Personnel
                 </h2>
             }
         >
             <div className="divide-x flex mt-5 text-sm border-b-2">
                 <Tabs
-                    id="staff-tab"
-                    active="staff"
+                    id="personnel-tab"
+                    active="personnel"
                     navigate={navigateTo}
                     tabs={[
-                        { id: "staff", label: "Staff" },
-                        { id: "staff.tardiness", label: "Tardiness" },
+                        { id: "personnel", label: "Personnel" },
+                        { id: "personnel.tardiness", label: "Tardiness" },
                     ].filter(({ id }) => tabs?.includes(id))}
                 />
             </div>
@@ -119,8 +119,8 @@ export default function Staff({ auth, staffs }: StaffProps) {
                     <div className="text-xl font-semibold">120 Employees</div>
                 </div>
                 <div className="border-t pt-4 space-y-1.5">
-                    <div className="font-medium">Total staffs</div>
-                    <div className="text-xl font-semibold">120 Staffs</div>
+                    <div className="font-medium">Total personnel</div>
+                    <div className="text-xl font-semibold">120 Personnel</div>
                 </div>
                 <div className="border-t pt-4 space-y-1.5">
                     <div className="font-medium">Department heads</div>
@@ -177,10 +177,10 @@ export default function Staff({ auth, staffs }: StaffProps) {
                 {auth.user.role === "HR" && (
                     <Button
                         className="ml-auto gap-3"
-                        onClick={() => router.get(route("staff.new"))}
+                        onClick={() => router.get(route("personnel.new"))}
                     >
                         <UserRoundPlus className="size-5" />
-                        New staff
+                        New personnel
                     </Button>
                 )}
             </div>
@@ -194,7 +194,7 @@ export default function Staff({ auth, staffs }: StaffProps) {
                     <div className="">Leave Credits</div>
                     <div className=""></div>
                 </div>
-                {staffList.data.length === 0 && (
+                {personnelList.data.length === 0 && (
                     <div className="text-center py-4 opacity-65">
                         No records
                     </div>
@@ -203,8 +203,8 @@ export default function Staff({ auth, staffs }: StaffProps) {
                     No results found for "lorem ipsum"
                 </div>
 
-                {staffList.data.map((data, index) => (
-                    <StaffRow
+                {personnelList.data.map((data, index) => (
+                    <PersonnelRow
                         key={index}
                         user={data}
                         onClick={onClickMenu}
@@ -212,36 +212,36 @@ export default function Staff({ auth, staffs }: StaffProps) {
                     />
                 ))}
 
-                {staffList.total > 50 && (
+                {personnelList.total > 50 && (
                     <Pagination className="!mt-auto pt-2">
                         <PaginationContent>
                             <PaginationItem>
                                 <PaginationPrevious
                                     href="#"
                                     className={cn(
-                                        staffList.current_page === 1 &&
+                                        personnelList.current_page === 1 &&
                                             "opacity-60 pointer-events-none"
                                     )}
                                 />
                             </PaginationItem>
                             {Array.from({
                                 length:
-                                    staffList.last_page <= 3
-                                        ? staffList.last_page
-                                        : staffList.last_page - 3,
+                                    personnelList.last_page <= 3
+                                        ? personnelList.last_page
+                                        : personnelList.last_page - 3,
                             }).map((_, index) => (
                                 <PaginationItem key={index}>
                                     <PaginationLink
                                         href="#"
                                         isActive={
-                                            staffList.current_page === ++index
+                                            personnelList.current_page === ++index
                                         }
                                     >
                                         <span>{index}</span>
                                     </PaginationLink>
                                 </PaginationItem>
                             ))}
-                            {staffList.last_page > 3 && (
+                            {personnelList.last_page > 3 && (
                                 <PaginationItem>
                                     <PaginationEllipsis />
                                 </PaginationItem>
@@ -250,7 +250,7 @@ export default function Staff({ auth, staffs }: StaffProps) {
                                 <PaginationNext
                                     href="#"
                                     className={cn(
-                                        !staffList.next_page_url &&
+                                        !personnelList.next_page_url &&
                                             "opacity-60 pointer-events-none"
                                     )}
                                     onClick={getNextPage}
@@ -263,12 +263,12 @@ export default function Staff({ auth, staffs }: StaffProps) {
 
             <UploadPDS show={showUploadPDS} onClose={setShowUploadPDS} />
             <ViewPDS show={showPDS} onClose={setShowPDS} />
-            <StaffDetails user={selectedStaff} show={showStaffDetails} onClose={setShowStaffDetails} onViewPDS={setShowPDS} />
+            <PersonnelDetails user={selectedPersonnel} show={showPersonnelDetails} onClose={setShowPersonnelDetails} onViewPDS={setShowPDS} />
         </Authenticated>
     );
 }
 
-const StaffRow: React.FC<StaffListProps & { auth: string }> = ({
+const PersonnelRow: React.FC<PersonnelListProps & { auth: string }> = ({
     user,
     auth,
     onClick,

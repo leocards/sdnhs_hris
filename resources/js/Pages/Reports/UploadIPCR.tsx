@@ -21,7 +21,7 @@ const UPLOADSCHEMA = z
     .object({
         add: z
             .object({
-                staffid: z.string(),
+                personnelid: z.string(),
                 rating: z.string(),
             })
             .partial(),
@@ -43,10 +43,10 @@ const UPLOADSCHEMA = z
     })
     .superRefine((data, ctx) => {
         if (data.isAdd) {
-            if (!data.add.staffid) {
+            if (!data.add.personnelid) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: requiredError("staff ID"),
+                    message: requiredError("personnel ID"),
                     path: ["add"],
                 });
             } else if (!data.add.rating) {
@@ -119,11 +119,11 @@ export default function UploadIPCR(props: {
                                 <div className="space-y-4">
                                     <FormField
                                         control={form.control}
-                                        name="add.staffid"
+                                        name="add.personnelid"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="required">
-                                                    Staff ID
+                                                    Personnel ID
                                                 </FormLabel>
                                                 <FormControl>
                                                     <Input

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { requiredError } from "../types";
-import { STAFFPOSITIONS } from "../Staff/types";
+import { PERSONNELPOSITIONS } from "../Personnel/types";
 import { differenceInDays, eachDayOfInterval, isWeekend } from "date-fns";
 
 export const LEAVETYPES = [
@@ -46,7 +46,7 @@ export const LEAVEFORMSCHEMA = z.object({
         .min(1, requiredError("last name"))
         .default(""),
     dateOfFiling: z.date({ required_error: requiredError("date of filing") }),
-    position: z.enum(STAFFPOSITIONS, { required_error: requiredError("position") }),
+    position: z.enum(PERSONNELPOSITIONS, { required_error: requiredError("position") }),
     salary: z.string().min(1, requiredError("salary")),
     leavetype: z
         .object({

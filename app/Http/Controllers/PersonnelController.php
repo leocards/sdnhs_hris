@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StaffRequest;
-use App\Models\StaffTardiness;
+use App\Http\Requests\PersonnelRequest;
+use App\Models\PersonnelTardiness;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -13,38 +13,38 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
-class StaffController extends Controller
+class PersonnelController extends Controller
 {
     public function index() 
     {
-        return Inertia::render('Staff/Staff', ['staffs' => User::whereNot('id', Auth::id())->paginate(50)]);
+        return Inertia::render('Personnel/Personnel', ['personnel' => User::whereNot('id', Auth::id())->paginate(50)]);
     }
 
     public function create() 
     {
-        return Inertia::render('Staff/NewStaff');
+        return Inertia::render('Personnel/NewPersonnel');
     }
 
     public function edit(User $user) 
     {
-        return Inertia::render('Staff/NewStaff', [
+        return Inertia::render('Personnel/NewPersonnel', [
             "user" => $user
         ]);
     }
 
     public function tardiness() 
     {
-        return Inertia::render('Staff/StaffTardiness', ['attendance' => StaffTardiness::orderBy('created_at', 'desc')->paginate(50)]);
+        return Inertia::render('Personnel/PersonnelTardiness', ['attendance' => PersonnelTardiness::orderBy('created_at', 'desc')->paginate(50)]);
     }
 
-    public function staff_list() 
+    public function personnel_list() 
     {
-        $staffs = User::whereNot('id', Auth::id())->paginate(50);
+        $personnel = User::whereNot('id', Auth::id())->paginate(50);
 
-        return response()->json($staffs);
+        return response()->json($personnel);
     }
 
-    public function store(StaffRequest $request) 
+    public function store(PersonnelRequest $request) 
     {
         DB::beginTransaction();
         try {
@@ -58,7 +58,7 @@ class StaffController extends Controller
                 'address' => $request->address,
                 'email' => $request->email,
                 'phone_number' => $request->phoneNumber,
-                'staff_id' => $request->staffId,
+                'personnel_id' => $request->personnelId,
                 'department' => $request->department,
                 'role' => $request->userRole,
                 'position' => $request->position,
@@ -69,7 +69,7 @@ class StaffController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'New staff has been added.');
+            return back()->with('success', 'New personnel has been added.');
         } catch (\Throwable $th) {
             DB::rollBack();
 
@@ -78,7 +78,7 @@ class StaffController extends Controller
         }
     }
 
-    public function update(StaffRequest $request, User $user = null) 
+    public function update(PersonnelRequest $request, User $user = null) 
     {
         DB::beginTransaction();
         try {
@@ -91,7 +91,7 @@ class StaffController extends Controller
             $user->address = $request->address;
             $user->email = $request->email;
             $user->phone_number = $request->phoneNumber;
-            $user->staff_id = $request->staffId;
+            $user->personnel_id = $request->personnelId;
             $user->department = $request->department;
             $user->role = $request->userRole;
             $user->position = $request->position;
@@ -103,7 +103,7 @@ class StaffController extends Controller
 
             DB::commit();
 
-            return back()->with('success', 'Staff has been updated.');
+            return back()->with('success', 'Personnel has been updated.');
         } catch (\Throwable $th) {
             DB::rollBack();
 
@@ -117,7 +117,7 @@ class StaffController extends Controller
         DB::beginTransaction();
         try {
             foreach ($request->attendances as $value) {
-                StaffTardiness::create([
+                PersonnelTardiness::create([
                     'name' => $value['name'],
                     'present' => $value['present'],
                     'absent' => $value['absent']

@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -21,7 +22,8 @@ class ProfileUpdate extends Mailable
      */
     public function __construct(
         public string $message,
-        public User $user
+        public User $user,
+        public string $email,
     ) { }
 
     /**
@@ -30,6 +32,8 @@ class ProfileUpdate extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address($this->email, $this->user->name()),
+            to: env("MAIL_FROM_ADDRESS"),
             subject: 'Profile Update',
         );
     }
@@ -42,9 +46,10 @@ class ProfileUpdate extends Mailable
         return new Content(
             markdown: 'profile.profileupdate',
             with: [
-                "message" => $this->message,
+                "notificationMesssage" => $this->message,
                 "user" => $this->user
-            ]
+            ],
+
         );
     }
 

@@ -110,9 +110,31 @@ const styles = StyleSheet.create({
 });
 
 export default function IPCRPDF({size}: {size: PageSize}) {
+
     return (
         <Document title="IPCR">
             <Page size={size} style={styles.body}>
+                <View style={[{display: "flex", flexDirection: "row"}]}>
+                    <View>
+                        <Image src={"/storage/assets/DepEd.png"} style={{width: 65, height: 65}} />
+                    </View>
+                    <View style={[{flexGrow: 1}]}>
+                        <Text style={[{alignSelf: "center"}]}>Republika ng Pilipinas</Text>
+                        <Text style={[{alignSelf: "center"}]}>Kagawaran ng Edukasyon</Text>
+                        <Text style={[{alignSelf: "center"}]}>Rehiyon XI</Text>
+                        <Text style={[{alignSelf: "center"}]}>Sangay ng Lungsod ng Panabo</Text>
+                        <Text style={[{alignSelf: "center"}]}>Lungsod ng Panabo</Text>
+                        <Text style={[{alignSelf: "center", fontFamily: "Inter-Bold"}]}>SOUTHERN DAVAO NATIONAL HIGH SCHOOL</Text>
+                        <Text style={[{alignSelf: "center"}]}>Southern Davao, Panabo City</Text>
+                        <Text style={[{alignSelf: "center", height: 10}]}></Text>
+                        <Text style={[{alignSelf: "center", fontFamily: "Inter-Bold"}]}>LIST OF TEACHERS WITH THEIR IPCR RATING</Text>
+                        <Text style={[{alignSelf: "center", fontFamily: "Inter-Bold"}]}>2022-2023</Text>
+                        <Text style={[{alignSelf: "center", height: 10}]}></Text>
+                    </View>
+                    <View>
+                        <Image src={"/storage/assets/sdnhs-logo.png"} style={{width: 65, height: 65}} />
+                    </View>
+                </View>
                 <Table style={{borderBottom: 0}}>
                     <Row>
                         <Cell style={{borderRight: 1, height: 40, flex: 1, justifyContent: "center", maxWidth: 30 }}>

@@ -1,7 +1,5 @@
 <x-mail::message>
-# Introduction
-
-The body of your message.
+{{ $user->name() }} {{ $notificationMesssage }}
 
 <br>
 {{ $user['first_name'].' '.$user['last_name'] }}<br>

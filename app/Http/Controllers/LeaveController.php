@@ -189,7 +189,7 @@ class LeaveController extends Controller
                 ]);
                 
                 Mail::to(env("MAIL_FROM_ADDRESS"))
-                    ->queue(new ProfileUpdate("have recently uploaded a medical certificate.", Auth::user()));
+                    ->queue(new ProfileUpdate("recently uploaded a medical certificate.", Auth::user(), Auth::user()->email));
                 
                 DB::commit();
 

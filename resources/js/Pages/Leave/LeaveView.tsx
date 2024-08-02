@@ -254,7 +254,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                                     file={blob}
                                     onLoadSuccess={onDocumentLoadSuccess}
                                     options={options}
-                                    className={"flex flex-col space-y-4"}
+                                    className={"flex flex-col space-y-"}
                                     loading={
                                         <div className="flex items-center gap-3 justify-center p-5">
                                             <span className="loading loading-spinner loading-md"></span>

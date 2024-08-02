@@ -56,7 +56,7 @@ Font.register({
 
 const styles = StyleSheet.create({
     body: {
-        padding: 35,
+        padding: 20,
         fontFamily: "Inter-Regular",
         fontSize: 9,
         transform: "scale(0.90)"
@@ -104,10 +104,23 @@ const styles = StyleSheet.create({
 export default function PDFLeave() {
     return (
         <Document title="Application for Leave">
-            <Page size={"LETTER"} style={styles.body}>
-                <Text style={[styles.title, { marginBottom: 12 }]}>
-                    APPLICATION FOR LEAVE
-                </Text>
+            <Page size={"A4"} style={styles.body}>
+                <View style={[{display: "flex", flexDirection: "row", justifyContent: 'center'}]}>
+                    <View>
+                        <Image src={"/storage/assets/DepEd.png"} style={{width: 65, height: 65}} />
+                    </View>
+                    <View style={[{flexGrow: 1, alignContent: "center",  maxWidth: 330}]}>
+                        <Text style={{alignSelf:"center", fontFamily: "Inter-Medium"}}>Republic of the Philippines</Text>
+                        <Text style={{alignSelf:"center", fontFamily: "Inter-Medium"}}>Department of Education</Text>
+                        <Text style={{alignSelf:"center", fontFamily: "Inter-Medium"}}>Region XI</Text>
+                        <Text style={{alignSelf:"center", fontFamily: "Inter-Medium"}}>SCHOOLS DIVISION OF PANABO CITY</Text>
+                        <Text style={[styles.title, { alignSelf:"center", marginVertical: 12 }]}>
+                            APPLICATION FOR LEAVE
+                        </Text>
+                    </View>
+                    <View style={{width: 65, height: 65}}></View>
+                </View>
+                
                 <View style={[styles.bordered]}>
                     <View style={[styles.table, { height: '30pt'}]}>
                         <View style={[styles.row]}>

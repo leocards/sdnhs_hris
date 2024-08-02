@@ -82,6 +82,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         marginBottom: 4,
     },
+    selfAlignCenter: {
+        alignSelf: "center"
+    },
     table: {
         width: "100%",
         display: "flex",
@@ -113,24 +116,34 @@ export default function SALNPDF({size}: {size: PageSize}) {
     return (
         <Document title="SALN">
             <Page size={"LEGAL"} orientation={"landscape"} style={styles.body}>
-                <View>
-                    <Text
-                        style={[
-                            styles.textCenter,
-                            styles.textBold,
-                            { marginBottom: 4 },
-                        ]}
-                    >
-                        SOUTHERN DAVAO NATIONAL HIGH SCHOOL
-                    </Text>
-                    <Text style={[styles.textCenter, { marginBottom: 4 }]}>
-                        SUMMARY REFORM FORM 1-A
-                    </Text>
-                    <Text style={[styles.textCenter, { marginBottom: 4 }]}>
-                        Statement of Assets, Liabilities and Network
-                    </Text>
-                    <Text style={[styles.textCenter]}>Calendar Year 2023</Text>
+                <View style={[{display: "flex", flexDirection: "row", justifyContent: 'center'}]}>
+                    <View>
+                        <Image src={"/storage/assets/DepEd.png"} style={{width: 65, height: 65}} />
+                    </View>
+                    <View style={[{flexGrow: 1, alignContent: "center",  maxWidth: 330}]}>
+                        <Text
+                            style={[
+                                styles.selfAlignCenter,
+                                styles.textBold,
+                                { marginBottom: 4 },
+                            ]}
+                        >
+                            SOUTHERN DAVAO NATIONAL HIGH SCHOOL
+                        </Text>
+                        <Text style={[styles.selfAlignCenter, { marginBottom: 4 }]}>
+                            SUMMARY REFORM FORM 1-A
+                        </Text>
+                        <Text style={[styles.selfAlignCenter, { marginBottom: 4 }]}>
+                            Statement of Assets, Liabilities and Network
+                        </Text>
+                        <Text style={[styles.selfAlignCenter]}>Calendar Year 2023</Text>
+                    </View>
+                    <View>
+                        <Image src={"/storage/assets/sdnhs-logo.png"} style={{width: 65, height: 65}} />
+                    </View>
                 </View>
+
+                <View style={{height: 15}}></View>
                 
                 <View style={styles.section}>
                     <View style={styles.flex_row}>

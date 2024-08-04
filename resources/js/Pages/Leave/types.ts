@@ -24,10 +24,12 @@ export function countWeekdaysInRange(startDate: Date, endDate: Date): {count: nu
     const allDays = eachDayOfInterval({ start: startDate, end: endDate });
     const weekdays = allDays.filter((day: Date) => !isWeekend(day));
     return {
-        count: weekdays.length,
+        count: weekdays.length, 
         dates: weekdays
     };
 }
+
+const allowedMimeTypes = ["image/jpeg", "image/jpg", "image/png"];
 
 export const LEAVEFORMSCHEMA = z.object({
     department: z
@@ -224,7 +226,37 @@ export const LEAVEFORMSCHEMA = z.object({
     }, {
         message: 'Please specify only 1 approved for.'
     }),
-    disapprovedDueTo: z.string().optional()
+    disapprovedDueTo: z.string().optional(),
+    medicalForMaternity: z
+    .instanceof(File, { message: "Please choose a file." })
+    .optional()
+    .refine((file) => {
+        if(file?.type) {
+            if(!allowedMimeTypes.includes(file?.type)) {
+                return false
+            } else return true
+        }
+    }, {
+        message: "Only JPEG, JPG, and PNG files are allowed.",
+    })
+    .refine((file) => {
+        if(file?.size) {
+            if(file?.size > 10 * 1024 * 1024) {
+                return false
+            } else return true
+        }
+    }, {
+        message: "File size should not exceed 10MB",
+    })
+}).refine(({ leavetype, medicalForMaternity }) => {
+    if(leavetype.type === "Maternity Leave") {
+        if(!medicalForMaternity)
+            return false
+    }
+    return true
+}, {
+    message: "Please upload medical.",
+    path: ['medicalForMaternity']
 })
 
 export const initialValues = {

@@ -28,7 +28,7 @@ import {
 } from "@/Components/ui/popover";
 import { format, isWeekend } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
     const watchLeaveType = form.watch("leavetype.type");
@@ -39,16 +39,16 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
         "detailsOfLeave.sick.outPatient.checked",
     ]);
     const commutation = form.watch([
-        'commutation.notRequested',
-        'commutation.requested',
-    ])
+        "commutation.notRequested",
+        "commutation.requested",
+    ]);
 
     useEffect(() => {
-        if(commutation) {
-            let result = commutation.filter((a: string) => a)
-            result.length === 1 && form.clearErrors('commutation')
+        if (commutation) {
+            let result = commutation.filter((a: string) => a);
+            result.length === 1 && form.clearErrors("commutation");
         }
-    }, [commutation])
+    }, [commutation]);
 
     return (
         <div>
@@ -111,7 +111,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                     <Input
                                         {...field}
                                         disabled={watchLeaveType !== "Others"}
-                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                        className="form-input"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -164,7 +164,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                className="form-input"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -198,9 +198,9 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                 render={({ field }) => (
                                     <FormItem className="mt-2">
                                         <FormControl>
-                                            <Input  
+                                            <Input
                                                 {...field}
-                                                className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                className="form-input"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -243,7 +243,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                className="form-input"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -279,7 +279,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                className="form-input"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -301,10 +301,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                     In case of Special Leave Benefits for Women:
                                 </FormLabel>
                                 <FormControl>
-                                    <Input
-                                        {...field}
-                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                    />
+                                    <Input {...field} className="form-input" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -411,12 +408,18 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                     >
                                         <Calendar
                                             mode="range"
-                                            selected={field.value}
+                                            selected={form.watch(
+                                                "inclusiveDates"
+                                            )}
                                             onSelect={field.onChange}
                                             disabled={(date) => {
-                                                if(form.getValues('leavetype.type') !== "Maternity Leave")
-                                                    return isWeekend(date)
-                                                else return false
+                                                if (
+                                                    form.getValues(
+                                                        "leavetype.type"
+                                                    ) !== "Maternity Leave"
+                                                )
+                                                    return isWeekend(date);
+                                                else return false;
                                             }}
                                         />
                                     </PopoverContent>
@@ -437,10 +440,12 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                     <NumberInput
                                         {...field}
                                         disabled
-                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                        className="form-input"
                                     />
                                 </FormControl>
-                                <FormDescription className="text-xs">Automatically set with inclusive dates</FormDescription>
+                                <FormDescription className="text-xs">
+                                    Automatically set with inclusive dates
+                                </FormDescription>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -500,7 +505,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
 };
 
 const CalendarPickerButton: React.FC<{ form: any }> = ({ form }) => {
-    const watchInclusiveDate = form.watch('inclusiveDates')
+    const watchInclusiveDate = form.watch("inclusiveDates");
 
     return (
         <PopoverTrigger
@@ -521,8 +526,15 @@ const CalendarPickerButton: React.FC<{ form: any }> = ({ form }) => {
                         <span>
                             {watchInclusiveDate?.to ? (
                                 <>
-                                    {format(watchInclusiveDate?.from, "LLL dd, y")} -{" "}
-                                    {format(watchInclusiveDate?.to, "LLL dd, y")}
+                                    {format(
+                                        watchInclusiveDate?.from,
+                                        "LLL dd, y"
+                                    )}{" "}
+                                    -{" "}
+                                    {format(
+                                        watchInclusiveDate?.to,
+                                        "LLL dd, y"
+                                    )}
                                 </>
                             ) : (
                                 format(watchInclusiveDate?.from, "LLL dd, y")

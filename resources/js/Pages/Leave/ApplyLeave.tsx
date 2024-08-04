@@ -4,7 +4,7 @@ import { PageProps } from "@/types";
 import { z } from "zod";
 import { useForm as reactForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "@/Components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/Components/ui/form";
 import LeaveFormI from "./Partials/LeaveFormI";
 import { DateRange } from "react-day-picker";
 import { useEffect, useState } from "react";
@@ -16,6 +16,8 @@ import { router, useForm } from "@inertiajs/react";
 import { useToast } from "@/Components/ui/use-toast";
 import { differenceInDays, eachDayOfInterval } from "date-fns";
 import Processing from "@/Components/Processing";
+import { cn } from "@/lib/utils";
+import { Input } from "@/Components/ui/input";
 
 type IFormLeave = z.infer<typeof LEAVEFORMSCHEMA>;
 
@@ -31,6 +33,7 @@ const ApplyLeave = ({ auth }: PageProps) => {
     const watchInclusiveDates = form.watch("inclusiveDates");
 
     const onFormSubmit = (form: IFormLeave) => {
+        console.log(form);
         setData(form);
         setIsFormConfirm(true);
     };
@@ -39,25 +42,25 @@ const ApplyLeave = ({ auth }: PageProps) => {
         if (watchInclusiveDates) {
             const leavetype = form.getValues("leavetype.type");
             const { from, to } = watchInclusiveDates;
-            if (to) {
-                if (leavetype !== "Maternity Leave") {
-                    const dates = countWeekdaysInRange(from, to);
-                    form.setValue("numDaysApplied", dates.count.toString(), {
-                        shouldValidate: true
-                    });
-                    form.setValue("inclusiveDates.dates", dates.dates);
-                } else {
-                    form.setValue(
-                        "numDaysApplied",
-                        (differenceInDays(to, from) + 1).toString(), {
-                            shouldValidate: true
-                        }
-                    );
-                    form.setValue(
-                        "inclusiveDates.dates",
-                        eachDayOfInterval({ start: from, end: to })
-                    );
-                }
+            if(leavetype === "Maternity Leave" && from){ 
+                // get the 105 days of leave for maternity
+                const dateTo = new Date(from).setDate(new Date(from).getDate() + 104)
+                const dates = eachDayOfInterval({ start: from, end: dateTo })
+
+                form.setValue( "numDaysApplied", dates.length.toString(), {
+                    shouldValidate: true
+                });
+                form.setValue(
+                    "inclusiveDates.dates",
+                    dates
+                );
+                form.setValue("inclusiveDates.to", new Date(dateTo))
+            } else if (to) {
+                const dates = countWeekdaysInRange(from, to);
+                form.setValue("numDaysApplied", dates.count.toString(), {
+                    shouldValidate: true
+                });
+                form.setValue("inclusiveDates.dates", dates.dates);
             } else form.setValue("numDaysApplied", "1", {
                 shouldValidate: true
             });
@@ -139,6 +142,41 @@ const ApplyLeave = ({ auth }: PageProps) => {
                         </div>
 
                         <DetailsOfActionOnApplication form={form} />
+
+                        {form.watch("leavetype.type") === "Maternity Leave" && (
+                        <FormField
+                            control={form.control}
+                            name="medicalForMaternity"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel
+                                        className={cn(
+                                            "after:content-['*'] after:ml-0.5 after:text-red-500"
+                                        )}
+                                    >
+                                        Medical
+                                    </FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="file"
+                                            className="form-input"
+                                            onChange={(e) => {
+                                                const file =
+                                                    e.target.files?.[0];
+                                                if (file) {
+                                                    field.onChange(file);
+                                                }
+                                            }}
+                                            onBlur={field.onBlur}
+                                            name={field.name}
+                                            ref={field.ref}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    )}
 
                         {
                             Object.keys(form.formState.errors).length !== 0 && (

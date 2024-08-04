@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     },
     flex: { display: "flex" },
     section: {
-        marginBottom: 10,
+        marginBottom: 5,
     },
     label: {
         fontWeight: "bold",
@@ -118,7 +118,7 @@ export default function SALNPDF({size}: {size: PageSize}) {
             <Page size={"LEGAL"} orientation={"landscape"} style={styles.body}>
                 <View style={[{display: "flex", flexDirection: "row", justifyContent: 'center'}]}>
                     <View>
-                        <Image src={"/storage/assets/DepEd.png"} style={{width: 65, height: 65}} />
+                        <Image src={"/storage/assets/DepEd.png"} style={{width: 55, height: 55}} />
                     </View>
                     <View style={[{flexGrow: 1, alignContent: "center",  maxWidth: 330}]}>
                         <Text
@@ -139,7 +139,7 @@ export default function SALNPDF({size}: {size: PageSize}) {
                         <Text style={[styles.selfAlignCenter]}>Calendar Year 2023</Text>
                     </View>
                     <View>
-                        <Image src={"/storage/assets/sdnhs-logo.png"} style={{width: 65, height: 65}} />
+                        <Image src={"/storage/assets/sdnhs-logo.png"} style={{width: 55, height: 55}} />
                     </View>
                 </View>
 

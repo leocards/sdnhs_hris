@@ -114,7 +114,7 @@ const UploadMedical: React.FC<{ show: boolean, data: Data, onClose: (close: fals
                                             <FormControl>
                                                 <Input
                                                     type="file"
-                                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                    className="form-input"
                                                     onChange={(e) => {
                                                         const file = e.target.files?.[0];
                                                         if (file) {

@@ -43,7 +43,6 @@ export default function IPCRPrint({
         } else {
             setSize(250);
         }
-
     }, [width]);
 
     return (

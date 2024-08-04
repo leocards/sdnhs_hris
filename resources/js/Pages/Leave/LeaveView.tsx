@@ -47,6 +47,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
     const [respondLeave, setRespondLeave] = useState<
         "rejected" | "approved" | null
     >(null);
+    const [viewMedical, setViewMedical] = useState<boolean>(false)
 
     function onDocumentLoadSuccess({
         numPages: nextNumPages,
@@ -74,6 +75,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
         } else {
             setSize(350);
         }
+        console.log(leave)
     }, [width]);
 
     return (
@@ -109,6 +111,9 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                                 </Label>
                                 <LeaveStatus status={leave.principal_status} />
                             </div>
+                            {leave.medical_certificate && <Button variant="link" onClick={() => setViewMedical(!viewMedical)} className="px-0">
+                                View medical
+                            </Button>}
                         </div>
                         <div className="ml-auto flex h-fit space-x-4">
                             {PDFLoaded &&
@@ -189,6 +194,13 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                             </PDFDownloadLink>
                         </div>
                     </div>
+
+                    {viewMedical && (
+                        <div className="mt-5">
+                            <img src={leave.medical_certificate?.file_path?.replace('public/', '/storage/')} className="h-96" />
+                        </div>
+                    )}
+                    
                     {leave.hr_reject_msg && leave.principal_reject_msg && (
                         <div className="space-y-3 mt-5">
                             <Label>Response for rejection:</Label>

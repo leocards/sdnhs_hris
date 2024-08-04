@@ -31,7 +31,7 @@ class LeaveController extends Controller
     public function view(Leave $leave = null, User $user = null)
     {
         if($leave)
-            $leave->load(['details_of_leave', 'details_of_action_leave']);
+            $leave->load(['details_of_leave', 'details_of_action_leave', 'medical_certificate']);
 
         return Inertia::render('Leave/LeaveView', [
             "user" => $user?->only(['id', 'first_name', 'last_name']),
@@ -46,10 +46,12 @@ class LeaveController extends Controller
 
     public function store(Request $request)
     {
+        $path = null;
+
         DB::beginTransaction();
         try {
 
-            if(Auth::user()->leave_credits < (integer) $request->numDaysApplied) {
+            if(Auth::user()->leave_credits < (integer) $request->numDaysApplied && $request->leavetype['type'] !== "Maternity Leave") {
                 throw new Exception("You don't have enough leave credits.", 1);
             }
 
@@ -113,10 +115,22 @@ class LeaveController extends Controller
                 'disapproved' => $request->disapprovedDueTo
             ]);
 
+            $path = $request->file('medicalForMaternity')->store('public/medical');
+
+            Medical::create([
+                'leave_id' => $leave->id,
+                'file_name' => "Medical 41",
+                'file_path' => $path,
+            ]);
+
             DB::commit();
             return back()->with('success', 'Application for leave has been submitted.');
         } catch (\Throwable $th) {
             DB::rollBack();
+
+            if(isset($path)) {
+                Storage::delete($path);
+            }
 
             return back()->withErrors($th->getMessage());
         }

@@ -4,12 +4,29 @@ import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
 import { router } from "@inertiajs/react";
-import { ChevronDown, Plus, Printer, Upload } from "lucide-react";
+import {
+    ChevronDown,
+    EllipsisVertical,
+    Eye,
+    PencilLine,
+    Plus,
+    Printer,
+    Trash2,
+    Upload,
+} from "lucide-react";
 import { Fragment, useState } from "react";
 import IPCRPrint from "./IPCRPrint";
 import SALNPrint from "./SALNPrint";
 import UploadIPCR from "./UploadIPCR";
 import UploadSALN from "./UploadSALN";
+import Filter from "@/Components/buttons/FilterButton";
+import {
+    Menubar,
+    MenubarItem,
+    MenubarMenu,
+    MenubarContent,
+    MenubarTrigger,
+} from "@/Components/ui/menubar";
 
 export default function Reports({ auth }: PageProps) {
     const [showIPCRPrint, setShowIPCRPrint] = useState<boolean>(false);
@@ -18,9 +35,17 @@ export default function Reports({ auth }: PageProps) {
         showEmployee: boolean;
         showIPCR: boolean;
         showSALN: boolean;
-    }>({ showEmployee: true, showIPCR: true, showSALN: true });
-    const [showIPCRUpload, setShowIPCRUpload] = useState<{upload: boolean, add: boolean}>({upload: false, add: false})
-    const [showSALNUpload, setShowSALNUpload] = useState<{upload: boolean, add: boolean}>({upload: false, add: false})
+    }>({ showEmployee: false, showIPCR: false, showSALN: true });
+    const [showIPCRUpload, setShowIPCRUpload] = useState<{
+        upload: boolean;
+        add: boolean;
+    }>({ upload: false, add: false });
+    const [showSALNUpload, setShowSALNUpload] = useState<{
+        upload: boolean;
+        add: boolean;
+    }>({ upload: false, add: false });
+    const [filterSALN, setFilterSALN] = useState<string>("");
+    const [filterIPCR, setFilterIPCR] = useState<string>("");
 
     return (
         <Authenticated
@@ -211,8 +236,20 @@ export default function Reports({ auth }: PageProps) {
                             />
                         </Button>
                         <div className="font-semibold text-lg ">IPCR</div>
-                        </div>
-                    {showList.showIPCR && (    
+                        <Filter
+                            filter="Filter by year"
+                            active={filterIPCR}
+                            items={[
+                                { filter: "2024", onClick: setFilterIPCR },
+                                { filter: "2023", onClick: setFilterIPCR },
+                                { filter: "2022", onClick: setFilterIPCR },
+                                { filter: "2021", onClick: setFilterIPCR },
+                                { filter: "2020", onClick: setFilterIPCR },
+                            ]}
+                            onClear={() => setFilterIPCR("")}
+                        />
+                    </div>
+                    {showList.showIPCR && (
                         <div className="flex gap-3">
                             <Button
                                 className="h-8 gap-2"
@@ -222,11 +259,28 @@ export default function Reports({ auth }: PageProps) {
                                 <Printer className="size-4" strokeWidth={2.3} />
                                 <span>Print</span>
                             </Button>
-                            <Button className="h-8 gap-2" variant="secondary" onClick={() => setShowIPCRUpload({...showIPCRUpload, upload: true})}>
+                            <Button
+                                className="h-8 gap-2"
+                                variant="secondary"
+                                onClick={() =>
+                                    setShowIPCRUpload({
+                                        ...showIPCRUpload,
+                                        upload: true,
+                                    })
+                                }
+                            >
                                 <Upload className="size-4" strokeWidth={2.7} />
                                 <span>Upload</span>
                             </Button>
-                            <Button className="h-8 gap-2" onClick={() => setShowIPCRUpload({...showIPCRUpload, add: true})}>
+                            <Button
+                                className="h-8 gap-2"
+                                onClick={() =>
+                                    setShowIPCRUpload({
+                                        ...showIPCRUpload,
+                                        add: true,
+                                    })
+                                }
+                            >
                                 <Plus className="size-4" strokeWidth={2.7} />
                                 <span>Add</span>
                             </Button>
@@ -235,18 +289,19 @@ export default function Reports({ auth }: PageProps) {
                 </div>
                 {showList.showIPCR && (
                     <div className="border divide-y rounded-lg">
-                        <div className="grid grid-cols-[4rem,repeat(4,1fr)] [&>div:not(:nth-child(2))]:text-center h-11 [&>div]:my-auto [&>div]:font-medium opacity-60">
+                        <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] text-sm [&>div:not(:nth-child(2))]:text-center h-11 [&>div]:my-auto [&>div]:font-semibold opacity-60">
                             <div className="">No.</div>
                             <div className="">Name of Personnel</div>
                             <div className="">Position</div>
                             <div className="">Performance Rating</div>
                             <div className="">Adjectival Equivalent</div>
+                            <div className=""></div>
                         </div>
                         <ScrollArea className="h-[30rem]">
                             <div className="divide-y">
                                 {IPCR.map((list, index) => (
                                     <div key={index}>
-                                        <div className="grid grid-cols-[4rem,repeat(4,1fr)] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
+                                        <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
                                             <div className="">{++index}</div>
                                             <div className="">{list.name}</div>
                                             <div className="">
@@ -256,6 +311,28 @@ export default function Reports({ auth }: PageProps) {
                                             <div className="">
                                                 {list.equivalent}
                                             </div>
+                                            <div className="flex items-center justify-center gap-2">
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="size-7"
+                                                >
+                                                    <PencilLine
+                                                        className="size-5"
+                                                        strokeWidth={1.8}
+                                                    />
+                                                </Button>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="icon"
+                                                    className="size-7"
+                                                >
+                                                    <Trash2
+                                                        className="size-5"
+                                                        strokeWidth={1.8}
+                                                    />
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
@@ -264,7 +341,11 @@ export default function Reports({ auth }: PageProps) {
                     </div>
                 )}
 
-                <UploadIPCR show={(showIPCRUpload.add || showIPCRUpload.upload)} onClose={setShowIPCRUpload} isAdd={showIPCRUpload.add} />
+                <UploadIPCR
+                    show={showIPCRUpload.add || showIPCRUpload.upload}
+                    onClose={setShowIPCRUpload}
+                    isAdd={showIPCRUpload.add}
+                />
             </div>
 
             <div className="mt-8">
@@ -289,6 +370,18 @@ export default function Reports({ auth }: PageProps) {
                             />
                         </Button>
                         <div className="font-semibold text-lg ">SALN</div>
+                        <Filter
+                            filter="Filter by year"
+                            active={filterSALN}
+                            items={[
+                                { filter: "2024", onClick: setFilterSALN },
+                                { filter: "2023", onClick: setFilterSALN },
+                                { filter: "2022", onClick: setFilterSALN },
+                                { filter: "2021", onClick: setFilterSALN },
+                                { filter: "2020", onClick: setFilterSALN },
+                            ]}
+                            onClear={() => setFilterSALN("")}
+                        />
                     </div>
                     {showList.showSALN && (
                         <div className="flex gap-3">
@@ -300,11 +393,28 @@ export default function Reports({ auth }: PageProps) {
                                 <Printer className="size-4" strokeWidth={2.3} />
                                 <span>Print</span>
                             </Button>
-                            <Button className="h-8 gap-2" variant="secondary" onClick={() => setShowSALNUpload({...showSALNUpload, upload: true})}>
+                            <Button
+                                className="h-8 gap-2"
+                                variant="secondary"
+                                onClick={() =>
+                                    setShowSALNUpload({
+                                        ...showSALNUpload,
+                                        upload: true,
+                                    })
+                                }
+                            >
                                 <Upload className="size-4" strokeWidth={2.7} />
                                 <span>Upload</span>
                             </Button>
-                            <Button className="h-8 gap-2" onClick={() => setShowSALNUpload({...showSALNUpload, add: true})}>
+                            <Button
+                                className="h-8 gap-2"
+                                onClick={() =>
+                                    setShowSALNUpload({
+                                        ...showSALNUpload,
+                                        add: true,
+                                    })
+                                }
+                            >
                                 <Plus className="size-4" strokeWidth={2.7} />
                                 <span>Add</span>
                             </Button>
@@ -314,11 +424,10 @@ export default function Reports({ auth }: PageProps) {
                 {showList.showSALN && (
                     <ScrollArea className="border rounded-md h-[30rem]">
                         <div className="divide-y w-max relative">
-                            <div className="grid grid-cols-[3rem,repeat(6,12rem),20rem,10rem] border-b [&>div]:text-center h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 bg-white">
+                            <div className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] border-b [&>div]:text-center 
+                            h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-white">
                                 <div className=""></div>
-                                <div className="">Last name</div>
-                                <div className="">First name</div>
-                                <div className="">Middle name</div>
+                                <div className="">Name</div>
                                 <div className="">TIN</div>
                                 <div className="">Position</div>
                                 <div className="">Net worth</div>
@@ -329,25 +438,19 @@ export default function Reports({ auth }: PageProps) {
                                 <div className="">
                                     Please check (/) if Joint Filing
                                 </div>
+                                <div className=""></div>
                             </div>
                             {SALN.map((list, index) => (
                                 <div
                                     key={index}
                                     className={cn(
-                                        "hover:bg-secondary",
-                                        index === 0 && "!border-t-0"
+                                        index === 0 && "!border-t-0",
                                     )}
                                 >
-                                    <div className="grid grid-cols-[3rem,repeat(6,12rem),20rem,10rem] [&>div]:text-center [&>div]:py-3">
+                                    <div className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] [&>div]:text-center [&>div]:py-3">
                                         <div className="">{++index}</div>
                                         <div className="">
-                                            {list["First Name"]}
-                                        </div>
-                                        <div className="">
-                                            {list["Last Name"]}
-                                        </div>
-                                        <div className="">
-                                            {list["Middle Name"]}
+                                            {`${list["First Name"]} ${list["Last Name"]} ${list["Middle Name"]}`}
                                         </div>
                                         <div className="">{list["TIN"]}</div>
                                         <div className="">
@@ -366,6 +469,28 @@ export default function Reports({ auth }: PageProps) {
                                         <div className="">
                                             {list["Joint Filing"]}
                                         </div>
+                                        <div className="flex items-center justify-center gap-2">
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="size-7"
+                                            >
+                                                <PencilLine
+                                                    className="size-5"
+                                                    strokeWidth={1.8}
+                                                />
+                                            </Button>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="size-7"
+                                            >
+                                                <Trash2
+                                                    className="size-5"
+                                                    strokeWidth={1.8}
+                                                />
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -378,8 +503,13 @@ export default function Reports({ auth }: PageProps) {
                     </ScrollArea>
                 )}
 
-                <UploadSALN show={(showSALNUpload.add || showSALNUpload.upload)} onClose={setShowSALNUpload} isAdd={showSALNUpload.add} />
+                <UploadSALN
+                    show={showSALNUpload.add || showSALNUpload.upload}
+                    onClose={setShowSALNUpload}
+                    isAdd={showSALNUpload.add}
+                />
             </div>
+
             <IPCRPrint show={showIPCRPrint} onClose={setShowIPCRPrint} />
             <SALNPrint show={showSALNPrint} onClose={setShowSALNPrint} />
         </Authenticated>

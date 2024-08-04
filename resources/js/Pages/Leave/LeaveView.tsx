@@ -201,7 +201,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                         </div>
                     )}
                     
-                    {leave.hr_reject_msg && leave.principal_reject_msg && (
+                    {(leave.hr_reject_msg || leave.principal_reject_msg) && (
                         <div className="space-y-3 mt-5">
                             <Label>Response for rejection:</Label>
                             {leave.hr_reject_msg && (
@@ -211,13 +211,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                                         <span className="ml-auto">:</span>
                                     </Label>
                                     <div>
-                                        {leave.hr_reject_msg} Lorem ipsum dolor
-                                        sit amet consectetur, adipisicing elit.
-                                        Omnis nisi possimus illo suscipit
-                                        tenetur id reprehenderit vitae neque
-                                        qui, harum facere aliquam obcaecati
-                                        nostrum incidunt explicabo eos ratione
-                                        porro mollitia.
+                                        {leave.hr_reject_msg}
                                     </div>
                                 </div>
                             )}
@@ -228,13 +222,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                                         <span className="ml-auto">:</span>
                                     </Label>
                                     <div>
-                                        {leave.principal_reject_msg} Lorem ipsum
-                                        dolor sit amet consectetur, adipisicing
-                                        elit. Omnis nisi possimus illo suscipit
-                                        tenetur id reprehenderit vitae neque
-                                        qui, harum facere aliquam obcaecati
-                                        nostrum incidunt explicabo eos ratione
-                                        porro mollitia.
+                                        {leave.principal_reject_msg}
                                     </div>
                                 </div>
                             )}

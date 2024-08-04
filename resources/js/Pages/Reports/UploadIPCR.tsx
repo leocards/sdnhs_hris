@@ -72,6 +72,7 @@ type IFormUpload = z.infer<typeof UPLOADSCHEMA>;
 export default function UploadIPCR(props: {
     show: boolean;
     isAdd?: boolean;
+    isEdit?: boolean;
     onClose: CallableFunction;
 }) {
     const { show, isAdd = false, onClose } = props;
@@ -113,7 +114,7 @@ export default function UploadIPCR(props: {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
                             <div className="font-bold text-xl mb-6 px-1">
-                                {isFormAdd ? "Add IPCR" : "Upload IPCR"}
+                                {isFormAdd ? props.isEdit ? "Edit" : "Add" : "Upload"} IPCR
                             </div>
                             {isFormAdd && (
                                 <div className="space-y-4">

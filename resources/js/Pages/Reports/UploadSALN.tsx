@@ -75,6 +75,7 @@ type IFormUpload = z.infer<typeof UPLOADSCHEMA>;
 export default function UploadSALN(props: {
     show: boolean;
     isAdd?: boolean;
+    isEdit?: boolean;
     onClose: CallableFunction;
 }) {
     const { show, isAdd = false, onClose } = props;
@@ -116,7 +117,7 @@ export default function UploadSALN(props: {
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
                             <div className="font-bold text-xl mb-6 px-1">
-                                {isFormAdd ? "Add SALN" : "Upload SALN"}
+                                {isFormAdd ? props.isEdit? "Edit" : "Add" : "Upload"} SALN
                             </div>
                             {isFormAdd && (
                                 <div className="space-y-4">

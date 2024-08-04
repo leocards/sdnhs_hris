@@ -35,7 +35,7 @@ export default function Reports({ auth }: PageProps) {
         showEmployee: boolean;
         showIPCR: boolean;
         showSALN: boolean;
-    }>({ showEmployee: false, showIPCR: false, showSALN: true });
+    }>({ showEmployee: true, showIPCR: true, showSALN: true });
     const [showIPCRUpload, setShowIPCRUpload] = useState<{
         upload: boolean;
         add: boolean;
@@ -46,6 +46,8 @@ export default function Reports({ auth }: PageProps) {
     }>({ upload: false, add: false });
     const [filterSALN, setFilterSALN] = useState<string>("");
     const [filterIPCR, setFilterIPCR] = useState<string>("");
+    const [isEditIPCR, setIsEditIPCR] = useState<boolean>(false)
+    const [isEditSALN, setIsEditSALN] = useState<boolean>(false)
 
     return (
         <Authenticated
@@ -316,6 +318,10 @@ export default function Reports({ auth }: PageProps) {
                                                     variant="ghost"
                                                     size="icon"
                                                     className="size-7"
+                                                    onClick={() => {
+                                                        setShowIPCRUpload({...showIPCRUpload, add: true})
+                                                        setIsEditIPCR(true)
+                                                    }}
                                                 >
                                                     <PencilLine
                                                         className="size-5"
@@ -343,8 +349,12 @@ export default function Reports({ auth }: PageProps) {
 
                 <UploadIPCR
                     show={showIPCRUpload.add || showIPCRUpload.upload}
-                    onClose={setShowIPCRUpload}
+                    onClose={(close: any) => {
+                        setIsEditIPCR(false)
+                        setShowIPCRUpload(close)
+                    }}
                     isAdd={showIPCRUpload.add}
+                    isEdit={isEditIPCR}
                 />
             </div>
 
@@ -474,6 +484,10 @@ export default function Reports({ auth }: PageProps) {
                                                 variant="ghost"
                                                 size="icon"
                                                 className="size-7"
+                                                onClick={() => {
+                                                    setIsEditSALN(true)
+                                                    setShowSALNUpload({...showSALNUpload, add: true})
+                                                }}
                                             >
                                                 <PencilLine
                                                     className="size-5"
@@ -505,8 +519,12 @@ export default function Reports({ auth }: PageProps) {
 
                 <UploadSALN
                     show={showSALNUpload.add || showSALNUpload.upload}
-                    onClose={setShowSALNUpload}
+                    onClose={(close: any) => {
+                        setIsEditSALN(false)
+                        setShowSALNUpload(close)
+                    }}
                     isAdd={showSALNUpload.add}
+                    isEdit={isEditSALN}
                 />
             </div>
 

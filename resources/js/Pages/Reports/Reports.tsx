@@ -75,7 +75,7 @@ export default function Reports({
         showEmployee: boolean;
         showIPCR: boolean;
         showSALN: boolean;
-    }>({ showEmployee: false, showIPCR: false, showSALN: true });
+    }>({ showEmployee: true, showIPCR: true, showSALN: true });
     const [showIPCRUpload, setShowIPCRUpload] = useState<{
         upload: boolean;
         add: boolean;

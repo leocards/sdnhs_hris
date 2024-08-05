@@ -99,6 +99,14 @@ export default function UploadIPCR(props: {
                 form.setValue("isAdd", false);
                 setIsFormAdd(false)
             }
+
+            if(props.isEdit) {
+                form.setValue('add.personnelid', "12345")
+                form.setValue('add.rating', "4.5")
+            } else {
+                form.setValue('add.personnelid', "")
+                form.setValue('add.rating', "")
+            }
         }
     }, [show]);
 

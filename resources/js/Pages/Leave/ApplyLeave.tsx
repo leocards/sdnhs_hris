@@ -143,12 +143,12 @@ const ApplyLeave = ({ auth }: PageProps) => {
 
                         <DetailsOfActionOnApplication form={form} />
 
-                        {form.watch("leavetype.type") === "Maternity Leave" && (
+                        {form.watch("leavetype.type") !== "Maternity Leave" && (
                         <FormField
                             control={form.control}
                             name="medicalForMaternity"
                             render={({ field }) => (
-                                <FormItem className="flex flex-col">
+                                <FormItem className="flex flex-col mt-5">
                                     <FormLabel
                                         className={cn(
                                             "after:content-['*'] after:ml-0.5 after:text-red-500"

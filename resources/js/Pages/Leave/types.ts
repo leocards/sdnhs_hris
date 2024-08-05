@@ -230,32 +230,41 @@ export const LEAVEFORMSCHEMA = z.object({
     medicalForMaternity: z
     .instanceof(File, { message: "Please choose a file." })
     .optional()
-    .refine((file) => {
-        if(file?.type) {
-            if(!allowedMimeTypes.includes(file?.type)) {
-                return false
-            } else return true
-        }
-    }, {
-        message: "Only JPEG, JPG, and PNG files are allowed.",
-    })
-    .refine((file) => {
-        if(file?.size) {
-            if(file?.size > 10 * 1024 * 1024) {
-                return false
-            } else return true
-        }
-    }, {
-        message: "File size should not exceed 10MB",
-    })
 }).refine(({ leavetype, medicalForMaternity }) => {
     if(leavetype.type === "Maternity Leave") {
+        console.log(medicalForMaternity)
         if(!medicalForMaternity)
             return false
     }
     return true
 }, {
     message: "Please upload medical.",
+    path: ['medicalForMaternity']
+})
+.refine(({leavetype, medicalForMaternity}) => {
+    if(leavetype.type === "Maternity Leave")
+        if(medicalForMaternity?.type) {
+            if(!allowedMimeTypes.includes(medicalForMaternity?.type)) {
+                return false
+            }
+        }
+
+    return true
+}, {
+    message: "Only JPEG, JPG, and PNG files are allowed.",
+    path: ['medicalForMaternity']
+})
+.refine(({leavetype, medicalForMaternity}) => {
+    if(leavetype.type === "Maternity Leave") 
+        if(medicalForMaternity?.size) {
+            if(medicalForMaternity?.size > 10 * 1024 * 1024) {
+                return false
+            } else return true
+        }
+
+    return true
+}, {
+    message: "File size should not exceed 10MB",
     path: ['medicalForMaternity']
 })
 

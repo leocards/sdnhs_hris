@@ -102,6 +102,16 @@ export default function UploadSALN(props: {
                 form.setValue("isAdd", false);
                 setIsFormAdd(false);
             }
+
+            if(props.isEdit) {
+                form.setValue('add.personnelid', '12345')
+                form.setValue('add.networth', '100,000')
+                form.setValue('add.isjoint', true)
+            } else {
+                form.setValue('add.personnelid', '')
+                form.setValue('add.networth', '')
+                form.setValue('add.isjoint', false)
+            }
         }
     }, [show]);
 

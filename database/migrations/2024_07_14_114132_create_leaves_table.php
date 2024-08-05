@@ -30,7 +30,8 @@ return new class extends Migration
             $table->boolean('is_requested')->nullable();
             $table->enum('principal_status', ['Rejected', 'Approved', 'Pending'])->default('Pending');
             $table->enum('hr_status', ['Rejected', 'Approved', 'Pending'])->default('Pending');
-            $table->text('reject_msg')->nullable();
+            $table->text('principal_reject_msg')->nullable();
+            $table->text('hr_reject_msg')->nullable();
             $table->timestamps();
         });
 

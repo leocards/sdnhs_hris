@@ -75,7 +75,7 @@ type IFormUpload = z.infer<typeof UPLOADSCHEMA>;
 export default function UploadSALN(props: {
     show: boolean;
     isAdd?: boolean;
-    isEdit?: boolean;
+    isEdit?: any;
     onClose: CallableFunction;
 }) {
     const { show, isAdd = false, onClose } = props;
@@ -92,7 +92,6 @@ export default function UploadSALN(props: {
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
         setData(formData)
-        console.log(formData)
     };
 
     useEffect(() => {
@@ -106,9 +105,14 @@ export default function UploadSALN(props: {
             }
 
             if(props.isEdit) {
-                form.setValue('add.personnelid', '12345')
-                form.setValue('add.networth', '100,000')
-                form.setValue('add.isjoint', true)
+                form.setValue('add.personnelid', props.isEdit?.user.personnel_id, {
+                    shouldDirty: true,
+                    shouldTouch: true,
+                    shouldValidate: true,
+                })
+                form.setValue('add.networth', props.isEdit?.networth)
+                form.setValue('add.spouse', props.isEdit?.spouse)
+                form.setValue('add.isjoint', !!props.isEdit?.joint)
             } else {
                 form.setValue('add.personnelid', '')
                 form.setValue('add.networth', '')
@@ -118,8 +122,8 @@ export default function UploadSALN(props: {
     }, [show]);
 
     useEffect(() => {
-        if(isSubmit && !props.isEdit) {
-            post(route('reports.addSALN'), {
+        if(isSubmit) {
+            post(props.isEdit?route('reports.updateSALN', [props.isEdit?.id]):route('reports.addSALN'), {
                 onSuccess: page => {
                     if(page.props.success) {
                         toast({
@@ -172,7 +176,6 @@ export default function UploadSALN(props: {
                                     <FormField
                                         control={form.control}
                                         name="add.personnelid"
-                                        disabled={props.isEdit}
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="required">
@@ -181,6 +184,7 @@ export default function UploadSALN(props: {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
+                                                        disabled={props.isEdit}
                                                         className="form-input"
                                                     />
                                                 </FormControl>

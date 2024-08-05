@@ -80,6 +80,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
             
             Route::post('/add-ipcr', 'addIPCRRow')->name('reports.addIPCR');
             Route::post('/add-saln', 'addSALNRow')->name('reports.addSALN');
+            Route::post('/update-ipcr/{ipcrId}', 'updateIPCRRow')->name('reports.updateIPCR');
+            Route::post('/update-saln/{salnId}', 'updateSALNRow')->name('reports.updateSALN');
+            Route::delete('/delete-ipcr/{ipcrId}', 'deleteIPCRRow')->name('reports.deleteIPCR');
+            Route::delete('/delete-saln/{salnId}', 'deleteSALNRow')->name('reports.deleteSALN');
         });
     });
 

@@ -23,13 +23,13 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Reports/Reports', [
-            "ipcr" => PerformanceRating::with(['user:id,first_name,last_name,middle_name,position'])
+            "ipcr" => PerformanceRating::with(['user:id,first_name,last_name,middle_name,position,personnel_id'])
                 ->join('users', 'performance_ratings.user_id', '=', 'users.id')
                 ->whereYear('performance_ratings.created_at', $request->query('ipcr') ?? $this->date->format("Y"))
                 ->orderBy('users.last_name')
                 ->select('performance_ratings.*')
                 ->get(),
-            "saln" => Saln::with(['user:id,first_name,last_name,middle_name,position'])->whereYear('created_at', $request->query('saln') ?? $this->date->format("Y"))->get(),
+            "saln" => Saln::with(['user:id,first_name,last_name,middle_name,position,personnel_id'])->whereYear('created_at', $request->query('saln') ?? $this->date->format("Y"))->get(),
         ]);
     }
 
@@ -132,5 +132,37 @@ class ReportController extends Controller
 
             return back()->withErrors($th->getMessage());
         }
+    }
+
+    public  function updateIPCRRow(Request $request, PerformanceRating $ipcrId)
+    {
+        $ipcrId->rating = $request->add['rating'];
+        $ipcrId->save();
+
+        return back()->with(['success' => 'Updated successfully']);
+    }
+
+    public  function updateSALNRow(Request $request, Saln $salnId)
+    {
+        $salnId->networth = $request->add['networth'];
+        $salnId->spouse = $request->add['spouse'];
+        $salnId->joint = $request->add['isjoint'];
+        $salnId->save();
+
+        return back()->with(['success' => 'Updated successfully']);
+    }
+
+    public  function deleteIPCRRow(PerformanceRating $ipcrId)
+    {
+        $ipcrId->delete();
+
+        return back()->with(['success' => 'Deleted successfully']);
+    }
+
+    public  function deleteSALNRow(Saln $salnId)
+    {
+        $salnId->delete();
+
+        return back()->with(['success' => 'Deleted successfully']);
     }
 }

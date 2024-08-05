@@ -17,6 +17,9 @@ import SALNPrint from "./SALNPrint";
 import UploadIPCR from "./UploadIPCR";
 import UploadSALN from "./UploadSALN";
 import Filter from "@/Components/buttons/FilterButton";
+import Processing from "@/Components/Processing";
+import { router } from "@inertiajs/react";
+import { useToast } from "@/Components/ui/use-toast";
 
 type IPCRType = {
     id: number;
@@ -28,6 +31,7 @@ type IPCRType = {
         last_name: string;
         middle_name: string;
         position: string;
+        personnel_id: string;
     };
     created_at: string;
 };
@@ -44,6 +48,7 @@ type SALNType = {
         last_name: string;
         middle_name: string;
         position: string;
+        personnel_id: string;
     };
     created_at: string;
 };
@@ -86,8 +91,31 @@ export default function Reports({
     }>({ upload: false, add: false });
     const [filterSALN, setFilterSALN] = useState<string>("");
     const [filterIPCR, setFilterIPCR] = useState<string>("");
-    const [isEditIPCR, setIsEditIPCR] = useState<boolean>(false);
-    const [isEditSALN, setIsEditSALN] = useState<boolean>(false);
+    const [isEditIPCR, setIsEditIPCR] = useState<IPCRType|null>(null);
+    const [isEditSALN, setIsEditSALN] = useState<SALNType|null>(null);
+    const [isProcessing, setIsProcessing] = useState<boolean>(false)
+    const { toast } = useToast()
+
+    const deleteRow = (deletRoute: string) => {
+        setIsProcessing(true)
+        router.delete(deletRoute, {
+            onSuccess: page => {
+                toast({
+                    variant: "success",
+                    description: page.props.success?.toString()
+                })
+            }, 
+            onError: error => {
+                toast({
+                    variant: "success",
+                    description: error[0]
+                })
+            }, 
+            onFinish: () => {
+                setIsProcessing(false)
+            }
+        })
+    }
 
     return (
         <Authenticated
@@ -98,6 +126,7 @@ export default function Reports({
                 </h2>
             }
         >
+            <Processing is_processing={isProcessing} label="Deleting..." />
             <div className="mt-10">
                 <div className="flex justify-between items-center mb-5">
                     <div className="flex items-center gap-3">
@@ -365,7 +394,7 @@ export default function Reports({
                                                             ...showIPCRUpload,
                                                             add: true,
                                                         });
-                                                        setIsEditIPCR(true);
+                                                        setIsEditIPCR(list);
                                                     }}
                                                 >
                                                     <PencilLine
@@ -377,6 +406,8 @@ export default function Reports({
                                                     variant="ghost"
                                                     size="icon"
                                                     className="size-7"
+                                                    onClick={() => deleteRow(route('reports.deleteIPCR', [list.id]))}
+                                                    
                                                 >
                                                     <Trash2
                                                         className="size-5"
@@ -395,7 +426,7 @@ export default function Reports({
                 <UploadIPCR
                     show={showIPCRUpload.add || showIPCRUpload.upload}
                     onClose={(close: any) => {
-                        setIsEditIPCR(false);
+                        setIsEditIPCR(null);
                         setShowIPCRUpload(close);
                     }}
                     isAdd={showIPCRUpload.add}
@@ -525,7 +556,7 @@ export default function Reports({
                                                 size="icon"
                                                 className="size-7"
                                                 onClick={() => {
-                                                    setIsEditSALN(true);
+                                                    setIsEditSALN(list);
                                                     setShowSALNUpload({
                                                         ...showSALNUpload,
                                                         add: true,
@@ -541,6 +572,7 @@ export default function Reports({
                                                 variant="ghost"
                                                 size="icon"
                                                 className="size-7"
+                                                onClick={() => deleteRow(route('reports.deleteSALN', [list.id]))}
                                             >
                                                 <Trash2
                                                     className="size-5"
@@ -563,7 +595,7 @@ export default function Reports({
                 <UploadSALN
                     show={showSALNUpload.add || showSALNUpload.upload}
                     onClose={(close: any) => {
-                        setIsEditSALN(false);
+                        setIsEditSALN(null);
                         setShowSALNUpload(close);
                     }}
                     isAdd={showSALNUpload.add}

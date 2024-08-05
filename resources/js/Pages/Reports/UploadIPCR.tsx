@@ -73,7 +73,7 @@ type IFormUpload = z.infer<typeof UPLOADSCHEMA>;
 export default function UploadIPCR(props: {
     show: boolean;
     isAdd?: boolean;
-    isEdit?: boolean;
+    isEdit?: any;
     onClose: CallableFunction;
 }) {
     const { show, isAdd = false, onClose } = props;
@@ -103,8 +103,12 @@ export default function UploadIPCR(props: {
             }
 
             if(props.isEdit) {
-                form.setValue('add.personnelid', "12345")
-                form.setValue('add.rating', "4.5")
+                form.setValue('add.personnelid', props.isEdit?.user.personnel_id, {
+                    shouldDirty: true,
+                    shouldTouch: true,
+                    shouldValidate: true,
+                })
+                form.setValue('add.rating', props.isEdit?.rating)
             } else {
                 form.setValue('add.personnelid', "")
                 form.setValue('add.rating', "")
@@ -113,8 +117,8 @@ export default function UploadIPCR(props: {
     }, [show]);
 
     useEffect(() => {
-        if(isSubmit && !props.isEdit) {
-            post(route('reports.addIPCR'), {
+        if(isSubmit) {
+            post(props.isEdit?route('reports.updateIPCR', [props.isEdit?.id]):route('reports.addIPCR'), {
                 onSuccess: page => {
                     if(page.props.success) {
                         toast({
@@ -166,7 +170,6 @@ export default function UploadIPCR(props: {
                                     <FormField
                                         control={form.control}
                                         name="add.personnelid"
-                                        disabled={props.isEdit}
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="required">
@@ -175,6 +178,7 @@ export default function UploadIPCR(props: {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
+                                                        disabled={props.isEdit}
                                                         className="form-input"
                                                     />
                                                 </FormControl>

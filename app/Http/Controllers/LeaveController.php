@@ -114,14 +114,16 @@ class LeaveController extends Controller
                 'approved_for_others' => $request->approvedFor['others'],
                 'disapproved' => $request->disapprovedDueTo
             ]);
-
-            $path = $request->file('medicalForMaternity')->store('public/medical');
-
-            Medical::create([
-                'leave_id' => $leave->id,
-                'file_name' => "Medical 41",
-                'file_path' => $path,
-            ]);
+            
+            if($request->hasFile('medicalForMaternity')) {
+                $path = $request->file('medicalForMaternity')->store('public/medical');
+    
+                Medical::create([
+                    'leave_id' => $leave->id,
+                    'file_name' => "Medical 41",
+                    'file_path' => $path,
+                ]);
+            }
 
             DB::commit();
             return back()->with('success', 'Application for leave has been submitted.');

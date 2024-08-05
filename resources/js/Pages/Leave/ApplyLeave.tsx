@@ -143,7 +143,7 @@ const ApplyLeave = ({ auth }: PageProps) => {
 
                         <DetailsOfActionOnApplication form={form} />
 
-                        {form.watch("leavetype.type") !== "Maternity Leave" && (
+                        {form.watch("leavetype.type") === "Maternity Leave" && (
                         <FormField
                             control={form.control}
                             name="medicalForMaternity"

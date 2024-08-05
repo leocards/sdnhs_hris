@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             'address' => 'Panabo city',
             'email' => 'banaag.nieljohn@gmail.com',
             'phone_number' => '09485729385',
-            'staff_id' => 'SDNH-3578',
+            'personnel_id' => 'SDNH-3578',
             'department' => 'ICT',
             'role' => 'HR',
             'position' => 'HR',

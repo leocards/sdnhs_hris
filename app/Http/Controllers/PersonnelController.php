@@ -59,10 +59,10 @@ class PersonnelController extends Controller
                 'email' => $request->email,
                 'phone_number' => $request->phoneNumber,
                 'personnel_id' => $request->personnelId,
-                'department' => $request->department,
+                'department' => $request->userRole != "HOD" ? $request->department : null,
                 'role' => $request->userRole,
                 'position' => $request->position,
-                'leave_credits' => $request->currentCredits,
+                'leave_credits' => $request->userRole != "HOD" ? $request->currentCredits : null,
                 'date_hired' => Carbon::parse($request->date_hired)->format('Y-m-d'),
                 'password' => Hash::make($request->password)
             ]);

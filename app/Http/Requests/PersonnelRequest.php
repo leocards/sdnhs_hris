@@ -25,7 +25,7 @@ class PersonnelRequest extends FormRequest
     {
         $userId = $this->route('user');
 
-        return [
+        $rules = [
             'firstName' => ['required'],
             'lastName' => ['required'],
             'middleName' => ['max:255'],
@@ -35,11 +35,30 @@ class PersonnelRequest extends FormRequest
             'email' => ['required', 'email', 'string', 'lowercase', 'max:255', $userId ? Rule::unique(User::class)->ignore($userId) : Rule::unique(User::class)],
             'phoneNumber' => ['required', 'string', 'size:11'],
             'personnelId' => ['required'],
-            'department' => ['required'],
             'userRole' => ['required'],
             'dateHired' => ['required', 'date'],
             'position' => ['required'],
             'password' => ['required', 'min:8'],
+        ];
+
+        if ($this->input('userRole') !== 'HOD') {
+            $rules['department'] = ['required'];
+        } else {
+            $rules['department'] = ['nullable'];
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Get the validation messages for the defined validation rules.
+     *
+     * @return array<string, string>
+     */
+    public function messages(): array
+    {
+        return [
+            'department.required' => 'The department field is required.',
         ];
     }
 }

@@ -19,7 +19,7 @@ export const PERSONNELPOSITIONS = [
     "HR"
 ] as const;
 
-export const ROLE = ["HOD", "Teaching", "Non-teaching"] as const;
+export const ROLE = ["HR", "HOD", "Teaching", "Non-teaching"] as const;
 
 export const NEWPERSONNELSCHEMA = z.object({
     firstName: z.string().min(1, requiredError("first name")).default(""),
@@ -36,15 +36,34 @@ export const NEWPERSONNELSCHEMA = z.object({
         .default(""),
     position: z.enum(PERSONNELPOSITIONS, { required_error: requiredError("position") }),
     personnelId: z.string().min(1, requiredError("personnel Id")).default(""),
-    department: z.string().min(1, requiredError("department")).default(""),
+    department: z.string().optional().default(""),
     userRole: z.enum(ROLE, { required_error: requiredError("user role") }),
     dateHired: z.date({ required_error: requiredError("date hired") }).nullable().default(null),
-    currentCredits: z.preprocess((value) => parseInt(value as string), z.number({required_error: requiredError('current credits'), invalid_type_error: requiredError('current credits')})).default(""),
+    currentCredits: z.preprocess(
+        (value) => {
+            if (value === "" || value === undefined) {
+                return 0;
+            }
+            return parseInt(value as string);
+        },
+        z.number().optional()
+    ).default(0),
     password: z
         .string()
         .min(8, "Password must have atleast 8 characters.")
         .default("12345678"),
-});
+}).refine(({ userRole, department }) => {
+    if(userRole !== "HOD" && !department) {
+        return false
+    }
+    return true
+}, { message: requiredError("department"), path: ['department'] })
+.refine(({ userRole, currentCredits }) => {
+    if(userRole !== "HOD" && !currentCredits) {
+        return false
+    }
+    return true
+}, { message: requiredError("current credits"), path: ['currentCredits']});
 
 export type PersonnelListProps = {
     user: User

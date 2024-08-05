@@ -22,10 +22,19 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/Components/ui/calendar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false)
+
+    const userRole = form.watch('userRole')
+
+    useEffect(() => {
+        if(userRole === "HOD") {
+            form.setValue('department', '')
+            form.setValue('currentCredits', 0)
+        }
+    }, [userRole])
 
     return (
         <>
@@ -40,6 +49,7 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                 <FormField
                     control={form.control}
                     name="currentCredits"
+                    disabled={userRole === "HOD"}
                     render={({ field }) => (
                         <FormItem className="grow">
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
@@ -130,6 +140,7 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                 <FormField
                     control={form.control}
                     name="department"
+                    disabled={userRole === "HOD"}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
@@ -139,6 +150,7 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                                 onValueChange={field.onChange}
                                 defaultValue={field.value}
                                 value={form.watch("department")??""}
+                                disabled={userRole === "HOD"}
                             >
                                 <FormControl>
                                     <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">

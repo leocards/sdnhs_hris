@@ -289,14 +289,14 @@ const PersonnelRow: React.FC<PersonnelListProps & { auth: string }> = ({
                 </div>
                 <div className="shrink-0">
                     <div className="line-clamp-1 break-words">
-                        {user.department}
+                        {user.role != "HOD" ? user.department : "-"}
                     </div>
                 </div>
                 <div className="">
                     <div className="line-clamp-1">{user.position}</div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">{user.leave_credits}</div>
+                    <div className="line-clamp-1">{user.role != "HOD" ? user.leave_credits : "-"}</div>
                 </div>
                 <div className="">
                     <Menubar className="p-0 border-none group size-8 bg-transparent">

@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone_number', 11);
             $table->string('personnel_id');
-            $table->string('department');
+            $table->string('department')->nullable();
             $table->string('role');
             $table->string('position');
             $table->date('date_hired');

@@ -112,9 +112,9 @@ export default function UpdateProfileInformation({
     const { toast } = useToast();
 
     const onFormSubmit = (formData: IFormProfile) => {
+        setIsSubmit(true);
+        setData(formData);
         if(form.formState.isDirty) {
-            setIsSubmit(true);
-            setData(formData);
         }
     };
 

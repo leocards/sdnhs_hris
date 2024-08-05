@@ -29,7 +29,7 @@ class ProfileUpdateRequest extends FormRequest
             'userRole' => ['required'],
             'dateHired' => ['required', 'date'],
             'position' => ['required'],
-            'password' => ['required', 'min:8'],
+            //'password' => ['required', 'min:8'],
         ];
     }
 }

@@ -113,7 +113,7 @@ export default function UploadIPCR(props: {
     }, [show]);
 
     useEffect(() => {
-        if(isSubmit) {
+        if(isSubmit && !props.isEdit) {
             post(route('reports.addIPCR'), {
                 onSuccess: page => {
                     if(page.props.success) {
@@ -166,6 +166,7 @@ export default function UploadIPCR(props: {
                                     <FormField
                                         control={form.control}
                                         name="add.personnelid"
+                                        disabled={props.isEdit}
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="required">

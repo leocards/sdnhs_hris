@@ -118,7 +118,7 @@ export default function UploadSALN(props: {
     }, [show]);
 
     useEffect(() => {
-        if(isSubmit) {
+        if(isSubmit && !props.isEdit) {
             post(route('reports.addSALN'), {
                 onSuccess: page => {
                     if(page.props.success) {
@@ -172,6 +172,7 @@ export default function UploadSALN(props: {
                                     <FormField
                                         control={form.control}
                                         name="add.personnelid"
+                                        disabled={props.isEdit}
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="required">

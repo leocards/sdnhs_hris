@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('salns', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->string('networth');
+            $table->string('spouse')->nullable();
+            $table->boolean('joint')->nullable();
             $table->timestamps();
         });
     }

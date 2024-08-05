@@ -34,7 +34,9 @@ class PersonnelRequest extends FormRequest
             'address' => ['required', 'max:1000'],
             'email' => ['required', 'email', 'string', 'lowercase', 'max:255', $userId ? Rule::unique(User::class)->ignore($userId) : Rule::unique(User::class)],
             'phoneNumber' => ['required', 'string', 'size:11'],
-            'personnelId' => ['required'],
+            'personnelId' => ['required', Rule::unique('users', 'personnel_id')->where(function ($query) use ($userId) {
+                return $query->where('id', '!=', $userId);
+            })],
             'userRole' => ['required'],
             'dateHired' => ['required', 'date'],
             'position' => ['required'],

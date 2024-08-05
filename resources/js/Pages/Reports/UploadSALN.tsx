@@ -17,6 +17,7 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import { Checkbox } from "@/Components/ui/checkbox";
+import { useToast } from "@/Components/ui/use-toast";
 
 const UPLOADSCHEMA = z
     .object({
@@ -24,10 +25,9 @@ const UPLOADSCHEMA = z
             .object({
                 personnelid: z.string(),
                 networth: z.string(),
-                spouse: z.string(),
-                isjoint: z.boolean(),
-            })
-            .partial(),
+                spouse: z.string().optional().default(""),
+                isjoint: z.boolean().default(false),
+            }),
         isAdd: z.boolean().optional(),
         file: z
             .instanceof(File, { message: "Please choose a file." })
@@ -50,13 +50,13 @@ const UPLOADSCHEMA = z
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: requiredError("personnel ID"),
-                    path: ["add"],
+                    path: ["add.personnelid"],
                 });
             } else if (!data.add.networth) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: requiredError("Net worth"),
-                    path: ["add"],
+                    message: requiredError("net worth"),
+                    path: ["add.networth"],
                 });
             }
         } else {
@@ -87,10 +87,12 @@ export default function UploadSALN(props: {
 
     const { setData, post, processing, reset } = useForm<IFormUpload>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
+    const { toast } = useToast()
 
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
-        console.log(formData);
+        setData(formData)
+        console.log(formData)
     };
 
     useEffect(() => {
@@ -115,13 +117,49 @@ export default function UploadSALN(props: {
         }
     }, [show]);
 
+    useEffect(() => {
+        if(isSubmit) {
+            post(route('reports.addSALN'), {
+                onSuccess: page => {
+                    if(page.props.success) {
+                        toast({
+                            variant: "success",
+                            description: page.props.success.toString()
+                        })
+                        form.reset()
+                        onClose({ upload: false, add: false })
+                    }
+                },
+                onError: error => {
+                    console.log(error)
+                    for (const key in error) {
+                        form.setError(key as keyof IFormUpload, {
+                            type: "manual",
+                            message: error[key],
+                        });
+                    }
+                    
+                    if(error[0])
+                        toast({
+                            variant: "destructive",
+                            description: error[0]
+                        })
+                },
+                onFinish: () => {
+                    reset()
+                    setIsSubmit(false)
+                }
+            })
+        }
+    }, [isSubmit])
+
     return (
         <Modal
             show={show}
             onClose={() => onClose({ upload: false, add: false })}
             maxWidth="lg"
         >
-            {processing && <Processing is_processing={processing} />}
+            {processing && <Processing is_processing={processing} backdrop="" />}
             {!processing && (
                 <div className="p-6">
                     <Form {...form}>

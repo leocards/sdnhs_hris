@@ -69,7 +69,6 @@ export default function NewPersonnel({ auth, user }: PageProps & { user?: any })
                             message: error[key],
                         });
                     }
-                    console.log(error);
                     setIsSubmit(false);
                     reset();
                 },

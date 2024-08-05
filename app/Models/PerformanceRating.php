@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class PerformanceRating extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        "user_id", "rating"
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

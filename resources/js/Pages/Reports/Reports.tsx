@@ -3,11 +3,8 @@ import { ScrollArea, ScrollBar } from "@/Components/ui/scroll-area";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
-import { router } from "@inertiajs/react";
 import {
     ChevronDown,
-    EllipsisVertical,
-    Eye,
     PencilLine,
     Plus,
     Printer,
@@ -20,22 +17,65 @@ import SALNPrint from "./SALNPrint";
 import UploadIPCR from "./UploadIPCR";
 import UploadSALN from "./UploadSALN";
 import Filter from "@/Components/buttons/FilterButton";
-import {
-    Menubar,
-    MenubarItem,
-    MenubarMenu,
-    MenubarContent,
-    MenubarTrigger,
-} from "@/Components/ui/menubar";
 
-export default function Reports({ auth }: PageProps) {
+type IPCRType = {
+    id: number;
+    rating: string;
+    user_id: number;
+    user: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        middle_name: string;
+        position: string;
+    };
+    created_at: string;
+};
+
+type SALNType = {
+    id: number;
+    joint: boolean;
+    networth: string;
+    spouse: string;
+    user_id: number;
+    user: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        middle_name: string;
+        position: string;
+    };
+    created_at: string;
+};
+
+const equivalent = (rate: number): string => {
+    if (rate >= 4.5 && rate <= 5) {
+        return "Outstanding";
+    } else if (rate >= 3.5 && rate <= 4.499) {
+        return "Very Satisfactory";
+    } else if (rate >= 2.5 && rate <= 3.499) {
+        return "Satisfactory";
+    } else if (rate >= 1.5 && rate <= 2.499) {
+        return "Moderate";
+    } else if (rate >= 1 && rate <= 1.499) {
+        return "Fair";
+    } else {
+        return "Poor";
+    }
+};
+
+export default function Reports({
+    auth,
+    ipcr,
+    saln,
+}: PageProps & { ipcr: Array<IPCRType>; saln: Array<SALNType> }) {
     const [showIPCRPrint, setShowIPCRPrint] = useState<boolean>(false);
     const [showSALNPrint, setShowSALNPrint] = useState<boolean>(false);
     const [showList, setShowList] = useState<{
         showEmployee: boolean;
         showIPCR: boolean;
         showSALN: boolean;
-    }>({ showEmployee: true, showIPCR: true, showSALN: true });
+    }>({ showEmployee: false, showIPCR: false, showSALN: true });
     const [showIPCRUpload, setShowIPCRUpload] = useState<{
         upload: boolean;
         add: boolean;
@@ -46,8 +86,8 @@ export default function Reports({ auth }: PageProps) {
     }>({ upload: false, add: false });
     const [filterSALN, setFilterSALN] = useState<string>("");
     const [filterIPCR, setFilterIPCR] = useState<string>("");
-    const [isEditIPCR, setIsEditIPCR] = useState<boolean>(false)
-    const [isEditSALN, setIsEditSALN] = useState<boolean>(false)
+    const [isEditIPCR, setIsEditIPCR] = useState<boolean>(false);
+    const [isEditSALN, setIsEditSALN] = useState<boolean>(false);
 
     return (
         <Authenticated
@@ -301,17 +341,19 @@ export default function Reports({ auth }: PageProps) {
                         </div>
                         <ScrollArea className="h-[30rem]">
                             <div className="divide-y">
-                                {IPCR.map((list, index) => (
+                                {ipcr.map((list, index) => (
                                     <div key={index}>
                                         <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
                                             <div className="">{++index}</div>
-                                            <div className="">{list.name}</div>
+                                            <div className="">{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
                                             <div className="">
-                                                {list.position}
+                                                {list.user.position}
                                             </div>
-                                            <div className="">{list.rate}</div>
                                             <div className="">
-                                                {list.equivalent}
+                                                {list.rating}
+                                            </div>
+                                            <div className="">
+                                                {equivalent(+list.rating)}
                                             </div>
                                             <div className="flex items-center justify-center gap-2">
                                                 <Button
@@ -319,8 +361,11 @@ export default function Reports({ auth }: PageProps) {
                                                     size="icon"
                                                     className="size-7"
                                                     onClick={() => {
-                                                        setShowIPCRUpload({...showIPCRUpload, add: true})
-                                                        setIsEditIPCR(true)
+                                                        setShowIPCRUpload({
+                                                            ...showIPCRUpload,
+                                                            add: true,
+                                                        });
+                                                        setIsEditIPCR(true);
                                                     }}
                                                 >
                                                     <PencilLine
@@ -350,8 +395,8 @@ export default function Reports({ auth }: PageProps) {
                 <UploadIPCR
                     show={showIPCRUpload.add || showIPCRUpload.upload}
                     onClose={(close: any) => {
-                        setIsEditIPCR(false)
-                        setShowIPCRUpload(close)
+                        setIsEditIPCR(false);
+                        setShowIPCRUpload(close);
                     }}
                     isAdd={showIPCRUpload.add}
                     isEdit={isEditIPCR}
@@ -434,8 +479,10 @@ export default function Reports({ auth }: PageProps) {
                 {showList.showSALN && (
                     <ScrollArea className="border rounded-md h-[30rem]">
                         <div className="divide-y w-max relative">
-                            <div className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] border-b [&>div]:text-center 
-                            h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-white">
+                            <div
+                                className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] border-b [&>div]:text-center 
+                            h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-white"
+                            >
                                 <div className=""></div>
                                 <div className="">Name</div>
                                 <div className="">TIN</div>
@@ -450,34 +497,27 @@ export default function Reports({ auth }: PageProps) {
                                 </div>
                                 <div className=""></div>
                             </div>
-                            {SALN.map((list, index) => (
+                            {saln.map((list, index) => (
                                 <div
                                     key={index}
-                                    className={cn(
-                                        index === 0 && "!border-t-0",
-                                    )}
+                                    className={cn(index === 0 && "!border-t-0")}
                                 >
                                     <div className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] [&>div]:text-center [&>div]:py-3">
                                         <div className="">{++index}</div>
+                                        <div className="">{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
+
                                         <div className="">
-                                            {`${list["First Name"]} ${list["Last Name"]} ${list["Middle Name"]}`}
-                                        </div>
-                                        <div className="">{list["TIN"]}</div>
-                                        <div className="">
-                                            {list["Position"]}
-                                        </div>
-                                        <div className="">
-                                            {list["Net Worth"]}
+                                            {Array.from({ length: 9 }, () =>
+                                                Math.floor(Math.random() * 10)
+                                            ).join("")}
                                         </div>
                                         <div className="">
-                                            {
-                                                list[
-                                                    "Name of Spouse/Employer/Address"
-                                                ]
-                                            }
+                                            {list.user.position}
                                         </div>
+                                        <div className="">{list.networth}</div>
+                                        <div className="">{list.spouse}</div>
                                         <div className="">
-                                            {list["Joint Filing"]}
+                                            {list.joint ? "/" : ""}
                                         </div>
                                         <div className="flex items-center justify-center gap-2">
                                             <Button
@@ -485,8 +525,11 @@ export default function Reports({ auth }: PageProps) {
                                                 size="icon"
                                                 className="size-7"
                                                 onClick={() => {
-                                                    setIsEditSALN(true)
-                                                    setShowSALNUpload({...showSALNUpload, add: true})
+                                                    setIsEditSALN(true);
+                                                    setShowSALNUpload({
+                                                        ...showSALNUpload,
+                                                        add: true,
+                                                    });
                                                 }}
                                             >
                                                 <PencilLine
@@ -520,8 +563,8 @@ export default function Reports({ auth }: PageProps) {
                 <UploadSALN
                     show={showSALNUpload.add || showSALNUpload.upload}
                     onClose={(close: any) => {
-                        setIsEditSALN(false)
-                        setShowSALNUpload(close)
+                        setIsEditSALN(false);
+                        setShowSALNUpload(close);
                     }}
                     isAdd={showSALNUpload.add}
                     isEdit={isEditSALN}

@@ -77,6 +77,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('reports')->group(function () {
         Route::controller(ReportController::class)->group(function () {
             Route::get('/', 'index')->name('reports');
+            
+            Route::post('/add-ipcr', 'addIPCRRow')->name('reports.addIPCR');
+            Route::post('/add-saln', 'addSALNRow')->name('reports.addSALN');
         });
     });
 

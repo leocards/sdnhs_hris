@@ -16,6 +16,7 @@ import {
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
+import { useToast } from "@/Components/ui/use-toast";
 
 const UPLOADSCHEMA = z
     .object({
@@ -47,13 +48,13 @@ const UPLOADSCHEMA = z
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: requiredError("personnel ID"),
-                    path: ["add"],
+                    path: ["add.personnelid"],
                 });
             } else if (!data.add.rating) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: requiredError("performance rating"),
-                    path: ["add"],
+                    path: ["add.rating"],
                 });
             }
         } else {
@@ -84,10 +85,11 @@ export default function UploadIPCR(props: {
 
     const { setData, post, processing, reset } = useForm<IFormUpload>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
+    const { toast } = useToast()
 
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
-        console.log(formData);
+        setData(formData)
     };
 
     useEffect(() => {
@@ -110,13 +112,48 @@ export default function UploadIPCR(props: {
         }
     }, [show]);
 
+    useEffect(() => {
+        if(isSubmit) {
+            post(route('reports.addIPCR'), {
+                onSuccess: page => {
+                    if(page.props.success) {
+                        toast({
+                            variant: "success",
+                            description: page.props.success.toString()
+                        })
+                        form.reset()
+                        onClose({ upload: false, add: false })
+                    }
+                },
+                onError: error => {
+                    for (const key in error) {
+                        form.setError(key as keyof IFormUpload, {
+                            type: "manual",
+                            message: error[key],
+                        });
+                    }
+                    
+                    if(error[0])
+                        toast({
+                            variant: "destructive",
+                            description: error[0]
+                        })
+                },
+                onFinish: () => {
+                    reset()
+                    setIsSubmit(false)
+                }
+            })
+        }
+    }, [isSubmit])
+
     return (
         <Modal
             show={show}
             onClose={() => onClose({ upload: false, add: false })}
             maxWidth="lg"
         >
-            {processing && <Processing is_processing={processing} />}
+            {processing && <Processing is_processing={processing} backdrop="" />}
             {!processing && (
                 <div className="p-6">
                     <Form {...form}>

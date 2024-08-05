@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('performance_ratings', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained();
+            $table->string('rating');
             $table->timestamps();
         });
     }

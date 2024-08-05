@@ -198,7 +198,7 @@ const Navigation: React.FC<{
             "notification",
             "messages",
         ],
-        "Non-Teaching": [
+        "Non-teaching": [
             "dashboard",
             "service-records",
             "leave",

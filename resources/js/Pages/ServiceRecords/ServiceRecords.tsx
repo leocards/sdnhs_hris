@@ -24,6 +24,7 @@ import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import ViewCertificate from "./ViewCertificate";
+import { AspectRatio } from "@radix-ui/react-aspect-ratio";
 
 export default function ServiceRecords({
     auth,
@@ -69,7 +70,7 @@ export default function ServiceRecords({
                 <div className="grid grid-cols-[repeat(3,1fr),3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Name</div>
                     <div className="">Date modified</div>
-                    <div className="">type</div>
+                    <div className="">File type</div>
                     <div className=""></div>
                 </div>
 
@@ -159,7 +160,11 @@ const CertificateRow: React.FC<{ data: CertificateRowData, onView: CallableFunct
                     <div className="line-clamp-1">{format(data.updated_at, "PPP")}</div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">{type}</div>
+                    {['png', 'jpg', 'jpeg'].includes(type) ? (
+                        <AspectRatio ratio={25/3} className="w-16 rounded-md overflow-hidden">
+                            <img src={data.file_path.replace('public', '/storage')} className="object-cover h-full w-full" />
+                        </AspectRatio>
+                    ) : type}
                 </div>
                 <div className="">
                     <Menubar className="p-0 border-none group size-8 bg-transparent">

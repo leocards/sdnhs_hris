@@ -1,90 +1,148 @@
-import { useEffect, FormEventHandler } from 'react';
-import GuestLayout from '@/Layouts/GuestLayout';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Head, useForm } from '@inertiajs/react';
+import { useEffect, FormEventHandler, useState } from "react";
+import GuestLayout from "@/Layouts/GuestLayout";
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import TextInput from "@/Components/TextInput";
+import { Head, useForm } from "@inertiajs/react";
+import { z } from "zod";
+import { useForm as reactForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/Components/ui/form";
+import { Input } from "@/Components/ui/input";
+import { Button } from "@/Components/ui/button";
+import Processing from "@/Components/Processing";
+import { requiredError } from "../types";
 
-export default function ResetPassword({ token, email }: { token: string, email: string }) {
-    const { data, setData, post, processing, errors, reset } = useForm({
-        token: token,
-        email: email,
-        password: '',
-        password_confirmation: '',
+const RESETPASSWORD = z.object({
+    token: z.string().default(""),
+    email: z.string().min(1, requiredError('email')).default(""),
+    password: z.string().min(1, requiredError('password')).default(""),
+    password_confirmation: z.string().min(1, requiredError('password confirmation')).default(""),
+});
+
+type IFormValues = z.infer<typeof RESETPASSWORD>;
+
+export default function ResetPassword({
+    token,
+    email,
+}: {
+    token: string;
+    email: string;
+}) {
+    const form = reactForm<IFormValues>({
+        resolver: zodResolver(RESETPASSWORD),
+        defaultValues: {
+            token: token,
+            email: email,
+            password: "",
+            password_confirmation: "",
+        },
     });
+    const { setData, post, processing, reset } =
+        useForm<IFormValues>();
+    const [isSubmit, setIsSubmit] = useState<boolean>(false)
 
     useEffect(() => {
         return () => {
-            reset('password', 'password_confirmation');
+            reset("password", "password_confirmation");
         };
     }, []);
 
-    const submit: FormEventHandler = (e) => {
-        e.preventDefault();
-
-        post(route('password.store'));
+    const onFormSubmit = (formData: IFormValues) => {
+        setIsSubmit(true)
+        setData(formData);
     };
+
+    useEffect(() => {
+        if(isSubmit) {
+            post(route("password.store"), {
+                onFinish: () => {
+                    setIsSubmit(false)
+                }
+            });
+        }
+    }, [isSubmit]);
 
     return (
         <GuestLayout>
             <Head title="Reset Password" />
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            <Processing is_processing={processing} />
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onFormSubmit)}>
+                    <div>
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            className="form-input"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
+                    <div className="mt-4">
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            className="form-input"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <div className="mt-4">
+                        <FormField
+                            control={form.control}
+                            name="password_confirmation"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            className="form-input"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
 
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        isFocused={true}
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-
-                    <TextInput
-                        type="password"
-                        name="password_confirmation"
-                        value={data.password_confirmation}
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                    />
-
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Reset Password
-                    </PrimaryButton>
-                </div>
-            </form>
+                    <div className="flex items-center justify-end mt-4">
+                        <Button className="ms-4" disabled={processing}>
+                            Reset Password
+                        </Button>
+                    </div>
+                </form>
+            </Form>
         </GuestLayout>
     );
 }

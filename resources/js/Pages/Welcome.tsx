@@ -9,7 +9,7 @@ export default function Welcome({ status }: { status?: string | expired }) {
             <div className="absolute hidden top-0 left-0 pointer-events-none -z-[1] w-screen h-screen object-cover bg-no-repeat [background-image:url(/storage/assets/background.png)] [background-size:cover]"></div>
 
             <div className="grid md:grid-cols-5 min-h-screen">
-                <div className="col-span-3 max-md:hidden flex items-center p-8 bg-[#F9D930]">
+                <div className="col-span-3 max-md:hidden flex items-center p-8 bg-[#C74375]">
                     <div className="flex items-center mx-auto">
                         <img
                             src="/storage/assets/sdnhs-logo.png"
@@ -17,7 +17,7 @@ export default function Welcome({ status }: { status?: string | expired }) {
                             className="size-60 shrink-0"
                         />
 
-                        <div className="pl-8">
+                        <div className="pl-8 text-yellow-200">
                             <div className="font-bold text-4xl">Welcome to</div>
                             <div className="font-black text-4xl uppercase">
                                 Human Resource

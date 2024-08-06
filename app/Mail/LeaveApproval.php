@@ -17,21 +17,18 @@ class LeaveApproval extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public array $recipient;
+    public $senders;
 
     /**
      * Create a new message instance.
      */
     public function __construct(
-        public User $sender,
+        public $userSender,
         public string $receiver,
         public $status,
         public $approval_message
     ) { 
-        $this->recipient = [
-            "name" => $sender->name(),
-            "position" => $sender->position
-        ];
+        $this->senders = $userSender;
     }
 
     /**
@@ -55,7 +52,7 @@ class LeaveApproval extends Mailable
                 "name" => $this->receiver,
                 "status" => $this->status,
                 "approval_message" => $this->approval_message,
-                "recipient" => $this->recipient
+                "sender" => $this->senders
             ]
         );
     }

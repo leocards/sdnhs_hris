@@ -120,7 +120,8 @@ const LeaveRespond: React.FC<{
                 ) : status === "rejected" ? (
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
-                            <div className="mb-5">Dear {`${user.first_name} ${user.last_name}`}, </div>
+                            <div className="mb-3.5">Dear {`${user.first_name} ${user.last_name}`}, </div>
+                            <div className="mb-5">We regret to inform you that your application for leave has been rejected.</div>
                             <FormField
                                 control={form.control}
                                 name="message"

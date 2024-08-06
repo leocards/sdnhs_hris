@@ -22,7 +22,7 @@ class ProfileUpdate extends Mailable
      */
     public function __construct(
         public string $message,
-        public User $user,
+        public $user,
         public string $email,
     ) { }
 
@@ -32,7 +32,7 @@ class ProfileUpdate extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address($this->email, $this->user->name()),
+            from: new Address($this->email, $this->user['name']),
             to: env("MAIL_FROM_ADDRESS"),
             subject: 'Profile Update',
         );

@@ -83,7 +83,7 @@ export default function samplePdf({ auth }: PageProps) {
                     <span>Back</span>
                 </Button>
                 <PDFDownloadLink
-                    document={<SALNPDF />}
+                    document={<SALNPDF size={"A4"} />}
                     fileName="Application for Leave.pdf"
                 >
                     {({ loading }) =>
@@ -100,7 +100,7 @@ export default function samplePdf({ auth }: PageProps) {
             </div>
             <div className="w-full mx-auto">
                 <PDFViewer className="w-full h-screen">
-                    <IPCRPDF />
+                    <IPCRPDF size={"LETTER"} />
                 </PDFViewer>
             </div>
         </Authenticated>

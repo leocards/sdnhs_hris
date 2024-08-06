@@ -148,7 +148,7 @@ export default function Reports({
                                 )}
                             />
                         </Button>
-                        <div className="font-semibold text-lg">
+                        <div className="font-semibold uppercase">
                             List of Employees
                         </div>
                     </div>
@@ -306,7 +306,7 @@ export default function Reports({
                                 )}
                             />
                         </Button>
-                        <div className="font-semibold text-lg ">IPCR</div>
+                        <div className="font-semibold  ">INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR)</div>
                         <Filter
                             filter="Filter by year"
                             active={filterIPCR}
@@ -402,18 +402,6 @@ export default function Reports({
                                                         strokeWidth={1.8}
                                                     />
                                                 </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="size-7"
-                                                    onClick={() => deleteRow(route('reports.deleteIPCR', [list.id]))}
-                                                    
-                                                >
-                                                    <Trash2
-                                                        className="size-5"
-                                                        strokeWidth={1.8}
-                                                    />
-                                                </Button>
                                             </div>
                                         </div>
                                     </div>
@@ -455,7 +443,7 @@ export default function Reports({
                                 )}
                             />
                         </Button>
-                        <div className="font-semibold text-lg ">SALN</div>
+                        <div className="font-semibold uppercase ">Statement of Assets, Liabilities and Network (SALN)</div>
                         <Filter
                             filter="Filter by year"
                             active={filterSALN}
@@ -545,7 +533,7 @@ export default function Reports({
                                         <div className="">
                                             {list.user.position}
                                         </div>
-                                        <div className="">{list.networth}</div>
+                                        <div className="">&#8369; {list.networth}</div>
                                         <div className="">{list.spouse}</div>
                                         <div className="">
                                             {list.joint ? "/" : ""}
@@ -564,17 +552,6 @@ export default function Reports({
                                                 }}
                                             >
                                                 <PencilLine
-                                                    className="size-5"
-                                                    strokeWidth={1.8}
-                                                />
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="size-7"
-                                                onClick={() => deleteRow(route('reports.deleteSALN', [list.id]))}
-                                            >
-                                                <Trash2
                                                     className="size-5"
                                                     strokeWidth={1.8}
                                                 />
@@ -663,13 +640,13 @@ export const SeniorHighList = [
     "ALABA, KARL RANIEL",
     "BANSAG, ROCHIL T.",
     "BARLUSCA, JUNRRY",
-    "DULATRE, MERYLL D.",
     "BASTIAN, KRISMIE H.",
-    "QUIBO, JANICE C.",
-    "OMBLERO, SARAH JANE R.",
-    "TASIC,  ALMA DONNA L.",
+    "DULATRE, MERYLL D.",
     "ESTRERA, VANESSA A.",
+    "OMBLERO, SARAH JANE R.",
+    "QUIBO, JANICE C.",
     "SANGILAN, DEITHER E.",
+    "TASIC, ALMA DONNA L."
 ];
 
 const Accounting = [

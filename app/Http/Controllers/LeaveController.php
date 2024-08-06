@@ -24,7 +24,9 @@ class LeaveController extends Controller
 {
     public function index()
     {
-
+        if(!in_array(Auth::user()->role, ['HR', 'HOD', 'Principal'])) {
+            return Inertia::render('Leave/Leave', ["leaves" => Leave::with(['user:id,first_name,last_name'])->with('medical_certificate')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(50)]);
+        }
         return Inertia::render('Leave/Leave', ["leaves" => Leave::with(['user:id,first_name,last_name'])->with('medical_certificate')->orderBy('created_at', 'desc')->paginate(50)]);
     }
 
@@ -168,8 +170,10 @@ class LeaveController extends Controller
             $leave->save();
 
             /* Send email */
+            $userSender = User::find(Auth::id());
+            
             Mail::to($user->email)
-                ->queue(new LeaveApproval(User::find(Auth::id()), $user->name(), $request->query('respond'), $request->message));
+                ->queue(new LeaveApproval(["name"=>$userSender->name(), "position" => $userSender->position], $user->name(), $request->query('respond'), $request->message));
 
             DB::commit();
 
@@ -203,9 +207,11 @@ class LeaveController extends Controller
                     'file_name' => "Medical certificate",
                     'file_path' => $path,
                 ]);
+
+                $userSender = User::find(Auth::id());
                 
                 Mail::to(env("MAIL_FROM_ADDRESS"))
-                    ->queue(new ProfileUpdate("recently uploaded a medical certificate.", Auth::user(), Auth::user()->email));
+                    ->queue(new ProfileUpdate("recently uploaded a medical certificate.", ["name" => $userSender->name(), "position" => $userSender->position], Auth::user()->email));
                 
                 DB::commit();
 

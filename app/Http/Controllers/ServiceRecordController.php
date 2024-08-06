@@ -51,7 +51,9 @@ class ServiceRecordController extends Controller
 
             DB::commit();
 
-            Mail:: queue(new ProfileUpdate("recently uploaded a service record: ".$request->certificateName, Auth::user(), Auth::user()->email));
+            $userSender = User::find(Auth::id());
+
+            Mail:: queue(new ProfileUpdate("recently uploaded a service record: ".$request->certificateName, ["name" => $userSender->name(), "position" => $userSender->position], Auth::user()->email));
 
             return back()->with('success', 'Certificate uploaded successfully.');
         } catch (\Throwable $th) {

@@ -3,6 +3,8 @@
 @if ($status === "rejected")
 Dear {{ $name }},
 
+We regret to inform you that your application for leave has been rejected.
+
 {{ $approval_message }}
 
 Thank you for your understanding and cooperation.
@@ -15,8 +17,8 @@ Your application for leave has been approved
 @endif
 
 <br>
-{{ $recipient['name'] }}<br>
-{{ $recipient['position'] }}<br>
+{{ $sender['name'] }}<br>
+{{ $sender['position'] }}<br>
 
 <hr>
 Via SDNHS HRIS

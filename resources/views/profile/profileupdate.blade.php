@@ -1,8 +1,8 @@
 <x-mail::message>
-{{ $user->name() }} {{ $notificationMesssage }}
+{{ $user['name'] }} {{ $notificationMesssage }}
 
 <br>
-{{ $user['first_name'].' '.$user['last_name'] }}<br>
+{{ $user['name']}}<br>
 {{ $user['position'] }}<br>
 
 <hr>

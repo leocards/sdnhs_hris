@@ -21,7 +21,7 @@ Route::get('/', function () {
             return back();
     }
     return Inertia::render('Welcome');
-});
+})->name('/');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

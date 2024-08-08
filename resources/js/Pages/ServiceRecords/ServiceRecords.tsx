@@ -159,12 +159,8 @@ const CertificateRow: React.FC<{ data: CertificateRowData, onView: CallableFunct
                 <div className="">
                     <div className="line-clamp-1">{format(data.updated_at, "PPP")}</div>
                 </div>
-                <div className="">
-                    {['png', 'jpg', 'jpeg'].includes(type) ? (
-                        <AspectRatio ratio={25/3} className="w-16 rounded-md overflow-hidden">
-                            <img src={data.file_path.replace('public', '/storage')} className="object-cover h-full w-full" />
-                        </AspectRatio>
-                    ) : type}
+                <div className="uppercase text-xs">
+                    {['png', 'jpg', 'jpeg'].includes(type) ? "image" : type}
                 </div>
                 <div className="">
                     <Menubar className="p-0 border-none group size-8 bg-transparent">

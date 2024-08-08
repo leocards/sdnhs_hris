@@ -52,7 +52,11 @@ export default function ResetPassword({
 
     useEffect(() => {
         return () => {
-            reset("password", "password_confirmation");
+            form.reset(formValues => ({
+                ...formValues,
+                password: "",
+                password_confirmation: ""
+            }))
         };
     }, []);
 
@@ -64,6 +68,14 @@ export default function ResetPassword({
     useEffect(() => {
         if(isSubmit) {
             post(route("password.store"), {
+                onError: error => {
+                    for (const key in error) {
+                        form.setError(key as keyof IFormValues, {
+                            type: "manual",
+                            message: error[key],
+                        });
+                    }
+                },
                 onFinish: () => {
                     setIsSubmit(false)
                 }
@@ -89,6 +101,7 @@ export default function ResetPassword({
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -104,10 +117,11 @@ export default function ResetPassword({
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Password</FormLabel>
+                                    <FormLabel className="required">Password</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            type="password"
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -123,10 +137,11 @@ export default function ResetPassword({
                             name="password_confirmation"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
+                                    <FormLabel className="required">Confirm Password</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            type="password"
                                             className="form-input"
                                         />
                                     </FormControl>

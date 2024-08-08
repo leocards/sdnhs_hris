@@ -49,6 +49,7 @@ export default function Login({ status }: { status?: string | expired }) {
     };
 
     useEffect(() => {
+        console.log(status)
         return () => {
             reset('password');
         };
@@ -88,7 +89,7 @@ export default function Login({ status }: { status?: string | expired }) {
                 </div>
             ) : status && (
                 <div className="mb-4 font-medium text-sm text-orange-600 bg-orange-200 p-2 text-center rounded">
-                    {typeof status !== 'string' && status?.expired}
+                    {typeof status !== 'string' && (status.expired)}
                 </div>
             )}
 

@@ -76,7 +76,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
             </div>
 
             <div className="space-y-4">
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.personalinformation + "surname"}
@@ -137,7 +137,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.personalinformation + "dateofbirth"}
@@ -246,7 +246,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="space-y-2.5">
                         <FormField
                             control={form.control}
@@ -388,7 +388,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.personalinformation + "gsisid"}
@@ -433,7 +433,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.personalinformation + "sss"}
@@ -517,7 +517,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             </FormItem>
                         )}
                     />
-                    <div className="flex gap-5 items-center ml-7">
+                    <div className="flex [@media(min-width:1070px)]:flex-row flex-col gap-5 [@media(min-width:1070px)]:items-center [@media(max-width:1070px)]:mt-3 ml-3 sm:ml-7">
                         <FormField
                             control={form.control}
                             name={c1.personalinformation + "citizenship.dualby"}
@@ -577,7 +577,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                                 <Button
                                                     variant={"outline"}
                                                     className={cn(
-                                                        "w-96 pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                        "w-full sm:w-96 pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
                                                         !field.value &&
                                                             "text-muted-foreground"
                                                     )}
@@ -620,7 +620,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     <FormLabel className="uppercase">
                         Residential Address
                     </FormLabel>
-                    <div className="grid grid-cols-3 gap-3 mt-2">
+                    <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3 mt-2">
                         <FormField
                             control={form.control}
                             name={
@@ -682,8 +682,6 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    <div className="grid grid-cols-3 gap-3 mt-4">
                         <FormField
                             control={form.control}
                             name={
@@ -747,8 +745,6 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    <div className="mt-4 mx-auto w-fit">
                         <FormField
                             control={form.control}
                             name={
@@ -756,14 +752,14 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 "residentialaddress.zipcode"
                             }
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="[@media(min-width:1156px)]:col-span-3 [@media(min-width:1156px)]:mx-auto">
                                     <FormLabel className="required">
                                         ZIP code
                                     </FormLabel>
                                     <FormControl>
                                         <NumberInput
                                             {...field}
-                                            className="form-input w-52"
+                                            className="form-input [@media(min-width:1156px)]:w-52"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -777,7 +773,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     <FormLabel className="uppercase">
                         Permanent Address
                     </FormLabel>
-                    <div className="grid grid-cols-3 gap-3 mt-2">
+                    <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3 mt-2">
                         <FormField
                             control={form.control}
                             name={
@@ -839,8 +835,6 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    <div className="grid grid-cols-3 gap-3 mt-4">
                         <FormField
                             control={form.control}
                             name={
@@ -904,8 +898,6 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 </FormItem>
                             )}
                         />
-                    </div>
-                    <div className="mt-4 mx-auto w-fit">
                         <FormField
                             control={form.control}
                             name={
@@ -913,14 +905,14 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 "permanentaddress.zipcode"
                             }
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem className="[@media(min-width:1156px)]:col-span-3 [@media(min-width:1156px)]:mx-auto">
                                     <FormLabel className="required">
                                         ZIP code
                                     </FormLabel>
                                     <FormControl>
                                         <NumberInput
                                             {...field}
-                                            className="form-input w-52"
+                                            className="form-input [@media(min-width:1156px)]:w-52"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -930,7 +922,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid sm:grid-cols-3 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.personalinformation + "telephone"}

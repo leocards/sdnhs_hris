@@ -136,7 +136,7 @@ export default function Authenticated({
 
             {showScrollUp && (
                 <div className="fixed z-[100] bottom-4 right-5">
-                    <Button size="icon" onClick={scrollToTop}>
+                    <Button size="icon" variant="outline" onClick={scrollToTop}>
                         <ChevronUp className="size-6" />
                     </Button>
                 </div>

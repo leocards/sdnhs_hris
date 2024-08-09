@@ -98,6 +98,7 @@ export default function Question41({ form }: { form: any }) {
                     <Button
                         className="px-7 ml-auto"
                         onClick={() => append(C4Q41)}
+                        type="button"
                     >
                         Add new row
                     </Button>

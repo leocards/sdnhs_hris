@@ -17,7 +17,7 @@ export default function EducationalBackground({
 
             <div className="space-y-4">
                 <FormLabel className="opacity-60">ELEMENTARY</FormLabel>
-                <div className="grid grid-cols-[1fr,1fr,repeat(2,7rem)] gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-[1fr,1fr,repeat(2,7rem)] sm:grid-cols-2 gap-3">
                     <FormField 
                         control={form.control}
                         name={c1.educationalbackground+"elementary.nameofschool"}
@@ -72,7 +72,7 @@ export default function EducationalBackground({
                         )}
                     />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.educationalbackground+"elementary.highestlvl"}
@@ -116,7 +116,7 @@ export default function EducationalBackground({
             </div>
             <div className="space-y-4">
                 <FormLabel className="opacity-60">SECONDARY</FormLabel>
-                <div className="grid grid-cols-[1fr,1fr,repeat(2,7rem)] gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-[1fr,1fr,repeat(2,7rem)] sm:grid-cols-2 gap-3">
                     <FormField 
                         control={form.control}
                         name={c1.educationalbackground+"secondary.nameofschool"}
@@ -171,7 +171,7 @@ export default function EducationalBackground({
                         )}
                     />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.educationalbackground+"secondary.highestlvl"}
@@ -215,7 +215,7 @@ export default function EducationalBackground({
             </div>
             <div className="space-y-4">
                 <FormLabel className="opacity-60">VOCATIONAL/TRADE COURSE</FormLabel>
-                <div className="grid grid-cols-[1fr,1fr,repeat(2,7rem)] gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-[1fr,1fr,repeat(2,7rem)] sm:grid-cols-2 gap-3">
                     <FormField 
                         control={form.control}
                         name={c1.educationalbackground+"vocational.nameofschool"}
@@ -270,7 +270,7 @@ export default function EducationalBackground({
                         )}
                     />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.educationalbackground+"vocational.highestlvl"}
@@ -314,7 +314,7 @@ export default function EducationalBackground({
             </div>
             <div className="space-y-4">
                 <FormLabel className="opacity-60">COLLEGE</FormLabel>
-                <div className="grid grid-cols-[1fr,1fr,repeat(2,7rem)] gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-[1fr,1fr,repeat(2,7rem)] sm:grid-cols-2 gap-3">
                     <FormField 
                         control={form.control}
                         name={c1.educationalbackground+"college.nameofschool"}
@@ -369,7 +369,7 @@ export default function EducationalBackground({
                         )}
                     />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.educationalbackground+"college.highestlvl"}
@@ -413,7 +413,7 @@ export default function EducationalBackground({
             </div>
             <div className="space-y-4">
                 <FormLabel className="opacity-60">GRADUATE STUDIES</FormLabel>
-                <div className="grid grid-cols-[1fr,1fr,repeat(2,7rem)] gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-[1fr,1fr,repeat(2,7rem)] sm:grid-cols-2 gap-3">
                     <FormField 
                         control={form.control}
                         name={c1.educationalbackground+"graduatestudies.nameofschool"}
@@ -468,7 +468,7 @@ export default function EducationalBackground({
                         )}
                     />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
                         name={c1.educationalbackground+"graduatestudies.highestlvl"}

@@ -41,7 +41,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                 <div className="space-y-4">
                     <FormLabel>SPOUSE NAME</FormLabel>
 
-                    <div className="grid grid-cols-4 gap-3">
+                    <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
                             name={c1.familybackground + "spouse.surname"}
@@ -116,7 +116,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                     </div>
 
-                    <div className="grid grid-cols-4 gap-3">
+                    <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
                             name={c1.familybackground + "spouse.occupation"}
@@ -201,7 +201,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                     {fields.map((item, index) => (
                         <div
                             key={item.id}
-                            className="grid grid-cols-2 gap-3 relative"
+                            className="grid sm:grid-cols-2 gap-3 relative"
                         >
                             <FormField
                                 control={form.control}
@@ -253,7 +253,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                 <div className="space-y-4">
                     <FormLabel>FATHER'S NAME</FormLabel>
 
-                    <div className="grid grid-cols-4 gap-3">
+                    <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
                             name={c1.familybackground + "father.surname"}
@@ -332,7 +332,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                 <div className="space-y-4">
                     <FormLabel>MOTEHR'S MAIDEN NAME</FormLabel>
 
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
                             name={c1.familybackground + "mother.surname"}

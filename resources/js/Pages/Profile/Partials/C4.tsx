@@ -40,7 +40,7 @@ export default function C4() {
                 <GovernmentIds form={form} />
 
                 <div className="mt-10 pt-2 border-t flex">
-                    <Button type="submit" className="px-10 ml-auto">Save C4</Button>
+                    <Button type="submit" className="px-10 ml-auto max-sm:w-full">Save C4</Button>
                 </div>
             </form>
         </Form>

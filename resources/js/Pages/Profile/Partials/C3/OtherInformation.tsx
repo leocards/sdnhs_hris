@@ -18,7 +18,7 @@ export default function OtherInformation({ form }: { form: any }) {
                 VIII.  OTHER INFORMATION
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid 2xl:grid-cols-3 [@media(min-width:1180px)]:grid-cols-2 max-lg:grid-cols-2 max-md:grid-cols-1 gap-3">
                 <div>
                     <FormLabel>Special skills & Hobbies</FormLabel>
                     <Informations

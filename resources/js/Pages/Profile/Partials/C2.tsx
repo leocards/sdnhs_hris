@@ -30,7 +30,7 @@ const C2: React.FC<C2Props> = () => {
                 <WorkExperience form={form} />
 
                 <div className="mt-10 pt-2 border-t flex">
-                    <Button type="submit" className="px-10 ml-auto">Save C2</Button>
+                    <Button type="submit" className="px-10 ml-auto max-sm:w-full">Save C2</Button>
                 </div>
             </form>
         </Form>

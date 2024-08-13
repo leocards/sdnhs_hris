@@ -8,6 +8,7 @@ import {
 import { Choices } from "./Choices";
 import DatePicker from "@/Components/ui/date-picker";
 import { Input } from "@/Components/ui/input";
+import { CalendarInput } from "../C1/FamilyBackground";
 
 export default function Question35to37({ form }: { form: any }) {
     return (
@@ -32,25 +33,16 @@ export default function Question35to37({ form }: { form: any }) {
                         <div className="ml-5">
                             <div>If YES, give details:</div>
                         </div>
-                        <FormField
-                            control={form.control}
-                            name="c4.q35.choiceb.datefiled"
-                            render={({ field }) => (
-                                <FormItem className="ml-5">
-                                    <FormLabel>Date Filed:</FormLabel>
-                                    <DatePicker
-                                        field={field}
-                                        isForm
-                                        disabled={
-                                            form.watch(
-                                                "c4.q35.choiceb.choices"
-                                            ) !== "Yes"
-                                        }
-                                    />
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                        <div className="ml-5">
+                            <CalendarInput 
+                                name="c4.q35.choiceb.datefiled"
+                                form={form.control}
+                                label="Date Filed:"
+                                disabled={form.watch(
+                                    "c4.q35.choiceb.choices"
+                                ) !== "Yes"}
+                            />
+                        </div>
                         <FormField
                             control={form.control}
                             name="c4.q35.choiceb.statusofcase"

@@ -49,7 +49,7 @@ export default function VoluntaryWork({ form }: { form: any }) {
                                 </Button>
                             )}
                         </div>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid xl:grid-cols-3 sm:grid-cols-2 gap-3">
                             <FormField 
                                 control={form.control}
                                 name={c3.voluntarywork+`${index}.nameandaddress`}
@@ -83,7 +83,7 @@ export default function VoluntaryWork({ form }: { form: any }) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-[10rem,1fr] gap-3">
+                        <div className="grid sm:grid-cols-[10rem,1fr] gap-3">
                             <FormField 
                                 control={form.control}
                                 name={c3.voluntarywork+`${index}.numberofhours`}

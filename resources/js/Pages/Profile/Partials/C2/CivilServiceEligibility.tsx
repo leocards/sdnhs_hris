@@ -48,7 +48,7 @@ export default function CivilServiceEligibility({
                                 </Button>
                             )}
                         </div>
-                        <div className="grid grid-cols-[1fr,auto] gap-3">
+                        <div className="sm:grid [@media(min-width:1290px)]:grid-cols-[1fr,auto] sm:grid-cols-2 gap-3 max-sm:space-y-3">
                             <FormField
                                 control={form.control}
                                 name={
@@ -56,7 +56,7 @@ export default function CivilServiceEligibility({
                                     `${index}.eligibility`
                                 }
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="[@media(max-width:1290px)]:col-span-2">
                                         <FormLabel>
                                             Career service/RA 1080 (BOARD/BAR)
                                             under special Laws/CES/CSEE Barangay
@@ -79,23 +79,20 @@ export default function CivilServiceEligibility({
                                     `${index}.rating`
                                 }
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="max-sm:col-span-1">
                                         <FormLabel>
                                             Rating (If applicable)
                                         </FormLabel>
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input w-52"
+                                                className="form-input [@media(min-width:1290px)]:w-52"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                        </div>
-
-                        <div className="grid grid-cols-[20rem,1fr] gap-3">
                             <CalendarInput
                                 form={form}
                                 label="Date of Examination/Conferment"
@@ -130,7 +127,7 @@ export default function CivilServiceEligibility({
 
                         <div>
                             <FormLabel>LICENCE (If applicable)</FormLabel>
-                            <div className="grid grid-cols-2 gap-3">
+                            <div className="grid sm:grid-cols-2 gap-3">
                                 <FormField
                                     control={form.control}
                                     name={
@@ -167,9 +164,7 @@ export default function CivilServiceEligibility({
                     <Button
                         type="button"
                         className="px-8 ml-auto"
-                        onClick={() =>
-                            append(C2CivilService)
-                        }
+                        onClick={() => append(C2CivilService)}
                     >
                         Add
                     </Button>

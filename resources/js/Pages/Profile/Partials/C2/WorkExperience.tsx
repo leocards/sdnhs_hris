@@ -59,7 +59,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                 </Button>
                             )}
                         </div>
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid xl:grid-cols-3 sm:grid-cols-2 gap-3">
                             <CalendarInput
                                 form={form}
                                 label={<div className="mb-1.5"><span className="text-xs text-foreground/60">(Inclusive date)</span> From</div>}
@@ -84,7 +84,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                     c2.workexperience + `${index}.positiontitle`
                                 }
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="sm:col-span-2">
                                         <FormLabel>
                                             Position title  <span className="text-xs">(Write in full/Do not
                                             abbreviate)</span>
@@ -101,7 +101,7 @@ export default function WorkExperience({ form }: { form: any }) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3">
+                        <div className="grid sm:grid-cols-2 gap-3">
                             <FormField
                                 control={form.control}
                                 name={
@@ -145,7 +145,7 @@ export default function WorkExperience({ form }: { form: any }) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-[1fr,1fr,15rem] gap-3">
+                        <div className="grid sm:grid-cols-[1fr,1fr,15rem] gap-3">
                             <FormField
                                 control={form.control}
                                 name={

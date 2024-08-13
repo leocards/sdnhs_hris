@@ -78,6 +78,11 @@ class User extends Authenticatable
         return $this->first_name. ' ' .$this->last_name;
     }
 
+    public function completeName()
+    {
+        return $this->first_name. ' ' .($this->middle_name ? substr($this->middle_name, 0, 1).'.' : ''). ' ' .$this->last_name;
+    }
+
     public function scopeSearchByFullName($query, $name)
     {
         return $query->where(DB::raw("CONCAT(first_name, ' ', last_name)"), 'LIKE', "%{$name}%");

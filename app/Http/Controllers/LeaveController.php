@@ -33,11 +33,12 @@ class LeaveController extends Controller
     public function view(Leave $leave = null, User $user = null)
     {
         if($leave)
-            $leave->load(['details_of_leave', 'details_of_action_leave', 'medical_certificate']);
+            $leave->load(['details_of_leave', 'details_of_action_leave', 'medical_certificate', 'user']);
 
-        return Inertia::render('Leave/LeaveView', [
+        return Inertia::render('Leave/ApplicationForLeavePDF', [
             "user" => $user?->only(['id', 'first_name', 'last_name']),
-            "leave" => $leave
+            "leave" => $leave,
+            "hr" => User::where('role', 'HR')->first()->completeName()
         ]);
     }
 

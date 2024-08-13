@@ -31,7 +31,7 @@ export default function Question41({ form }: { form: any }) {
                 {fields.map((item, index) => (
                     <div
                         key={item.id}
-                        className="grid grid-cols-3 gap-3 relative mt-4"
+                        className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3 relative mt-4"
                     >
                         {fields.length > 1 && (
                             <Button

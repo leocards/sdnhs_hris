@@ -399,7 +399,8 @@ export const CalendarInput: React.FC<{
     name: string;
     label?: string | React.ReactNode;
     isRequired?: boolean;
-}> = ({ form, name, label = 'Date of birth', isRequired = true }) => {
+    disabled?: boolean;
+}> = ({ form, name, label = 'Date of birth', isRequired = true, disabled }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
     return (
@@ -426,6 +427,7 @@ export const CalendarInput: React.FC<{
                                         "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
                                         !field.value && "text-muted-foreground"
                                     )}
+                                    disabled={disabled}
                                 >
                                     {field.value ? (
                                         <span>

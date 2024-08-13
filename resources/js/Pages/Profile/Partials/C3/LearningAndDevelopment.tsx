@@ -49,12 +49,12 @@ export default function LearningAndDevelopment({form}: {form:any}) {
                             )}
                         </div>
 
-                        <div className="grid grid-cols-[1fr,repeat(2,12rem)] gap-3">
+                        <div className="grid [@media(min-width:1290px)]:grid-cols-[1fr,repeat(2,12rem)] sm:grid-cols-2 gap-3">
                             <FormField 
                                 control={form.control}
                                 name={c3.landd+`${index}.title`}
                                 render={({ field }) => (
-                                    <FormItem>
+                                    <FormItem className="sm:col-span-2">
                                         <FormLabel>Title of Learning and Development Interventions/Training Programs (Write in full)</FormLabel>
                                         <FormControl>
                                             <Input {...field} className="form-input" />
@@ -83,7 +83,7 @@ export default function LearningAndDevelopment({form}: {form:any}) {
                             />
                         </div>
 
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="grid [@media(min-width:1290px)]:grid-cols-3 [@media(min-width:1090px)]:grid-cols-2 max-lg:grid-cols-2 max-md:grid-cols-1 gap-3">
                             <FormField 
                                 control={form.control}
                                 name={c3.landd+`${index}.numberofhours`}

@@ -31,7 +31,7 @@ const C3 = () => {
                 <OtherInformation form={form} />
 
                 <div className="mt-10 pt-2 border-t flex">
-                    <Button type="submit" className="px-10 ml-auto">Save C3</Button>
+                    <Button type="submit" className="px-10 ml-auto max-sm:w-full">Save C3</Button>
                 </div>
             </form>
         </Form>

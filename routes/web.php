@@ -52,13 +52,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
 
         Route::controller(PersonnelController::class)->group(function () {
-            Route::get('/list', 'personnel_list')->name('personnel.list');
-        })/* ->middleware(['role:HR,HOD']) */;
+            Route::get('/json', 'indexJson')->name('personnel.json');
+        })->middleware(['role:HR,HOD']);
     });
     
     Route::prefix('leave')->group(function () {
         Route::controller(LeaveController::class)->group(function () {
             Route::get('/', 'index')->name('leave');
+            Route::get('/json', 'indexJson')->name('leave.json');
             Route::get('/view/{leave?}/{user?}', 'view')->name('leave.view');
             Route::get('/leave/apply-for-leave', 'apply_for_leave')->name('leave.apply');
 

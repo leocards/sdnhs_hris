@@ -11,20 +11,9 @@ import {
     MenubarSeparator,
     MenubarTrigger,
 } from "@/Components/ui/menubar";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/Components/ui/pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { cn } from "@/lib/utils";
 import { PaginateData, PageProps } from "@/types";
-import { router, usePage } from "@inertiajs/react";
-import axios from "axios";
+import { router } from "@inertiajs/react";
 import {
     EllipsisVertical,
     Eye,
@@ -39,13 +28,24 @@ import { PersonnelListProps } from "./types";
 import UploadPDS from "./UploadPDS";
 import ViewPDS from "./ViewPds";
 import PersonnelDetails from "./PersonnelDetails";
+import PaginationButton from "@/Components/PaginationButton";
+import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
+import DataList from "@/Components/DataList";
 
 interface PersonnelProps extends PageProps {
-    personnel: PaginateData;
+    pageData: PaginateData;
 }
 
-export default function Personnel({ auth, personnel }: PersonnelProps) {
-    const [personnelList, setPersonnelList] = useState<PaginateData>(personnel);
+export default function Index({ auth, pageData }: PersonnelProps) {
+
+    return (
+        <PageListProvider initialValue={pageData}>
+            <Personnel auth={auth} pageData={pageData} />
+        </PageListProvider>
+    )
+}
+
+function Personnel({ auth, pageData }: PersonnelProps) {
     const [filter, setFilter] = useState<string>("");
     const [sort, setSort] = useState<{ sort: string; order: string }>({
         sort: "Name",
@@ -55,20 +55,26 @@ export default function Personnel({ auth, personnel }: PersonnelProps) {
     const [showPDS, setShowPDS] = useState<boolean>(false)
     const [showPersonnelDetails, setShowPersonnelDetails] = useState<boolean>(false)
     const [selectedPersonnel, setSelectedPersonnel] = useState<any>(null)
+    const { data, setList, pages, clearList, setLoading, loading } = usePageList()
 
     const navigateTo = (nav: string) => {
         router.get(route(nav));
     };
 
-    const processData = (response: any) => {
-        const { data } = response;
-        setPersonnelList(data);
-    };
-
-    const getNextPage = () => {
-        if (personnelList.next_page_url)
-            axios.get(personnelList.next_page_url).then(processData);
-    };
+    const getPageData = (page?: number) => {
+        setLoading(true)
+        window.axios.get(route("personnel.json", {
+            _query: {
+                filter: filter,
+                sort: sort,
+                page: page
+            }
+        })).then((response) => {
+            const data = response.data
+            setList(data)
+            setLoading(false)
+        })
+    }
 
     const onClickMenu = (action: string, id: any) => {
         if (action === "upload_pds") {
@@ -89,8 +95,16 @@ export default function Personnel({ auth, personnel }: PersonnelProps) {
     }[auth.user.role];
 
     useEffect(() => {
-        axios.get(route("personnel.list")).then(processData);
-    }, []);
+        if(filter != "" || sort.sort != "Name" || sort.order != "ASC") {
+            getPageData(pages?.currentPage)
+        } else {
+            setList(pageData)
+        }
+
+        return () => {
+            clearList()
+        }
+    }, [filter, sort])
 
     return (
         <Authenticated
@@ -140,8 +154,9 @@ export default function Personnel({ auth, personnel }: PersonnelProps) {
                         position="BOTTOMLEFT"
                         active={filter}
                         items={[
-                            { filter: "Department", onClick: setFilter },
-                            { filter: "Position", onClick: setFilter },
+                            { filter: "Junior High School", onClick: setFilter },
+                            { filter: "Senior High School", onClick: setFilter },
+                            { filter: "Accounting", onClick: setFilter },
                             { filter: "Teaching", onClick: setFilter },
                             { filter: "Non-teaching", onClick: setFilter },
                         ]}
@@ -185,7 +200,7 @@ export default function Personnel({ auth, personnel }: PersonnelProps) {
                 )}
             </div>
 
-            <div className="divide-y min-h-[22rem] flex flex-col ">
+            <div className="divide-y min-h-[22rem]">
                 <div className="grid grid-cols-[repeat(4,minmax(6rem,1fr)),8rem,3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Name</div>
                     <div className="">Email</div>
@@ -194,71 +209,19 @@ export default function Personnel({ auth, personnel }: PersonnelProps) {
                     <div className="">Leave Credits</div>
                     <div className=""></div>
                 </div>
-                {personnelList.data.length === 0 && (
-                    <div className="text-center py-4 opacity-65">
-                        No records
-                    </div>
-                )}
-                <div className="text-center py-4 opacity-65 hidden">
-                    No results found for "lorem ipsum"
-                </div>
 
-                {personnelList.data.map((data, index) => (
-                    <PersonnelRow
-                        key={index}
-                        user={data}
-                        onClick={onClickMenu}
-                        auth={auth.user.role}
-                    />
-                ))}
+                <DataList empty={data.length === 0} loading={loading}>
+                    {data.map((data, index) => (
+                        <PersonnelRow
+                            key={index}
+                            user={data}
+                            onClick={onClickMenu}
+                            auth={auth.user.role}
+                        />
+                    ))}
+                </DataList>
 
-                {personnelList.total > 50 && (
-                    <Pagination className="!mt-auto pt-2">
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious
-                                    href="#"
-                                    className={cn(
-                                        personnelList.current_page === 1 &&
-                                            "opacity-60 pointer-events-none"
-                                    )}
-                                />
-                            </PaginationItem>
-                            {Array.from({
-                                length:
-                                    personnelList.last_page <= 3
-                                        ? personnelList.last_page
-                                        : personnelList.last_page - 3,
-                            }).map((_, index) => (
-                                <PaginationItem key={index}>
-                                    <PaginationLink
-                                        href="#"
-                                        isActive={
-                                            personnelList.current_page === ++index
-                                        }
-                                    >
-                                        <span>{index}</span>
-                                    </PaginationLink>
-                                </PaginationItem>
-                            ))}
-                            {personnelList.last_page > 3 && (
-                                <PaginationItem>
-                                    <PaginationEllipsis />
-                                </PaginationItem>
-                            )}
-                            <PaginationItem>
-                                <PaginationNext
-                                    href="#"
-                                    className={cn(
-                                        !personnelList.next_page_url &&
-                                            "opacity-60 pointer-events-none"
-                                    )}
-                                    onClick={getNextPage}
-                                />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                )}
+                <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
             </div>
 
             <UploadPDS show={showUploadPDS} onClose={setShowUploadPDS} />

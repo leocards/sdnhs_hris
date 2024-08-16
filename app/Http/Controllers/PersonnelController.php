@@ -7,6 +7,7 @@ use App\Models\PersonnelTardiness;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,11 @@ class PersonnelController extends Controller
 {
     public function index() 
     {
-        return Inertia::render('Personnel/Personnel', ['personnel' => User::whereNot('id', Auth::id())->paginate(50)]);
+        return Inertia::render('Personnel/Personnel', [
+            'pageData' => User::whereNot('id', Auth::id())
+                ->orderBy('first_name', 'ASC')
+                ->paginate(50)
+        ]);
     }
 
     public function create() 
@@ -37,9 +42,36 @@ class PersonnelController extends Controller
         return Inertia::render('Personnel/PersonnelTardiness', ['attendance' => PersonnelTardiness::orderBy('created_at', 'desc')->paginate(50)]);
     }
 
-    public function personnel_list() 
+    public function indexJson(Request $request): JsonResponse
     {
-        $personnel = User::whereNot('id', Auth::id())->paginate(50);
+        $personnel = User::whereNot('id', Auth::id())
+            ->when($request->query('filter'), function ($query) use ($request) {
+                $filter = $request->query('filter');
+
+                if(in_array($filter, ['Junior High School', 'Senior High School', 'Accounting']))
+                    $query->where('department', 'LIKE', $filter)->whereNot('role', 'HOD');
+
+                if(in_array($filter, ['Non-teaching', 'Teaching', 'HOD']))
+                    $query->where('role', 'LIKE', $filter);
+
+            })
+            ->when($request->query('sort'), function ($query) use ($request) {
+                $sort = $request->query('sort');
+                
+                if($sort['sort'] === "Name")
+                    $query->orderBy('first_name', $sort['order']);
+
+                if($sort['sort'] === "Email")
+                    $query->orderBy('email', $sort['order']);
+
+                if($sort['sort'] === "Position")
+                    $query->orderBy('position', $sort['order']);
+
+                if($sort['sort'] === "Department")
+                    $query->orderBy('department', $sort['order']);
+
+            })
+            ->paginate(50);
 
         return response()->json($personnel);
     }

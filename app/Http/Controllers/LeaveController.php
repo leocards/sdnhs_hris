@@ -24,15 +24,59 @@ class LeaveController extends Controller
 {
     public function index()
     {
-        if(!in_array(Auth::user()->role, ['HR', 'HOD', 'Principal'])) {
-            return Inertia::render('Leave/Leave', ["leaves" => Leave::with(['user:id,first_name,last_name'])->with('medical_certificate')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(50)]);
-        }
-        return Inertia::render('Leave/Leave', ["leaves" => Leave::with(['user:id,first_name,last_name'])->with('medical_certificate')->orderBy('created_at', 'desc')->paginate(50)]);
+        return Inertia::render('Leave/Leave', [
+            "pageData" => Leave::with(['user:id,first_name,last_name'])
+                ->when(!in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']), function ($query) {
+                    return $query->where('user_id', Auth::id());
+                })
+                ->with('medical_certificate')
+                ->orderBy('created_at', 'desc')
+                ->paginate(50)
+        ]);
+    }
+
+    public function indexJson(Request $request)
+    {
+        return response()->json(
+            Leave::with(['user:id,first_name,last_name'])
+                ->with('medical_certificate')
+                ->when($request->query('filter') && $request->query('filter') != "All", function ($query) use ($request) {
+                    return $query->where('hr_status', $request->query('filter'))
+                        ->orWhere('principal_status', $request->query('filter'));
+                })
+                ->when(!in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']), function ($query) {
+                    return $query->where('user_id', Auth::id());
+                })
+                ->when($request->query('sort')['sort'], function ($query) use ($request) {
+                    if($request->query('sort')['sort'] == "Date created"){
+                        $query->orderBy('created_at', $request->query('sort')['order']);
+                    }
+                    if($request->query('sort')['sort'] == "Leave type"){
+                        $query->orderBy('leave_type', $request->query('sort')['order']);
+                    }
+                    if(in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']))
+                        if ($request->query('sort')['sort'] == "Name"){
+                            $query->join('users', 'users.id', '=', 'leaves.user_id')
+                                ->orderBy('users.first_name', $request->query('sort')['order'])
+                                ->select('leaves.*');
+                        } 
+                })
+                ->when($request->query('search'), function ($query) use ($request) {
+                    $search = $request->query('search');
+                    $query->join('users', 'users.id', '=', 'leaves.user_id')
+                        ->where('leaves.leave_type', 'LIKE', '%'.$search.'%')
+                        ->when(in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']), function ($query) use ($search) {
+                            $query->orWhere('users.first_name', 'LIKE', '%'.$search.'%');
+                        })
+                        ->select('leaves.*');
+                })
+                ->paginate(50)
+        );
     }
 
     public function view(Leave $leave = null, User $user = null)
     {
-        if($leave)
+        if ($leave)
             $leave->load(['details_of_leave', 'details_of_action_leave', 'medical_certificate', 'user']);
 
         return Inertia::render('Leave/ApplicationForLeavePDF', [
@@ -54,7 +98,7 @@ class LeaveController extends Controller
         DB::beginTransaction();
         try {
 
-            if(Auth::user()->leave_credits < (integer) $request->numDaysApplied && $request->leavetype['type'] !== "Maternity Leave") {
+            if (Auth::user()->leave_credits < (int) $request->numDaysApplied && $request->leavetype['type'] !== "Maternity Leave") {
                 throw new Exception("You don't have enough leave credits.", 1);
             }
 
@@ -117,10 +161,10 @@ class LeaveController extends Controller
                 'approved_for_others' => $request->approvedFor['others'],
                 'disapproved' => $request->disapprovedDueTo
             ]);
-            
-            if($request->hasFile('medicalForMaternity')) {
+
+            if ($request->hasFile('medicalForMaternity')) {
                 $path = $request->file('medicalForMaternity')->store('public/medical');
-    
+
                 Medical::create([
                     'leave_id' => $leave->id,
                     'file_name' => "Medical 41",
@@ -133,7 +177,7 @@ class LeaveController extends Controller
         } catch (\Throwable $th) {
             DB::rollBack();
 
-            if(isset($path)) {
+            if (isset($path)) {
                 Storage::delete($path);
             }
 
@@ -151,16 +195,16 @@ class LeaveController extends Controller
         DB::beginTransaction();
         try {
 
-            if($request->respond === "approved") {
-                if(Auth::user()->role === "HR") {
+            if ($request->respond === "approved") {
+                if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Approved";
                 } else {
                     $leave->principal_status = "Approved";
                 }
-                $user->leave_credits = ($user->leave_credits - ((integer) $leave->num_days_applied));
+                $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
                 $user->save();
             } else {
-                if(Auth::user()->role === "HR") {
+                if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Rejected";
                     $leave->hr_reject_msg = $request->message;
                 } else {
@@ -172,9 +216,9 @@ class LeaveController extends Controller
 
             /* Send email */
             $userSender = User::find(Auth::id());
-            
+
             Mail::to($user->email)
-                ->queue(new LeaveApproval(["name"=>$userSender->name(), "position" => $userSender->position], $user->name(), $request->query('respond'), $request->message));
+                ->queue(new LeaveApproval(["name" => $userSender->name(), "position" => $userSender->position], $user->name(), $request->query('respond'), $request->message));
 
             DB::commit();
 
@@ -196,9 +240,9 @@ class LeaveController extends Controller
 
         DB::beginTransaction();
         try {
-            if($request->auth != Auth::id()) throw new Exception("Unauthorized access");
+            if ($request->auth != Auth::id()) throw new Exception("Unauthorized access");
 
-            if($request->hasFile('file')) {
+            if ($request->hasFile('file')) {
                 $path = $request->file('file')->store('public/medical');
 
                 Medical::where('leave_id', $leave_id->id)->whereNull('is_old_version')->update(['is_old_version' => true]);
@@ -210,17 +254,16 @@ class LeaveController extends Controller
                 ]);
 
                 $userSender = User::find(Auth::id());
-                
+
                 Mail::to(env("MAIL_FROM_ADDRESS"))
                     ->queue(new ProfileUpdate("recently uploaded a medical certificate.", ["name" => $userSender->name(), "position" => $userSender->position], Auth::user()->email));
-                
+
                 DB::commit();
 
                 return back()->with('success', 'Medical certificate uploaded successfully.');
             } else {
                 throw new Exception("Missing file");
             }
-
         } catch (\Throwable $th) {
             DB::rollBack();
 

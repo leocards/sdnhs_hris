@@ -37,7 +37,7 @@ export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ user: User; header?: ReactNode }>) {
-    const isLoading = isPageLoading()
+    const isLoading = isPageLoading();
     const {
         props: { auth, message },
     } = usePage<any>();
@@ -121,13 +121,16 @@ export default function Authenticated({
 
             <main className="flex flex-1 flex-col pb-2 lg:min-w-0 lg:pl-72 lg:pr-2 lg:pt-2">
                 <div className="grow p-6 lg:rounded-lg lg:bg-white lg:p-10 lg:shadow-sm lg:ring-1 lg:ring-zinc-950/5 dark:lg:bg-zinc-900 dark:lg:ring-white/10">
-                    <div className={cn("mx-auto max-w-6xl", isLoading && "flex flex-col h-full")}>
-                        {
-                            isLoading ? <Loading /> : (<>
-                                <header className="">{header}</header>
-                                {children}
-                            </>)
-                        }
+                    <div
+                        className={cn(
+                            "mx-auto max-w-6xl",
+                            isLoading && "flex flex-col h-full"
+                        )}
+                    >
+                        <Loading>
+                            <header className="">{header}</header>
+                            {children}
+                        </Loading>
                     </div>
                 </div>
             </main>

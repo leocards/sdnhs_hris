@@ -11,36 +11,44 @@ import {
     MenubarContent,
     MenubarItem,
 } from "@/Components/ui/menubar";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/Components/ui/pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
 import { PageProps, PaginateData, User } from "@/types";
 import { router, usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import { EllipsisVertical, Eye, Search, Trash2, Upload, X } from "lucide-react";
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import UploadMedical from "./UploadMedical";
 import ViewMedical from "./ViewMedical";
+import useDebounce from "@/hooks/useDebounce";
+import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
+import PaginationButton from "@/Components/PaginationButton";
 
-export default function Leave({
+export default function Index({
     auth,
-    leaves,
+    pageData,
 }: PageProps & {
-    leaves: PaginateData;
+    pageData: PaginateData;
+}) {
+
+    return (
+        <PageListProvider initialValue={pageData}>
+            <Leave auth={auth} pageData={pageData} />
+        </PageListProvider>
+    )
+}
+
+function Leave({
+    auth,
+    pageData,
+}: PageProps & {
+    pageData: PaginateData;
 }) {
     const [search, setSearch] = useState<string>("");
     const [filter, setFilter] = useState<string>("All");
     const [sort, setSort] = useState<{ sort: string; order: string }>({
-        sort: "Name",
-        order: "ASC",
+        sort: "Date created",
+        order: "DESC",
     });
     const [showMedicalUpload, setShowMedicalUpload] = useState<boolean>(false);
     const [viewMedical, setViewMedical] = useState<boolean>(false);
@@ -53,6 +61,8 @@ export default function Leave({
         medical: "",
         user: { id: null, first_name: "", last_name: "" },
     });
+    const { setList, data, pages, clearList } = usePageList()
+    const debounceSearch = useDebounce<string>(search, search?700:0)
 
     const searchRef = useRef<HTMLInputElement | null>(null);
 
@@ -83,6 +93,32 @@ export default function Leave({
         } else if (action === "Delete") {
         }
     };
+
+    const getPageData = (page?: number) => {
+        window.axios.get(route('leave.json', {
+            _query: {
+                filter: filter,
+                sort: sort,
+                search: debounceSearch.trim(),
+                page: page
+            }
+        })).then((response) => {
+            let data = response.data
+            setList(data)
+        })
+    }
+
+    useEffect(() => {
+        if(filter != "All" || sort.sort != "Date created" || sort.order !== "DESC" || debounceSearch.trim() !== "") {
+            getPageData(pages?.currentPage)
+        } else {
+            setList(pageData)
+        }
+
+        return () => {
+            clearList()
+        }
+    }, [filter, sort, debounceSearch])
 
     return (
         <Authenticated
@@ -145,8 +181,17 @@ export default function Leave({
                         sorts={[
                             { sort: "Name" },
                             { sort: "Leave type" },
-                            { sort: "Date" },
-                        ]}
+                            { sort: "Date created" },
+                        ].filter(({sort}) => {
+                            if(sort == "Name") {
+                                if(['HOD', 'Principal', 'HR'].includes(auth.user.role)) {
+                                    return sort
+                                } 
+
+                                return
+                            }
+                            return sort
+                        })}
                     />
                 </div>
 
@@ -182,13 +227,13 @@ export default function Leave({
                     <div className=""></div>
                 </div>
 
-                {leaves.data.length === 0 && (
+                {data.length === 0 && (
                     <div className="text-center py-5 text-foreground/60">
                         No record.
                     </div>
                 )}
 
-                {leaves.data.map((leave, index) => (
+                {data?.map((leave, index) => (
                     <LeaveRow
                         key={index}
                         leave={leave}
@@ -196,46 +241,7 @@ export default function Leave({
                     />
                 ))}
 
-                {1 >= 50 && (
-                    <Pagination className="!mt-auto pt-2">
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious
-                                    href="#"
-                                    className={cn(
-                                        "opacity-60 pointer-events-none"
-                                    )}
-                                />
-                            </PaginationItem>
-                            {Array.from({
-                                length: 3,
-                            }).map((_, index) => (
-                                <PaginationItem key={index}>
-                                    <PaginationLink
-                                        href="#"
-                                        isActive={1 === ++index}
-                                    >
-                                        <span>{index}</span>
-                                    </PaginationLink>
-                                </PaginationItem>
-                            ))}
-                            {0 > 3 && (
-                                <PaginationItem>
-                                    <PaginationEllipsis />
-                                </PaginationItem>
-                            )}
-                            <PaginationItem>
-                                <PaginationNext
-                                    href="#"
-                                    className={cn(
-                                        "opacity-60 pointer-events-none"
-                                    )}
-                                    onClick={() => {}}
-                                />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                )}
+                <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
             </div>
 
             <UploadMedical

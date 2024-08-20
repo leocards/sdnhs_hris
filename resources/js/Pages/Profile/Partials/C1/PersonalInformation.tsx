@@ -29,6 +29,7 @@ import { c1 } from "../../type";
 import { COUNTRIES } from "@/country";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import NumberInput from "@/Components/NumberInput";
+import { CalendarInput } from "./FamilyBackground";
 
 type PersonalInformationProps = {
     form: any;
@@ -138,7 +139,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 </div>
 
                 <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name={c1.personalinformation + "dateofbirth"}
                         render={({ field }) => (
@@ -194,7 +195,12 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
+                    <CalendarInput
+                                form={form}
+                                name={c1.personalinformation + "dateofbirth"}
+                                isRequired={false}
+                            />
                     <FormField
                         control={form.control}
                         name={c1.personalinformation + "placeofbirth"}

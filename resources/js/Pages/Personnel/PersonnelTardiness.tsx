@@ -1,5 +1,4 @@
 import Filter from "@/Components/buttons/FilterButton";
-import Sort from "@/Components/buttons/SortButton";
 import Tabs from "@/Components/framer/Tabs";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
@@ -8,36 +7,30 @@ import {
     MenubarContent,
     MenubarItem,
     MenubarMenu,
-    MenubarSeparator,
     MenubarTrigger,
 } from "@/Components/ui/menubar";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/Components/ui/pagination";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PageProps, PaginateData } from "@/types";
-import { router, usePage } from "@inertiajs/react";
+import { router } from "@inertiajs/react";
 import {
     ChevronRight,
     ClipboardCheck,
     EllipsisVertical,
-    MessageCircle,
     PenLine,
     Trash2,
-    UserRoundPlus,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import TeacherAttendance from "./TeacherAttendance";
-import { format } from "date-fns";
+import { format, getYear } from "date-fns";
+import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
+import PaginationButton from "@/Components/PaginationButton";
+import DataList from "@/Components/DataList";
+import PersonnelTardinessConfirmDelete from "./PersonnelTardinessConfirmDelete";
 
 interface PersonnelTardinessProps extends PageProps {
     attendance: PaginateData;
+    personnels: Array<any>;
+    years: Array<number>;
 }
 
 export type Personnel = {
@@ -45,23 +38,35 @@ export type Personnel = {
     name: string;
     present: string;
     absent: string;
-    updated_at: string;
+    created_at: string;
 };
 
-export default function PersonnelTardiness({
+export default function Index({
     auth,
     attendance,
+    personnels,
+    years,
+}: PersonnelTardinessProps) {
+
+    return (
+        <PageListProvider initialValue={attendance}>
+            <PersonnelTardiness auth={auth} attendance={attendance} personnels={personnels} years={years} />
+        </PageListProvider>
+    )
+}
+
+function PersonnelTardiness({
+    auth,
+    attendance,
+    personnels,
+    years
 }: PersonnelTardinessProps) {
     const [showAddAttendance, setShowAddAttendance] = useState<boolean>(false);
-    const [personnelAttendance, setPersonnelAttendance] =
-        useState<PaginateData>(attendance);
+    const [showDeleteAttendance, setShowDeleteAttendance] = useState<boolean>(false);
     const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel>();
+    const { setList, data, pages, loading, setLoading } = usePageList()
 
-    const [filter, setFilter] = useState<string>("All");
-    const [sort, setSort] = useState<{ sort: string; order: string }>({
-        sort: "Name",
-        order: "ASC",
-    });
+    const [filter, setFilter] = useState<string>(getYear(new Date()).toString());
 
     const navigateTo = (nav: string) => {
         router.get(route(nav));
@@ -72,27 +77,47 @@ export default function PersonnelTardiness({
         setShowAddAttendance(true);
     };
 
-    useEffect(() => {
-        const succ = router.on("success", (event) => {
-            setPersonnelAttendance(
-                event.detail.page.props.attendance as PaginateData
-            );
-        });
+    const onDeletePersonnel = (personnel: Personnel) => {
+        setSelectedPersonnel(personnel);
+        setShowDeleteAttendance(true);
+    };
 
-        return () => succ();
-    }, []);
+    const getPageData = (page?: number) => {
+        setLoading(true)
+        window.axios.get(route('personnel.tardiness.json', {
+            _query: {
+                year: filter,
+                page: page
+            }
+        })).then((response) => {
+            let data = response.data
+            setList(data)
+            setLoading(false)
+        })
+    }
 
     useEffect(() => {
-        if (!showAddAttendance) {
+        if(attendance) {
+            if(filter != getYear(new Date()).toString()) {
+                getPageData(1)
+            } else {
+                setList(attendance)
+            }
+        }
+    }, [attendance, filter]);
+
+    // unset the setSelected personnel on add or delete close
+    useEffect(() => {
+        if (!showAddAttendance && !showDeleteAttendance) {
             setTimeout(() => setSelectedPersonnel(undefined), 300);
         }
-    }, [showAddAttendance]);
+    }, [showAddAttendance, showDeleteAttendance]);
 
     return (
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight flex items-center gap-2">
+                <h2 className="font-semibold text-xl leading-tight flex items-center gap-2">
                     Personnel <ChevronRight className="size-5" /> Tardiness
                 </h2>
             }
@@ -114,13 +139,11 @@ export default function PersonnelTardiness({
                     size="lg"
                     filter="Filter"
                     position="BOTTOMLEFT"
+                    default="All"
                     active={filter}
                     items={[
                         { filter: "All", onClick: setFilter },
-                        { filter: "2024", onClick: setFilter },
-                        { filter: "2023", onClick: setFilter },
-                        { filter: "2022", onClick: setFilter },
-                        { filter: "2021", onClick: setFilter },
+                        ...years.map((year) => ({ filter: year.toString(), onClick: setFilter }))
                     ]}
                     onClear={() => setFilter("All")}
                 />
@@ -137,6 +160,7 @@ export default function PersonnelTardiness({
                     show={showAddAttendance}
                     onClose={setShowAddAttendance}
                     user={selectedPersonnel}
+                    initialList={personnels}
                 />
             </div>
 
@@ -148,54 +172,20 @@ export default function PersonnelTardiness({
                     <div className="">Date modified</div>
                     <div className=""></div>
                 </div>
-                {personnelAttendance.data.length === 0 && (
-                    <div className="text-center py-4 opacity-65">
-                        No records
-                    </div>
-                )}
-                <div className="text-center py-4 opacity-65 hidden">
-                    No results found for "lorem ipsum"
-                </div>
 
-                {personnelAttendance.data.map((personnel, index) => (
-                    <PersonnelRow
-                        key={index}
-                        personnel={personnel}
-                        onEdit={onEditPersonnel}
-                        onDelete={setSelectedPersonnel}
-                    />
-                ))}
+                <DataList empty={data.length == 0} loading={loading}>
+                    {data.map((personnel, index) => (
+                        <PersonnelRow
+                            key={index}
+                            personnel={personnel}
+                            onEdit={onEditPersonnel}
+                            onDelete={onDeletePersonnel}
+                        />
+                    ))}
+                </DataList>
 
-                {attendance.data.length > 50 && (
-                    <Pagination className="!mt-auto pt-2">
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious href="#" />
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#">
-                                    <span>1</span>
-                                </PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#" isActive>
-                                    <span>2</span>
-                                </PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationLink href="#">
-                                    <span>3</span>
-                                </PaginationLink>
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationEllipsis />
-                            </PaginationItem>
-                            <PaginationItem>
-                                <PaginationNext href="#" />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                )}
+                <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
+                <PersonnelTardinessConfirmDelete personnel={selectedPersonnel} show={showDeleteAttendance} onClose={setShowDeleteAttendance} />
             </div>
         </Authenticated>
     );
@@ -225,7 +215,7 @@ const PersonnelRow: React.FC<PersonnelRowProps> = ({ personnel, onEdit, onDelete
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        {format(new Date(personnel.updated_at), "PP")}
+                        {format(new Date(personnel.created_at), "PP")}
                     </div>
                 </div>
                 <div className="">

@@ -96,7 +96,7 @@ function Personnel({ auth, pageData }: PersonnelProps) {
 
     useEffect(() => {
         if(filter != "" || sort.sort != "Name" || sort.order != "ASC") {
-            getPageData(pages?.currentPage)
+            getPageData(1)
         } else {
             setList(pageData)
         }
@@ -110,7 +110,7 @@ function Personnel({ auth, pageData }: PersonnelProps) {
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Personnel
                 </h2>
             }

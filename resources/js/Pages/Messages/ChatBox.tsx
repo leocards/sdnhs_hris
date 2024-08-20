@@ -41,7 +41,7 @@ export default function ChatBox({ user }: {user: User}) {
                             <MenubarItem className="transition duration-200">
                                 Export chat
                             </MenubarItem>
-                            <MenubarItem className="text-destructive hover:!bg-destructive/10 hover:!text-destructive transition duration-200">
+                            <MenubarItem className="text-destructive hover:!bg-destructive/10 dark:hover:!bg-destructive/50 hover:!text-destructive dark:hover:!text-red-500 transition duration-200">
                                 Delete conversation
                             </MenubarItem>
                         </MenubarContent>
@@ -60,9 +60,9 @@ export default function ChatBox({ user }: {user: User}) {
                     <MessageBox auth={user} position="receiver-b" message={{id: 1001, message: "Lorem ipsum dolor", from: 2, to: 1, time: new Date().getTime().toString()}} />
 
                     <MessageBox auth={user} position="sender" message={{id: 1001, message: "Lorem ipsum dolor", from: 1, to: 2, time: new Date().getTime().toString()}} />
-                    
+
                     <MessageBox auth={user} position="receiver" message={{id: 1001, message: "Lorem ipsum dolor", from: 2, to: 1, time: new Date().getTime().toString()}} />
-                    
+
                     <MessageBox auth={user} position="sender" message={{id: 1001, message: "Lorem ipsum dolor", from: 1, to: 2, time: new Date().getTime().toString()}} />
 
                 </div>
@@ -89,9 +89,9 @@ interface MessageBoxProps {
     time: string;
 }
 
-type MessagePosition = "sender-t" 
-    | "sender-m" 
-    | "sender-b" 
+type MessagePosition = "sender-t"
+    | "sender-m"
+    | "sender-b"
     | "sender"
     | "receiver-b"
     | "receiver-t"

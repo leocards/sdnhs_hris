@@ -418,7 +418,7 @@ export const CalendarInput: React.FC<{
                     >
                         <PopoverTrigger
                             asChild
-                            className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                            className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
                         >
                             <FormControl>
                                 <Button

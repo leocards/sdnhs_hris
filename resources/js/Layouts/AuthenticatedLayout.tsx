@@ -98,7 +98,7 @@ export default function Authenticated({
                 />
             </NavigationModal>
 
-            <header className="flex items-center px-4 lg:hidden sticky top-0 bg-white z-50">
+            <header className="flex items-center px-4 lg:hidden sticky top-0 bg-white dark:bg-background z-50">
                 <div className="py-2.5">
                     <span className="relative">
                         <Button
@@ -128,7 +128,7 @@ export default function Authenticated({
                         )}
                     >
                         <Loading>
-                            <header className="">{header}</header>
+                            <header className="text-secondary-foreground">{header}</header>
                             {children}
                         </Loading>
                     </div>
@@ -227,7 +227,7 @@ const Navigation: React.FC<{
         >
             <nav
                 className={cn(
-                    "h-screen w-72 max-lg:bg-white grid grid-rows-[auto,auto,auto,1fr,auto] lg:grid-rows-[auto,auto,1fr,auto]",
+                    "h-screen w-72 max-lg:bg-white max-lg:dark:bg-zinc-900 grid grid-rows-[auto,auto,auto,1fr,auto] lg:grid-rows-[auto,auto,1fr,auto]",
                     "max-lg:h-[calc(100vh-1rem)]"
                 )}
             >
@@ -300,7 +300,7 @@ const Navigation: React.FC<{
                             className={cn(
                                 "grid grid-cols-[auto,1fr,auto] items-center p-2 w-full rounded-md gap-2 relative focus:outline-none",
                                 "transition duration-150 [&>*]:z-10",
-                                "before:w-full before:h-full before:absolute before:left-0 before:rounded-[inherit] before:bg-zinc-200",
+                                "before:w-full before:h-full before:absolute before:left-0 before:rounded-[inherit] before:bg-zinc-200 dark:before:!bg-white/10",
                                 "before:scale-[.45] before:hover:scale-100 before:trasition before:duration-200 before:opacity-0 before:hover:opacity-100",
                                 "group-data-[open]:before:scale-100 group-data-[open]:before:opacity-100"
                             )}
@@ -318,7 +318,7 @@ const Navigation: React.FC<{
                         </PopoverButton>
                         <PopoverPanel
                             anchor="top"
-                            className="border w-64 rounded-lg bg-background [--anchor-gap:var(--spacing-5)] z-30 shadow-md dark:shadow-3xl min-w-[11rem] -mt-2"
+                            className="border w-64 rounded-lg bg-background dark:bg-secondary [--anchor-gap:var(--spacing-5)] z-30 shadow-md dark:shadow-3xl min-w-[11rem] -mt-2"
                         >
                             <ul className="p-1 [&>li]:flex [&>li]:items-center [&>li]:gap-4 [&>li]:pl-3 [&>li]:py-2 [&>li]:cursor-default [&>li]:rounded-md space-y-1">
                                 <li
@@ -337,7 +337,7 @@ const Navigation: React.FC<{
                                 >
                                     <Settings className="size-5" /> Settings
                                 </li>
-                                <hr />
+                                <hr className="borde-t dark:border-white/10" />
                                 <li
                                     className="hover:bg-primary hover:text-primary-foreground"
                                     onClick={() => router.post(route("logout"))}

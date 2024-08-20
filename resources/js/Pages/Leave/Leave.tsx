@@ -110,7 +110,7 @@ function Leave({
 
     useEffect(() => {
         if(filter != "All" || sort.sort != "Date created" || sort.order !== "DESC" || debounceSearch.trim() !== "") {
-            getPageData(pages?.currentPage)
+            getPageData(1)
         } else {
             setList(pageData)
         }
@@ -124,7 +124,7 @@ function Leave({
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Leave
                 </h2>
             }
@@ -186,7 +186,7 @@ function Leave({
                             if(sort == "Name") {
                                 if(['HOD', 'Principal', 'HR'].includes(auth.user.role)) {
                                     return sort
-                                } 
+                                }
 
                                 return
                             }
@@ -382,21 +382,23 @@ const LeaveRow: React.FC<{
                                         )}
                                     </>
                                 )}
-                                <MenubarItem
-                                    className="px-4 gap-5"
-                                    onClick={() =>
-                                        onMenuAction("Delete", {
-                                            leave_id: id,
-                                            user_id: user.id,
-                                        })
-                                    }
-                                >
-                                    <Trash2
-                                        className="size-5"
-                                        strokeWidth={1.8}
-                                    />
-                                    <div>Delete</div>
-                                </MenubarItem>
+                                {auth.user.id === user.id && (
+                                    <MenubarItem
+                                        className="px-4 gap-5 !text-destructive hover:!bg-destructive/10"
+                                        onClick={() =>
+                                            onMenuAction("Delete", {
+                                                leave_id: id,
+                                                user_id: user.id,
+                                            })
+                                        }
+                                    >
+                                        <Trash2
+                                            className="size-5"
+                                            strokeWidth={1.8}
+                                        />
+                                        <div>Delete</div>
+                                    </MenubarItem>
+                                )}
                             </MenubarContent>
                         </MenubarMenu>
                     </Menubar>

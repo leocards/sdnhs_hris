@@ -43,11 +43,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::middleware(['role:HR'])->group(function () {
                 Route::get('/tardiness', 'tardiness')->name('personnel.tardiness');
+                Route::get('/tardiness/json', 'tardinessJson')->name('personnel.tardiness.json');
+                Route::get('/tardiness/search-attendance', 'tardiness_search')->name('personnel.tardiness.att.search');
                 Route::get('/new-personnel', 'create')->name('personnel.new');
-    
+
                 Route::post('/new-personnel', 'store')->name('personnel.new.store');
                 Route::post('/update-personnel/{user?}', 'update')->name('personnel.update');
                 Route::post('/tardiness', 'store_tardiness')->name('personnel.tardiness.add');
+                Route::post('/tardiness-update/{tardiness}', 'update_tardiness')->name('personnel.tardiness.update');
+                Route::post('/tardiness-delete/{tardiness}', 'delete_tardiness')->name('personnel.tardiness.delete');
             });
         });
 
@@ -55,16 +59,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/json', 'indexJson')->name('personnel.json');
         })->middleware(['role:HR,HOD']);
     });
-    
+
     Route::prefix('leave')->group(function () {
         Route::controller(LeaveController::class)->group(function () {
             Route::get('/', 'index')->name('leave');
             Route::get('/json', 'indexJson')->name('leave.json');
             Route::get('/view/{leave?}/{user?}', 'view')->name('leave.view');
-            Route::get('/leave/apply-for-leave', 'apply_for_leave')->name('leave.apply');
+            Route::get('/apply-for-leave', 'apply_for_leave')->name('leave.apply');
 
             Route::post('/respond/{user}/{leave}', 'application_for_leave_action')->middleware(['role:HOD,HR'])->name('leave.respond');
-            Route::post('/leave/submit-application-leave', [LeaveController::class, 'store'])->name('leave.submit');
+            Route::post('/submit-application-leave', [LeaveController::class, 'store'])->name('leave.submit');
             Route::post('/upload-medical/{leave_id}', [LeaveController::class, 'upload_medical'])->name('leave.upload_medical');
             Route::post('/upload-medical-maternity', [LeaveController::class, 'upload_medical_maternity'])->name('leave.upload_medical_maternity');
         });
@@ -78,7 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('reports')->group(function () {
         Route::controller(ReportController::class)->group(function () {
             Route::get('/', 'index')->name('reports');
-            
+
             Route::post('/add-ipcr', 'addIPCRRow')->name('reports.addIPCR');
             Route::post('/add-saln', 'addSALNRow')->name('reports.addSALN');
             Route::post('/update-ipcr/{ipcrId}', 'updateIPCRRow')->name('reports.updateIPCR');

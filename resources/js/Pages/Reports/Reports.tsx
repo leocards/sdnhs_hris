@@ -104,13 +104,13 @@ export default function Reports({
                     variant: "success",
                     description: page.props.success?.toString()
                 })
-            }, 
+            },
             onError: error => {
                 toast({
                     variant: "success",
                     description: error[0]
                 })
-            }, 
+            },
             onFinish: () => {
                 setIsProcessing(false)
             }
@@ -121,7 +121,7 @@ export default function Reports({
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Reports
                 </h2>
             }
@@ -206,7 +206,7 @@ export default function Reports({
 
                         <div className="grid grid-cols-[repeat(3,minmax(17rem,1fr))] gap-2">
                             <div className="rounded-lg overflow-hidden">
-                                <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
+                                <div className="bg-zinc-200 dark:bg-white/10 p-2 font-semibold rounded-t-lg">
                                     Junior High School
                                 </div>
                                 <div className="divide-y border rounded-b-lg">
@@ -232,7 +232,7 @@ export default function Reports({
                             </div>
 
                             <div className="">
-                                <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
+                                <div className="bg-zinc-200 dark:bg-white/10 p-2 font-semibold rounded-t-lg">
                                     Senior High School
                                 </div>
                                 <div className="divide-y border rounded-b-lg">
@@ -258,7 +258,7 @@ export default function Reports({
                             </div>
 
                             <div className="">
-                                <div className="bg-zinc-200 p-2 font-semibold rounded-t-lg">
+                                <div className="bg-zinc-200 dark:bg-white/10 p-2 font-semibold rounded-t-lg">
                                     Accounting
                                 </div>
                                 <div className="divide-y border rounded-b-lg">
@@ -499,8 +499,8 @@ export default function Reports({
                     <ScrollArea className="border rounded-md h-[30rem]">
                         <div className="divide-y w-max relative">
                             <div
-                                className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] border-b [&>div]:text-center 
-                            h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-white"
+                                className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] border-b [&>div]:text-center
+                            h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-white dark:bg-zinc-900"
                             >
                                 <div className=""></div>
                                 <div className="">Name</div>

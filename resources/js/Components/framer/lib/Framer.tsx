@@ -95,7 +95,7 @@ export const Tabs = ({
                             <AnimatePresence>
                                 {i === hoveredTab ? (
                                     <motion.div
-                                        className="absolute h-full bottom-0 left-0 right-0 top-0 z-10 rounded-md bg-zinc-950/5 dark:!shadow-highlight"
+                                        className="absolute h-full bottom-0 left-0 right-0 top-0 z-10 rounded-md bg-zinc-950/5 dark:bg-white/5 dark:!shadow-highlight"
                                         initial={{
                                             opacity: 0
                                         }}

@@ -127,8 +127,7 @@ class LeaveController extends Controller
                 $request->detailsOfLeave['other']['terminal'] ?? false,
             ];
 
-            DetailsOfLeave::create([
-                'leave_id' => $leave->id,
+            $leave->details_of_leave()->create([
                 'is_philippines' => $checkedFields[0] ? true : null,
                 'is_philippines_input' => $checkedFields[0] ? $request->detailsOfLeave['vacation_special']['withinPhilippines']['input'] : null,
                 'is_abroad' => $checkedFields[1] ? true : null,
@@ -144,7 +143,7 @@ class LeaveController extends Controller
                 'is_terminal_leave' => $checkedFields[8] ? true : null
             ]);
 
-            DetailsOfActionLeave::create([
+            $leave->details_of_action_leave()->create([
                 'leave_id' => $leave->id,
                 'as_of' => $request->certificationLeaveCredits['asOf'],
                 'total_earned_vacation' => $request->certificationLeaveCredits['totalEarned']['vacationLeave'],

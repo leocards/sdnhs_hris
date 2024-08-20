@@ -15,15 +15,30 @@ import LeaveStatus from "@/Components/LeaveStatus";
 import { format } from "date-fns";
 import { useEffect } from "react";
 
+type Statistics = {
+    recent: number;
+    total: number;
+};
+
 export default function Dashboard({
     auth,
     leaves,
-}: PageProps<{ leaves: PaginateData }>) {
+    totalEmployee,
+    approved,
+    pending,
+    reject,
+}: PageProps<{
+    leaves: PaginateData;
+    totalEmployee?: Statistics;
+    approved: Statistics;
+    pending: Statistics;
+    reject: Statistics;
+}>) {
     return (
         <AuthenticatedLayout
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Good{" "}
                     {format(new Date(), "bbbb") === "a.m."
                         ? "morning"
@@ -39,16 +54,18 @@ export default function Dashboard({
             <div className="mt-10 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
                 {["HR", "HOD"].includes(auth.user.role) ? (
                     <div className="border-t pt-4 space-y-1.5">
-                        <div className="font-medium">Total peronnel</div>
+                        <div className="font-medium">Total personnel</div>
                         <div className="text-xl font-semibold">
-                            120 Employees
+                            {totalEmployee?.total} Employees
                         </div>
-                        <div className="text-xs font-medium space-x-1">
-                            <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
-                                + 5
-                            </span>
-                            <span> from the last 7 days</span>
-                        </div>
+                        {(totalEmployee?.recent && totalEmployee?.recent > 0) ? (
+                            <div className="text-xs font-medium space-x-1">
+                                <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
+                                    + {totalEmployee?.recent}
+                                </span>
+                                <span> from the last 7 days</span>
+                            </div>
+                        ): ""}
                     </div>
                 ) : (
                     <div className="border-t pt-4 space-y-1.5">
@@ -66,33 +83,45 @@ export default function Dashboard({
                 )}
                 <div className="border-t pt-4 space-y-1.5">
                     <div className="font-medium">Approved leave</div>
-                    <div className="text-xl font-semibold">10 Approved</div>
-                    <div className="text-xs font-medium space-x-1">
-                        <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
-                            + 5
-                        </span>
-                        <span> from the last 7 days</span>
+                    <div className="text-xl font-semibold">
+                        {approved.total} Approved
                     </div>
+                    {approved.recent > 0 && (
+                        <div className="text-xs font-medium space-x-1">
+                            <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
+                                + {approved.recent}
+                            </span>
+                            <span> from the last 7 days</span>
+                        </div>
+                    )}
                 </div>
                 <div className="border-t pt-4 space-y-1.5">
                     <div className="font-medium">Pending leave</div>
-                    <div className="text-xl font-semibold">3 Pending</div>
-                    <div className="text-xs font-medium space-x-1">
-                        <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
-                            + 2
-                        </span>
-                        <span> from the last 7 days</span>
+                    <div className="text-xl font-semibold">
+                        {pending.total} Pending
                     </div>
+                    {pending.recent > 0 && (
+                        <div className="text-xs font-medium space-x-1">
+                            <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
+                                + {pending.recent}
+                            </span>
+                            <span> from the last 7 days</span>
+                        </div>
+                    )}
                 </div>
                 <div className="border-t pt-4 space-y-1.5">
                     <div className="font-medium">Rejected leave</div>
-                    <div className="text-xl font-semibold">2 Rejected</div>
-                    <div className="text-xs font-medium space-x-1">
-                        <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
-                            + 1
-                        </span>
-                        <span> from the last 7 days</span>
+                    <div className="text-xl font-semibold">
+                        {reject.total} Rejected
                     </div>
+                    {reject.recent > 0 && (
+                        <div className="text-xs font-medium space-x-1">
+                            <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
+                                + {reject.recent}
+                            </span>
+                            <span> from the last 7 days</span>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -168,8 +197,7 @@ const RecentLeaveRow: React.FC<{ leave: LeaveType }> = ({
         props: { auth },
     } = usePage<PageProps>();
 
-    useEffect(() => {
-    }, []);
+    useEffect(() => {}, []);
 
     return (
         <div className="hover:bg-secondary transition-colors">
@@ -177,14 +205,18 @@ const RecentLeaveRow: React.FC<{ leave: LeaveType }> = ({
                 <div className="">
                     <div className="flex items-center gap-2">
                         <AvatarProfile className="size-8" />
-                        <div className="line-clamp-1">{user.first_name + " " + user.last_name}</div>
+                        <div className="line-clamp-1">
+                            {user.first_name + " " + user.last_name}
+                        </div>
                     </div>
                 </div>
                 <div className="">
                     <div className="line-clamp-1">{leave_type}</div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">{format(date_of_filing, "PP")}</div>
+                    <div className="line-clamp-1">
+                        {format(date_of_filing, "PP")}
+                    </div>
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
@@ -206,7 +238,9 @@ const RecentLeaveRow: React.FC<{ leave: LeaveType }> = ({
                                 <MenubarItem
                                     className="px-4 gap-5"
                                     onClick={() =>
-                                        router.get(route("leave.view", [id, user.id]))
+                                        router.get(
+                                            route("leave.view", [id, user.id])
+                                        )
                                     }
                                 >
                                     <Eye className="size-5" strokeWidth={1.8} />

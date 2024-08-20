@@ -82,7 +82,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Leave
                 </h2>
             }
@@ -200,7 +200,7 @@ export default function LeaveView({ auth, leave }: PageProps<{ leave: any }>) {
                             <img src={leave.medical_certificate?.file_path?.replace('public/', '/storage/')} className="h-96" />
                         </div>
                     )}
-                    
+
                     {(leave.hr_reject_msg || leave.principal_reject_msg) && (
                         <div className="space-y-3 mt-5">
                             <Label>Response for rejection:</Label>

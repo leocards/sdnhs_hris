@@ -41,7 +41,7 @@ const MenubarTrigger = React.forwardRef<
 			ref={ref}
 			className={cn(
 				"relative [&>*]:z-[1] flex cursor-default select-none items-center rounded-[inherit] px-3 py-1.5 font-medium outline-none focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground",
-                "before:w-full before:h-full before:left-0 before:absolute before:rounded-[inherit] before:bg-secondary",
+                "before:w-full before:h-full before:left-0 before:absolute before:rounded-[inherit] before:bg-secondary dark:before:!bg-white/10",
                 "before:scale-[.45] before:hover:scale-100 before:trasition before:duration-200 before:opacity-0 before:hover:opacity-100",
                 "before:data-[state=close]:scale-[.45] before:data-[state=close]:opacity-100 before:data-[state=open]:scale-100 before:data-[state=open]:opacity-100",
 				className

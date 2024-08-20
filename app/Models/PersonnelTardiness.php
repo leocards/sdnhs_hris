@@ -15,4 +15,9 @@ class PersonnelTardiness extends Model
         "present",
         "absent",
     ];
+
+    public function users()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

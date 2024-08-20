@@ -16,7 +16,7 @@ use Inertia\Inertia;
 
 class PersonnelController extends Controller
 {
-    public function index() 
+    public function index()
     {
         return Inertia::render('Personnel/Personnel', [
             'pageData' => User::whereNot('id', Auth::id())
@@ -25,21 +25,63 @@ class PersonnelController extends Controller
         ]);
     }
 
-    public function create() 
+    public function create()
     {
         return Inertia::render('Personnel/NewPersonnel');
     }
 
-    public function edit(User $user) 
+    public function edit(User $user)
     {
         return Inertia::render('Personnel/NewPersonnel', [
             "user" => $user
         ]);
     }
 
-    public function tardiness() 
+    public function tardiness()
     {
-        return Inertia::render('Personnel/PersonnelTardiness', ['attendance' => PersonnelTardiness::orderBy('created_at', 'desc')->paginate(50)]);
+        return Inertia::render('Personnel/PersonnelTardiness', [
+            'attendance' => PersonnelTardiness::with('users')
+                ->whereYear('created_at', Carbon::now()->format('Y'))
+                ->orderBy(
+                    User::select('first_name')
+                        ->whereColumn('personnel_tardinesses.user_id', 'users.id')
+                        ->orderBy('last_name')
+                        ->limit(1)
+                )
+                ->paginate(50),
+            'years' => PersonnelTardiness::selectRaw('YEAR(created_at) as year')
+                ->distinct()
+                ->orderBy('year', 'desc')
+                ->pluck('year'),
+            'personnels' => User::whereNotIn('role', ['HR', 'HOD'])
+                ->rightJoin('personnel_tardinesses as pt', 'pt.user_id', '=', 'users.id')
+                ->whereYear('pt.created_at', '!=', Carbon::now()->format('Y'))
+                ->get(['users.id', 'users.first_name', 'users.last_name', 'users.middle_name'])
+                ->append('name')
+        ]);
+    }
+
+    public function tardinessJson(Request $request): JsonResponse
+    {
+        $year = $request->query('year');
+        $month = $request->query('month');
+
+        return response()->json(
+            PersonnelTardiness::with('users')
+                ->when($year && ($year !== Carbon::now()->format('Y') && $year !== "All"), function ($query) use ($year, $month) {
+                    $query->whereYear('created_at', $year)
+                        ->when($month && $month !== "All", function ($query) use ($year, $month) {
+                            $query->whereMonth('created_at', $month);
+                        });
+                })
+                ->orderBy(
+                    User::select('first_name')
+                        ->whereColumn('personnel_tardinesses.user_id', 'users.id')
+                        ->orderBy('last_name')
+                        ->limit(1)
+                )
+                ->paginate(50)
+        );
     }
 
     public function indexJson(Request $request): JsonResponse
@@ -48,35 +90,33 @@ class PersonnelController extends Controller
             ->when($request->query('filter'), function ($query) use ($request) {
                 $filter = $request->query('filter');
 
-                if(in_array($filter, ['Junior High School', 'Senior High School', 'Accounting']))
+                if (in_array($filter, ['Junior High School', 'Senior High School', 'Accounting']))
                     $query->where('department', 'LIKE', $filter)->whereNot('role', 'HOD');
 
-                if(in_array($filter, ['Non-teaching', 'Teaching', 'HOD']))
+                if (in_array($filter, ['Non-teaching', 'Teaching', 'HOD']))
                     $query->where('role', 'LIKE', $filter);
-
             })
             ->when($request->query('sort'), function ($query) use ($request) {
                 $sort = $request->query('sort');
-                
-                if($sort['sort'] === "Name")
+
+                if ($sort['sort'] === "Name")
                     $query->orderBy('first_name', $sort['order']);
 
-                if($sort['sort'] === "Email")
+                if ($sort['sort'] === "Email")
                     $query->orderBy('email', $sort['order']);
 
-                if($sort['sort'] === "Position")
+                if ($sort['sort'] === "Position")
                     $query->orderBy('position', $sort['order']);
 
-                if($sort['sort'] === "Department")
+                if ($sort['sort'] === "Department")
                     $query->orderBy('department', $sort['order']);
-
             })
             ->paginate(50);
 
         return response()->json($personnel);
     }
 
-    public function store(PersonnelRequest $request) 
+    public function store(PersonnelRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -110,7 +150,7 @@ class PersonnelController extends Controller
         }
     }
 
-    public function update(PersonnelRequest $request, User $user = null) 
+    public function update(PersonnelRequest $request, User $user = null)
     {
         DB::beginTransaction();
         try {
@@ -150,6 +190,7 @@ class PersonnelController extends Controller
         try {
             foreach ($request->attendances as $value) {
                 PersonnelTardiness::create([
+                    'user_id' => $value['personnelId'],
                     'name' => $value['name'],
                     'present' => $value['present'],
                     'absent' => $value['absent']
@@ -163,5 +204,37 @@ class PersonnelController extends Controller
 
             return back()->withErrors($th->getMessage());
         }
+    }
+
+    public function update_tardiness(Request $request, PersonnelTardiness $tardiness)
+    {
+        $attendance = $request->attendances;
+
+        $tardiness->absent = $attendance[0]['absent'];
+        $tardiness->present = $attendance[0]['present'];
+        $tardiness->save();
+
+        return back()->with("success", "Successfully updated.");
+    }
+
+    public function tardiness_search(Request $request): JsonResponse
+    {
+        $search = $request->query('search');
+        $result = User::where('personnel_id', 'LIKE', "%$search%")
+            ->orWhere('first_name', 'LIKE', "%$search%")
+            ->orWhere('last_name', 'LIKE', "%$search%")
+            ->orWhere('middle_name', 'LIKE', "%$search%")
+            ->whereNotIn('role', ['HR', 'HOD'])
+            ->get(['id', 'first_name', 'last_name', 'middle_name'])
+            ->append('name');
+
+        return response()->json($result);
+    }
+
+    public function delete_tardiness(PersonnelTardiness $tardiness)
+    {
+        $tardiness->delete();
+
+        return back()->with('success', 'Successfully deleted.');
     }
 }

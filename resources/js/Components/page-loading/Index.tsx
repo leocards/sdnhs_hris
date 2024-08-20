@@ -5,12 +5,12 @@ export default function isPageLoading(): boolean {
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const pages = [
-        '/dashboard', '/personnel', '/leave', '/service-records', '/reports', '/messages', '/notification', '/general-search',
+        '/dashboard', '/personnel', '/personnel/tardiness', '/leave', '/service-records', '/reports', '/messages', '/notification', '/general-search',
         '/profile', '/profile/settings', '/personnel/new-personnel'
     ]
 
     const subpages = [
-        '/personnel/new-personnel/edit', '/messages?user', '/leave/view'
+        '/personnel/new-personnel/edit', '/messages?user', '/leave/view', '/leave/apply-for-leave'
     ]
 
     useEffect(() => {

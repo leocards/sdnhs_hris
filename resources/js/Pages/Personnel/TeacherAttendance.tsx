@@ -15,15 +15,25 @@ import { useToast } from "@/Components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "@inertiajs/react";
-import { X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import { ChevronDown, X } from "lucide-react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useForm as reactForm, useFieldArray } from "react-hook-form";
 import { z } from "zod";
 import { Personnel } from "./PersonnelTardiness";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/Components/ui/popover";
+import { ScrollArea } from "@/Components/ui/scroll-area";
+import useDebounce from "@/hooks/useDebounce";
+import Loading from "@/Components/page-loading/Loading";
 
 const ATTENDANCEOBJECTSCHEMA = z.object({
     id: z.string().optional(),
+    attendanceId: z.number().nullable().optional(),
     name: z.string().min(1, "The name field is required."),
+    personnelId: z.number().optional().nullable(),
     present: z.string().min(1, "The number of days present is required."),
     absent: z.string().min(1, "The number of days absent is required."),
 });
@@ -37,24 +47,24 @@ type IFormAttendance = z.infer<typeof ATTENDANCESCHEMA>;
 export default function TeacherAttendance({
     show,
     user,
+    initialList,
     onClose,
-}: ModalProps & { user?: Personnel }) {
+}: ModalProps & { user?: Personnel; initialList: Array<any> }) {
     const form = reactForm<IFormAttendance>({
         resolver: zodResolver(ATTENDANCESCHEMA),
         defaultValues: {
             attendances: [{ name: "", present: "", absent: "" }],
         },
     });
-
     const { fields, append, replace, remove } = useFieldArray({
         control: form.control,
         name: "attendances",
     });
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
-
     const { toast } = useToast();
-
     const { setData, post, processing, reset } = useForm<IFormAttendance>();
+    const [tardinessDraft, setTardinessDraft] = useState<boolean | null>();
+    const [confirmDraft, setConfirmDraft] = useState<boolean>(false);
 
     const onFormSubmit = (form: IFormAttendance) => {
         setIsSubmit(true);
@@ -62,7 +72,28 @@ export default function TeacherAttendance({
     };
 
     const onSaveToDraft = () => {
-        form.getValues();
+        // retrieve the drafted data
+        let tardinessDraft = localStorage.getItem("tardinessDraft");
+
+        // check if there is a drafted data
+        if (!tardinessDraft) {
+            // if there is no drafted data, then add one to the local storage
+            localStorage.setItem(
+                "tardinessDraft",
+                JSON.stringify(form.getValues("attendances"))
+            );
+
+            // set to true to remove the Save as draft button
+            setTardinessDraft(true);
+        } else {
+            // if there is a drafted data, then replace the form with draft.
+            form.setValue("attendances", JSON.parse(tardinessDraft));
+            setConfirmDraft(false);
+            setTardinessDraft(false);
+
+            // remove the draft in local storeage
+            localStorage.removeItem("tardinessDraft");
+        }
     };
 
     useEffect(() => {
@@ -81,7 +112,11 @@ export default function TeacherAttendance({
 
     useEffect(() => {
         if (isSubmit) {
-            post(route("personnel.tardiness.add"), {
+            let submitRoute = !user
+                ? route("personnel.tardiness.add")
+                : route("personnel.tardiness.update", [user.id]);
+
+            post(submitRoute, {
                 onSuccess: (page) => {
                     toast({
                         variant: "success",
@@ -93,6 +128,10 @@ export default function TeacherAttendance({
                 },
                 onError: (error) => {
                     console.log(error);
+                    toast({
+                        variant: "destructive",
+                        description: error[0],
+                    });
                 },
                 onFinish: () => {
                     setIsSubmit(false);
@@ -107,11 +146,30 @@ export default function TeacherAttendance({
                 <Processing is_processing={processing} backdrop={""} />
             ) : (
                 <div className="p-6 px-5">
-                    <div className="font-bold text-xl mb-6 px-1">
+                    <div className="font-bold text-xl px-1">
                         Attendance Form
                     </div>
+
+                    {tardinessDraft && (
+                        <div className="flex text-sm items-center bg-secondary/60 rounded-full px-1 py-1">
+                            <div className="ml-3">
+                                You have a draft attendance record.
+                            </div>
+                            <Button
+                                variant="ghost"
+                                className="rounded-full h-9 before:!bg-gray-200 ml-auto text-xs"
+                                onClick={() => setConfirmDraft(true)}
+                            >
+                                <span>Use draft</span>
+                            </Button>
+                        </div>
+                    )}
+
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onFormSubmit)}>
+                        <form
+                            onSubmit={form.handleSubmit(onFormSubmit)}
+                            className="mt-6"
+                        >
                             <div className="px-1">
                                 {fields.map((field, index) => {
                                     let count = index;
@@ -150,31 +208,21 @@ export default function TeacherAttendance({
                                                         <X className="size-5" />
                                                     </Button>
                                                 )}
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`attendances.${index}.name`}
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <FormLabel>
-                                                                Name
-                                                            </FormLabel>
-                                                            <FormControl>
-                                                                <Input
-                                                                    {...field}
-                                                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive bg-transparent shadow-sm"
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
+
+                                                <ComboBox
+                                                    form={form}
+                                                    index={index}
+                                                    disabled={!!user}
+                                                    initialList={initialList}
                                                 />
+
                                                 <div className="flex items-start gap-3 mt-3">
                                                     <FormField
                                                         control={form.control}
                                                         name={`attendances.${index}.present`}
                                                         render={({ field }) => (
                                                             <FormItem className="grow">
-                                                                <FormLabel>
+                                                                <FormLabel className="required">
                                                                     Days present
                                                                 </FormLabel>
                                                                 <FormControl>
@@ -192,7 +240,7 @@ export default function TeacherAttendance({
                                                         name={`attendances.${index}.absent`}
                                                         render={({ field }) => (
                                                             <FormItem className="grow">
-                                                                <FormLabel>
+                                                                <FormLabel className="required">
                                                                     Days absent
                                                                 </FormLabel>
                                                                 <FormControl>
@@ -230,6 +278,7 @@ export default function TeacherAttendance({
                                                 name: "",
                                                 present: "",
                                                 absent: "",
+                                                personnelId: null,
                                             })
                                         }
                                     >
@@ -249,7 +298,7 @@ export default function TeacherAttendance({
                                     </Button>
                                 </div>
                                 <div className="flex items-center ml-auto gap-3">
-                                    {!user && (
+                                    {!user && !tardinessDraft && (
                                         <Button
                                             type="button"
                                             variant="secondary"
@@ -270,8 +319,180 @@ export default function TeacherAttendance({
                             </div>
                         </form>
                     </Form>
+
+                    <Modal
+                        show={confirmDraft}
+                        onClose={() => setConfirmDraft(false)}
+                        closeable={false}
+                        maxWidth="sm"
+                        center
+                    >
+                        <div className="p-6">
+                            <div>
+                                Continuing this action will remove the current
+                                data and replace it with the drafted data. Do
+                                you want to continue?
+                            </div>
+
+                            <div className="flex mt-6 justify-between">
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => setConfirmDraft(false)}
+                                >
+                                    <span>Cancel</span>
+                                </Button>
+
+                                <Button onClick={onSaveToDraft}>
+                                    <span>Confirm</span>
+                                </Button>
+                            </div>
+                        </div>
+                    </Modal>
                 </div>
             )}
         </Modal>
     );
 }
+
+type PersonnelDataType = {
+    id: number;
+    name: string;
+}
+
+const ComboBox = ({
+    form,
+    index,
+    disabled,
+    initialList,
+}: {
+    form: any;
+    index: number;
+    disabled?: boolean;
+    initialList: Array<any>;
+}) => {
+    const [show, setShow] = useState<boolean>(false);
+    const [search, setSearch] = useState<string>("");
+    const debounceSearch = useDebounce(search, 500);
+    const [personnels, setPersonnels] = useState<Array<PersonnelDataType>>(initialList);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const onSearch = (event: ChangeEvent<HTMLInputElement>) => {
+        // remove all the white spaces to get the data only
+        const input = event.target.value.replace(/\s+/g, " ");
+
+        setSearch(input);
+        if (input != "") setLoading(true);
+    };
+
+    useEffect(() => {
+        let addedPersonnel = form.getValues('attendances')
+
+        if (debounceSearch) {
+            setLoading(true);
+            window.axios
+                .get(
+                    route("personnel.tardiness.att.search", {
+                        _query: {
+                            search: debounceSearch,
+                        },
+                    })
+                )
+                .then((response) => {
+                    // assign the response data to a variable
+                    let data: Array<PersonnelDataType> = response.data;
+
+                    // filter the results to retrieve only the data which are not existing to the form.
+                    let filteredData = data.filter((fd) => !addedPersonnel.some((ap: any) => fd.id === ap.personnelId))
+
+                    // filter the data with the initial data to retrieve only the data wich are not added to the database.
+                    filteredData = initialList.filter((fd) => !filteredData.some((ap: any) => fd.id === ap.personnelId))
+
+                    // assign the filtered data to personnel state
+                    setPersonnels(filteredData);
+
+                    // remove the loading indicator
+                    setLoading(false);
+                });
+        } else {
+            // filter the data which are already added in the form
+            let filteredData = initialList.filter((fd) => !addedPersonnel.some((ap: any) => fd.id === ap.personnelId))
+
+            // assign the filtered data to personnel state
+            setPersonnels(filteredData);
+        }
+    }, [debounceSearch]);
+
+    return (
+        <FormField
+            control={form.control}
+            name={`attendances.${index}.name`}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel className="required">Name</FormLabel>
+                    <Popover open={show} onOpenChange={setShow}>
+                        <FormControl>
+                            <PopoverTrigger
+                                disabled={disabled}
+                                className="w-full border rounded-md form-input px-3 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                            >
+                                <div className="line-clamp-1 text-left">
+                                    {field.value ? (
+                                        field.value
+                                    ) : (
+                                        <span>Select personnel</span>
+                                    )}
+                                </div>
+                                <ChevronDown className="size-4 ml-auto shrink-0" />
+                            </PopoverTrigger>
+                        </FormControl>
+                        <PopoverContent className="w-[30rem] p-2 rounded-lg">
+                            <Input
+                                className="form-input h-9"
+                                placeholder="Search personnel"
+                                onInput={onSearch}
+                            />
+                            <div className="pt-2">
+                                <ScrollArea className="h-40">
+                                    {loading ? (
+                                        <div className="w-fit h-fit mx-auto my-auto flex items-center gap-2 py-4">
+                                            <span className="loading loading-spinner loading-sm"></span>
+                                            <div>Loading...</div>
+                                        </div>
+                                    ) : personnels.length === 0 && search ? (
+                                        <div className="w-fit h-fit mx-auto my-auto flex items-center gap-2 py-4">
+                                            No records found for "{search}"
+                                        </div>
+                                    ) : personnels.length === 0 && !search ? (
+                                        <div className="w-fit h-fit mx-auto my-auto flex items-center gap-2 py-4">
+                                            No records
+                                        </div>
+                                    ) : (
+                                        personnels.map((personnel, indx) => (
+                                            <div
+                                                key={indx}
+                                                className="rounded-md p-2 px-3 hover:bg-secondary transition cursor-pointer"
+                                                onClick={() => {
+                                                    field.onChange(
+                                                        personnel.name
+                                                    );
+                                                    form.setValue(
+                                                        `attendances.${index}.personnelId`,
+                                                        personnel.id
+                                                    );
+                                                    setShow(false);
+                                                }}
+                                            >
+                                                {personnel.name}
+                                            </div>
+                                        ))
+                                    )}
+                                </ScrollArea>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    );
+};

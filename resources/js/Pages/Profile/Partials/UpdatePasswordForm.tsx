@@ -40,16 +40,16 @@ export default function UpdatePasswordForm({ className = '' }: { className?: str
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Update Password</h2>
+                <h2 className="text-lg font-medium text-secondary-foreground">Update Password</h2>
 
-                <p className="mt-1 text-sm text-gray-600">
+                <p className="mt-1 text-sm text-accent-foreground/60">
                     Ensure your account is using a long, random password to stay secure.
                 </p>
             </header>
 
-            <form onSubmit={updatePassword} className="mt-6 space-y-6">
+            <form onSubmit={updatePassword} className="mt-6 max-md:space-y-6 md:grid md:grid-cols-3 md:gap-3">
                 <div>
-                    <InputLabel htmlFor="current_password" value="Current Password" />
+                    <InputLabel htmlFor="current_password" value="Current Password" className='text-secondary-foreground' />
 
                     <Input
                         id="current_password"
@@ -65,7 +65,7 @@ export default function UpdatePasswordForm({ className = '' }: { className?: str
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password" value="New Password" />
+                    <InputLabel htmlFor="password" value="New Password" className='text-secondary-foreground' />
 
                     <Input
                         id="password"
@@ -81,7 +81,7 @@ export default function UpdatePasswordForm({ className = '' }: { className?: str
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
+                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" className='text-secondary-foreground' />
 
                     <Input
                         id="password_confirmation"

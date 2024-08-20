@@ -12,7 +12,7 @@ export default function Notification({ auth }: PageProps) {
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Notification
                 </h2>
             }
@@ -72,7 +72,7 @@ export default function Notification({ auth }: PageProps) {
     );
 }
 
-/* 
+/*
 <Button
                                 variant="secondary"
                                 size="icon"

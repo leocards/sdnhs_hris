@@ -39,7 +39,7 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
     return (
         <>
             <div className="mt-8 mb-4 py-3 relative">
-                <div className="bg-background absolute top-1/2 -translate-y-1/2 h-fit pr-3 text-foreground/75">
+                <div className="bg-background dark:bg-zinc-900 absolute top-1/2 -translate-y-1/2 h-fit pr-3 text-foreground/75">
                 Personnel information
                 </div>
                 <hr className="border-t-2 border-border" />
@@ -100,7 +100,7 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                                             <Button
                                                 variant={"outline"}
                                                 className={cn(
-                                                    "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                    "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring dark:border-zinc-700 dark:bg-zinc-800",
                                                     !field.value &&
                                                         "text-muted-foreground"
                                                 )}

@@ -20,6 +20,7 @@ type ItemsType = {
 type FilterProps = {
 	filter: string;
 	active?: string;
+    default?: string;
 	size?: string;
 	bgStyle?: string;
 	bordered?: boolean;
@@ -37,7 +38,7 @@ export default function Filter({
 }: FilterProps) {
 	const [show, setShow] = useState<boolean>(false);
 	const [popOver, setPopOver] = useState<boolean>(false);
-    
+
 	const Sizes = {
 		sm: "h-8",
 		md: "h-9",
@@ -107,7 +108,7 @@ export default function Filter({
 											className={cn(
 												"hover:bg-secondary px-3.5 py-1 rounded-full disabled:opacity-60 disabled:pointer-events-none"
 											)}
-											disabled={!props.active}
+											disabled={!props.active || props.default === props.active}
 											onClick={() => {
 												if (props.active) {
 													props.onClear &&

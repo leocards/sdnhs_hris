@@ -60,7 +60,7 @@ class User extends Authenticatable
 
     /**
      * Get the role of a user
-     * 
+     *
      * @param string $role
      * @return Boolean
      */
@@ -69,6 +69,8 @@ class User extends Authenticatable
     {
         return $this->role == $role;
     }
+
+    protected $appends = ['name'];
 
     /**
      * Get the full name (first name and last name) of a user
@@ -80,7 +82,12 @@ class User extends Authenticatable
 
     public function completeName()
     {
-        return $this->first_name. ' ' .($this->middle_name ? substr($this->middle_name, 0, 1).'.' : ''). ' ' .$this->last_name;
+        return $this->first_name. ' ' .($this->middle_name ? substr($this->middle_name, 0, 1).'. ' : ' ') . $this->last_name;
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->first_name . ' ' . ($this->middle_name ? substr($this->middle_name, 0, 1) . '. ' : ' ') . $this->last_name;
     }
 
     public function scopeSearchByFullName($query, $name)

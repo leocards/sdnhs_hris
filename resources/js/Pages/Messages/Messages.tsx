@@ -29,7 +29,7 @@ export default function Messages({ auth }: PageProps) {
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Messages
                 </h2>
             }

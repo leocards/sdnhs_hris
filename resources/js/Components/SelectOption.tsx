@@ -8,6 +8,7 @@ import {
     ReactNode,
     useContext,
     useEffect,
+    useRef,
     useState,
 } from "react";
 import { Check, ChevronDown } from "lucide-react";
@@ -16,7 +17,9 @@ type SelectOptionState = {
     isOpen: boolean;
     setIsOpen: (isOpen: boolean) => void;
     selected: string;
-    setSelected: (select: string) => void
+    setSelected: (select: string) => void;
+    width: number;
+    setWidth: CallableFunction;
 };
 
 const initialState: SelectOptionState = {
@@ -24,6 +27,8 @@ const initialState: SelectOptionState = {
     setIsOpen: () => {},
     selected: "",
     setSelected: () => {},
+    width: 0,
+    setWidth: () => {},
 };
 
 type SelectOptionProps = {
@@ -35,6 +40,7 @@ const SelectOptionContext = createContext<SelectOptionState>(initialState);
 const SelectOptionProvider = ({ children, ...props }: SelectOptionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [selected, setSelected] = useState<string>("");
+    const [width, setWidth] = useState<number>(0);
 
     const value = {
         isOpen: isOpen,
@@ -43,8 +49,12 @@ const SelectOptionProvider = ({ children, ...props }: SelectOptionProps) => {
         },
         selected: selected,
         setSelected: (select: string) => {
-            setSelected(select)
-        }
+            setSelected(select);
+        },
+        width,
+        setWidth: (width: number) => {
+            setWidth(width);
+        },
     };
 
     return (
@@ -73,12 +83,14 @@ const SelectOptionRoot: React.FC<{ children: ReactNode }> = ({ children }) => {
     return <SelectOptionProvider>{children}</SelectOptionProvider>;
 };
 
-const SelectOptionMain: React.FC<SelectOptionProps & { onChange: (value: string) => void }> = ({ children, onChange }) => {
-    const { isOpen, selected, setIsOpen } = useSelectOption();
+const SelectOptionMain: React.FC<
+    SelectOptionProps & { onChange: (value: string) => void }
+> = ({ children, onChange }) => {
+    const { isOpen, selected, setIsOpen, setWidth } = useSelectOption();
 
     useEffect(() => {
-        onChange(selected)
-    }, [selected])
+        onChange(selected);
+    }, [selected]);
 
     return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>
@@ -87,7 +99,10 @@ const SelectOptionMain: React.FC<SelectOptionProps & { onChange: (value: string)
     );
 };
 
-const SelectOption: React.FC<{ children: ReactNode, onChange: (value: string) =>void }> = ({ children, onChange}) => {
+const SelectOption: React.FC<{
+    children: ReactNode;
+    onChange: (value: string) => void;
+}> = ({ children, onChange }) => {
     return (
         <SelectOptionRoot>
             <SelectOptionMain children={children} onChange={onChange} />
@@ -95,12 +110,14 @@ const SelectOption: React.FC<{ children: ReactNode, onChange: (value: string) =>
     );
 };
 
-const SelectOptionContent: React.FC<{ children: ReactNode, className?: string }> = ({
-    children,
-    className
-}) => {
+const SelectOptionContent: React.FC<{
+    children: ReactNode;
+    className?: string;
+}> = ({ children, className }) => {
+    const { width } = useSelectOption();
+
     return (
-        <PopoverContent className={cn("p-1", className)} align="start">
+        <PopoverContent className={cn("p-1", className)} align="start" style={{width: `${width}px`}}>
             {children}
         </PopoverContent>
     );
@@ -116,7 +133,7 @@ const SelectOptionItem: React.FC<{
 
     const handleSelect = () => {
         onSelect && onSelect(value);
-        setSelected(value)
+        setSelected(value);
         setIsOpen(false);
     };
 
@@ -139,10 +156,32 @@ const SelectOptionItem: React.FC<{
 const SelectOptionTrigger: React.FC<{ children: ReactNode }> = ({
     children,
 }) => {
+    const ref = useRef(null);
+    const { setWidth } = useSelectOption();
+
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver((entries) => {
+            if (entries[0]) {
+                setWidth(entries[0].target.clientWidth);
+            }
+        });
+
+        if (ref.current) {
+            resizeObserver.observe(ref.current);
+        }
+
+        return () => {
+            if (ref.current) {
+                resizeObserver.unobserve(ref.current);
+            }
+        };
+    }, []);
+
     return (
         <PopoverTrigger
             asChild
             className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
+            ref={ref}
         >
             {children}
         </PopoverTrigger>

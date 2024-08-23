@@ -15,11 +15,6 @@ import {
     FormMessage,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
@@ -139,68 +134,11 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 </div>
 
                 <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
-                    {/* <FormField
-                        control={form.control}
-                        name={c1.personalinformation + "dateofbirth"}
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="required">
-                                    Date of birth
-                                </FormLabel>
-                                <Popover
-                                    open={isCalendarOpen}
-                                    onOpenChange={setIsCalendarOpen}
-                                >
-                                    <PopoverTrigger
-                                        asChild
-                                        className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                    >
-                                        <FormControl>
-                                            <Button
-                                                variant={"outline"}
-                                                className={cn(
-                                                    "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
-                                                    !field.value &&
-                                                        "text-muted-foreground"
-                                                )}
-                                            >
-                                                {field.value ? (
-                                                    <span>
-                                                        {format(
-                                                            field.value,
-                                                            "PPP"
-                                                        )}
-                                                    </span>
-                                                ) : (
-                                                    <span>Pick a date</span>
-                                                )}
-                                                <CalendarIcon className="ml-auto size-5 opacity-50" />
-                                            </Button>
-                                        </FormControl>
-                                    </PopoverTrigger>
-                                    <PopoverContent
-                                        className="w-auto p-0"
-                                        align="start"
-                                    >
-                                        <Calendar
-                                            mode="single"
-                                            selected={field.value}
-                                            onSelect={(date) => {
-                                                field.onChange(date);
-                                                setIsCalendarOpen(false);
-                                            }}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    /> */}
                     <CalendarInput
-                                form={form}
-                                name={c1.personalinformation + "dateofbirth"}
-                                isRequired={false}
-                            />
+                        form={form}
+                        name={c1.personalinformation + "dateofbirth"}
+                        isRequired={false}
+                    />
                     <FormField
                         control={form.control}
                         name={c1.personalinformation + "placeofbirth"}

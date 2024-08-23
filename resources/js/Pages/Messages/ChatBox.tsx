@@ -6,7 +6,7 @@ import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } fro
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
 import { router } from "@inertiajs/react";
-import { EllipsisVertical, Send } from "lucide-react";
+import { ArrowLeft, EllipsisVertical, Send } from "lucide-react";
 import { useEffect } from "react";
 
 export default function ChatBox({ user }: {user: User}) {
@@ -21,8 +21,13 @@ export default function ChatBox({ user }: {user: User}) {
     return (
         <div className="border rounded-lg grid grid-rows-[auto,1fr,auto]">
             <div className="h-14 border-b p-2 flex items-center gap-2">
+                <div className="[@media(min-width:720px)]:hidden">
+                    <Button variant={'ghost'} size={"icon"}>
+                        <ArrowLeft className="size-4" />
+                    </Button>
+                </div>
                 <div className="">
-                    <AvatarProfile />
+                    <AvatarProfile src="/storage/assets/profile.png" />
                 </div>
                 <div className="max-w-96 w-full mr-2">
                     <Label className="line-clamp-1">Lorem ipsum dolor</Label>
@@ -41,7 +46,7 @@ export default function ChatBox({ user }: {user: User}) {
                             <MenubarItem className="transition duration-200">
                                 Export chat
                             </MenubarItem>
-                            <MenubarItem className="text-destructive hover:!bg-destructive/10 dark:hover:!bg-destructive/50 hover:!text-destructive dark:hover:!text-red-500 transition duration-200">
+                            <MenubarItem className="text-destructive hover:!bg-destructive/10 dark:hover:!bg-destructive/50 hover:!text-destructive dark:!text-red-500 transition duration-200">
                                 Delete conversation
                             </MenubarItem>
                         </MenubarContent>
@@ -69,7 +74,7 @@ export default function ChatBox({ user }: {user: User}) {
             </div>
             <div className="h-14 border-t p-2 flex gap-3">
                 <Input className="" placeholder="Write message" />
-                <Button size="icon" onClick={() => {
+                <Button size="icon" className="shrink-0" onClick={() => {
                     router.post(route('message.send', [2]), {
                         message: "hello there"
                     })
@@ -103,7 +108,7 @@ const MessageBox: React.FC<{ message: MessageBoxProps, auth: User, position: Mes
     const messageBoxVariant = {
         "sender": "ml-auto mr-2 bg-blue-600 text-white",
         "receiver": "ml-2 bg-accent"
-    }[message.from === auth.id ? "sender" : "receiver"]
+    }[message.from === 1 ? "sender" : "receiver"]
 
     const roundedBox = {
         "sender-t": "rounded-[1.25rem] rounded-br-md",

@@ -4,7 +4,7 @@ const LeaveStatus: React.FC<{ status: 'Approved' | 'Pending' | 'Rejected', class
     const state = {
         Approved: "text-green-600 dark:text-green-700",
         Pending: "text-yellow-600 dark:text-yellow-700",
-        Rejected: "text-destructive",
+        Rejected: "text-destructive dark:text-red-500",
     }[status]
 
     return (

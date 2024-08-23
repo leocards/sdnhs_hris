@@ -15,7 +15,7 @@ import {
     Menu,
     X,
 } from "lucide-react";
-import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import { CloseButton, Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Tabs from "@/Components/framer/Tabs";
 import { User } from "@/types";
@@ -82,7 +82,7 @@ export default function Authenticated({
 
     return (
         <div className="relative isolate flex min-h-svh w-full bg-white max-lg:flex-col lg:bg-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
-            {width > 1024 && (
+            {width > 1023 && (
                 <Navigation
                     user={user}
                     openNavigation={openNavigation}
@@ -155,6 +155,7 @@ const Navigation: React.FC<{
 }> = ({ user, openNavigation, setOpenNavigation }) => {
     const { width } = useWindowSize();
     const [activeTab] = useState(window.location.pathname.split("/")[1]);
+    const [openPopover, setOpenPopover] = useState<boolean>(false)
     const navigationTabs = [
         {
             id: "dashboard",
@@ -211,11 +212,14 @@ const Navigation: React.FC<{
     }[user.role];
 
     const navigateToTab = (nav: string) => {
+        if (width <= 1023) {
+            setOpenNavigation(false);
+        }
         router.get(route(nav));
     };
 
     useEffect(() => {
-        if (width > 1024) {
+        if (width > 1023) {
             setOpenNavigation(false);
         }
     }, [width]);
@@ -305,7 +309,7 @@ const Navigation: React.FC<{
                                 "group-data-[open]:before:scale-100 group-data-[open]:before:opacity-100"
                             )}
                         >
-                            <AvatarProfile />
+                            <AvatarProfile src={user.avatar} />
                             <div className="text-left font-medium">
                                 <div className="line-clamp-1">{`${user.first_name} ${user.last_name}`}</div>
                                 <div className="text-xs line-clamp-1 opacity-75">
@@ -321,29 +325,32 @@ const Navigation: React.FC<{
                             className="border w-64 rounded-lg bg-background dark:bg-secondary [--anchor-gap:var(--spacing-5)] z-30 shadow-md dark:shadow-3xl min-w-[11rem] -mt-2"
                         >
                             <ul className="p-1 [&>li]:flex [&>li]:items-center [&>li]:gap-4 [&>li]:pl-3 [&>li]:py-2 [&>li]:cursor-default [&>li]:rounded-md space-y-1">
-                                <li
+                                <CloseButton
+                                    as="li"
                                     className="hover:bg-primary hover:text-primary-foreground"
                                     onClick={() =>
                                         router.get(route("profile.edit"))
                                     }
                                 >
                                     <UserRound className="size-5" /> My account
-                                </li>
-                                <li
+                                </CloseButton>
+                                <CloseButton
+                                    as="li"
                                     className="hover:bg-primary hover:text-primary-foreground"
                                     onClick={() =>
                                         router.get(route("profile.settings"))
                                     }
                                 >
                                     <Settings className="size-5" /> Settings
-                                </li>
+                                </CloseButton>
                                 <hr className="borde-t dark:border-white/10" />
-                                <li
+                                <CloseButton
+                                    as="li"
                                     className="hover:bg-primary hover:text-primary-foreground"
                                     onClick={() => router.post(route("logout"))}
                                 >
                                     <LogOut className="size-5" /> Sign out
-                                </li>
+                                </CloseButton>
                             </ul>
                         </PopoverPanel>
                     </Popover>

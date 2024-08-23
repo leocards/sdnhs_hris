@@ -42,7 +42,7 @@ const DetailsOfActionOnApplication: React.FC<FormProps> = ({ form }) => {
     return (
         <div>
             <div>
-                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
+                <FormLabel className="required uppercase opacity-70">
                     A certification of leave credits
                 </FormLabel>
                 <div className="mt-3">
@@ -52,7 +52,7 @@ const DetailsOfActionOnApplication: React.FC<FormProps> = ({ form }) => {
                         render={({ field }) => (
                             <FormItem className="">
                                 <div className="flex items-center gap-3 ">
-                                    <FormLabel className="shrink-0 after:content-['*'] after:ml-0.5 after:text-red-500">
+                                    <FormLabel className="shrink-0 required">
                                         As of
                                     </FormLabel>
                                     <FormControl>
@@ -200,7 +200,7 @@ const DetailsOfActionOnApplication: React.FC<FormProps> = ({ form }) => {
                 </div>
 
                 <div className="mt-4">
-                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
+                    <FormLabel className="required uppercase opacity-70">
                         Recommendation
                     </FormLabel>
                     <div
@@ -266,9 +266,9 @@ const DetailsOfActionOnApplication: React.FC<FormProps> = ({ form }) => {
                 </div>
 
                 <div className="mt-4">
-                    <div className="grid grid-cols-3">
+                    <div className="grid grid-cols-1">
                         <div className="">
-                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
+                            <FormLabel className="required uppercase opacity-70">
                                 Approved for
                             </FormLabel>
                             <div
@@ -280,73 +280,75 @@ const DetailsOfActionOnApplication: React.FC<FormProps> = ({ form }) => {
                                         ?.message
                                 }
                             </div>
-                            <FormField
-                                control={form.control}
-                                name="approvedFor.daysWithPay"
-                                render={({ field }) => (
-                                    <FormItem className="mt-2">
-                                        <div className="flex items-center gap-3">
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="h-10 w-32 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                                />
-                                            </FormControl>
-                                            <FormLabel>days with pay</FormLabel>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="approvedFor.daysWithOutPay"
-                                render={({ field }) => (
-                                    <FormItem className="mt-2">
-                                        <div className="flex items-center gap-3">
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="h-10 w-32 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                                />
-                                            </FormControl>
-                                            <FormLabel>
-                                                days with out pay
-                                            </FormLabel>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="approvedFor.others"
-                                render={({ field }) => (
-                                    <FormItem className="mt-2">
-                                        <div className="flex items-center gap-3">
-                                            <FormControl>
-                                                <Input
-                                                    {...field}
-                                                    className="h-10 w-32 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                                />
-                                            </FormControl>
-                                            <FormLabel>
-                                                others (specify)
-                                            </FormLabel>
-                                        </div>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="grid [@media(min-width:728px)]:grid-cols-3 [@media(min-width:728px)]:gap-3">
+                                <FormField
+                                    control={form.control}
+                                    name="approvedFor.daysWithPay"
+                                    render={({ field }) => (
+                                        <FormItem className="mt-2">
+                                            <div className="flex items-center gap-3">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="h-10 w-32 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                    />
+                                                </FormControl>
+                                                <FormLabel>days with pay</FormLabel>
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="approvedFor.daysWithOutPay"
+                                    render={({ field }) => (
+                                        <FormItem className="mt-2">
+                                            <div className="flex items-center gap-3">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="h-10 w-32 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                    />
+                                                </FormControl>
+                                                <FormLabel>
+                                                    days with out pay
+                                                </FormLabel>
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="approvedFor.others"
+                                    render={({ field }) => (
+                                        <FormItem className="mt-2">
+                                            <div className="flex items-center gap-3">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="h-10 w-32 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                    />
+                                                </FormControl>
+                                                <FormLabel>
+                                                    others (specify)
+                                                </FormLabel>
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                         </div>
 
-                        <div className="col-span-2">
+                        {/* <div className="col-span-2">
                             <FormField
                                 control={form.control}
                                 name="disapprovedDueTo"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
+                                        <FormLabel className="uppercase opacity-70">
                                             Disapproved due to
                                         </FormLabel>
                                         <FormControl>
@@ -359,7 +361,7 @@ const DetailsOfActionOnApplication: React.FC<FormProps> = ({ form }) => {
                                     </FormItem>
                                 )}
                             />
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>

@@ -70,8 +70,6 @@ export default function SearchedEmployee({
         } else {
             setSize(350);
         }
-
-        console.log(width)
     }, [width]);
 
     return (
@@ -88,13 +86,13 @@ export default function SearchedEmployee({
             </div>
 
             <div className="flex items-center gap-3">
-                <AvatarProfile className="size-16" />
+                <AvatarProfile src={user.avatar} className="size-16" />
                 <div>
                     <div className="flex items-center">
                         <Label className="w-28 flex items-center">
                             Name <span className="ml-auto mr-3">:</span>{" "}
                         </Label>
-                        <div className="font-semibold text-lg">{`${user.first_name} ${user.middle_name} ${user.last_name}`}</div>
+                        <div className="font-semibold text-lg">{`${user.first_name} ${user.middle_name??''} ${user.last_name}`}</div>
                     </div>
                     <div className="flex items-center">
                         <Label className="w-28 flex items-center">
@@ -318,7 +316,7 @@ const PDFPages = ({
                 pageNumber={page}
                 width={size}
                 onRenderSuccess={() => setIsRendered(true)}
-                
+
             />
         </div>
     );

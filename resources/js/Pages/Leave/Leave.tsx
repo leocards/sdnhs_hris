@@ -61,7 +61,7 @@ function Leave({
         medical: "",
         user: { id: null, first_name: "", last_name: "" },
     });
-    const { setList, data, pages, clearList } = usePageList()
+    const { setList, data, clearList } = usePageList()
     const debounceSearch = useDebounce<string>(search, search?700:0)
 
     const searchRef = useRef<HTMLInputElement | null>(null);
@@ -269,7 +269,7 @@ const LeaveRow: React.FC<{
             id: number;
             first_name: string;
             last_name: string;
-            profile?: string;
+            avatar?: string;
         };
         medical_certificate: {
             id: number;
@@ -299,7 +299,7 @@ const LeaveRow: React.FC<{
             <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
                 <div className="">
                     <div className="flex items-center gap-2">
-                        <AvatarProfile className="size-8" />
+                        <AvatarProfile src={user.avatar} className="size-8" />
                         <div className="line-clamp-1">
                             {user.first_name + " " + user.last_name}
                         </div>

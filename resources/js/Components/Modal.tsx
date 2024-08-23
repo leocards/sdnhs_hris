@@ -57,7 +57,7 @@ export default function Modal({
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <DialogPanel
-                        className={`my-6 h-fit bg-white dark:bg-zinc-900 rounded-lg overflow-hidd en shadow-xl transform transition-all sm:w-full sm:mx-auto ${typeof center === 'string' ? center : center &&"my-auto"} ${dialogStyle} ${maxWidthClass}`}
+                        className={`my-6 h-fit bg-white dark:bg-zinc-900 rounded-lg overflow-hidd en shadow-xl transform transition-all sm: w-full sm:mx-auto ${typeof center === 'string' ? center : center &&"my-auto"} ${dialogStyle} ${maxWidthClass}`}
                     >
                         {children}
                     </DialogPanel>

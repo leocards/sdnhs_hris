@@ -13,11 +13,16 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name');
             $table->string('last_name');
+            $table->string('first_name');
             $table->string('middle_name')->nullable();
-            $table->enum('sex', ['Male', 'Female']);
+            $table->string('extension_name')->nullable();
             $table->date('date_of_birth');
+            $table->string('birth_place', 1000)->nullable();
+            $table->enum('sex', ['Male', 'Female']);
+            $table->string('civil_status')->nullable();
+            $table->string('height')->nullable();
+            $table->string('weight')->nullable();
             $table->string('address', 1000);
             $table->string('email')->unique();
             $table->string('phone_number', 11);
@@ -28,10 +33,12 @@ return new class extends Migration
             $table->date('date_hired');
             $table->integer('leave_rendered')->nullable();
             $table->integer('leave_credits')->nullable();
+            $table->string('avatar')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

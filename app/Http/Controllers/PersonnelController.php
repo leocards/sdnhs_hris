@@ -21,7 +21,13 @@ class PersonnelController extends Controller
         return Inertia::render('Personnel/Personnel', [
             'pageData' => User::whereNot('id', Auth::id())
                 ->orderBy('first_name', 'ASC')
-                ->paginate(50)
+                ->paginate(50),
+            'statistics' => collect([
+                'jhs' => User::where('department', 'Junior High School')->count(),
+                'shs' => User::where('department', 'Senior High School')->count(),
+                'accounting' => User::where('department', 'Accounting')->count(),
+                'admin' => User::where('role', 'HR')->count()
+            ])
         ]);
     }
 
@@ -40,7 +46,7 @@ class PersonnelController extends Controller
     public function tardiness()
     {
         return Inertia::render('Personnel/PersonnelTardiness', [
-            'attendance' => PersonnelTardiness::with('users')
+            'attendance' => PersonnelTardiness::with(['users:id,first_name,last_name,middle_name,avatar'])
                 ->whereYear('created_at', Carbon::now()->format('Y'))
                 ->orderBy(
                     User::select('first_name')
@@ -56,7 +62,7 @@ class PersonnelController extends Controller
             'personnels' => User::whereNotIn('role', ['HR', 'HOD'])
                 ->rightJoin('personnel_tardinesses as pt', 'pt.user_id', '=', 'users.id')
                 ->whereYear('pt.created_at', '!=', Carbon::now()->format('Y'))
-                ->get(['users.id', 'users.first_name', 'users.last_name', 'users.middle_name'])
+                ->get(['users.id', 'users.first_name', 'users.last_name', 'users.middle_name', 'users.avatar'])
                 ->append('name')
         ]);
     }
@@ -136,7 +142,8 @@ class PersonnelController extends Controller
                 'position' => $request->position,
                 'leave_credits' => $request->userRole != "HOD" ? $request->currentCredits : null,
                 'date_hired' => Carbon::parse($request->date_hired)->format('Y-m-d'),
-                'password' => Hash::make($request->password)
+                'password' => Hash::make($request->password),
+                'avatar' => '/storage/assets/profile.png'
             ]);
 
             DB::commit();
@@ -182,6 +189,13 @@ class PersonnelController extends Controller
             return back()->withErrors($th->getMessage());
             //throw $th;
         }
+    }
+
+    public function delete(User $user)
+    {
+        $user->delete();
+
+        return back()->with('success', 'Successfully deleted.');
     }
 
     public function store_tardiness(Request $request)

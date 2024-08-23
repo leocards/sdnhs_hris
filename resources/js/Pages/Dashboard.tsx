@@ -40,7 +40,9 @@ export default function Dashboard({
             header={
                 <h2 className="font-semibold text-xl leading-tight">
                     Good{" "}
-                    {format(new Date(), "bbbb") === "a.m."
+                    {parseInt(format(new Date(), "kk")) >= 17
+                        ? "evening"
+                        : format(new Date(), "bbbb") === "a.m."
                         ? "morning"
                         : format(new Date(), "bbbb") === "p.m."
                         ? "afternoon"
@@ -56,16 +58,18 @@ export default function Dashboard({
                     <div className="border-t pt-4 space-y-1.5">
                         <div className="font-medium">Total personnel</div>
                         <div className="text-xl font-semibold">
-                            {totalEmployee?.total} Employees
+                            {totalEmployee?.total} Personnel
                         </div>
-                        {(totalEmployee?.recent && totalEmployee?.recent > 0) ? (
+                        {totalEmployee?.recent && totalEmployee?.recent > 0 ? (
                             <div className="text-xs font-medium space-x-1">
                                 <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
                                     + {totalEmployee?.recent}
                                 </span>
                                 <span> from the last 7 days</span>
                             </div>
-                        ): ""}
+                        ) : (
+                            ""
+                        )}
                     </div>
                 ) : (
                     <div className="border-t pt-4 space-y-1.5">
@@ -73,12 +77,16 @@ export default function Dashboard({
                         <div className="text-xl font-semibold">
                             {auth.user.leave_credits ?? 0} Credit/s
                         </div>
-                        <div className="text-xs font-medium space-x-1">
-                            <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
-                                + 1
-                            </span>
-                            <span> from the last 7 days</span>
-                        </div>
+                        {totalEmployee?.recent && totalEmployee?.recent > 0 ? (
+                            <div className="text-xs font-medium space-x-1">
+                                <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
+                                    + {totalEmployee?.recent}
+                                </span>
+                                <span> from the last 7 days</span>
+                            </div>
+                        ) : (
+                            ""
+                        )}
                     </div>
                 )}
                 <div className="border-t pt-4 space-y-1.5">
@@ -173,7 +181,7 @@ type LeaveType = {
         id: number;
         first_name: string;
         last_name: string;
-        profile?: string;
+        avatar?: string;
     };
     medical_certificate: {
         id: number;
@@ -204,7 +212,7 @@ const RecentLeaveRow: React.FC<{ leave: LeaveType }> = ({
             <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
                 <div className="">
                     <div className="flex items-center gap-2">
-                        <AvatarProfile className="size-8" />
+                        <AvatarProfile src={user.avatar} className="size-8" />
                         <div className="line-clamp-1">
                             {user.first_name + " " + user.last_name}
                         </div>

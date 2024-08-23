@@ -39,6 +39,14 @@ export type Personnel = {
     present: string;
     absent: string;
     created_at: string;
+    avatar: string;
+    users: {
+        id: number;
+        first_name: string;
+        last_name: string;
+        middle_name: string;
+        avatar: string;
+    };
 };
 
 export default function Index({
@@ -47,26 +55,35 @@ export default function Index({
     personnels,
     years,
 }: PersonnelTardinessProps) {
+    console.log(attendance);
 
     return (
         <PageListProvider initialValue={attendance}>
-            <PersonnelTardiness auth={auth} attendance={attendance} personnels={personnels} years={years} />
+            <PersonnelTardiness
+                auth={auth}
+                attendance={attendance}
+                personnels={personnels}
+                years={years}
+            />
         </PageListProvider>
-    )
+    );
 }
 
 function PersonnelTardiness({
     auth,
     attendance,
     personnels,
-    years
+    years,
 }: PersonnelTardinessProps) {
     const [showAddAttendance, setShowAddAttendance] = useState<boolean>(false);
-    const [showDeleteAttendance, setShowDeleteAttendance] = useState<boolean>(false);
+    const [showDeleteAttendance, setShowDeleteAttendance] =
+        useState<boolean>(false);
     const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel>();
-    const { setList, data, pages, loading, setLoading } = usePageList()
+    const { setList, data, pages, loading, setLoading } = usePageList();
 
-    const [filter, setFilter] = useState<string>(getYear(new Date()).toString());
+    const [filter, setFilter] = useState<string>(
+        getYear(new Date()).toString()
+    );
 
     const navigateTo = (nav: string) => {
         router.get(route(nav));
@@ -83,25 +100,29 @@ function PersonnelTardiness({
     };
 
     const getPageData = (page?: number) => {
-        setLoading(true)
-        window.axios.get(route('personnel.tardiness.json', {
-            _query: {
-                year: filter,
-                page: page
-            }
-        })).then((response) => {
-            let data = response.data
-            setList(data)
-            setLoading(false)
-        })
-    }
+        setLoading(true);
+        window.axios
+            .get(
+                route("personnel.tardiness.json", {
+                    _query: {
+                        year: filter,
+                        page: page,
+                    },
+                })
+            )
+            .then((response) => {
+                let data = response.data;
+                setList(data);
+                setLoading(false);
+            });
+    };
 
     useEffect(() => {
-        if(attendance) {
-            if(filter != getYear(new Date()).toString()) {
-                getPageData(1)
+        if (attendance) {
+            if (filter != getYear(new Date()).toString()) {
+                getPageData(1);
             } else {
-                setList(attendance)
+                setList(attendance);
             }
         }
     }, [attendance, filter]);
@@ -143,7 +164,10 @@ function PersonnelTardiness({
                     active={filter}
                     items={[
                         { filter: "All", onClick: setFilter },
-                        ...years.map((year) => ({ filter: year.toString(), onClick: setFilter }))
+                        ...years.map((year) => ({
+                            filter: year.toString(),
+                            onClick: setFilter,
+                        })),
                     ]}
                     onClear={() => setFilter("All")}
                 />
@@ -184,8 +208,16 @@ function PersonnelTardiness({
                     ))}
                 </DataList>
 
-                <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
-                <PersonnelTardinessConfirmDelete personnel={selectedPersonnel} show={showDeleteAttendance} onClose={setShowDeleteAttendance} />
+                <PaginationButton
+                    onPage={getPageData}
+                    onNext={getPageData}
+                    onPrevious={getPageData}
+                />
+                <PersonnelTardinessConfirmDelete
+                    personnel={selectedPersonnel}
+                    show={showDeleteAttendance}
+                    onClose={setShowDeleteAttendance}
+                />
             </div>
         </Authenticated>
     );
@@ -197,13 +229,21 @@ type PersonnelRowProps = {
     onDelete: (personnel: Personnel) => void;
 };
 
-const PersonnelRow: React.FC<PersonnelRowProps> = ({ personnel, onEdit, onDelete }) => {
+const PersonnelRow: React.FC<PersonnelRowProps> = ({
+    personnel,
+    onEdit,
+    onDelete,
+}) => {
+    console.log(personnel);
     return (
         <div className="hover:bg-secondary transition-colors">
             <div className="grid grid-cols-[repeat(4,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1">
                 <div className="">
                     <div className="flex items-center gap-2">
-                        <AvatarProfile className="size-8" />
+                        <AvatarProfile
+                            src={personnel.users?.avatar}
+                            className="size-8"
+                        />
                         <div className="line-clamp-1">{personnel.name}</div>
                     </div>
                 </div>

@@ -10,7 +10,7 @@ export default function isPageLoading(): boolean {
     ]
 
     const subpages = [
-        '/personnel/new-personnel/edit', '/messages?user', '/leave/view', '/leave/apply-for-leave'
+        '/personnel/new-personnel/edit', '/messages?user', '/leave/view', '/leave/apply-for-leave', '/general-search/view'
     ]
 
     useEffect(() => {

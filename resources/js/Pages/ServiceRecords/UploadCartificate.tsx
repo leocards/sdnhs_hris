@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/Components/ui/use-toast";
+import Processing from "@/Components/Processing";
 
 type UploadCertificateProps = {
     show: boolean;
@@ -110,7 +111,6 @@ export default function UploadCertificate({
                         variant: "destructive",
                         description: error[0]
                     })
-                    console.log(error)
                     setIsSubmit(false)
                 }
             })
@@ -127,103 +127,107 @@ export default function UploadCertificate({
 
     return (
         <Modal show={show} onClose={() => onClose(false)} center maxWidth="lg">
-            <div className="p-6">
-                <div className="font-bold text-xl mb-6 px-1">
-                    Upload certificate
-                </div>
+            {processing ? (
+                <Processing is_processing={processing} backdrop={""} />
+            ) : (
+                <div className="p-6">
+                    <div className="font-bold text-xl mb-6 px-1">
+                        Upload certificate
+                    </div>
 
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onFormSubmit)}>
-                        <div className="space-y-5">
-                            <FormField
-                                control={form.control}
-                                name="certificateName"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                            Certificate name
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="file"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                            File
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                onChange={(e) => {
-                                                    const file = e.target.files?.[0];
-                                                    if (file) {
-                                                        field.onChange(file);
-                                                    }
-                                                }}
-                                                onBlur={field.onBlur}
-                                                name={field.name}
-                                                ref={field.ref}
-                                                type="file"
-                                                className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="daysRendered"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                            Days rendered
-                                        </FormLabel>
-                                        <Popover>
-                                            <CalendarPickerButton form={form} />
-                                            <PopoverContent
-                                                className="w-auto p-0"
-                                                align="start"
-                                            >
-                                                <Calendar
-                                                    mode="range"
-                                                    selected={field.value}
-                                                    onSelect={field.onChange}
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onFormSubmit)}>
+                            <div className="space-y-5">
+                                <FormField
+                                    control={form.control}
+                                    name="certificateName"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                                Certificate name
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
                                                 />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="file"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                                File
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    onChange={(e) => {
+                                                        const file = e.target.files?.[0];
+                                                        if (file) {
+                                                            field.onChange(file);
+                                                        }
+                                                    }}
+                                                    onBlur={field.onBlur}
+                                                    name={field.name}
+                                                    ref={field.ref}
+                                                    type="file"
+                                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="daysRendered"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                                Days rendered
+                                            </FormLabel>
+                                            <Popover>
+                                                <CalendarPickerButton form={form} />
+                                                <PopoverContent
+                                                    className="w-auto p-0"
+                                                    align="start"
+                                                >
+                                                    <Calendar
+                                                        mode="range"
+                                                        selected={field.value}
+                                                        onSelect={field.onChange}
+                                                    />
+                                                </PopoverContent>
+                                            </Popover>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
 
-                        <div className="flex items-center mt-8 pt-3">
-                            <Button
-                                type="button"
-                                variant="ghost"
-                                className=""
-                                onClick={() => onClose(false)}
-                                disabled={processing}
-                            >
-                                <span>Cancel</span>
-                            </Button>
-                            <Button className="ml-auto" disabled={processing}>
-                                Upload
-                            </Button>
-                        </div>
-                    </form>
-                </Form>
-            </div>
+                            <div className="flex items-center mt-8 pt-3">
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    className=""
+                                    onClick={() => onClose(false)}
+                                    disabled={processing}
+                                >
+                                    <span>Cancel</span>
+                                </Button>
+                                <Button className="ml-auto" disabled={processing}>
+                                    Upload
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
+                </div>
+            )}
         </Modal>
     );
 }

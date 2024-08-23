@@ -9,6 +9,7 @@ export interface User {
     email: string;
     role: string;
     email_verified_at: string;
+    avatar: string;
 }
 
 export type PaginateData = {

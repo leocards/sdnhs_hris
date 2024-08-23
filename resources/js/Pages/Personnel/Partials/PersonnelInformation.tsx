@@ -20,9 +20,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/Components/ui/popover
 import { Button } from "@/Components/ui/button";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "lucide-react";
 import { Calendar } from "@/Components/ui/calendar";
 import { useEffect, useState } from "react";
+import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigger } from "@/Components/SelectOption";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false)
@@ -146,29 +148,30 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 Department
                             </FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                                value={form.watch("department")??""}
-                                disabled={userRole === "HOD"}
-                            >
-                                <FormControl>
-                                    <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">
-                                        <SelectValue placeholder="Select department" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="Junior High School">
-                                        Junior High School
-                                    </SelectItem>
-                                    <SelectItem value="Senior High School">
-                                        Senior High School
-                                    </SelectItem>
-                                    <SelectItem value="Accounting">
-                                        Accounting
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <SelectOption onChange={field.onChange}>
+                                <SelectOptionTrigger>
+                                    <FormControl>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                !field.value &&
+                                                    "text-muted-foreground"
+                                            )}
+                                        >
+                                            <span>
+                                                {!field.value ? "Select department" : field.value}
+                                            </span>
+                                            <ChevronDown className="size-4" />
+                                        </Button>
+                                    </FormControl>
+                                </SelectOptionTrigger>
+                                <SelectOptionContent>
+                                    <SelectOptionItem value="Junior High School" />
+                                    <SelectOptionItem value="Senior High School" />
+                                    <SelectOptionItem value="Accounting" />
+                                </SelectOptionContent>
+                            </SelectOption>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -181,27 +184,31 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 User role
                             </FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                                value={form.watch("userRole")??""}
-                            >
-                                <FormControl>
-                                    <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">
-                                        <SelectValue placeholder="Select role" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent >
-                                    <SelectItem value="HR">HR</SelectItem>
-                                    <SelectItem value="HOD">HOD</SelectItem>
-                                    <SelectItem value="Teaching">
-                                        Teaching
-                                    </SelectItem>
-                                    <SelectItem value="Non-teaching">
-                                        Non-teaching
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <SelectOption onChange={field.onChange}>
+                                <SelectOptionTrigger>
+                                    <FormControl>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                !field.value &&
+                                                    "text-muted-foreground"
+                                            )}
+                                        >
+                                            <span>
+                                                {!field.value ? "Select role" : field.value}
+                                            </span>
+                                            <ChevronDown className="size-4" />
+                                        </Button>
+                                    </FormControl>
+                                </SelectOptionTrigger>
+                                <SelectOptionContent>
+                                    <SelectOptionItem value="HR" />
+                                    <SelectOptionItem value="HOD" />
+                                    <SelectOptionItem value="Teaching" />
+                                    <SelectOptionItem value="Non-teaching" />
+                                </SelectOptionContent>
+                            </SelectOption>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -214,24 +221,32 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 Position
                             </FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value}
-                                value={form.watch("position")??""}
-                            >
-                                <FormControl>
-                                    <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">
-                                        <SelectValue placeholder="Select role" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent className="!max-h-80">
-                                    {PERSONNELPOSITIONS.map((pos, index) => (
-                                        <SelectItem key={index} value={pos}>
-                                            {pos}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <SelectOption onChange={field.onChange}>
+                                <SelectOptionTrigger>
+                                    <FormControl>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                !field.value &&
+                                                    "text-muted-foreground"
+                                            )}
+                                        >
+                                            <span>
+                                                {field.value ?? "Select position"}
+                                            </span>
+                                            <ChevronDown className="size-4" />
+                                        </Button>
+                                    </FormControl>
+                                </SelectOptionTrigger>
+                                <SelectOptionContent>
+                                    <ScrollArea className="h-72">
+                                        {PERSONNELPOSITIONS.map((pos, index) => (
+                                            <SelectOptionItem key={index} value={pos} />
+                                        ))}
+                                    </ScrollArea>
+                                </SelectOptionContent>
+                            </SelectOption>
                             <FormMessage />
                         </FormItem>
                     )}

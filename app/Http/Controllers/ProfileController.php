@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -55,6 +58,40 @@ class ProfileController extends Controller
         $request->user()->save();
 
         return back()->with(['success' => "Profile updated successfully."]);
+    }
+
+    public function upload_avatar(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|mimes:png,jpg,jpeg|max:10240', // 10MB max size
+        ]);
+
+        $path = null;
+
+        DB::beginTransaction();
+        try {
+
+            $path = $request->file('image')->store('public/avatar');
+
+            $user = User::find(Auth::id());
+
+            $user->avatar = str_replace('public', '/storage', $path);
+
+            $user->save();
+
+            DB::commit();
+
+            return back()->with('success', 'Successfully uploaded.');
+
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            if (isset($path)) {
+                Storage::delete($path);
+            }
+
+            return back()->withErrors($th->getMessage());
+        }
     }
 
     /**

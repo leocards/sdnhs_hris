@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ServiceRecordRequest;
 use App\Mail\ProfileUpdate;
+use App\Models\Notifications;
 use App\Models\ServiceRecord;
 use App\Models\User;
 use Carbon\Carbon;
@@ -28,6 +29,16 @@ class ServiceRecordController extends Controller
         ]);
     }
 
+    public function indexJson()
+    {
+        return response()->json(
+            ServiceRecord::where('user_id', Auth::id())
+                ->where('file_name', '!=', 'Medical certificate')
+                ->orderBy('created_at', 'desc')
+                ->paginate(50)
+        );
+    }
+
     public function store(ServiceRecordRequest $request)
     {
         $path = null;
@@ -38,22 +49,44 @@ class ServiceRecordController extends Controller
 
             $from = Carbon::parse($request->daysRendered['from']);
             $to = $request->daysRendered['to'] ? Carbon::parse($request->daysRendered['to']) : null;
+            $credits = $to ? ($from->diffInDays($to) + 1) : 1;
 
-            User::whereId(Auth::id())->update(['leave_credits' => (Auth::user()->leave_credits + ($to ? ($from->diffInDays($to) + 1) : 1))]);
+            User::whereId(Auth::id())->update(['leave_credits' => (Auth::user()->leave_credits + $credits)]);
 
             ServiceRecord::create([
                 'user_id' => Auth::id(),
                 'file_name' => $request->certificateName,
                 'file_path' => $path,
                 'date_from' => $from->format('Y-m-d'),
-                'date_to' => $to ? $to->format('Y-m-d') : null
+                'date_to' => $to ? $to->format('Y-m-d') : null,
+                'credits' => $credits
             ]);
+
+            if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
+                $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
+                foreach ($receivers as $value) {
+                    Notifications::create([
+                        'user_id' => $value['id'],
+                        'from_user_id' => Auth::id(),
+                        'message' => "has uploaded a certificate."
+                    ]);
+                }
+            } else {
+                $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
+                foreach ($receivers as $value) {
+                    Notifications::create([
+                        'user_id' => $value['id'],
+                        'from_user_id' => Auth::id(),
+                        'message' => "has uploaded a certificate."
+                    ]);
+                }
+            }
 
             DB::commit();
 
             $userSender = User::find(Auth::id());
 
-            Mail:: queue(new ProfileUpdate("recently uploaded a service record: ".$request->certificateName, ["name" => $userSender->name(), "position" => $userSender->position], Auth::user()->email));
+            Mail::queue(new ProfileUpdate("recently uploaded a service record: " . $request->certificateName, ["name" => $userSender->name(), "position" => $userSender->position], Auth::user()->email));
 
             return back()->with('success', 'Certificate uploaded successfully.');
         } catch (\Throwable $th) {
@@ -63,6 +96,29 @@ class ServiceRecordController extends Controller
                 Storage::delete($path);
             }
 
+            return back()->withErrors($th->getMessage());
+        }
+    }
+
+    public function delete(ServiceRecord $sr)
+    {
+        try {
+            DB::transaction(function () use ($sr) {
+
+                $user = User::find(Auth::id());
+
+                $credits_remain = intval($user->leave_credits) - intval($sr->credits);
+
+                $user->leave_credits = $credits_remain < 0 ? 0 : $credits_remain;
+
+                $user->save();
+
+                $sr->delete();
+
+            });
+
+            return back()->with('success', 'Deleted successfully.');
+        } catch (\Throwable $th) {
             return back()->withErrors($th->getMessage());
         }
     }

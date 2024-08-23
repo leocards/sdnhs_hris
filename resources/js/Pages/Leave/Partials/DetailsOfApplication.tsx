@@ -14,7 +14,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import { LEAVETYPES } from "../types";
+import { defaultDetailsOfLeave, LEAVETYPES } from "../types";
 import { Input } from "@/Components/ui/input";
 import { cn } from "@/lib/utils";
 import NumberInput from "@/Components/NumberInput";
@@ -27,8 +27,15 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 import { format, isWeekend } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
+import {
+    SelectOption,
+    SelectOptionContent,
+    SelectOptionItem,
+    SelectOptionTrigger,
+} from "@/Components/SelectOption";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
     const watchLeaveType = form.watch("leavetype.type");
@@ -50,10 +57,34 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
         }
     }, [commutation]);
 
+    useEffect(() => {
+        if(watchLeaveType) {
+            form.resetField('detailsOfLeave.vacation_special.withinPhilippines', {
+                checked: false, input: ''
+            })
+            form.resetField('detailsOfLeave.vacation_special.abroad', {
+                checked: false, input: ''
+            })
+            form.resetField('detailsOfLeave.sick.inHospital', {
+                checked: false, input: ''
+            })
+            form.resetField('detailsOfLeave.sick.outPatient', {
+                checked: false, input: ''
+            })
+            form.resetField('detailsOfLeave.benefitsForWomen', '')
+            form.resetField('detailsOfLeave.study', {
+                degree: false, examReview: false
+            })
+            form.resetField('detailsOfLeave.other', {
+                monetization: false, terminal: false
+            })
+        }
+    }, [watchLeaveType])
+
     return (
         <div>
             <div className="">
-                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
+                <FormLabel className="required uppercase opacity-70">
                     Type of leave to be availed of
                 </FormLabel>
                 <div className="grid []:grid-cols-1 grid-cols-2 gap-3 mt-2">
@@ -62,29 +93,43 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                         name="leavetype.type"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                <FormLabel className="required">
                                     Type:
                                 </FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
+                                <SelectOption
+                                    onChange={(select) => {
+                                        field.onChange(select);
+                                    }}
                                 >
-                                    <FormControl>
-                                        <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">
-                                            <SelectValue placeholder="Select type" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent className="!max-h-80">
-                                        {LEAVETYPES.map((type, index) => (
-                                            <SelectItem
-                                                key={index}
-                                                value={type}
+                                    <SelectOptionTrigger>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                    !field.value &&
+                                                        "text-muted-foreground"
+                                                )}
                                             >
-                                                {type}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                                <span className="line-clamp-1">
+                                                    {field.value ??
+                                                        "Select type"}
+                                                </span>
+                                                <ChevronDown className="size-4" />
+                                            </Button>
+                                        </FormControl>
+                                    </SelectOptionTrigger>
+                                    <SelectOptionContent className="w-80">
+                                        <ScrollArea className="h-72">
+                                            {LEAVETYPES.map((type, index) => (
+                                                <SelectOptionItem
+                                                    key={index}
+                                                    value={type}
+                                                />
+                                            ))}
+                                        </ScrollArea>
+                                    </SelectOptionContent>
+                                </SelectOption>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -99,7 +144,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                 <FormLabel
                                     className={cn(
                                         watchLeaveType === "Others" &&
-                                            "after:content-['*'] after:ml-0.5 after:text-red-500"
+                                            "required"
                                     )}
                                 >
                                     Others:{" "}
@@ -121,385 +166,471 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                 </div>
             </div>
 
-            <div className="mt-6">
-                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
-                    Details of leave
-                </FormLabel>
-
-                <div
-                    className="text-sm font-medium text-destructive"
-                    tabIndex={0}
-                >
-                    {form.formState.errors.detailsOfLeave?.root?.message}
-                </div>
-
-                <div className="mt-2">
-                    <FormLabel className="italic">
-                        In case of Vacation/Special Privilege Leave:
-                    </FormLabel>
-                    <div className="grid []:grid-cols-1 grid-cols-2 gap-3 mt-2">
-                        <div className="">
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.vacation_special.withinPhilippines.checked"
-                                render={({ field }) => (
-                                    <FormItem className="items-center flex gap-2">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormLabel className=" !mt-0 font-normal">
-                                            Within the Philippines
-                                        </FormLabel>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.vacation_special.withinPhilippines.input"
-                                render={({ field }) => (
-                                    <FormItem className="mt-2">
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="form-input"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                                disabled={!detailsOfLeave[0]}
-                            />
-                        </div>
-
-                        <div className="">
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.vacation_special.abroad.checked"
-                                render={({ field }) => (
-                                    <FormItem className="items-center flex gap-2">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormLabel className=" !mt-0 font-normal">
-                                            Abroad (Specify)
-                                        </FormLabel>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.vacation_special.abroad.input"
-                                render={({ field }) => (
-                                    <FormItem className="mt-2">
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="form-input"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                                disabled={!detailsOfLeave[1]}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-4">
-                    <FormLabel className="italic">
-                        In case of Sick Leave:
-                    </FormLabel>
-                    <div className="grid []:grid-cols-1 grid-cols-2 gap-3 mt-2">
-                        <div className="">
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.sick.inHospital.checked"
-                                render={({ field }) => (
-                                    <FormItem className="items-center flex gap-2">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormLabel className=" !mt-0 font-normal">
-                                            In Hospital (Specify Illness)
-                                        </FormLabel>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.sick.inHospital.input"
-                                render={({ field }) => (
-                                    <FormItem className="mt-2">
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="form-input"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                                disabled={!detailsOfLeave[2]}
-                            />
-                        </div>
-
-                        <div className="">
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.sick.outPatient.checked"
-                                render={({ field }) => (
-                                    <FormItem className="items-center flex gap-2">
-                                        <FormControl>
-                                            <Checkbox
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </FormControl>
-                                        <FormLabel className=" !mt-0 font-normal">
-                                            Out Patient (Specify Illness)
-                                        </FormLabel>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="detailsOfLeave.sick.outPatient.input"
-                                render={({ field }) => (
-                                    <FormItem className="mt-2">
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="form-input"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                                disabled={!detailsOfLeave[3]}
-                            />
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-4">
-                    <FormField
-                        control={form.control}
-                        name="detailsOfLeave.benefitsForWomen"
-                        render={({ field }) => (
-                            <FormItem className="mt-2">
-                                <FormLabel className="italic">
-                                    In case of Special Leave Benefits for Women:
-                                </FormLabel>
-                                <FormControl>
-                                    <Input {...field} className="form-input" />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
-                <div className="mt-4">
-                    <FormLabel className="italic">
-                        In case of Study Leave:
-                    </FormLabel>
-                    <div className="mt-3 space-y-2 ml-4">
-                        <FormField
-                            control={form.control}
-                            name="detailsOfLeave.study.degree"
-                            render={({ field }) => (
-                                <FormItem className="items-center flex gap-2">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormLabel className=" !mt-0 font-normal">
-                                        Completion of Master's Degree
-                                    </FormLabel>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="detailsOfLeave.study.examReview"
-                            render={({ field }) => (
-                                <FormItem className="items-center flex gap-2">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormLabel className=" !mt-0 font-normal">
-                                        BAR/Board Examination Review
-                                    </FormLabel>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                </div>
-
-                <div className="mt-4">
-                    <FormLabel className="italic">Other purpose</FormLabel>
-                    <div className="mt-3 space-y-2 ml-4">
-                        <FormField
-                            control={form.control}
-                            name="detailsOfLeave.other.monetization"
-                            render={({ field }) => (
-                                <FormItem className="items-center flex gap-2">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormLabel className=" !mt-0 font-normal">
-                                        Monetization of Leave Credits
-                                    </FormLabel>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="detailsOfLeave.other.terminal"
-                            render={({ field }) => (
-                                <FormItem className="items-center flex gap-2">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormLabel className=" !mt-0 font-normal">
-                                        Terminal Leave
-                                    </FormLabel>
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                </div>
-
-                <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-2 w-full gap-3 mt-6">
-                    <FormField
-                        control={form.control}
-                        name="inclusiveDates"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
-                                    Inclusive dates
-                                </FormLabel>
-                                <Popover>
-                                    <CalendarPickerButton form={form} />
-                                    <PopoverContent
-                                        className="w-auto p-0"
-                                        align="start"
-                                    >
-                                        <Calendar
-                                            mode="range"
-                                            selected={form.watch(
-                                                "inclusiveDates"
-                                            )}
-                                            onSelect={field.onChange}
-                                            disabled={(date) => {
-                                                if (
-                                                    form.getValues(
-                                                        "leavetype.type"
-                                                    ) !== "Maternity Leave"
-                                                )
-                                                    return isWeekend(date);
-                                                else return false;
-                                            }}
-                                        />
-                                    </PopoverContent>
-                                </Popover>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="numDaysApplied"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
-                                    Number of days applied for
-                                </FormLabel>
-                                <FormControl>
-                                    <NumberInput
-                                        {...field}
-                                        disabled
-                                        className="form-input"
-                                    />
-                                </FormControl>
-                                <FormDescription className="text-xs">
-                                    Automatically set with inclusive dates
-                                </FormDescription>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                </div>
-
+            {watchLeaveType && (
                 <div className="mt-6">
-                    <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase opacity-70">
-                        Commutation
+                    <FormLabel className="required uppercase opacity-70">
+                        Details of leave
                     </FormLabel>
+
                     <div
                         className="text-sm font-medium text-destructive"
                         tabIndex={0}
                     >
-                        {form.formState.errors.commutation?.root?.message}
+                        {form.formState.errors.detailsOfLeave?.root?.message}
                     </div>
-                    <div className="mt-3 space-y-2 ml-4">
+
+                    {["Vacation Leave", "Special Privilege Leave"].includes(
+                        watchLeaveType
+                    ) && (
+                        <div className="mt-2">
+                            <FormLabel className="italic">
+                                In case of Vacation/Special Privilege Leave:
+                            </FormLabel>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.vacation_special.withinPhilippines.checked"
+                                        render={({ field }) => (
+                                            <FormItem className="items-center flex gap-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
+                                                        disabled={
+                                                            form.watch(
+                                                                "detailsOfLeave.vacation_special.abroad.checked"
+                                                            ) === true
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className=" !mt-0 font-normal">
+                                                    Within the Philippines
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.vacation_special.withinPhilippines.input"
+                                        render={({ field }) => (
+                                            <FormItem className="mt-2">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="form-input"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        disabled={!detailsOfLeave[0]}
+                                    />
+                                </div>
+
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.vacation_special.abroad.checked"
+                                        render={({ field }) => (
+                                            <FormItem className="items-center flex gap-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
+                                                        disabled={
+                                                            form.watch(
+                                                                "detailsOfLeave.vacation_special.withinPhilippines.checked"
+                                                            ) === true
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className=" !mt-0 font-normal">
+                                                    Abroad (Specify)
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.vacation_special.abroad.input"
+                                        render={({ field }) => (
+                                            <FormItem className="mt-2">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="form-input"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        disabled={!detailsOfLeave[1]}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {watchLeaveType === "Sick Leave" && (
+                        <div className="mt-4">
+                            <FormLabel className="italic">
+                                In case of Sick Leave:
+                            </FormLabel>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.sick.inHospital.checked"
+                                        render={({ field }) => (
+                                            <FormItem className="items-center flex gap-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
+                                                        disabled={
+                                                            form.watch(
+                                                                "detailsOfLeave.sick.outPatient.checked"
+                                                            ) === true
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className=" !mt-0 font-normal">
+                                                    In Hospital (Specify
+                                                    Illness)
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.sick.inHospital.input"
+                                        render={({ field }) => (
+                                            <FormItem className="mt-2">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="form-input"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        disabled={!detailsOfLeave[2]}
+                                    />
+                                </div>
+
+                                <div className="">
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.sick.outPatient.checked"
+                                        render={({ field }) => (
+                                            <FormItem className="items-center flex gap-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
+                                                        disabled={
+                                                            form.watch(
+                                                                "detailsOfLeave.sick.inHospital.checked"
+                                                            ) === true
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className=" !mt-0 font-normal">
+                                                    Out Patient (Specify
+                                                    Illness)
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.sick.outPatient.input"
+                                        render={({ field }) => (
+                                            <FormItem className="mt-2">
+                                                <FormControl>
+                                                    <Input
+                                                        {...field}
+                                                        className="form-input"
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                        disabled={!detailsOfLeave[3]}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {watchLeaveType === "Special Leave Benefits for Women" && (
+                        <div className="mt-4">
+                            <FormField
+                                control={form.control}
+                                name="detailsOfLeave.benefitsForWomen"
+                                render={({ field }) => (
+                                    <FormItem className="mt-2">
+                                        <FormLabel className="italic">
+                                            In case of Special Leave Benefits
+                                            for Women:
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className="form-input"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                    )}
+
+                    {watchLeaveType === "Study Leave" && (
+                        <div className="mt-4">
+                            <FormLabel className="italic">
+                                In case of Study Leave:
+                            </FormLabel>
+                            <div className="mt-3 space-y-2 ml-4">
+                                <FormField
+                                    control={form.control}
+                                    name="detailsOfLeave.study.degree"
+                                    render={({ field }) => (
+                                        <FormItem className="items-center flex gap-2">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={
+                                                        field.onChange
+                                                    }
+                                                    disabled={
+                                                        form.watch(
+                                                            "detailsOfLeave.study.examReview"
+                                                        ) === true
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormLabel className=" !mt-0 font-normal">
+                                                Completion of Master's Degree
+                                            </FormLabel>
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="detailsOfLeave.study.examReview"
+                                    render={({ field }) => (
+                                        <FormItem className="items-center flex gap-2">
+                                            <FormControl>
+                                                <Checkbox
+                                                    checked={field.value}
+                                                    onCheckedChange={
+                                                        field.onChange
+                                                    }
+                                                    disabled={
+                                                        form.watch(
+                                                            "detailsOfLeave.study.degree"
+                                                        ) === true
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormLabel className=" !mt-0 font-normal">
+                                                BAR/Board Examination Review
+                                            </FormLabel>
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
+                    )}
+
+                    {![
+                        "Sick Leave",
+                        "Vacation Leave",
+                        "Special Privilege Leave",
+                        "Special Leave Benefits for Women",
+                        "Study Leave",
+                    ].includes(watchLeaveType) &&
+                        watchLeaveType && (
+                            <div className="mt-4">
+                                <FormLabel className="italic">
+                                    Other purpose
+                                </FormLabel>
+                                <div className="mt-3 space-y-2 ml-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.other.monetization"
+                                        render={({ field }) => (
+                                            <FormItem className="items-center flex gap-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
+                                                        disabled={
+                                                            form.watch(
+                                                                "detailsOfLeave.other.terminal"
+                                                            ) === true
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className=" !mt-0 font-normal">
+                                                    Monetization of Leave
+                                                    Credits
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="detailsOfLeave.other.terminal"
+                                        render={({ field }) => (
+                                            <FormItem className="items-center flex gap-2">
+                                                <FormControl>
+                                                    <Checkbox
+                                                        checked={field.value}
+                                                        onCheckedChange={
+                                                            field.onChange
+                                                        }
+                                                        disabled={
+                                                            form.watch(
+                                                                "detailsOfLeave.other.monetization"
+                                                            ) === true
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormLabel className=" !mt-0 font-normal">
+                                                    Terminal Leave
+                                                </FormLabel>
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                    <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-2 w-full gap-3 mt-6">
                         <FormField
                             control={form.control}
-                            name="commutation.notRequested"
+                            name="inclusiveDates"
                             render={({ field }) => (
-                                <FormItem className="items-center flex gap-2">
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormLabel className=" !mt-0 font-normal">
-                                        Not requested
+                                <FormItem>
+                                    <FormLabel className="required uppercase opacity-70">
+                                        Inclusive dates
                                     </FormLabel>
+                                    <Popover>
+                                        <CalendarPickerButton form={form} />
+                                        <PopoverContent
+                                            className="w-auto p-0"
+                                            align="start"
+                                        >
+                                            <Calendar
+                                                mode="range"
+                                                selected={form.watch(
+                                                    "inclusiveDates"
+                                                )}
+                                                onSelect={field.onChange}
+                                                disabled={(date) => {
+                                                    if (
+                                                        form.getValues(
+                                                            "leavetype.type"
+                                                        ) !== "Maternity Leave"
+                                                    )
+                                                        return isWeekend(date);
+                                                    else return false;
+                                                }}
+                                            />
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
                         <FormField
                             control={form.control}
-                            name="commutation.requested"
+                            name="numDaysApplied"
                             render={({ field }) => (
-                                <FormItem className="items-center flex gap-2">
+                                <FormItem>
+                                    <FormLabel className="required uppercase opacity-70">
+                                        Number of days applied for
+                                    </FormLabel>
                                     <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
+                                        <NumberInput
+                                            {...field}
+                                            disabled
+                                            className="form-input"
                                         />
                                     </FormControl>
-                                    <FormLabel className=" !mt-0 font-normal">
-                                        Requested
-                                    </FormLabel>
+                                    <FormDescription className="text-xs">
+                                        Automatically set with inclusive dates
+                                    </FormDescription>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
+                    </div>
+
+                    <div className="mt-6">
+                        <FormLabel className="required uppercase opacity-70">
+                            Commutation
+                        </FormLabel>
+                        <div
+                            className="text-sm font-medium text-destructive"
+                            tabIndex={0}
+                        >
+                            {form.formState.errors.commutation?.root?.message}
+                        </div>
+                        <div className="mt-3 space-y-2 ml-4">
+                            <FormField
+                                control={form.control}
+                                name="commutation.notRequested"
+                                render={({ field }) => (
+                                    <FormItem className="items-center flex gap-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <FormLabel className=" !mt-0 font-normal">
+                                            Not requested
+                                        </FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="commutation.requested"
+                                render={({ field }) => (
+                                    <FormItem className="items-center flex gap-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <FormLabel className=" !mt-0 font-normal">
+                                            Requested
+                                        </FormLabel>
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

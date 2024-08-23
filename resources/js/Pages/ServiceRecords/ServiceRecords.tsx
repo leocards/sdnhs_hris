@@ -9,43 +9,59 @@ import {
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PageProps, PaginateData } from "@/types";
 import { EllipsisVertical, Eye, Trash2, Upload } from "lucide-react";
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from "@/Components/ui/pagination";
-import { cn } from "@/lib/utils";
 import UploadCertificate from "./UploadCartificate";
 import { useEffect, useState } from "react";
 import { usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import ViewCertificate from "./ViewCertificate";
-import { AspectRatio } from "@radix-ui/react-aspect-ratio";
+import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
+import DataList from "@/Components/DataList";
+import PaginationButton from "@/Components/PaginationButton";
 
-export default function ServiceRecords({
+
+
+export default function index({
     auth,
     records,
 }: PageProps & {
     records: PaginateData;
 }) {
-    const [recirdsList, setRecirdsList] = useState<PaginateData>(records);
+    return (
+        <PageListProvider initialValue={records}>
+            <ServiceRecords auth={auth} records={records} />
+        </PageListProvider>
+    )
+}
+
+function ServiceRecords({
+    auth,
+    records,
+}: PageProps & {
+    records: PaginateData;
+}) {
+    const { setList, data, loading, setLoading } = usePageList()
     const [isUploadCertificate, setIsUploadCertificate] =
         useState<boolean>(false);
-
-    const { props } = usePage();
-
     const [selectedCertificate, setSelectedCertificate] = useState<string|null>(null)
 
+    const getPageData = (page?: number) => {
+        setLoading(true)
+        window.axios.get(route('service-records.json', {
+            _query: {
+                page: page
+            }
+        })).then((response) => {
+            let data = response.data
+            setList(data)
+            setLoading(false)
+        })
+    }
+
     useEffect(() => {
-        if (isUploadCertificate) {
-            setRecirdsList(props.records as PaginateData);
-            console.log("rendered");
+        if (records) {
+            setList(records);
         }
-    }, [props]);
+    }, [records]);
 
     return (
         <Authenticated
@@ -74,56 +90,13 @@ export default function ServiceRecords({
                     <div className=""></div>
                 </div>
 
-                {records.data.length === 0 && (
-                    <div className="text-center py-5 text-foreground/60">
-                        No record.
-                    </div>
-                )}
+                <DataList empty={data.length === 0} loading={loading}>
+                    {data.map((record, index) => (
+                        <CertificateRow key={index} data={record} onView={setSelectedCertificate} />
+                    ))}
+                </DataList>
 
-                {records.data.map((record, index) => (
-                    <CertificateRow key={index} data={record} onView={setSelectedCertificate} />
-                ))}
-
-                {records.total >= 50 && (
-                    <Pagination className="!mt-auto pt-2">
-                        <PaginationContent>
-                            <PaginationItem>
-                                <PaginationPrevious
-                                    href="#"
-                                    className={cn(
-                                        "opacity-60 pointer-events-none"
-                                    )}
-                                />
-                            </PaginationItem>
-                            {Array.from({
-                                length: 3,
-                            }).map((_, index) => (
-                                <PaginationItem key={index}>
-                                    <PaginationLink
-                                        href="#"
-                                        isActive={1 === ++index}
-                                    >
-                                        <span>{index}</span>
-                                    </PaginationLink>
-                                </PaginationItem>
-                            ))}
-                            {0 > 3 && (
-                                <PaginationItem>
-                                    <PaginationEllipsis />
-                                </PaginationItem>
-                            )}
-                            <PaginationItem>
-                                <PaginationNext
-                                    href="#"
-                                    className={cn(
-                                        "opacity-60 pointer-events-none"
-                                    )}
-                                    onClick={() => {}}
-                                />
-                            </PaginationItem>
-                        </PaginationContent>
-                    </Pagination>
-                )}
+                <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
             </div>
 
             <UploadCertificate

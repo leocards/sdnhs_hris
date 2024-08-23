@@ -9,9 +9,11 @@ import LeaveRespond from "./LeaveRespond";
 import LeaveStatus from "@/Components/LeaveStatus";
 import { Breadcrumbs } from "@/Components/ui/breadcrumb";
 import LeavePDF from "./LeavePDF";
+import ViewLeaveResponse from "./ViewLeaveResponse";
 
 const ApplicationForLeavePDF = ({ auth, leave, hr }: PageProps<{ leave: any, hr: string }>) => {
     const [showRespond, setShowRespond] = useState<boolean>(false);
+    const [showViewResponse, setShowViewResponse] = useState<boolean>(false);
     const [respondLeave, setRespondLeave] = useState<
         "rejected" | "approved" | null
     >(null);
@@ -21,7 +23,7 @@ const ApplicationForLeavePDF = ({ auth, leave, hr }: PageProps<{ leave: any, hr:
         page: { format: "A4", margin: Margin.MEDIUM },
     });
     const download_pdf = usePDF({
-        method: "open",
+        method: "save",
         filename: "application-for-leave.pdf",
         page: { format: "A4", margin: Margin.MEDIUM },
     });
@@ -36,7 +38,7 @@ const ApplicationForLeavePDF = ({ auth, leave, hr }: PageProps<{ leave: any, hr:
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl text-gray-800 leading-tight">
+                <h2 className="font-semibold text-xl leading-tight">
                     Leave
                 </h2>
             }
@@ -51,7 +53,7 @@ const ApplicationForLeavePDF = ({ auth, leave, hr }: PageProps<{ leave: any, hr:
 
             <div className="flex mb-3">
                 <div>
-                    <Button variant={"ghost"}>
+                    <Button variant={"ghost"} onClick={() => setShowViewResponse(true)}>
                         <span>View response</span>
                     </Button>
                 </div>
@@ -93,6 +95,20 @@ const ApplicationForLeavePDF = ({ auth, leave, hr }: PageProps<{ leave: any, hr:
                 show={showRespond}
                 status={respondLeave}
                 onClose={setShowRespond}
+            />
+            <ViewLeaveResponse
+                show={showViewResponse}
+                onClose={setShowViewResponse}
+                response={{
+                    hr: {
+                        reponse: leave.hr_status,
+                        message: leave.hr_reject_msg,
+                    },
+                    principal: {
+                        reponse: leave.principal_status,
+                        message: leave.principal_reject_msg,
+                    }
+                }}
             />
         </Authenticated>
     );

@@ -28,11 +28,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/settings', [ProfileController::class, 'edit'])->name('profile.settings');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::post('/profile/upload-avatar', [ProfileController::class, 'upload_avatar'])->name('profile.avatar');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/general-search', [SearchController::class, 'index'])->name('general-search');
-    Route::get('/general-search/view/{user}', [SearchController::class, 'view_searched'])->name('general-search.view');
+    Route::prefix('general-search')->group(function () {
+        Route::controller(SearchController::class)->group(function () {
+            Route::get('/', 'index')->name('general-search');
+            Route::get('/json', 'indexJson')->name('general-search.json');
+            Route::get('/view/{user}', 'view_searched')->name('general-search.view');
+        });
+    });
+
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -49,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
                 Route::post('/new-personnel', 'store')->name('personnel.new.store');
                 Route::post('/update-personnel/{user?}', 'update')->name('personnel.update');
+                Route::post('/delete-personnel/{user?}', 'delete')->name('personnel.delete');
                 Route::post('/tardiness', 'store_tardiness')->name('personnel.tardiness.add');
                 Route::post('/tardiness-update/{tardiness}', 'update_tardiness')->name('personnel.tardiness.update');
                 Route::post('/tardiness-delete/{tardiness}', 'delete_tardiness')->name('personnel.tardiness.delete');
@@ -76,8 +85,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/pds-upload', [PersonalDataSheetController::class, 'store_pds'])->name('pds.upload');
 
-    Route::get('/service-records', [ServiceRecordController::class, 'index'])->name('service-records');
-    Route::post('/service-records', [ServiceRecordController::class, 'store'])->name('service-records.post');
+    Route::prefix('service-records')->group(function () {
+        Route::controller(ServiceRecordController::class)->group(function () {
+            Route::get('/', [ServiceRecordController::class, 'index'])->name('service-records');
+            Route::get('/json', [ServiceRecordController::class, 'indexJson'])->name('service-records.json');
+
+            Route::post('/upload', [ServiceRecordController::class, 'store'])->name('service-records.post');
+        });
+    });
 
     Route::prefix('reports')->group(function () {
         Route::controller(ReportController::class)->group(function () {

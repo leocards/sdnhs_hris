@@ -11,7 +11,7 @@ export default function PersonalDataSheet() {
     return (
         <div className="mt-8">
             <div className="w-full border-b mb-6">
-                <Tabs 
+                <Tabs
                     id="pds"
                     active={activeTab}
                     tabs={[
@@ -24,35 +24,12 @@ export default function PersonalDataSheet() {
                     navigate={setActiveTab}
                 />
             </div>
-            
+
             {activeTab === "c1" && <C1 />}
             {activeTab === "c2" && <C2 />}
             {activeTab === "c3" && <C3 />}
             {activeTab === "c4" && <C4 />}
-
-            {/* C3 */}
-            {/* <div className="">
-                <div className="">
-                    <div className="font-medium uppercase italic">
-                        VI. VOLUNTARY WORK OR INVOLVEMENT IN CIVIC /
-                        NON-GOVERNMENT / PEOPLE / VOLUNTARY
-                        ORGANIZATION/S
-                    </div>
-                </div>
-
-                <div className="">
-                    <div className="font-medium uppercase italic">
-                        VII. LEARNING AND DEVELOPMENT (L&D)
-                        INTERVENTIONS/TRAINING PROGRAMS ATTENDED
-                    </div>
-                </div>
-
-                <div className="">
-                    <div className="font-medium uppercase italic">
-                        VIII. OTHER INFORMATION
-                    </div>
-                </div>
-            </div> */}
+            
         </div>
     );
 }

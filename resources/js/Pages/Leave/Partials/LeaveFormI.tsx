@@ -22,11 +22,12 @@ import {
 import { Button } from "@/Components/ui/button";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "lucide-react";
 import { Calendar } from "@/Components/ui/calendar";
 import NumberInput from "@/Components/NumberInput";
 import { PERSONNELPOSITIONS } from "@/Pages/Personnel/types";
-import { useEffect } from "react";
+import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigger } from "@/Components/SelectOption";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const LeaveFormI: React.FC<FormProps> = ({ form }) => {
     return (
@@ -37,37 +38,41 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                     name="department"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase">
+                            <FormLabel className="required uppercase">
                                 Office/Department
                             </FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                value={field.value??""}
-                            >
-                                <FormControl>
-                                    <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">
-                                        <SelectValue placeholder="Select department" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    <SelectItem value="Junior High School">
-                                        Junior High School
-                                    </SelectItem>
-                                    <SelectItem value="Senior High School">
-                                        Senior High School
-                                    </SelectItem>
-                                    <SelectItem value="Accounting">
-                                        Accounting
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <SelectOption onChange={field.onChange}>
+                                <SelectOptionTrigger>
+                                    <FormControl>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                !field.value &&
+                                                    "text-muted-foreground"
+                                            )}
+                                            disabled
+                                        >
+                                            <span>
+                                                {field.value ?? "Select depeartment"}
+                                            </span>
+                                            <ChevronDown className="size-4" />
+                                        </Button>
+                                    </FormControl>
+                                </SelectOptionTrigger>
+                                <SelectOptionContent>
+                                    <SelectOptionItem value="Junior High School" />
+                                    <SelectOptionItem value="Senior High School" />
+                                    <SelectOptionItem value="Accounting" />
+                                </SelectOptionContent>
+                            </SelectOption>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
             </div>
             <div className=" mt-5">
-                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase">
+                <FormLabel className="required uppercase">
                     Name
                 </FormLabel>
                 <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3">
@@ -76,12 +81,13 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                         name="firstName"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                <FormLabel className="required">
                                     First name
                                 </FormLabel>
                                 <FormControl>
                                     <Input
                                         {...field}
+                                        disabled
                                         className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
                                     />
                                 </FormControl>
@@ -95,12 +101,13 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                         name="lastName"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                <FormLabel className="required">
                                     Last name
                                 </FormLabel>
                                 <FormControl>
                                     <Input
                                         {...field}
+                                        disabled
                                         className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
                                     />
                                 </FormControl>
@@ -113,12 +120,13 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                         name="middleName"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                <FormLabel className="">
                                     Middle name
                                 </FormLabel>
                                 <FormControl>
                                     <Input
                                         {...field}
+                                        disabled
                                         className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
                                     />
                                 </FormControl>
@@ -134,7 +142,7 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                     name="dateOfFiling"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase">
+                            <FormLabel className="required uppercase">
                                 Date of filing
                             </FormLabel>
                             <Popover>
@@ -182,27 +190,36 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                     name="position"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase">
+                            <FormLabel className="required uppercase">
                                 Position
                             </FormLabel>
-                            <Select
-                                onValueChange={field.onChange}
-                                defaultValue={field.value??""}
-                                value={field.value??""}
-                            >
-                                <FormControl>
-                                    <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">
-                                        <SelectValue placeholder="Select role" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent className="!max-h-80">
-                                    {PERSONNELPOSITIONS.map((pos, index) => (
-                                        <SelectItem key={index} value={pos}>
-                                            {pos}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                            <SelectOption onChange={field.onChange}>
+                                <SelectOptionTrigger>
+                                    <FormControl>
+                                        <Button
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                !field.value &&
+                                                    "text-muted-foreground"
+                                            )}
+                                            disabled
+                                        >
+                                            <span>
+                                                {field.value ?? "Select role"}
+                                            </span>
+                                            <ChevronDown className="size-4" />
+                                        </Button>
+                                    </FormControl>
+                                </SelectOptionTrigger>
+                                <SelectOptionContent>
+                                    <ScrollArea className="h-72">
+                                        {PERSONNELPOSITIONS.map((pos, index) => (
+                                            <SelectOptionItem key={index} value={pos} />
+                                        ))}
+                                    </ScrollArea>
+                                </SelectOptionContent>
+                            </SelectOption>
                             <FormMessage />
                         </FormItem>
                     )}
@@ -212,7 +229,7 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                     name="salary"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500 uppercase">
+                            <FormLabel className="required uppercase">
                                 Salary
                             </FormLabel>
                             <FormControl>

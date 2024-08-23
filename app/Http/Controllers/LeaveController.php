@@ -9,11 +9,13 @@ use App\Models\DetailsOfActionLeave;
 use App\Models\DetailsOfLeave;
 use App\Models\Leave;
 use App\Models\Medical;
+use App\Models\Notifications;
 use App\Models\ServiceRecord;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
@@ -25,7 +27,7 @@ class LeaveController extends Controller
     public function index()
     {
         return Inertia::render('Leave/Leave', [
-            "pageData" => Leave::with(['user:id,first_name,last_name'])
+            "pageData" => Leave::with(['user:id,first_name,last_name,avatar'])
                 ->when(!in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']), function ($query) {
                     return $query->where('user_id', Auth::id());
                 })
@@ -48,25 +50,25 @@ class LeaveController extends Controller
                     return $query->where('user_id', Auth::id());
                 })
                 ->when($request->query('sort')['sort'], function ($query) use ($request) {
-                    if($request->query('sort')['sort'] == "Date created"){
+                    if ($request->query('sort')['sort'] == "Date created") {
                         $query->orderBy('created_at', $request->query('sort')['order']);
                     }
-                    if($request->query('sort')['sort'] == "Leave type"){
+                    if ($request->query('sort')['sort'] == "Leave type") {
                         $query->orderBy('leave_type', $request->query('sort')['order']);
                     }
-                    if(in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']))
-                        if ($request->query('sort')['sort'] == "Name"){
+                    if (in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']))
+                        if ($request->query('sort')['sort'] == "Name") {
                             $query->join('users', 'users.id', '=', 'leaves.user_id')
                                 ->orderBy('users.first_name', $request->query('sort')['order'])
                                 ->select('leaves.*');
-                        } 
+                        }
                 })
                 ->when($request->query('search'), function ($query) use ($request) {
                     $search = $request->query('search');
                     $query->join('users', 'users.id', '=', 'leaves.user_id')
-                        ->where('leaves.leave_type', 'LIKE', '%'.$search.'%')
+                        ->where('leaves.leave_type', 'LIKE', '%' . $search . '%')
                         ->when(in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']), function ($query) use ($search) {
-                            $query->orWhere('users.first_name', 'LIKE', '%'.$search.'%');
+                            $query->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
                         })
                         ->select('leaves.*');
                 })
@@ -161,6 +163,26 @@ class LeaveController extends Controller
                 'disapproved' => $request->disapprovedDueTo
             ]);
 
+            if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
+                $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
+                foreach ($receivers as $value) {
+                    Notifications::create([
+                        'user_id' => $value['id'],
+                        'from_user_id' => Auth::id(),
+                        'message' => " has submitted an Application for leave."
+                    ]);
+                }
+            } else {
+                $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
+                foreach ($receivers as $value) {
+                    Notifications::create([
+                        'user_id' => $value['id'],
+                        'from_user_id' => Auth::id(),
+                        'message' => " has submitted an Application for leave."
+                    ]);
+                }
+            }
+
             if ($request->hasFile('medicalForMaternity')) {
                 $path = $request->file('medicalForMaternity')->store('public/medical');
 
@@ -197,8 +219,21 @@ class LeaveController extends Controller
             if ($request->respond === "approved") {
                 if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Approved";
+
+                    Notifications::create([
+                        'user_id' => $user->id,
+                        'from_user_id' => Auth::id(),
+                        'message' => ': Your application for leave has been approved by the HR.'
+                    ]);
+
                 } else {
                     $leave->principal_status = "Approved";
+
+                    Notifications::create([
+                        'user_id' => $user->id,
+                        'from_user_id' => Auth::id(),
+                        'message' => ': Your application for leave has been approved by the Principal.'
+                    ]);
                 }
                 $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
                 $user->save();
@@ -206,9 +241,21 @@ class LeaveController extends Controller
                 if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Rejected";
                     $leave->hr_reject_msg = $request->message;
+
+                    Notifications::create([
+                        'user_id' => $user->id,
+                        'from_user_id' => Auth::id(),
+                        'message' => ': Your application for leave has been rejected by the HR.'
+                    ]);
                 } else {
                     $leave->principal_status = "Rejected";
                     $leave->principal_reject_msg = $request->message;
+
+                    Notifications::create([
+                        'user_id' => $user->id,
+                        'from_user_id' => Auth::id(),
+                        'message' => ': Your application for leave has been rejected by the HR.'
+                    ]);
                 }
             }
             $leave->save();
@@ -251,6 +298,26 @@ class LeaveController extends Controller
                     'file_name' => "Medical certificate",
                     'file_path' => $path,
                 ]);
+
+                if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
+                    $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
+                    foreach ($receivers as $value) {
+                        Notifications::create([
+                            'user_id' => $value['id'],
+                            'from_user_id' => Auth::id(),
+                            'message' => " has uploaded medical certificate."
+                        ]);
+                    }
+                } else {
+                    $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
+                    foreach ($receivers as $value) {
+                        Notifications::create([
+                            'user_id' => $value['id'],
+                            'from_user_id' => Auth::id(),
+                            'message' => " has uploaded medical certificate."
+                        ]);
+                    }
+                }
 
                 $userSender = User::find(Auth::id());
 

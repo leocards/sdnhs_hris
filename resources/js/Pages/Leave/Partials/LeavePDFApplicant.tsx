@@ -72,7 +72,7 @@ const LeavePDFApplicant = ({
                     </div>
                 </div>
             </div>
-            <div className="border-t border-black uppercase h-9 grid grid-cols-3 p-[1pt] pb-2">
+            <div className={cn("border-t uppercase h-9 grid grid-cols-3 p-[1pt] pb-2", isDownload ? "border-black" : "dark:border-border border-black")}>
                 <div className="">
                     <div className={cn(isDownload && "-mt-1.5")}>
                         3. Date of filing

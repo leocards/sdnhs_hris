@@ -13,7 +13,7 @@ const LeavePDF = React.forwardRef<
 
     return (
         <div ref={ref} className="w-[790px] shrink-0 mx-auto text-[11px]">
-            <div className={cn("flex flex-col m-[40pt] mx-[30pt]", isDownload && "my-[20pt]")}>
+            <div className={cn("flex flex-col m-[40pt] mx-[30pt]", isDownload && "my-[20pt] dark:text-black")}>
                 <div className="flex p-2 mx-auto">
                     <img
                         src={"/storage/assets/DepEd.png"}
@@ -43,7 +43,7 @@ const LeavePDF = React.forwardRef<
                     />
                 </div>
 
-                <div className="mt-4 border border-black">
+                <div className={cn("mt-4 border", isDownload ? "border-black" : "dark:border-border border-black")}>
                     <LeavePDFApplicant applicant={{
                         department: leave?.user?.first_name,
                         first: leave?.user?.first_name,
@@ -51,7 +51,7 @@ const LeavePDF = React.forwardRef<
                         middle: leave?.user?.middle_name,
                         dateOfFiling: leave?.created_at,
                         position: leave?.user?.position,
-                        
+
                     }} isDownload={isDownload} />
 
                     <LeavePDFDetailsOfApplication
@@ -79,7 +79,7 @@ const LeavePDF = React.forwardRef<
                         }}
                         isDownload={isDownload}
                     />
-                    
+
                     <LeavePDFDetailsOfActionOnApplication
                         isDownload={isDownload}
                         hr={hr}
@@ -92,8 +92,8 @@ const LeavePDF = React.forwardRef<
                             balanced_sick: leave?.details_of_action_leave?.balanced_sick,
                             balanced_vacation: leave?.details_of_action_leave?.balanced_vacation,
                             is_for_approval: leave?.details_of_action_leave?.is_for_approval,
-                            is_for_disapproval: leave?.details_of_action_leave?.is_for_disapproval,    
-                            is_for_disapproval_input: leave?.details_of_action_leave?.is_for_disapproval_input,    
+                            is_for_disapproval: leave?.details_of_action_leave?.is_for_disapproval,
+                            is_for_disapproval_input: leave?.details_of_action_leave?.is_for_disapproval_input,
                             approved_for_days_with_out_pay: leave?.details_of_action_leave?.approved_for_days_with_out_pay,
                             approved_for_days_with_pay: leave?.details_of_action_leave?.approved_for_days_with_pay,
                             approved_for_others: leave?.details_of_action_leave?.approved_for_others,

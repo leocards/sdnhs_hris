@@ -24,7 +24,7 @@ export function countWeekdaysInRange(startDate: Date, endDate: Date): {count: nu
     const allDays = eachDayOfInterval({ start: startDate, end: endDate });
     const weekdays = allDays.filter((day: Date) => !isWeekend(day));
     return {
-        count: weekdays.length, 
+        count: weekdays.length,
         dates: weekdays
     };
 }
@@ -52,10 +52,13 @@ export const LEAVEFORMSCHEMA = z.object({
     salary: z.string().min(1, requiredError("salary")),
     leavetype: z
         .object({
-            type: z.enum(LEAVETYPES, {
-                required_error:
-                    "Please select the type of leave to be availed of.",
-            }),
+            type: z.preprocess(
+                (val) => (val === "" ? undefined : val),
+                z.enum(LEAVETYPES, {
+                  required_error: "Please select the type of leave.",
+                  invalid_type_error: "Please select the type of leave.",
+                })
+              ),
             others: z.string().optional(),
         })
         // refined, to enable 'others input' field when user select 'others' in leave type
@@ -126,7 +129,7 @@ export const LEAVEFORMSCHEMA = z.object({
 
         return checkedFields.length === 0 ? false : (checkedFields.length <= 1);
     }, {
-        message: 'Please specify only 1 details of leave.'
+        message: 'Please fill out the details of leave.'
     }),
     inclusiveDates: z
         .object({
@@ -255,7 +258,7 @@ export const LEAVEFORMSCHEMA = z.object({
     path: ['medicalForMaternity']
 })
 .refine(({leavetype, medicalForMaternity}) => {
-    if(leavetype.type === "Maternity Leave") 
+    if(leavetype.type === "Maternity Leave")
         if(medicalForMaternity?.size) {
             if(medicalForMaternity?.size > 10 * 1024 * 1024) {
                 return false
@@ -268,6 +271,26 @@ export const LEAVEFORMSCHEMA = z.object({
     path: ['medicalForMaternity']
 })
 
+export const defaultDetailsOfLeave = {
+    vacation_special: {
+        withinPhilippines: { input: '', checked: false },
+        abroad: { input: '', checked: false },
+    },
+    sick: {
+        inHospital: { input: '', checked: false },
+        outPatient: { input: '', checked: false },
+    },
+    benefitsForWomen: '',
+    study: {
+        degree: false,
+        examReview: false
+    },
+    other: {
+        monetization: false,
+        terminal: false
+    }
+}
+
 export const initialValues = {
     department: "",
     firstName: "",
@@ -275,17 +298,7 @@ export const initialValues = {
     lastName: "",
     salary: "",
     leavetype: { others: '' },
-    detailsOfLeave: {
-        vacation_special: {
-            withinPhilippines: { input: '' },
-            abroad: { input: '' },
-        },
-        sick: {
-            inHospital: { input: '' },
-            outPatient: { input: '' },
-        },
-        benefitsForWomen: '',
-    },
+    detailsOfLeave: defaultDetailsOfLeave,
     numDaysApplied: '',
     certificationLeaveCredits: {
         asOf: '',

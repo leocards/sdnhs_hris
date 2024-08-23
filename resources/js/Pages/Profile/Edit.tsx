@@ -7,6 +7,8 @@ import { Camera } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import PersonalDataSheet from "./PersonalDataSheet";
 import Settings from "./Settings";
+import { useState } from "react";
+import UploadAvatar from "./UploadAvatar";
 
 export default function Edit({
     auth,
@@ -14,6 +16,7 @@ export default function Edit({
     status,
 }: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
     const name = auth.user.first_name + " " + auth.user.last_name;
+    const [uploadAvatar, setUploadAvatar] = useState<boolean>(false)
 
     const { url } = usePage();
 
@@ -30,12 +33,13 @@ export default function Edit({
 
             <div className="flex flex-row items-center mt-10 gap-4">
                 <div className="relative group rounded-full overflow-hidden select-none">
-                    <AvatarProfile className="size-32" fallbackSize={40} />
+                    <AvatarProfile src={auth.user.avatar} className="size-32" fallbackSize={40} />
                     <div
                         className={cn(
                             "flex justify-center items-center cursor-pointer opacity-0 bg-black/40 absolute top-0 left-0 z-10 size-full backdrop-blur-sm transition duration-200",
                             "group-hover:opacity-100"
                         )}
+                        onClick={() => setUploadAvatar(true)}
                     >
                         <Camera className="size-8 text-white" />
                     </div>
@@ -76,6 +80,8 @@ export default function Edit({
                     />
                 )}
             </div>
+
+            <UploadAvatar show={uploadAvatar} onClose={setUploadAvatar} />
         </AuthenticatedLayout>
     );
 }

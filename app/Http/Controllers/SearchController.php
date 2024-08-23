@@ -11,17 +11,25 @@ class SearchController extends Controller
 {
     public function index()
     {
-        return Inertia::render("Search/Search");
+        return Inertia::render("Search/Search", [
+            "personnels" => User::orderBy('last_name')->get(['id', 'first_name', 'middle_name', 'last_name', 'position', 'department', 'leave_credits', 'avatar']),
+        ]);
     }
 
     public function view_searched(User $user)
     {
-        if(!$user || $user->id === Auth::id()) {
-            abort(404);
-        }
-
         return Inertia::render('Search/SearchedEmployee', [
             'user' => $user
         ]);
+    }
+
+    public function indexJson(Request $request)
+    {
+        return response()->json(
+            User::where('first_name', 'LIKE', "%".$request->query('search')."%")
+                ->orWhere('last_name', 'LIKE', "%".$request->query('search')."%")
+                ->orWhere('middle_name', 'LIKE', "%".$request->query('search')."%")
+                ->get(['first_name', 'middle_name', 'last_name', 'position', 'department', 'leave_credits'])
+        );
     }
 }

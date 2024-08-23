@@ -14,6 +14,7 @@ class ServiceRecord extends Model
         'file_name',
         'file_path',
         'date_from',
-        'date_to'
+        'date_to',
+        'credits',
     ];
 }

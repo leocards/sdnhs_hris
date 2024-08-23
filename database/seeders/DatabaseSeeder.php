@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'banaag.nieljohn@gmail.com',
             'phone_number' => '09485729385',
             'personnel_id' => 'SDNH-3578',
-            'department' => 'ICT',
+            'department' => 'Senior High School ',
             'role' => 'HR',
             'position' => 'HR',
             'leave_credits' => 0,

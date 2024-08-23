@@ -90,14 +90,14 @@ const LeavePDFDetailsOfApplication = (
         <>
             <div
                 className={cn(
-                    "border-y text-center font-bold uppercase border-black p-[1pt]"
+                    "border-y text-center font-bold uppercase p-[1pt]", isDownload ? "border-black" : "dark:border-border border-black"
                 )}
             >
                 <div className={cn(isDownload && "-mt-3 py-1.5")}>
                     6. Details of Application
                 </div>
             </div>
-            <div className="grid grid-cols-2 divide-x divide-black h-[19rem] [&>div]:p-[1pt]">
+            <div className={cn("grid grid-cols-2 divide-x h-[19rem] [&>div]:p-[1pt]", isDownload ? "divide-black" : "dark:divide-border divide-black")}>
                 <div>
                     <div className={cn("uppercase", isDownload && "-mt-1.5")}>
                         6.A Types of Leave to be availed of:{" "}
@@ -127,7 +127,7 @@ const LeavePDFDetailsOfApplication = (
                                 "h-4 w-[70%]",
                                 leave_type_others
                                     ? "underline"
-                                    : "border-b border-black"
+                                    : ("border-b " + (isDownload ? "border-black" : "dark:border-border border-black"))
                             )}
                         >
                             {leave_type_others}
@@ -285,14 +285,18 @@ const LeavePDFDetailsOfApplication = (
                     </div>
                 </div>
             </div>
-            <div className="border-t border-black grid grid-cols-2 divide-x divide-black h-[6.5rem] [&>div]:p-[1pt]">
+            <div className={cn(
+                "border-t border-black grid grid-cols-2 divide-x divide-black h-[6.5rem] [&>div]:p-[1pt]",
+                isDownload ? "border-black divide-black" : "dark:border-border dark:divide-border border-black divide-black"
+            )}>
                 <div>
                     <div className={cn("uppercase", isDownload && "-mt-1.5")}>
                         6.C Number of working days applied for
                     </div>
                     <div
                         className={cn(
-                            "border-b border-black w-[60%] ml-4 text-center"
+                            "border-b w-[60%] ml-4 text-center",
+                            isDownload ? "border-black" : "dark:border-border border-black"
                         )}
                     >
                         <div className={cn(isDownload && "mb-1.5 mt-1")}>
@@ -303,7 +307,8 @@ const LeavePDFDetailsOfApplication = (
                     <div className="uppercase ml-4 mt-3"> Inclusive dates</div>
                     <div
                         className={cn(
-                            "border-b border-black w-[60%] ml-4 text-center"
+                            "border-b w-[60%] ml-4 text-center",
+                            isDownload ? "border-black" : "dark:border-border border-black"
                         )}
                     >
                         <div className={cn(isDownload && "mb-1.5 mt-1")}>
@@ -355,7 +360,8 @@ const LeavePDFDetailsOfApplication = (
                         </div>
                         <div
                             className={cn(
-                                "border-t border-black text-center",
+                                "border-t text-center",
+                                isDownload ? "border-black" : "dark:border-border border-black",
                                 isDownload ? "mt-2" : "pt-0.5"
                             )}
                         >

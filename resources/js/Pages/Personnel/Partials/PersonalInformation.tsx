@@ -23,11 +23,12 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigger } from "@/Components/SelectOption";
 
 const PersonalInformation: React.FC<FormProps> = ({ form }) => {
-    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false)
+    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
     return (
         <>
@@ -103,26 +104,30 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                                 <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                     Sex
                                 </FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                    value={form.watch("sex")??""}
-                                >
-
-                                    <FormControl>
-                                        <SelectTrigger className="aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm">
-                                            <SelectValue placeholder="Select sex" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        <SelectItem value="Male">
-                                            Male
-                                        </SelectItem>
-                                        <SelectItem value="Female">
-                                            Female
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
+                                <SelectOption onChange={field.onChange}>
+                                    <SelectOptionTrigger>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                    !field.value &&
+                                                        "text-muted-foreground"
+                                                )}
+                                            >
+                                                <span>
+                                                    {field.value ??
+                                                        "Select sex"}
+                                                </span>
+                                                <ChevronDown className="size-4" />
+                                            </Button>
+                                        </FormControl>
+                                    </SelectOptionTrigger>
+                                    <SelectOptionContent>
+                                        <SelectOptionItem value="Male" />
+                                        <SelectOptionItem value="Female" />
+                                    </SelectOptionContent>
+                                </SelectOption>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -135,7 +140,10 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                                 <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                     Date of birth
                                 </FormLabel>
-                                <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+                                <Popover
+                                    open={isCalendarOpen}
+                                    onOpenChange={setIsCalendarOpen}
+                                >
                                     <PopoverTrigger
                                         asChild
                                         className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
@@ -167,14 +175,14 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                                         className="w-auto p-0"
                                         align="start"
                                     >
-                                            <Calendar
-                                                mode="single"
-                                                selected={field.value}
-                                                onSelect={(date) => {
-                                                    field.onChange(date)
-                                                    setIsCalendarOpen(false)
-                                                }}
-                                            />
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={(date) => {
+                                                field.onChange(date);
+                                                setIsCalendarOpen(false);
+                                            }}
+                                        />
                                     </PopoverContent>
                                 </Popover>
                                 <FormMessage />

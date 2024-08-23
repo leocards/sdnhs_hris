@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('file_path', 1000);
             $table->date('date_from')->nullable();
             $table->date('date_to')->nullable();
+            $table->integer('credits')->nullable();
             $table->timestamps();
         });
     }

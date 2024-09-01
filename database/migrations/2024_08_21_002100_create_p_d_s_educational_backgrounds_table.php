@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('p_d_s_educational_backgrounds', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->enum('education_type', ['elementary', 'secondary', 'vocational', 'college', 'gradaute']);
+            $table->enum('education_type', ['elementary', 'secondary', 'vocational', 'college', 'graduate']);
             $table->string('school');
             $table->string('course')->nullable();
             $table->year('from');

@@ -55,8 +55,6 @@ export default function Index({
     personnels,
     years,
 }: PersonnelTardinessProps) {
-    console.log(attendance);
-
     return (
         <PageListProvider initialValue={attendance}>
             <PersonnelTardiness

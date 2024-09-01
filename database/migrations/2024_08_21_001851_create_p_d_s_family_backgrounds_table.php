@@ -19,9 +19,11 @@ return new class extends Migration
             $table->string('first_name')->nullable();
             $table->string('middle_name')->nullable();
             $table->string('full_name')->nullable();
+            $table->date('birthdate')->nullable();
             $table->string('extension_name')->nullable();
             $table->string('occupation')->nullable();
             $table->string('business_name')->nullable();
+            $table->string('business_address')->nullable();
             $table->string('telephone')->nullable();
             $table->timestamps();
         });

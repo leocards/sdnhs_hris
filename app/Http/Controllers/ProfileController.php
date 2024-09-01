@@ -22,9 +22,37 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $pds = User::find(Auth::id());
+        $pds_cs = $request->query('c');
+        $pds_cs_section = $request->query('section');
+
+        if(!$pds_cs || $pds_cs === "C1") {
+            if($pds_cs_section === "I" || !$pds_cs_section)
+                $pds->load(['pdsPersonalInformation']);
+            if($pds_cs_section === "II")
+                $pds->load(['pdsFamilyBackground']);
+            if($pds_cs_section === "III")
+                $pds->load(['pdsEducationalBackground']);
+        } else if($pds_cs === "C2") {
+            if($pds_cs_section === "IV" || !$pds_cs_section)
+                $pds->load(['pdsCivilServiceEligibility']);
+            if($pds_cs_section === "V")
+                $pds->load(['pdsWorkExperience']);
+        } else if($pds_cs === "C3") {
+            if($pds_cs_section === "VI" || !$pds_cs_section)
+                $pds->load(['pdsVoluntaryWork']);
+            if($pds_cs_section === "VII")
+                $pds->load(['pdsLearningDevelopment']);
+            if($pds_cs_section === "VIII")
+                $pds->load(['pdsOtherInformation']);
+        } else if($pds_cs === "C4") {
+            $pds->load(['pdsCs4', 'pdsReferece', 'pdsGovernment']);
+        }
+
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'userinfo' => $pds,
         ]);
     }
 

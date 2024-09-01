@@ -11,14 +11,12 @@ import { PageProps, PaginateData } from "@/types";
 import { EllipsisVertical, Eye, Trash2, Upload } from "lucide-react";
 import UploadCertificate from "./UploadCartificate";
 import { useEffect, useState } from "react";
-import { usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import ViewCertificate from "./ViewCertificate";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import DataList from "@/Components/DataList";
 import PaginationButton from "@/Components/PaginationButton";
-
-
+import ServiceRecordDeleteConfirmation from "./ServiceRecordDeleteConfirmation";
 
 export default function index({
     auth,
@@ -30,8 +28,19 @@ export default function index({
         <PageListProvider initialValue={records}>
             <ServiceRecords auth={auth} records={records} />
         </PageListProvider>
-    )
+    );
 }
+
+type CertificateRowData = {
+    id: number;
+    user_id: number;
+    file_name: string;
+    file_path: string;
+    date_from: string;
+    date_to: string;
+    updated_at: string;
+    credits: number;
+};
 
 function ServiceRecords({
     auth,
@@ -39,23 +48,40 @@ function ServiceRecords({
 }: PageProps & {
     records: PaginateData;
 }) {
-    const { setList, data, loading, setLoading } = usePageList()
+    const { setList, data, loading, setLoading } = usePageList();
     const [isUploadCertificate, setIsUploadCertificate] =
         useState<boolean>(false);
-    const [selectedCertificate, setSelectedCertificate] = useState<string|null>(null)
+    const [selectedCertificate, setSelectedCertificate] =
+        useState<CertificateRowData | null>(null);
+    const [showView, setShowView] = useState<boolean>(false);
+    const [showDelete, setShowDelete] = useState<boolean>(false);
 
     const getPageData = (page?: number) => {
-        setLoading(true)
-        window.axios.get(route('service-records.json', {
-            _query: {
-                page: page
-            }
-        })).then((response) => {
-            let data = response.data
-            setList(data)
-            setLoading(false)
-        })
-    }
+        setLoading(true);
+        window.axios
+            .get(
+                route("service-records.json", {
+                    _query: {
+                        page: page,
+                    },
+                })
+            )
+            .then((response) => {
+                let data = response.data;
+                setList(data);
+                setLoading(false);
+            });
+    };
+
+    const onView = (certificate: CertificateRowData) => {
+        setShowView(true);
+        setSelectedCertificate(certificate);
+    };
+
+    const onDelete = (certificate: CertificateRowData) => {
+        setShowDelete(true);
+        setSelectedCertificate(certificate);
+    };
 
     useEffect(() => {
         if (records) {
@@ -92,11 +118,20 @@ function ServiceRecords({
 
                 <DataList empty={data.length === 0} loading={loading}>
                     {data.map((record, index) => (
-                        <CertificateRow key={index} data={record} onView={setSelectedCertificate} />
+                        <CertificateRow
+                            key={index}
+                            data={record}
+                            onView={onView}
+                            onDelete={onDelete}
+                        />
                     ))}
                 </DataList>
 
-                <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
+                <PaginationButton
+                    onPage={getPageData}
+                    onNext={getPageData}
+                    onPrevious={getPageData}
+                />
             </div>
 
             <UploadCertificate
@@ -104,24 +139,25 @@ function ServiceRecords({
                 onClose={setIsUploadCertificate}
             />
             <ViewCertificate
-                img={selectedCertificate}
-                show={!!selectedCertificate}
-                onClose={() => setSelectedCertificate(null)}
+                certificate={selectedCertificate}
+                show={showView}
+                onClose={setShowView}
+            />
+            <ServiceRecordDeleteConfirmation
+                certificate={selectedCertificate}
+                show={showDelete}
+                onClose={setShowDelete}
             />
         </Authenticated>
     );
 }
 
-type CertificateRowData = {
-    user_id: number
-    file_name: string
-    file_path: string
-    date_from: string
-    date_to: string
-    updated_at: string
-};
-const CertificateRow: React.FC<{ data: CertificateRowData, onView: CallableFunction }> = ({ data, onView }) => {
-    const type = data.file_path.split('.')[1]
+const CertificateRow: React.FC<{
+    data: CertificateRowData;
+    onView: CallableFunction;
+    onDelete: CallableFunction;
+}> = ({ data, onView, onDelete }) => {
+    const type = data.file_path.split(".")[1];
 
     return (
         <div className="hover:bg-secondary transition-colors">
@@ -130,10 +166,12 @@ const CertificateRow: React.FC<{ data: CertificateRowData, onView: CallableFunct
                     <div className="line-clamp-1">{data.file_name}</div>
                 </div>
                 <div className="">
-                    <div className="line-clamp-1">{format(data.updated_at, "PPP")}</div>
+                    <div className="line-clamp-1">
+                        {format(data.updated_at, "PPP")}
+                    </div>
                 </div>
                 <div className="uppercase text-xs">
-                    {['png', 'jpg', 'jpeg'].includes(type) ? "image" : type}
+                    {["png", "jpg", "jpeg"].includes(type) ? "image" : type}
                 </div>
                 <div className="">
                     <Menubar className="p-0 border-none group size-8 bg-transparent">
@@ -144,12 +182,15 @@ const CertificateRow: React.FC<{ data: CertificateRowData, onView: CallableFunct
                             <MenubarContent className="w-52" align="end">
                                 <MenubarItem
                                     className="px-4 gap-5"
-                                    onClick={() => onView(data.file_path)}
+                                    onClick={() => onView(data)}
                                 >
                                     <Eye className="size-5" strokeWidth={1.8} />
                                     <div>View</div>
                                 </MenubarItem>
-                                <MenubarItem className="px-4 gap-5">
+                                <MenubarItem
+                                    className="px-4 gap-5 !text-destructive hover:!bg-destructive/10 dark:hover:!bg-destructive/50 dark:!text-red-500"
+                                    onClick={() => onDelete(data)}
+                                >
                                     <Trash2
                                         className="size-5"
                                         strokeWidth={1.8}

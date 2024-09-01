@@ -83,14 +83,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-    Route::post('/pds-upload', [PersonalDataSheetController::class, 'store_pds'])->name('pds.upload');
+    Route::prefix('pds')->group(function () {
+        Route::controller(PersonalDataSheetController::class)->group(function () {
+            Route::post('/pds-excel-upload', 'store_excel_pds')->name('pds.upload');
+            Route::post('/pds-c1-upload', 'store_c1')->name('pds.c1.upload');
+            Route::post('/pds-c1-pi-upload', 'store_pi')->name('pds.c1.pi.upload');
+            Route::post('/pds-c1-fb-upload', 'store_fb')->name('pds.c1.fb.upload');
+            Route::post('/pds-c1-eb-upload', 'store_eb')->name('pds.c1.eb.upload');
+            Route::post('/pds-c2-cs-upload', 'store_cs')->name('pds.c2.cs.upload');
+            Route::post('/pds-c2-we-upload', 'store_we')->name('pds.c2.we.upload');
+            Route::post('/pds-c3-vw-upload', 'store_vw')->name('pds.c3.vw.upload');
+            Route::post('/pds-c3-ld-upload', 'store_ld')->name('pds.c3.ld.upload');
+            Route::post('/pds-c3-oi-upload', 'store_oi')->name('pds.c3.oi.upload');
+            Route::post('/pds-c4-upload', 'store_c4')->name('pds.c4.upload');
+        });
+    });
+
 
     Route::prefix('service-records')->group(function () {
         Route::controller(ServiceRecordController::class)->group(function () {
-            Route::get('/', [ServiceRecordController::class, 'index'])->name('service-records');
-            Route::get('/json', [ServiceRecordController::class, 'indexJson'])->name('service-records.json');
+            Route::get('/', 'index')->name('service-records');
+            Route::get('/json', 'indexJson')->name('service-records.json');
 
-            Route::post('/upload', [ServiceRecordController::class, 'store'])->name('service-records.post');
+            Route::post('/upload', 'store')->name('service-records.post');
+            Route::post('/delete/{sr}', 'delete')->name('service-records.delete');
         });
     });
 

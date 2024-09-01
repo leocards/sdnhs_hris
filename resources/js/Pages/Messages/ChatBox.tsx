@@ -2,14 +2,19 @@ import { AvatarProfile } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "@/Components/ui/menubar";
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarTrigger,
+} from "@/Components/ui/menubar";
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
-import { router } from "@inertiajs/react";
 import { ArrowLeft, EllipsisVertical, Send } from "lucide-react";
-import { useEffect } from "react";
+import MessageBoxInput from "./MessageBox";
 
-export default function ChatBox({ user }: {user: User}) {
+export default function ChatBox({ user }: { user: User }) {
 
     /* useEffect(() => {
         window.Echo.channel(`message.${user.id}`)
@@ -22,7 +27,7 @@ export default function ChatBox({ user }: {user: User}) {
         <div className="border rounded-lg grid grid-rows-[auto,1fr,auto]">
             <div className="h-14 border-b p-2 flex items-center gap-2">
                 <div className="[@media(min-width:720px)]:hidden">
-                    <Button variant={'ghost'} size={"icon"}>
+                    <Button variant={"ghost"} size={"icon"}>
                         <ArrowLeft className="size-4" />
                     </Button>
                 </div>
@@ -31,7 +36,9 @@ export default function ChatBox({ user }: {user: User}) {
                 </div>
                 <div className="max-w-96 w-full mr-2">
                     <Label className="line-clamp-1">Lorem ipsum dolor</Label>
-                    <div className="text-xs text-green-600 font-medium">Active</div>
+                    <div className="text-xs text-green-600 font-medium">
+                        Active
+                    </div>
                 </div>
 
                 <Menubar className="p-0 h-fit border-none ml-auto">
@@ -53,32 +60,125 @@ export default function ChatBox({ user }: {user: User}) {
                     </MenubarMenu>
                 </Menubar>
             </div>
-            <div className="flex flex-col-reverse py-2">
+            <div className="flex flex-col-reverse overflow-y-auto py-2">
                 <div className="flex flex-col space-y-0.5">
+                    <MessageBox
+                        auth={user}
+                        position="sender-t"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor \n Lorem",
+                            from: 1,
+                            to: 2,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
+                    <MessageBox
+                        auth={user}
+                        position="sender-m"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 1,
+                            to: 2,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
+                    <MessageBox
+                        auth={user}
+                        position="sender-b"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 1,
+                            to: 2,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
 
-                    <MessageBox auth={user} position="sender-t" message={{id: 1001, message: "Lorem ipsum dolor \n Lorem", from: 1, to: 2, time: new Date().getTime().toString()}} />
-                    <MessageBox auth={user} position="sender-m" message={{id: 1001, message: "Lorem ipsum dolor", from: 1, to: 2, time: new Date().getTime().toString()}} />
-                    <MessageBox auth={user} position="sender-b" message={{id: 1001, message: "Lorem ipsum dolor", from: 1, to: 2, time: new Date().getTime().toString()}} />
+                    <MessageBox
+                        auth={user}
+                        position="receiver-t"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 2,
+                            to: 1,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
+                    <MessageBox
+                        auth={user}
+                        position="receiver-m"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 2,
+                            to: 1,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
+                    <MessageBox
+                        auth={user}
+                        position="receiver-b"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 2,
+                            to: 1,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
 
-                    <MessageBox auth={user} position="receiver-t" message={{id: 1001, message: "Lorem ipsum dolor", from: 2, to: 1, time: new Date().getTime().toString()}} />
-                    <MessageBox auth={user} position="receiver-m" message={{id: 1001, message: "Lorem ipsum dolor", from: 2, to: 1, time: new Date().getTime().toString()}} />
-                    <MessageBox auth={user} position="receiver-b" message={{id: 1001, message: "Lorem ipsum dolor", from: 2, to: 1, time: new Date().getTime().toString()}} />
+                    <MessageBox
+                        auth={user}
+                        position="sender"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 1,
+                            to: 2,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
 
-                    <MessageBox auth={user} position="sender" message={{id: 1001, message: "Lorem ipsum dolor", from: 1, to: 2, time: new Date().getTime().toString()}} />
+                    <MessageBox
+                        auth={user}
+                        position="receiver"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 2,
+                            to: 1,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
 
-                    <MessageBox auth={user} position="receiver" message={{id: 1001, message: "Lorem ipsum dolor", from: 2, to: 1, time: new Date().getTime().toString()}} />
-
-                    <MessageBox auth={user} position="sender" message={{id: 1001, message: "Lorem ipsum dolor", from: 1, to: 2, time: new Date().getTime().toString()}} />
-
+                    <MessageBox
+                        auth={user}
+                        position="sender"
+                        message={{
+                            id: 1001,
+                            message: "Lorem ipsum dolor",
+                            from: 1,
+                            to: 2,
+                            time: new Date().getTime().toString(),
+                        }}
+                    />
                 </div>
             </div>
-            <div className="h-14 border-t p-2 flex gap-3">
-                <Input className="" placeholder="Write message" />
-                <Button size="icon" className="shrink-0" onClick={() => {
-                    router.post(route('message.send', [2]), {
+            <div className="border-t p-2 overflow-hidden flex items-end gap-3">
+                <MessageBoxInput  />
+
+                <Button
+                    size="icon"
+                    className="shrink-0"
+                    onClick={() => {
+                        /* router.post(route('message.send', [2]), {
                         message: "hello there"
-                    })
-                }}>
+                    }) */
+                    }}
+                >
                     <Send className="size-5" />
                 </Button>
             </div>
@@ -94,38 +194,48 @@ interface MessageBoxProps {
     time: string;
 }
 
-type MessagePosition = "sender-t"
+type MessagePosition =
+    | "sender-t"
     | "sender-m"
     | "sender-b"
     | "sender"
     | "receiver-b"
     | "receiver-t"
     | "receiver-m"
-    | "receiver"
+    | "receiver";
 
-const MessageBox: React.FC<{ message: MessageBoxProps, auth: User, position: MessagePosition }> = ({ message, auth, position }) => {
-
+const MessageBox: React.FC<{
+    message: MessageBoxProps;
+    auth: User;
+    position: MessagePosition;
+}> = ({ message, auth, position }) => {
     const messageBoxVariant = {
-        "sender": "ml-auto mr-2 bg-blue-600 text-white",
-        "receiver": "ml-2 bg-accent"
-    }[message.from === 1 ? "sender" : "receiver"]
+        sender: "ml-auto mr-2 bg-blue-600 text-white",
+        receiver: "ml-2 bg-accent",
+    }[message.from === 1 ? "sender" : "receiver"];
 
     const roundedBox = {
         "sender-t": "rounded-[1.25rem] rounded-br-md",
         "sender-m": "rounded-[1.25rem] rounded-e-md",
         "sender-b": "rounded-[1.25rem] rounded-tr-md",
-        "sender": "rounded-[1.25rem]",
+        sender: "rounded-[1.25rem]",
         "receiver-t": "rounded-[1.25rem] rounded-bl-md",
         "receiver-m": "rounded-[1.25rem] rounded-s-md",
         "receiver-b": "rounded-[1.25rem] rounded-tl-md",
-        "receiver": "rounded-[1.25rem]",
-    }[position]
+        receiver: "rounded-[1.25rem]",
+    }[position];
 
     return (
-        <div className={cn("max-w-96 w-fit py-2 px-3", messageBoxVariant, roundedBox)}>
+        <div
+            className={cn(
+                "max-w-96 w-fit py-2 px-3",
+                messageBoxVariant,
+                roundedBox
+            )}
+        >
             <div className="whitespace-pre-line break-words">
                 {message.message}
             </div>
         </div>
-    )
-}
+    );
+};

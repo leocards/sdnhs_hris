@@ -1,5 +1,4 @@
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { c2, C2workExperienceDefault } from "../../type";
+import { useFieldArray } from "react-hook-form";
 import { CalendarInput } from "../C1/FamilyBackground";
 import {
     FormControl,
@@ -12,12 +11,13 @@ import { Input } from "@/Components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { Button } from "@/Components/ui/button";
 import { X } from "lucide-react";
+import { defaultWE } from "../c2types";
+import NumberInput from "@/Components/NumberInput";
 
 export default function WorkExperience({ form }: { form: any }) {
-    const { control } = useFormContext();
     const { fields, prepend, remove } = useFieldArray({
-        control,
-        name: "c2.workexperience",
+        control: form.control,
+        name: "we",
     });
 
     return (
@@ -31,63 +31,127 @@ export default function WorkExperience({ form }: { form: any }) {
                 Experience sheet.
             </div>
 
-            <div className="space-y-4 divide-y divide-zinc-400 !mt-0">
+            <div className="space-y-4">
                 <div className="flex pt-2">
                     <Button
                         type="button"
-                        className="px-8 ml-auto"
-                        onClick={() =>
-                            prepend(C2workExperienceDefault)
-                        }
+                        className="px-8 w-full"
+                        onClick={() => prepend(defaultWE)}
                     >
                         Add
                     </Button>
                 </div>
                 {fields.map((item, index) => (
-                    <div className="space-y-4 relative pt-3" key={item.id}>
-                        <div className="w-fit ml-auto absolute right-2">
-                            {fields.length > 1 && (
-                                <Button
-                                    size="icon"
-                                    type="button"
-                                    className="size-7"
-                                    onClick={() => {
-                                        fields.length > 1 && remove(index);
-                                    }}
-                                >
-                                    <X className="size-4" />
-                                </Button>
-                            )}
+                    <div
+                        className="space-y-4 relative pt-3 border p-3 px-3.5 rounded-md shadow-sm"
+                        key={item.id}
+                    >
+                        <div className="w-fit ml-auto absolute right-1 top-1">
+                            <Button
+                                size="icon"
+                                type="button"
+                                variant="ghost"
+                                className="size-7"
+                                onClick={() => {
+                                    const deleted = form.getValues('deletedWE')
+                                    const deletable = form.getValues(`we.${index}.weid`)
+                                    if(deletable)
+                                        form.setValue('deletedWE', [...deleted, deletable])
+
+                                    remove(index);
+                                }}
+                            >
+                                <X className="size-4" />
+                            </Button>
                         </div>
-                        <div className="grid xl:grid-cols-3 sm:grid-cols-2 gap-3">
+
+                        <div className="grid grid-cols-1 [@media(min-width:568px)]:grid-cols-2 gap-3">
+                            <FormField
+                                control={form.control}
+                                name={`we.${index}.positiontitle`}
+                                render={({ field }) => (
+                                    <FormItem className="[@media(min-width:568px)]:col-span-2">
+                                        <FormLabel>
+                                            Position title{" "}
+                                            <span className="text-xs">
+                                                (Write in full/Do not
+                                                abbreviate)
+                                            </span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className="form-input"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <CalendarInput
                                 form={form}
-                                label={<div className="mb-1.5"><span className="text-xs text-foreground/60">(Inclusive date)</span> From</div>}
-                                name={
-                                    c2.workexperience +
-                                    `${index}.inclusivedates.from`
+                                label={
+                                    <div className="mb-1.5">
+                                        <span className="text-xs text-foreground/60">
+                                            (Inclusive date)
+                                        </span>{" "}
+                                        From
+                                    </div>
                                 }
+                                name={`we.${index}.inclusivedates.from`}
                                 isRequired={false}
                             />
                             <CalendarInput
                                 form={form}
-                                label={<div className="mb-1.5"><span className="text-xs text-foreground/60">(Inclusive date)</span> To</div>}
-                                name={
-                                    c2.workexperience +
-                                    `${index}.inclusivedates.to`
+                                label={
+                                    <div className="mb-1.5">
+                                        <span className="text-xs text-foreground/60">
+                                            (Inclusive date)
+                                        </span>{" "}
+                                        To
+                                    </div>
                                 }
+                                name={`we.${index}.inclusivedates.to`}
                                 isRequired={false}
+                            />
+
+                        </div>
+
+                        <div className="grid [@media(min-width:660px)]:grid-cols-2 gap-3">
+                            <FormField
+                                control={form.control}
+                                name={`we.${index}.department`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>
+                                            Department/Agency/Office/Company{" "}
+                                            <br />
+                                            <span className="text-xs">
+                                                (Write in full/Do not
+                                                abbreviate)
+                                            </span>
+                                        </FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                className="form-input"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
                             <FormField
                                 control={form.control}
-                                name={
-                                    c2.workexperience + `${index}.positiontitle`
-                                }
+                                name={`we.${index}.salarygrade`}
                                 render={({ field }) => (
-                                    <FormItem className="sm:col-span-2">
+                                    <FormItem>
                                         <FormLabel>
-                                            Position title  <span className="text-xs">(Write in full/Do not
-                                            abbreviate)</span>
+                                            Salary/Job/Pay Grade <br />
+                                            <span className="text-xs">
+                                                (if applicable) & Step (Format
+                                                "00-0")/Increment
+                                            </span>
                                         </FormLabel>
                                         <FormControl>
                                             <Input
@@ -101,21 +165,17 @@ export default function WorkExperience({ form }: { form: any }) {
                             />
                         </div>
 
-                        <div className="grid sm:grid-cols-2 gap-3">
+                        <div className="grid [@media(min-width:660px)]:grid-cols-[1fr,1fr,15rem] gap-3">
                             <FormField
                                 control={form.control}
-                                name={
-                                    c2.workexperience + `${index}.department`
-                                }
+                                name={`we.${index}.monthlysalary`}
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>
-                                            Department/Agency/Office/Company <span className="text-xs">(Write in full/Do not
-                                            abbreviate)</span> 
-                                        </FormLabel>
+                                        <FormLabel>Monthly salary</FormLabel>
                                         <FormControl>
-                                            <Input
+                                            <NumberInput
                                                 {...field}
+                                                isAmount={true}
                                                 className="form-input"
                                             />
                                         </FormControl>
@@ -125,52 +185,7 @@ export default function WorkExperience({ form }: { form: any }) {
                             />
                             <FormField
                                 control={form.control}
-                                name={
-                                    c2.workexperience + `${index}.salarygrade`
-                                }
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Salary/Job/Pay Grade <span className="text-xs">(if applicable) & Step (Format "00-0")/Increment</span>
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="form-input"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-
-                        <div className="grid sm:grid-cols-[1fr,1fr,15rem] gap-3">
-                            <FormField
-                                control={form.control}
-                                name={
-                                    c2.workexperience + `${index}.monthlysalary`
-                                }
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>
-                                            Monthly salary
-                                        </FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                {...field}
-                                                className="form-input"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name={
-                                    c2.workexperience + `${index}.statusofappointment`
-                                }
+                                name={`we.${index}.statusofappointment`}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
@@ -189,17 +204,17 @@ export default function WorkExperience({ form }: { form: any }) {
 
                             <FormField
                                 control={form.control}
-                                name={
-                                    c2.workexperience + `${index}.isgovernment`
-                                }
+                                name={`we.${index}.isgovernment`}
                                 render={({ field }) => (
-                                    <FormItem className="space-y-4">
-                                        <FormLabel className="">Gov't service (Y/N)</FormLabel>
+                                    <FormItem className="space-y-4 [@media(min-width:660px)]:text-center">
+                                        <FormLabel className="text-center">
+                                            Gov't service (Y/N)
+                                        </FormLabel>
                                         <FormControl>
                                             <RadioGroup
                                                 onValueChange={field.onChange}
                                                 defaultValue={field.value}
-                                                className="flex gap-7 items-center"
+                                                className="flex gap-7 items-center [@media(min-width:660px)]:justify-center"
                                             >
                                                 <FormItem className="flex items-center space-x-3 space-y-0">
                                                     <FormControl>
@@ -223,7 +238,6 @@ export default function WorkExperience({ form }: { form: any }) {
                                     </FormItem>
                                 )}
                             />
-
                         </div>
                     </div>
                 ))}

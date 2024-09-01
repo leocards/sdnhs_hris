@@ -5,12 +5,12 @@ import {
     FormLabel,
     FormMessage,
 } from "@/Components/ui/form";
-import { c2, C2CivilService } from "../../type";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Input } from "@/Components/ui/input";
 import { CalendarInput } from "../C1/FamilyBackground";
 import { Button } from "@/Components/ui/button";
 import { X } from "lucide-react";
+import { defaultCS } from "../c2types";
 
 type CivilServiceEligibilityProps = {
     form: any;
@@ -19,10 +19,9 @@ type CivilServiceEligibilityProps = {
 export default function CivilServiceEligibility({
     form,
 }: CivilServiceEligibilityProps) {
-    const { control } = useFormContext();
     const { fields, append, remove } = useFieldArray({
-        control,
-        name: "c2.civilserviceeligibility",
+        control: form.control,
+        name: "cs",
     });
 
     return (
@@ -31,30 +30,34 @@ export default function CivilServiceEligibility({
                 IV. CIVIL SERVICE ELIGIBILITY
             </div>
 
-            <div className="space-y-4 divide-y divide-zinc-400 !mt-0">
+            <div className="space-y-6 !mt-6">
                 {fields.map((item, index) => (
-                    <div className="space-y-4 relative pt-3" key={item.id}>
-                        <div className="w-fit ml-auto absolute right-2">
-                            {fields.length > 1 && (
-                                <Button
-                                    size="icon"
-                                    type="button"
-                                    className="size-7"
-                                    onClick={() => {
-                                        fields.length > 1 && remove(index);
-                                    }}
-                                >
-                                    <X className="size-4" />
-                                </Button>
-                            )}
+                    <div
+                        className="space-y-4 relative pt-3 border p-3 px-3.5 rounded-md shadow-sm"
+                        key={item.id}
+                    >
+                        <div className="w-fit ml-auto absolute right-1 top-1">
+                            <Button
+                                size="icon"
+                                type="button"
+                                variant="ghost"
+                                className="size-7"
+                                onClick={() => {
+                                    const deleted = form.getValues('deletedCS')
+                                    const deletable = form.getValues(`cs.${index}.csid`)
+                                    if(deletable)
+                                        form.setValue('deletedCS', [...deleted, deletable])
+
+                                    remove(index);
+                                }}
+                            >
+                                <X className="size-4" />
+                            </Button>
                         </div>
-                        <div className="sm:grid [@media(min-width:1290px)]:grid-cols-[1fr,auto] sm:grid-cols-2 gap-3 max-sm:space-y-3">
+                        <div className="sm:grid [@media(min-width:1290px)]:grid-cols-[1fr,auto] gap-3 max-sm:space-y-3">
                             <FormField
                                 control={form.control}
-                                name={
-                                    c2.civilserviceeligibility +
-                                    `${index}.eligibility`
-                                }
+                                name={`cs.${index}.eligibility`}
                                 render={({ field }) => (
                                     <FormItem className="[@media(max-width:1290px)]:col-span-2">
                                         <FormLabel>
@@ -74,10 +77,7 @@ export default function CivilServiceEligibility({
                             />
                             <FormField
                                 control={form.control}
-                                name={
-                                    c2.civilserviceeligibility +
-                                    `${index}.rating`
-                                }
+                                name={`cs.${index}.rating`}
                                 render={({ field }) => (
                                     <FormItem className="max-sm:col-span-1">
                                         <FormLabel>
@@ -86,28 +86,16 @@ export default function CivilServiceEligibility({
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input [@media(min-width:1290px)]:w-52"
+                                                className="form-input"
                                             />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            <CalendarInput
-                                form={form}
-                                label="Date of Examination/Conferment"
-                                name={
-                                    c2.civilserviceeligibility +
-                                    `${index}.dateofexaminationconferment`
-                                }
-                                isRequired={false}
-                            />
                             <FormField
                                 control={form.control}
-                                name={
-                                    c2.civilserviceeligibility +
-                                    `${index}.placeofexaminationconferment`
-                                }
+                                name={`cs.${index}.placeofexaminationconferment`}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>
@@ -123,6 +111,14 @@ export default function CivilServiceEligibility({
                                     </FormItem>
                                 )}
                             />
+                            <div className="[@media(min-width:1290px)]:w-72 [@media(max-width:1290px)]:col-span-2">
+                                <CalendarInput
+                                    form={form}
+                                    label="Date of Examination/Conferment"
+                                    name={`cs.${index}.dateofexaminationconferment`}
+                                    isRequired={false}
+                                />
+                            </div>
                         </div>
 
                         <div>
@@ -130,10 +126,7 @@ export default function CivilServiceEligibility({
                             <div className="grid sm:grid-cols-2 gap-3">
                                 <FormField
                                     control={form.control}
-                                    name={
-                                        c2.civilserviceeligibility +
-                                        `${index}.license.number`
-                                    }
+                                    name={`cs.${index}.license.number`}
                                     render={({ field }) => (
                                         <FormItem>
                                             <FormLabel>Number</FormLabel>
@@ -150,10 +143,7 @@ export default function CivilServiceEligibility({
                                 <CalendarInput
                                     form={form}
                                     label="Date of validity"
-                                    name={
-                                        c2.civilserviceeligibility +
-                                        `${index}.license.dateofvalidity`
-                                    }
+                                    name={`cs.${index}.license.dateofvalidity`}
                                     isRequired={false}
                                 />
                             </div>
@@ -163,8 +153,8 @@ export default function CivilServiceEligibility({
                 <div className="flex pt-2">
                     <Button
                         type="button"
-                        className="px-8 ml-auto"
-                        onClick={() => append(C2CivilService)}
+                        className="px-8 ml-auto w-full"
+                        onClick={() => append(defaultCS)}
                     >
                         Add
                     </Button>

@@ -9,47 +9,47 @@ import { X } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { c3 } from "../../type";
 import { Input } from "@/Components/ui/input";
+import { defaultOI } from "../c3types";
 
 export default function OtherInformation({ form }: { form: any }) {
-
     return (
         <div className="space-y-4 !mt-12">
             <div className="font-medium uppercase italic">
-                VIII.  OTHER INFORMATION
+                VIII. OTHER INFORMATION
             </div>
 
-            <div className="grid 2xl:grid-cols-3 [@media(min-width:1180px)]:grid-cols-2 max-lg:grid-cols-2 max-md:grid-cols-1 gap-3">
+            <div className="grid [@media(min-width:698px)]:grid-cols-3 [@media(min-width:698px)]:gap-4 gap-6">
                 <div>
                     <FormLabel>Special skills & Hobbies</FormLabel>
                     <Informations
                         form={form}
-                        name="c3.otherinformation.skills"
-                        fieldName={(index) =>
-                            c3.otherinformation + `skills.${index}.skill`
-                        }
-                        defaultValue={{skill: ""}}
+                        name="skills"
+                        fieldName={(index) => `skills.${index}.detail`}
+                        defaultValue={{ skill: "" }}
                     />
                 </div>
                 <div>
-                    <FormLabel>Non-academics distinction/recognition (Write in full)</FormLabel>
+                    <FormLabel>
+                        Non-academics distinction/recognition (Write in full)
+                    </FormLabel>
                     <Informations
                         form={form}
-                        name="c3.otherinformation.nonacademicrecognition"
+                        name="nonacademicrecognition"
                         fieldName={(index) =>
-                            c3.otherinformation + `nonacademicrecognition.${index}.recognition`
+                            `nonacademicrecognition.${index}.detail`
                         }
-                        defaultValue={{recognition: ""}}
+                        defaultValue={{ recognition: "" }}
                     />
                 </div>
                 <div>
-                    <FormLabel>Membership in association/organization (Write in full)</FormLabel>
+                    <FormLabel>
+                        Membership in association/organization (Write in full)
+                    </FormLabel>
                     <Informations
                         form={form}
-                        name="c3.otherinformation.membership"
-                        fieldName={(index) =>
-                            c3.otherinformation + `membership.${index}.member`
-                        }
-                        defaultValue={{member: ""}}
+                        name="membership"
+                        fieldName={(index) => `membership.${index}.detail`}
+                        defaultValue={{ member: "" }}
                     />
                 </div>
             </div>
@@ -73,17 +73,25 @@ const Informations: React.FC<{
         <div className="space-y-3 mt-3">
             {fields.map((item, index) => (
                 <div className="relative" key={item.id}>
-                    {fields.length > 1 && (
-                        <Button
-                            size={"icon"}
-                            className="size-6 absolute -top-3 -right-2"
-                            onClick={() => {
-                                fields.length > 1 && remove(index);
-                            }}
-                        >
-                            <X className="size-4" />
-                        </Button>
-                    )}
+                    <Button
+                        size={"icon"}
+                        className="size-6 absolute -top-3 -right-2"
+                        onClick={() => {
+                            const deleted = form.getValues("deletedOI");
+                            const deletable = form.getValues(
+                                `${name}.${index}.oiid`
+                            );
+                            if (deletable)
+                                form.setValue("deletedOI", [
+                                    ...deleted,
+                                    deletable,
+                                ]);
+
+                            remove(index);
+                        }}
+                    >
+                        <X className="size-4" />
+                    </Button>
                     <FormField
                         control={form.control}
                         name={fieldName(index)}
@@ -100,7 +108,7 @@ const Informations: React.FC<{
             <Button
                 type="button"
                 className="px-8 w-full"
-                onClick={() => append(defaultValue)}
+                onClick={() => append(defaultOI)}
             >
                 Add
             </Button>

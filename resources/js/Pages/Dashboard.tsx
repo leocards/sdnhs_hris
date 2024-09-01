@@ -17,6 +17,7 @@ import { useEffect } from "react";
 
 type Statistics = {
     recent: number;
+    recent_deduction?: number;
     total: number;
 };
 
@@ -82,6 +83,13 @@ export default function Dashboard({
                                 <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-lime-400/20 text-lime-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
                                     + {totalEmployee?.recent}
                                 </span>
+                                {totalEmployee?.recent_deduction ? (
+                                    <span className="w-fit font-semibold p-1 px-2 rounded border-transparent bg-pink-400/15 text-pink-700 group-data-[hover]:bg-lime-400/30 dark:bg-lime-400/10 dark:text-lime-300 dark:group-data-[hover]:bg-lime-400/15">
+                                        - {totalEmployee?.recent_deduction}
+                                    </span>
+                                ) : (
+                                    ""
+                                )}
                                 <span> from the last 7 days</span>
                             </div>
                         ) : (

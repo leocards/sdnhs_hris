@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head, router, usePage } from "@inertiajs/react";
-import { PageProps } from "@/types";
+import { PageProps, User, UserInfo } from "@/types";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Camera } from "lucide-react";
@@ -10,13 +10,36 @@ import Settings from "./Settings";
 import { useState } from "react";
 import UploadAvatar from "./UploadAvatar";
 
+export type UserInfoType = User & UserInfo & {
+    pds_educational_background: Array<any>;
+    pds_family_background: Array<any>;
+    pds_personal_information: any;
+    pds_civil_service_eligibility: any;
+    pds_work_experience: any;
+    pds_voluntary_work: any;
+    pds_learning_development: any;
+    pds_other_information: any;
+    pds_cs4: any;
+    pds_government: any;
+    pds_referece: any;
+    birth_place: string;
+    civil_status: string;
+    height: string;
+    weight: string;
+}
+
 export default function Edit({
     auth,
+    userinfo,
     mustVerifyEmail,
     status,
-}: PageProps<{ mustVerifyEmail: boolean; status?: string }>) {
+}: PageProps<{
+    mustVerifyEmail: boolean;
+    status?: string;
+    userinfo: UserInfoType;
+}>) {
     const name = auth.user.first_name + " " + auth.user.last_name;
-    const [uploadAvatar, setUploadAvatar] = useState<boolean>(false)
+    const [uploadAvatar, setUploadAvatar] = useState<boolean>(false);
 
     const { url } = usePage();
 
@@ -33,7 +56,11 @@ export default function Edit({
 
             <div className="flex flex-row items-center mt-10 gap-4">
                 <div className="relative group rounded-full overflow-hidden select-none">
-                    <AvatarProfile src={auth.user.avatar} className="size-32" fallbackSize={40} />
+                    <AvatarProfile
+                        src={auth.user.avatar}
+                        className="size-32"
+                        fallbackSize={40}
+                    />
                     <div
                         className={cn(
                             "flex justify-center items-center cursor-pointer opacity-0 bg-black/40 absolute top-0 left-0 z-10 size-full backdrop-blur-sm transition duration-200",
@@ -53,7 +80,7 @@ export default function Edit({
 
             <div className="mt-8 flex gap-3">
                 <Button
-                    variant={url === "/profile" ? "default" : "ghost"}
+                    variant={url !== "/profile/settings" ? "default" : "ghost"}
                     onClick={() => router.get(route("profile.edit"))}
                 >
                     <span>Personal Data Sheet</span>
@@ -70,7 +97,9 @@ export default function Edit({
                 </Button>
             </div>
 
-            <div>{url === "/profile" && <PersonalDataSheet />}</div>
+            <div>
+                {url !== "/profile/settings" && <PersonalDataSheet user={userinfo} />}
+            </div>
             <div>
                 {url.startsWith("/profile/settings") && (
                     <Settings

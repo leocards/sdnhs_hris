@@ -3,13 +3,24 @@ export interface User {
     first_name: string;
     last_name: string;
     middle_name: string;
+    extension_name: string | null;
     department: string;
     position: any;
-    leave_credits?: number|null;
+    leave_credits?: number | null;
     email: string;
     role: string;
     email_verified_at: string;
     avatar: string;
+}
+
+export interface UserInfo {
+    sex?: "Male" | "Female",
+    date_of_birth: string,
+    phone_number: string,
+    personnel_id: string,
+    date_hired: string,
+    leave_rendered: number,
+    name: string
 }
 
 export type PaginateData = {

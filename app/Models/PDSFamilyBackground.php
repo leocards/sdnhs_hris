@@ -16,9 +16,11 @@ class PDSFamilyBackground extends Model
         'first_name',
         'middle_name',
         'full_name',
+        'birthdate',
         'extension_name',
         'occupation',
         'business_name',
+        'business_address',
         'telephone',
     ];
 

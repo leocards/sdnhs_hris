@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('date_to')->nullable();
             $table->integer('credits')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

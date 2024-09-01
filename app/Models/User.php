@@ -24,6 +24,10 @@ class User extends Authenticatable
         'middle_name',
         'sex',
         'date_of_birth',
+        'birth_place',
+        'civil_status',
+        'height',
+        'weight',
         'address',
         'email',
         'phone_number',
@@ -95,5 +99,60 @@ class User extends Authenticatable
     public function scopeSearchByFullName($query, $name)
     {
         return $query->where(DB::raw("CONCAT(first_name, ' ', last_name)"), 'LIKE', "%{$name}%");
+    }
+
+    public function pdsPersonalInformation()
+    {
+        return $this->hasOne(PDSPersonalInformation::class);
+    }
+
+    public function pdsFamilyBackground()
+    {
+        return $this->hasMany(PDSFamilyBackground::class);
+    }
+
+    public function pdsEducationalBackground()
+    {
+        return $this->hasMany(PDSEducationalBackground::class);
+    }
+
+    public function pdsCivilServiceEligibility()
+    {
+        return $this->hasMany(PDSCivilServiceEligibility::class);
+    }
+
+    public function pdsWorkExperience()
+    {
+        return $this->hasMany(PDSWorkExperience::class);
+    }
+
+    public function pdsVoluntaryWork()
+    {
+        return $this->hasMany(PDSVoluntaryWork::class);
+    }
+
+    public function pdsLearningDevelopment()
+    {
+        return $this->hasMany(PDSLearningDevelopment::class);
+    }
+
+    public function pdsOtherInformation()
+    {
+        return $this->hasMany(PDSOtherInformation::class);
+    }
+
+    public function pdsCs4()
+    {
+        return $this->hasMany(PDSc4::class);
+    }
+
+    public function pdsReferece()
+    {
+        return $this->hasMany(PDSReferences::class);
+    }
+
+    public function pdsGovernment()
+    {
+        return $this->hasOne(PDSGovernmentId::class);
     }
 }

@@ -46,13 +46,13 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-const AvatarProfile: React.FC<{ src?: string; name?: string; className?: string, fallbackSize?: number }> = 
-({ src = "https://github.com/shadcn.png", name = "John Doe", className, fallbackSize = 16 }) => {
+const AvatarProfile: React.FC<{ src?: string; name?: string; className?: string, fallbackSize?: number }> =
+({ src, name = "John Doe", className, fallbackSize = 16 }) => {
     const userInitials = name.split(' ').map((ui) => ui[0]).join("").toUpperCase()
 
 	return (
 		<Avatar className={className}>
-			<AvatarImage src={src} alt="profile" />
+			<AvatarImage src={src??"/storage/assets/profile.png"} alt="profile" />
 			<AvatarFallback>
                 <UserRound size={fallbackSize} />
             </AvatarFallback>

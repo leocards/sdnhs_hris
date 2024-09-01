@@ -12,23 +12,23 @@ export const ChoiceDetails: React.FC<{
     form: any;
     name: string;
     disabled: boolean;
-    detailsLabel?: string;
-}> = ({ form, name, disabled, detailsLabel }) => {
+    label?: string;
+}> = ({ form, name, disabled = false, label }) => {
     return (
         <FormField
             control={form.control}
             name={name}
-            disabled={disabled}
             render={({ field }) => (
                 <FormItem className="mt-4 ml-5">
                     <div className="flex items-start">
                         <FormLabel className="mt-0.5 mr-2 font-normal">
-                            {detailsLabel??'if YES, give details:'}
+                            {label??'if YES, give details:'}
                         </FormLabel>
                     </div>
                     <FormControl>
                         <Input
                             {...field}
+                            disabled={disabled}
                             className="form-input max-w-80 min-w-32 w-full"
                         />
                     </FormControl>
@@ -47,7 +47,8 @@ export const Choices: React.FC<{
     disabled?: boolean;
     className?: string;
     detailsLabel?: string;
-}> = ({ form, label, name, detailsName, disabled = true, className, detailsLabel }) => {
+    children?: React.ReactNode
+}> = ({ form, children, label, name, className, }) => {
     return (
         <>
             <FormField
@@ -88,14 +89,7 @@ export const Choices: React.FC<{
                     </FormItem>
                 )}
             />
-            {detailsName && (
-                <ChoiceDetails
-                    form={form}
-                    name={detailsName}
-                    disabled={disabled}
-                    detailsLabel={detailsLabel}
-                />
-            )}
+            {children}
         </>
     );
 };

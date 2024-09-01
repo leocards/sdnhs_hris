@@ -17,7 +17,7 @@ export default function GovernmentIds({ form }: { form: any }) {
             <div className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3">
                 <FormField
                     control={form.control}
-                    name={`c4.governmentids.governmentissuedid`}
+                    name={`governmentids.governmentissuedid`}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Government Issued ID: </FormLabel>
@@ -31,7 +31,7 @@ export default function GovernmentIds({ form }: { form: any }) {
 
                 <FormField
                     control={form.control}
-                    name={`c4.governmentids.licensepasswordid`}
+                    name={`governmentids.licensepasswordid`}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>ID/License/Passport No.: </FormLabel>
@@ -45,7 +45,7 @@ export default function GovernmentIds({ form }: { form: any }) {
 
                 <FormField
                     control={form.control}
-                    name={`c4.governmentids.issued`}
+                    name={`governmentids.issued`}
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Date/Place of Issuance: </FormLabel>

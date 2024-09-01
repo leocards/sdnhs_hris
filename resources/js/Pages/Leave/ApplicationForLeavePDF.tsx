@@ -32,8 +32,6 @@ const ApplicationForLeavePDF = ({ auth, leave, hr }: PageProps<{ leave: any, hr:
         content: () => targetRef.current
     });
 
-    console.log(leave)
-
     return (
         <Authenticated
             user={auth.user}

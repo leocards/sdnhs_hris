@@ -21,13 +21,17 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        User::insert([
+        User::create([
             'first_name' => 'Niel Jhon ',
             'last_name' => 'Banaag',
             'middle_name' => null,
             'sex' => 'Male',
             'date_hired' => '2024-06-20',
             'date_of_birth' => '1981-03-05',
+            'birth_place' => 'Panabo City',
+            'civil_status' => 'Single',
+            'height' => '5.2',
+            'weight' => '59',
             'address' => 'Panabo city',
             'email' => 'banaag.nieljohn@gmail.com',
             'phone_number' => '09485729385',

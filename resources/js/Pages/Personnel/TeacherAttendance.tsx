@@ -375,6 +375,8 @@ const ComboBox = ({
     const debounceSearch = useDebounce(search, 500);
     const [personnels, setPersonnels] = useState<Array<PersonnelDataType>>(initialList);
     const [loading, setLoading] = useState<boolean>(false);
+    const popoverWidthRef = useRef<HTMLButtonElement|null>(null);
+    const [popoverWidth, setPopoverWidth] = useState<number>(0);
 
     const onSearch = (event: ChangeEvent<HTMLInputElement>) => {
         // remove all the white spaces to get the data only
@@ -382,6 +384,7 @@ const ComboBox = ({
 
         setSearch(input);
         if (input != "") setLoading(true);
+        else setLoading(false);
     };
 
     useEffect(() => {
@@ -422,6 +425,24 @@ const ComboBox = ({
         }
     }, [debounceSearch]);
 
+    useEffect(() => {
+        const resizeObserver = new ResizeObserver((entries) => {
+            if (entries[0]) {
+                setPopoverWidth(entries[0].target.clientWidth);
+            }
+        });
+
+        if (popoverWidthRef.current) {
+            resizeObserver.observe(popoverWidthRef.current);
+        }
+
+        return () => {
+            if (popoverWidthRef.current) {
+                resizeObserver.unobserve(popoverWidthRef.current);
+            }
+        };
+    }, []);
+
     return (
         <FormField
             control={form.control}
@@ -432,6 +453,7 @@ const ComboBox = ({
                     <Popover open={show} onOpenChange={setShow}>
                         <FormControl>
                             <PopoverTrigger
+                                ref={popoverWidthRef}
                                 disabled={disabled}
                                 className="w-full border rounded-md form-input px-3 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                             >
@@ -445,14 +467,14 @@ const ComboBox = ({
                                 <ChevronDown className="size-4 ml-auto shrink-0" />
                             </PopoverTrigger>
                         </FormControl>
-                        <PopoverContent className="w-[30rem] p-2 rounded-lg">
+                        <PopoverContent className="p-2 rounded-lg" style={{ width: popoverWidth }}>
                             <Input
                                 className="form-input h-9"
                                 placeholder="Search personnel"
                                 onInput={onSearch}
                             />
                             <div className="pt-2">
-                                <ScrollArea className="h-40">
+                                <ScrollArea className="h-48">
                                     {loading ? (
                                         <div className="w-fit h-fit mx-auto my-auto flex items-center gap-2 py-4">
                                             <span className="loading loading-spinner loading-sm"></span>

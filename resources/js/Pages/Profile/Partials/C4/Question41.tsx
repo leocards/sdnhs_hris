@@ -15,7 +15,7 @@ export default function Question41({ form }: { form: any }) {
     const { control } = useFormContext();
     const { fields, append, remove } = useFieldArray({
         control,
-        name: "c4.q41",
+        name: "q41",
     });
 
     return (
@@ -31,20 +31,21 @@ export default function Question41({ form }: { form: any }) {
                 {fields.map((item, index) => (
                     <div
                         key={item.id}
-                        className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3 relative mt-4"
+                        className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3 relative mt-4 border rounded-md p-3 pt-4"
                     >
-                        {fields.length > 1 && (
-                            <Button
-                                size="icon"
-                                className="size-7 absolute right-0 -top-2"
-                                onClick={() => remove(index)}
-                            >
-                                <X className="size-4" />
-                            </Button>
-                        )}
+                        <Button
+                            size="icon"
+                            variant={"ghost"}
+                            className="size-7 absolute right-1 top-1"
+                            onClick={() => {
+                                remove(index)
+                            }}
+                        >
+                            <X className="size-4" />
+                        </Button>
                         <FormField
                             control={form.control}
-                            name={`c4.q41.${index}.name`}
+                            name={`q41.${index}.name`}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Name</FormLabel>
@@ -61,7 +62,7 @@ export default function Question41({ form }: { form: any }) {
 
                         <FormField
                             control={form.control}
-                            name={`c4.q41.${index}.address`}
+                            name={`q41.${index}.address`}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Address</FormLabel>
@@ -78,7 +79,7 @@ export default function Question41({ form }: { form: any }) {
 
                         <FormField
                             control={form.control}
-                            name={`c4.q41.${index}.telno`}
+                            name={`q41.${index}.telno`}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Tel. No.</FormLabel>
@@ -96,11 +97,16 @@ export default function Question41({ form }: { form: any }) {
                 ))}
                 <div className="flex mt-4">
                     <Button
-                        className="px-7 ml-auto"
-                        onClick={() => append(C4Q41)}
+                        className="px-7 w-full"
+                        onClick={() => append({
+                            c4id: null,
+                            name: "",
+                            address: "",
+                            telno: ""
+                        })}
                         type="button"
                     >
-                        Add new row
+                        Add new reference
                     </Button>
                 </div>
             </div>

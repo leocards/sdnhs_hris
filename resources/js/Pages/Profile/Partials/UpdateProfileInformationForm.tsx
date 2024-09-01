@@ -73,7 +73,7 @@ interface User {
 
 type UserProps = { auth: { user: User } };
 
-export default function UpdateProfileInformation({
+export default function     UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = "",

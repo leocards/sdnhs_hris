@@ -18,9 +18,24 @@ class PDSPersonalInformation extends Model
         'sss',
         'tin',
         'agency',
-        'address_id',
         'telephone',
         'mobile',
+        'email',
+        'citizenship',
+        'dual_by',
+        'citizenship_country',
     ];
+
+    protected $appends = ['address'];
+
+    public function getAddressAttribute()
+    {
+        return Address::where('pds_pi_id', $this->id)->get();
+    }
+
+    public function addresses()
+    {
+        return $this->hasMany(Address::class, 'pds_pi_id', 'id');
+    }
 
 }

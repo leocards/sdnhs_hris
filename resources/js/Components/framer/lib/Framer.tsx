@@ -24,6 +24,7 @@ type Props = {
     axis?: "horizontal" | "vertical"
     withActive?: boolean
     active?: string | null
+    tabWidth?: string
 };
 
 export const Tabs = ({
@@ -39,6 +40,7 @@ export const Tabs = ({
     expand = false,
     isAutoUpdate,
     initialTabId,
+    tabWidth,
 }: Props): JSX.Element => {
     const [hoveredTab, setHoveredTab] = useState<number | null>(null);
 
@@ -71,7 +73,8 @@ export const Tabs = ({
                                 (hoveredTab === i || selectedTabIndex === i ? 'text-secondary-foreground' : !withActive && 'text-secondary-foreground'),
                                 "ignore",
                                 axis === "horizontal" && "justify-center",
-                                (expand?"w-full":"")
+                                (expand?"w-full":""),
+                                tabWidth
                             )}
                             onHoverStart={() => setHoveredTab(i)}
                             onFocus={() => setHoveredTab(i)}
@@ -95,7 +98,7 @@ export const Tabs = ({
                             <AnimatePresence>
                                 {i === hoveredTab ? (
                                     <motion.div
-                                        className="absolute h-full bottom-0 left-0 right-0 top-0 z-10 rounded-md bg-zinc-950/5 dark:bg-white/5 dark:!shadow-highlight"
+                                        className={cn("absolute h-full bottom-0 left-0 right-0 top-0 z-10 rounded-md bg-zinc-950/5 dark:bg-white/5 dark:!shadow-highlight", tabWidth)}
                                         initial={{
                                             opacity: 0
                                         }}

@@ -14,11 +14,6 @@ return new class extends Migration
         Schema::create('leaves', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            // $table->string('department', 500); // referenced to foreign key
-            // $table->string('first_name'); // referenced to foreign key
-            // $table->string('last_name'); // referenced to foreign key
-            // $table->string('middle_name'); // referenced to foreign key
-            // $table->string('position'); // referenced to foreign key
             $table->date('date_of_filing');
             $table->string('salary');
             $table->string('leave_type');
@@ -33,6 +28,7 @@ return new class extends Migration
             $table->text('principal_reject_msg')->nullable();
             $table->text('hr_reject_msg')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('details_of_leaves', function (Blueprint $table) {

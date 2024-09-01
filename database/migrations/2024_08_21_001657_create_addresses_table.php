@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('addresses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->unsignedBigInteger('pds_pi_id');
             $table->enum('address_type', ['residential', 'permanent']);
+            $table->boolean('same')->default(false)->nullable();
             $table->string('house_no', 50)->nullable();
             $table->string('street', 100)->nullable();
             $table->string('subdivision', 100)->nullable();
@@ -23,6 +24,8 @@ return new class extends Migration
             $table->string('province', 50)->nullable();
             $table->string('zip_code', 10)->nullable();
             $table->timestamps();
+
+            $table->foreign('pds_pi_id')->references('id')->on('p_d_s_personal_information');
         });
     }
 

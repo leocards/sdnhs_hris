@@ -2,13 +2,13 @@ import { forwardRef } from "react";
 import { Input, InputProps } from "./ui/input";
 
 interface NumberInputProps extends InputProps {
-    isAmount?: boolean | null
+    isAmount?: boolean | null;
 }
 
 const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(({ isAmount, ...props}, ref) => {
         const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
             const { value } = e.currentTarget;
-            e.currentTarget.value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');//value.replace(/[^0-9.]/g, '');
+            e.currentTarget.value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
         };
 
         const onBlur = (e: React.FormEvent<HTMLInputElement>) => {

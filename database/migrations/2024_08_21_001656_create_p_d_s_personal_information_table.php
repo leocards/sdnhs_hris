@@ -14,14 +14,17 @@ return new class extends Migration
         Schema::create('p_d_s_personal_information', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
+            $table->string('email')->nullable();
+            $table->enum('citizenship', ['Filipino', 'Dual'])->nullable();
+            $table->enum('dual_by', ['birth', 'naturalization'])->nullable();
+            $table->string('citizenship_country')->nullable();
             $table->string('blood_type')->nullable();
             $table->string('gsis')->nullable();
-            $table->string('pag-ibig')->nullable();
+            $table->string('pag_ibig')->nullable();
             $table->string('philhealth')->nullable();
             $table->string('sss')->nullable();
             $table->string('tin')->nullable();
             $table->string('agency')->nullable();
-            $table->foreignId('address_id')->constrained();
             $table->string('telephone')->nullable();
             $table->string('mobile')->nullable();
             $table->timestamps();

@@ -33,13 +33,14 @@ const initialState: SelectOptionState = {
 
 type SelectOptionProps = {
     children: ReactNode;
+    initialValue?: string;
 };
 
 const SelectOptionContext = createContext<SelectOptionState>(initialState);
 
-const SelectOptionProvider = ({ children, ...props }: SelectOptionProps) => {
+const SelectOptionProvider = ({ children, initialValue = "", ...props }: SelectOptionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [selected, setSelected] = useState<string>("");
+    const [selected, setSelected] = useState<string>(initialValue);
     const [width, setWidth] = useState<number>(0);
 
     const value = {
@@ -56,6 +57,10 @@ const SelectOptionProvider = ({ children, ...props }: SelectOptionProps) => {
             setWidth(width);
         },
     };
+
+    useEffect(() => {
+
+    }, [])
 
     return (
         <SelectOptionContext.Provider value={value} {...props}>
@@ -79,14 +84,14 @@ const useSelectOption = () => {
     return context;
 };
 
-const SelectOptionRoot: React.FC<{ children: ReactNode }> = ({ children }) => {
-    return <SelectOptionProvider>{children}</SelectOptionProvider>;
+const SelectOptionRoot: React.FC<{ children: ReactNode; initialValue?: string; }> = ({ children, initialValue }) => {
+    return <SelectOptionProvider initialValue={initialValue}>{children}</SelectOptionProvider>;
 };
 
 const SelectOptionMain: React.FC<
     SelectOptionProps & { onChange: (value: string) => void }
 > = ({ children, onChange }) => {
-    const { isOpen, selected, setIsOpen, setWidth } = useSelectOption();
+    const { isOpen, selected, setIsOpen } = useSelectOption();
 
     useEffect(() => {
         onChange(selected);
@@ -101,10 +106,11 @@ const SelectOptionMain: React.FC<
 
 const SelectOption: React.FC<{
     children: ReactNode;
+    initialValue?: string;
     onChange: (value: string) => void;
-}> = ({ children, onChange }) => {
+}> = ({ children, initialValue, onChange }) => {
     return (
-        <SelectOptionRoot>
+        <SelectOptionRoot initialValue={initialValue}>
             <SelectOptionMain children={children} onChange={onChange} />
         </SelectOptionRoot>
     );

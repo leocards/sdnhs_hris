@@ -17,53 +17,67 @@ import {
 import { Input } from "@/Components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
-import { c1 } from "../../type";
 import { COUNTRIES } from "@/country";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import NumberInput from "@/Components/NumberInput";
 import { CalendarInput } from "./FamilyBackground";
+import { Checkbox } from "@/Components/ui/checkbox";
+import { bloodTypes } from "../c1types";
+import { useWatch } from "react-hook-form";
 
 type PersonalInformationProps = {
     form: any;
 };
 
 const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
-    const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+    const watchCitizenship = form.watch("citizenship.citizen");
 
-    const watchCitizenship = form.watch(
-        c1.personalinformation + "citizenship.citizen"
-    );
+    const watchCiviStatus = form.watch("civilstatus.status");
 
-    const watchCiviStatus = form.watch(
-        c1.personalinformation + "civilstatus.status"
+    const watchResidential = useWatch({
+        control: form.control, name: "residentialaddress"
+    })
+
+    const watchIsSameResidential = form.watch(
+        "permanentaddress.isSameResidential"
     );
 
     useEffect(() => {
         if (watchCitizenship !== "Dual Citizenship") {
-            form.setValue(c1.personalinformation + "citizenship.dualby", null);
-            form.setValue(
-                c1.personalinformation + "citizenship.dualcitizencountry",
-                null
-            );
+            form.setValue("citizenship.dualby", null);
+            form.setValue("citizenship.dualcitizencountry", null);
             form.clearErrors([
-                c1.personalinformation + "citizenship.dualby",
-                c1.personalinformation + "citizenship.dualcitizencountry",
+                "citizenship.dualby",
+                "citizenship.dualcitizencountry",
             ]);
         }
 
         if (watchCiviStatus !== "Others") {
-            form.setValue(
-                c1.personalinformation + "civilstatus.otherstatus",
-                ""
-            );
-            form.clearErrors([
-                c1.personalinformation + "civilstatus.otherstatus",
-            ]);
+            form.setValue("civilstatus.otherstatus", "");
+            form.clearErrors(["civilstatus.otherstatus"]);
         }
     }, [watchCitizenship, watchCiviStatus, form]);
+
+    useEffect(() => {
+        if(watchIsSameResidential) {
+            form.setValue("permanentaddress", {
+                isSameResidential: watchIsSameResidential,
+                houselotblockno: form.getValues('residentialaddress.houselotblockno'),
+                street: form.getValues('residentialaddress.street'),
+                subdivision: form.getValues('residentialaddress.subdivision'),
+                barangay: form.getValues('residentialaddress.barangay'),
+                citymunicipality: form.getValues('residentialaddress.citymunicipality'),
+                province: form.getValues('residentialaddress.province'),
+                zipcode: form.getValues('residentialaddress.zipcode')
+            }, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true,
+            })
+        }
+    }, [watchResidential, watchIsSameResidential])
 
     return (
         <div className="space-y-4" id="personalInformation">
@@ -75,7 +89,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "surname"}
+                        name={"surname"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="required">
@@ -90,7 +104,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "firstname"}
+                        name={"firstname"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="required">
@@ -105,7 +119,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "middlename"}
+                        name={"middlename"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="">Middle name</FormLabel>
@@ -118,7 +132,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "extensionname"}
+                        name={"extensionname"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="">
@@ -136,12 +150,12 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                     <CalendarInput
                         form={form}
-                        name={c1.personalinformation + "dateofbirth"}
+                        name={"dateofbirth"}
                         isRequired={false}
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "placeofbirth"}
+                        name={"placeofbirth"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="required">
@@ -156,11 +170,14 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "sex"}
+                        name={"sex"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="required">Sex</FormLabel>
-                                <SelectOption onChange={field.onChange}>
+                                <SelectOption
+                                    onChange={field.onChange}
+                                    initialValue={field.value}
+                                >
                                     <SelectOptionTrigger>
                                         <FormControl>
                                             <Button
@@ -172,8 +189,9 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                                 )}
                                             >
                                                 <span>
-                                                    {field.value ??
-                                                        "Select sex"}
+                                                    {field.value === ""
+                                                        ? "Select sex"
+                                                        : field.value}
                                                 </span>
                                                 <ChevronDown className="size-4" />
                                             </Button>
@@ -194,7 +212,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     <div className="space-y-2.5">
                         <FormField
                             control={form.control}
-                            name={c1.personalinformation + "civilstatus.status"}
+                            name={"civilstatus.status"}
                             render={({ field }) => (
                                 <FormItem className="space-y-3">
                                     <FormLabel>Civil status</FormLabel>
@@ -252,14 +270,9 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "civilstatus.otherstatus"
-                            }
+                            name={"civilstatus.otherstatus"}
                             disabled={
-                                form.watch(
-                                    "c1.personalinformation.civilstatus.status"
-                                ) !== "Others"
+                                form.watch("civilstatus.status") !== "Others"
                             }
                             render={({ field }) => (
                                 <FormItem>
@@ -280,7 +293,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     <div className="flex flex-col justify-between">
                         <FormField
                             control={form.control}
-                            name={c1.personalinformation + "height"}
+                            name={"height"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -297,7 +310,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.personalinformation + "weight"}
+                            name={"weight"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -314,18 +327,48 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.personalinformation + "bloodtype"}
+                            name={"bloodtype"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
                                         Blood type
                                     </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
+                                    <SelectOption
+                                        onChange={field.onChange}
+                                        initialValue={field.value}
+                                    >
+                                        <SelectOptionTrigger>
+                                            <FormControl>
+                                                <Button
+                                                    variant={"outline"}
+                                                    className={cn(
+                                                        "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                        !field.value &&
+                                                            "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    <span>
+                                                        {field.value === "" ||
+                                                        !field.value
+                                                            ? "Select blood type"
+                                                            : field.value}
+                                                    </span>
+                                                    <ChevronDown className="size-4" />
+                                                </Button>
+                                            </FormControl>
+                                        </SelectOptionTrigger>
+                                        <SelectOptionContent>
+                                            <ScrollArea>
+                                                {bloodTypes.map((bt, index) => (
+                                                    <SelectOptionItem
+                                                        value={bt}
+                                                        key={index}
+                                                    />
+                                                ))}
+                                            </ScrollArea>
+                                        </SelectOptionContent>
+                                    </SelectOption>
+                                    <FormMessage />
                                 </FormItem>
                             )}
                         />
@@ -335,12 +378,10 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "gsisid"}
+                        name={"gsisid"}
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="required">
-                                    GSIS ID no.
-                                </FormLabel>
+                                <FormLabel className="">GSIS ID no.</FormLabel>
                                 <FormControl>
                                     <Input {...field} className="form-input" />
                                 </FormControl>
@@ -349,10 +390,10 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "pagibigid"}
+                        name={"pagibigid"}
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="required">
+                                <FormLabel className="">
                                     Pag-ibig ID no.
                                 </FormLabel>
                                 <FormControl>
@@ -363,10 +404,10 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "philhealth"}
+                        name={"philhealth"}
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="required">
+                                <FormLabel className="">
                                     Philhealth no.
                                 </FormLabel>
                                 <FormControl>
@@ -380,12 +421,10 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "sss"}
+                        name={"sss"}
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="required">
-                                    SSS no.
-                                </FormLabel>
+                                <FormLabel className="">SSS no.</FormLabel>
                                 <FormControl>
                                     <Input {...field} className="form-input" />
                                 </FormControl>
@@ -394,12 +433,10 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "tin"}
+                        name={"tin"}
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="required">
-                                    TIN no.
-                                </FormLabel>
+                                <FormLabel className="">TIN no.</FormLabel>
                                 <FormControl>
                                     <Input {...field} className="form-input" />
                                 </FormControl>
@@ -408,10 +445,10 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "agencyemployee"}
+                        name={"agencyemployee"}
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel className="required">
+                                <FormLabel className="">
                                     Agency employee no.
                                 </FormLabel>
                                 <FormControl>
@@ -425,10 +462,12 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 <div className="">
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "citizenship.citizen"}
+                        name={"citizenship.citizen"}
                         render={({ field }) => (
                             <FormItem className="space-y-3">
-                                <FormLabel>Citizenship</FormLabel>
+                                <FormLabel className="required">
+                                    Citizenship
+                                </FormLabel>
                                 <FormDescription className="!mt-0 text-xs">
                                     If holder of dual citizenship, please
                                     indicate the details.
@@ -464,7 +503,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     <div className="flex [@media(min-width:1070px)]:flex-row flex-col gap-5 [@media(min-width:1070px)]:items-center [@media(max-width:1070px)]:mt-3 ml-3 sm:ml-7">
                         <FormField
                             control={form.control}
-                            name={c1.personalinformation + "citizenship.dualby"}
+                            name={"citizenship.dualby"}
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
                                     <FormControl>
@@ -474,8 +513,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                             className="flex gap-5 disabled:opacity-0"
                                             disabled={
                                                 form.watch(
-                                                    c1.personalinformation +
-                                                        "citizenship.citizen"
+                                                    "citizenship.citizen"
                                                 ) !== "Dual Citizenship"
                                             }
                                         >
@@ -503,15 +541,10 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "citizenship.dualcitizencountry"
-                            }
+                            name={"citizenship.dualcitizencountry"}
                             disabled={
-                                form.watch(
-                                    c1.personalinformation +
-                                        "citizenship.citizen"
-                                ) !== "Dual Citizenship"
+                                form.watch("citizenship.citizen") !==
+                                "Dual Citizenship"
                             }
                             render={({ field }) => (
                                 <FormItem className="">
@@ -527,8 +560,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                                     )}
                                                     disabled={
                                                         form.watch(
-                                                            c1.personalinformation +
-                                                                "citizenship.citizen"
+                                                            "citizenship.citizen"
                                                         ) !== "Dual Citizenship"
                                                     }
                                                 >
@@ -541,7 +573,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                             </FormControl>
                                         </SelectOptionTrigger>
                                         <SelectOptionContent>
-                                            <ScrollArea className="h-96">
+                                            <ScrollArea className="h-72">
                                                 {COUNTRIES.map(
                                                     (country, index) => (
                                                         <SelectOptionItem
@@ -567,10 +599,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3 mt-2">
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "residentialaddress.houselotblockno"
-                            }
+                            name={"residentialaddress.houselotblockno"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -588,10 +617,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "residentialaddress.street"
-                            }
+                            name={"residentialaddress.street"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">Street</FormLabel>
@@ -607,10 +633,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "residentialaddress.subdivision"
-                            }
+                            name={"residentialaddress.subdivision"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -628,10 +651,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "residentialaddress.barangay"
-                            }
+                            name={"residentialaddress.barangay"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -649,10 +669,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "residentialaddress.citymunicipality"
-                            }
+                            name={"residentialaddress.citymunicipality"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -670,10 +687,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "residentialaddress.province"
-                            }
+                            name={"residentialaddress.province"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -691,10 +705,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "residentialaddress.zipcode"
-                            }
+                            name={"residentialaddress.zipcode"}
                             render={({ field }) => (
                                 <FormItem className="[@media(min-width:1156px)]:col-span-3 [@media(min-width:1156px)]:mx-auto">
                                     <FormLabel className="required">
@@ -714,16 +725,31 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 </div>
 
                 <div className="">
-                    <FormLabel className="uppercase">
-                        Permanent Address
-                    </FormLabel>
+                    <div className="flex items-center">
+                        <FormLabel className="uppercase">
+                            Permanent Address
+                        </FormLabel>
+                        <label
+                            htmlFor="same_address"
+                            className="text-xs font-medium flex items-center ml-2 gap-1"
+                        >
+                            <Checkbox
+                                id="same_address"
+                                checked={form.watch('permanentaddress.isSameResidential')}
+                                onCheckedChange={(checked) => {
+                                    form.setValue(
+                                        "permanentaddress.isSameResidential",
+                                        checked
+                                    );
+                                }}
+                            />
+                            Same as residential
+                        </label>
+                    </div>
                     <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3 mt-2">
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "permanentaddress.houselotblockno"
-                            }
+                            name={"permanentaddress.houselotblockno"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -732,6 +758,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={watchIsSameResidential}
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -741,16 +768,14 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "permanentaddress.street"
-                            }
+                            name={"permanentaddress.street"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">Street</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={watchIsSameResidential}
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -760,10 +785,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "permanentaddress.subdivision"
-                            }
+                            name={"permanentaddress.subdivision"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -772,6 +794,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={watchIsSameResidential}
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -781,10 +804,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "permanentaddress.barangay"
-                            }
+                            name={"permanentaddress.barangay"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -793,6 +813,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={watchIsSameResidential}
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -802,10 +823,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "permanentaddress.citymunicipality"
-                            }
+                            name={"permanentaddress.citymunicipality"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -814,6 +832,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={watchIsSameResidential}
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -823,10 +842,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "permanentaddress.province"
-                            }
+                            name={"permanentaddress.province"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -835,6 +851,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
+                                            disabled={watchIsSameResidential}
                                             className="form-input"
                                         />
                                     </FormControl>
@@ -844,10 +861,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.personalinformation +
-                                "permanentaddress.zipcode"
-                            }
+                            name={"permanentaddress.zipcode"}
                             render={({ field }) => (
                                 <FormItem className="[@media(min-width:1156px)]:col-span-3 [@media(min-width:1156px)]:mx-auto">
                                     <FormLabel className="required">
@@ -856,6 +870,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <NumberInput
                                             {...field}
+                                            disabled={watchIsSameResidential}
                                             className="form-input [@media(min-width:1156px)]:w-52"
                                         />
                                     </FormControl>
@@ -869,7 +884,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                 <div className="grid sm:grid-cols-3 gap-3">
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "telephone"}
+                        name={"telephone"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Telephone no.</FormLabel>
@@ -882,14 +897,17 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "mobile"}
+                        name={"mobile"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="required">
                                     Mobile no.
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <NumberInput
+                                        {...field}
+                                        className="form-input"
+                                    />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -897,7 +915,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name={c1.personalinformation + "email"}
+                        name={"email"}
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Email address (if any)</FormLabel>

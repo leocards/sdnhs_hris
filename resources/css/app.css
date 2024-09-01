@@ -92,5 +92,23 @@
 }
 
 @layer utilities {
+    .rounded-scrollbar::-webkit-scrollbar {
+        @apply !bg-transparent;
+    }
 
+    .rounded-scrollbar::-webkit-scrollbar {
+        @apply w-[14px] h-[14px] bg-secondary;
+    }
+
+    .rounded-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-zinc-400/60 hover:bg-zinc-400 cursor-pointer;
+    }
+
+    .rounded-scrollbar::-webkit-scrollbar-thumb {
+        @apply bg-zinc-400/60 hover:bg-zinc-400 rounded-full border-[3.4px] border-solid border-transparent bg-clip-padding;
+    }
+
+    .rounded-scrollbar::-webkit-scrollbar-button {
+        @apply bg-transparent h-0 w-0;
+    }
 }

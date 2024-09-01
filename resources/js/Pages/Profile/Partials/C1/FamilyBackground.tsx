@@ -15,7 +15,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/Components/ui/calendar";
@@ -28,8 +28,10 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
     const { control } = useFormContext(); // Get the control and watch from the form context
     const { fields, append, remove } = useFieldArray({
         control,
-        name: `${c1.familybackground}.children`, // Adjust the name to fit your schema
+        name: `children`, // Adjust the name to fit your schema
     });
+
+    const currentDeletedChild = form.watch("deletedChild");
 
     return (
         <div className="mt-10 space-y-4" id="familyBackground">
@@ -39,17 +41,15 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
 
             <div className="space-y-4">
                 <div className="space-y-4">
-                    <FormLabel>SPOUSE NAME</FormLabel>
+                    <FormLabel className="opacity-60">SPOUSE NAME</FormLabel>
 
                     <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "spouse.surname"}
+                            name={"spouse.surname"}
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="required">
-                                        Surname
-                                    </FormLabel>
+                                    <FormLabel className="">Surname</FormLabel>
                                     <FormControl>
                                         <Input
                                             {...field}
@@ -62,10 +62,10 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "spouse.firstname"}
+                            name={"spouse.firstname"}
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="required">
+                                    <FormLabel className="">
                                         First name
                                     </FormLabel>
                                     <FormControl>
@@ -80,7 +80,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "spouse.middlename"}
+                            name={"spouse.middlename"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -98,7 +98,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "spouse.extensionname"}
+                            name={"spouse.extensionname"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -119,10 +119,10 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                     <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "spouse.occupation"}
+                            name={"spouse.occupation"}
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="required">
+                                    <FormLabel className="">
                                         Occupation
                                     </FormLabel>
                                     <FormControl>
@@ -137,12 +137,10 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.familybackground + "spouse.employerbusiness"
-                            }
+                            name={"spouse.employerbusiness"}
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="required">
+                                    <FormLabel className="">
                                         Employer/business name
                                     </FormLabel>
                                     <FormControl>
@@ -157,9 +155,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={
-                                c1.familybackground + "spouse.businessaddress"
-                            }
+                            name={"spouse.businessaddress"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -177,7 +173,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "spouse.telephone"}
+                            name={"spouse.telephone"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -196,8 +192,10 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                     </div>
                 </div>
 
-                <div className="space-y-4 flex flex-col">
-                    <FormLabel className="uppercase">Children</FormLabel>
+                <div className="space-y-4 pt-5 flex flex-col">
+                    <FormLabel className="uppercase opacity-60">
+                        Children
+                    </FormLabel>
                     {fields.map((item, index) => (
                         <div
                             key={item.id}
@@ -205,7 +203,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         >
                             <FormField
                                 control={form.control}
-                                name={`${c1.familybackground}.children.${index}.name`}
+                                name={`children.${index}.name`}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="">Name</FormLabel>
@@ -221,42 +219,48 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                             />
                             <CalendarInput
                                 form={form}
-                                name={
-                                    c1.familybackground +
-                                    `children.${index}.dateOfBirth`
-                                }
+                                name={`children.${index}.dateOfBirth`}
                                 isRequired={false}
                             />
-                            {fields.length > 1 && (
-                                <Button
-                                    type="button"
-                                    size={"icon"}
-                                    onClick={() => {
-                                        fields.length > 1 && remove(index);
-                                    }}
-                                    className="absolute right-1 size-7"
-                                >
-                                    <X className="size-4" />
-                                </Button>
-                            )}
+                            <Button
+                                type="button"
+                                size={"icon"}
+                                onClick={() => {
+                                    let id = form.getValues(
+                                        `children.${index}.childid`
+                                    );
+                                    if (id)
+                                        form.setValue("deletedChild", [
+                                            ...currentDeletedChild,
+                                            form.getValues(
+                                                `children.${index}.childid`
+                                            ),
+                                        ]);
+
+                                    remove(index);
+                                }}
+                                className="absolute right-1 size-7"
+                            >
+                                <X className="size-4" />
+                            </Button>
                         </div>
                     ))}
                     <Button
                         type="button"
-                        className="px-8 ml-auto"
+                        className="px-8 ml-auto w-full"
                         onClick={() => append({ name: "", dateOfBirth: null })}
                     >
                         Add Child
                     </Button>
                 </div>
 
-                <div className="space-y-4">
-                    <FormLabel>FATHER'S NAME</FormLabel>
+                <div className="space-y-4 pt-5">
+                    <FormLabel className="opacity-60">FATHER'S NAME</FormLabel>
 
                     <div className="grid [@media(min-width:1156px)]:grid-cols-4 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "father.surname"}
+                            name={"father.surname"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -274,7 +278,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "father.firstname"}
+                            name={"father.firstname"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -292,7 +296,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "father.middlename"}
+                            name={"father.middlename"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -310,7 +314,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "father.extensionname"}
+                            name={"father.extensionname"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -329,13 +333,15 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                     </div>
                 </div>
 
-                <div className="space-y-4">
-                    <FormLabel>MOTEHR'S MAIDEN NAME</FormLabel>
+                <div className="space-y-4 pt-5">
+                    <FormLabel className="opacity-60">
+                        MOTEHR'S MAIDEN NAME
+                    </FormLabel>
 
                     <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3">
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "mother.surname"}
+                            name={"mother.surname"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -353,7 +359,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "mother.firstname"}
+                            name={"mother.firstname"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="required">
@@ -371,7 +377,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                         />
                         <FormField
                             control={form.control}
-                            name={c1.familybackground + "mother.middlename"}
+                            name={"mother.middlename"}
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel className="">
@@ -400,7 +406,8 @@ export const CalendarInput: React.FC<{
     label?: string | React.ReactNode;
     isRequired?: boolean;
     disabled?: boolean;
-}> = ({ form, name, label = 'Date of birth', isRequired = true, disabled }) => {
+    className?: string;
+}> = ({ form, name, label = "Date of birth", isRequired = true, disabled, className }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
     return (
@@ -425,7 +432,8 @@ export const CalendarInput: React.FC<{
                                     variant={"outline"}
                                     className={cn(
                                         "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
-                                        !field.value && "text-muted-foreground"
+                                        !field.value && "text-muted-foreground",
+                                        className
                                     )}
                                     disabled={disabled}
                                 >

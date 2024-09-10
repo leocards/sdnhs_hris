@@ -4,7 +4,7 @@ import { Input } from "@/Components/ui/input";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
-import { router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { SearchIcon, X } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { SeniorHighList } from "../Reports/Reports";
@@ -69,6 +69,8 @@ export default function Search({
                 <h2 className="font-semibold text-xl leading-tight">Search</h2>
             }
         >
+            <Head title="Search" />
+
             <div className="flex my-6 mt-5 relative">
                 <Input
                     className="w-full px-10"
@@ -92,7 +94,7 @@ export default function Search({
 
             <div className="border rounded-lg overflow-hidden p-1">
                 <div className="h-12 flex items-center border-b w-full bg-white dark:bg-zinc-900 px-2">
-                    <div className="grid grid-cols-[repeat(3,1fr),5rem,4rem] grow relative z-10">
+                    <div className="grid grid-cols-[1fr,12rem,12rem,5rem,4rem] grow relative z-10">
                         <div>Name</div>
                         <div>Position</div>
                         <div>Department</div>
@@ -104,7 +106,7 @@ export default function Search({
                         {personnelList.map((emp, index) => (
                             <div className="cursor-default" key={index}>
                                 <div className="rounded-md hover:bg-secondary transition">
-                                    <div className="grid grid-cols-[repeat(3,1fr),5rem,4rem] grow [&>div]:py-2 px-2">
+                                    <div className="grid grid-cols-[1fr,12rem,12rem,5rem,4rem] grow [&>div]:py-2 px-2">
                                         <div className="flex items-center gap-2">
                                             <AvatarProfile src={emp.avatar} className="" />
                                             <div className="line-clamp-1">

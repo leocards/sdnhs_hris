@@ -84,7 +84,8 @@ class LeaveController extends Controller
         return Inertia::render('Leave/ApplicationForLeavePDF', [
             "user" => $user?->only(['id', 'first_name', 'last_name']),
             "leave" => $leave,
-            "hr" => User::where('role', 'HR')->first()->completeName()
+            "hr" => User::where('role', 'HR')->first()->completeName(),
+            "open" => session('open')
         ]);
     }
 
@@ -146,7 +147,6 @@ class LeaveController extends Controller
             ]);
 
             $leave->details_of_action_leave()->create([
-                'leave_id' => $leave->id,
                 'as_of' => $request->certificationLeaveCredits['asOf'],
                 'total_earned_vacation' => $request->certificationLeaveCredits['totalEarned']['vacationLeave'],
                 'total_earned_sick' => $request->certificationLeaveCredits['totalEarned']['sickLeave'],
@@ -169,7 +169,9 @@ class LeaveController extends Controller
                     Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
-                        'message' => " has submitted an Application for leave."
+                        'message' => " has submitted an Application for leave.",
+                        'type' => 'leave',
+                        'go_to_link' => route('leave.view', [$leave->id, Auth::id()])
                     ]);
                 }
             } else {
@@ -178,7 +180,9 @@ class LeaveController extends Controller
                     Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
-                        'message' => " has submitted an Application for leave."
+                        'message' => " has submitted an Application for leave.",
+                        'type' => 'leave',
+                        'go_to_link' => route('leave.view', [$leave->id, Auth::id()])
                     ]);
                 }
             }
@@ -223,7 +227,9 @@ class LeaveController extends Controller
                     Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
-                        'message' => ': Your application for leave has been approved by the HR.'
+                        'message' => ': Your application for leave has been approved by the HR.',
+                        'type' => 'response',
+                        'go_to_link' => route('leave.view', [$leave->id, $user->id])
                     ]);
 
                 } else {
@@ -232,7 +238,9 @@ class LeaveController extends Controller
                     Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
-                        'message' => ': Your application for leave has been approved by the Principal.'
+                        'message' => ': Your application for leave has been approved by the Principal.',
+                        'type' => 'response',
+                        'go_to_link' => route('leave.view', [$leave->id, $user->id])
                     ]);
                 }
                 $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
@@ -245,7 +253,9 @@ class LeaveController extends Controller
                     Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
-                        'message' => ': Your application for leave has been rejected by the HR.'
+                        'message' => ': Your application for leave has been rejected by the HR.',
+                        'type' => 'response',
+                        'go_to_link' => route('leave.view', [$leave->id, $user->id])
                     ]);
                 } else {
                     $leave->principal_status = "Rejected";
@@ -254,7 +264,9 @@ class LeaveController extends Controller
                     Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
-                        'message' => ': Your application for leave has been rejected by the HR.'
+                        'message' => ': Your application for leave has been rejected by the HR.',
+                        'type' => 'response',
+                        'go_to_link' => route('leave.view', [$leave->id, $user->id])
                     ]);
                 }
             }
@@ -305,7 +317,9 @@ class LeaveController extends Controller
                         Notifications::create([
                             'user_id' => $value['id'],
                             'from_user_id' => Auth::id(),
-                            'message' => " has uploaded medical certificate."
+                            'message' => ": has uploaded medical certificate.",
+                            'type' => 'medical',
+                            'go_to_link' => route('leave.view', [$leave_id->id, Auth::id()])
                         ]);
                     }
                 } else {
@@ -314,7 +328,9 @@ class LeaveController extends Controller
                         Notifications::create([
                             'user_id' => $value['id'],
                             'from_user_id' => Auth::id(),
-                            'message' => " has uploaded medical certificate."
+                            'message' => ": has uploaded medical certificate.",
+                            'type' => 'medical',
+                            'go_to_link' => route('leave.view', [$leave_id->id, Auth::id()])
                         ]);
                     }
                 }

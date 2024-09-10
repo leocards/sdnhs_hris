@@ -13,7 +13,7 @@ import {
 } from "@/Components/ui/menubar";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PaginateData, PageProps } from "@/types";
-import { router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import {
     EllipsisVertical,
     Eye,
@@ -47,6 +47,8 @@ export default function Index({ auth, pageData, statistics }: PersonnelProps) {
 
     return (
         <PageListProvider initialValue={pageData}>
+            <Head title="Personnel" />
+            
             <Personnel auth={auth} pageData={pageData} statistics={statistics} />
         </PageListProvider>
     )

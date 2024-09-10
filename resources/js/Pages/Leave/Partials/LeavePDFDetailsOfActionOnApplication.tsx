@@ -249,7 +249,7 @@ const LeavePDFDetailsOfActionOnApplication = (
                                 )}
                             >
                                 <div className={cn(isDownload && "-mt-3")}>
-                                    Lorem ipsum dolor est
+                                    {/* Lorem ipsum dolor est */}
                                 </div>
                             </div>
                             <div

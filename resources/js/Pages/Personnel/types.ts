@@ -69,3 +69,16 @@ export type PersonnelListProps = {
     user: User
     onClick?: (action: string, id: any) => void
 }
+
+const ATTENDANCEOBJECTSCHEMA = z.object({
+    id: z.string().optional(),
+    attendanceId: z.number().nullable().optional(),
+    name: z.string().min(1, "The name field is required."),
+    personnelId: z.number().optional().nullable(),
+    present: z.string().min(1, "The number of days present is required."),
+    absent: z.string().min(1, "The number of days absent is required."),
+});
+
+export const ATTENDANCESCHEMA = z.object({
+    attendances: z.array(ATTENDANCEOBJECTSCHEMA),
+});

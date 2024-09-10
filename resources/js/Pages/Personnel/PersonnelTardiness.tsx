@@ -20,12 +20,12 @@ import {
     Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import TeacherAttendance from "./TeacherAttendance";
 import { format, getYear } from "date-fns";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import PaginationButton from "@/Components/PaginationButton";
 import DataList from "@/Components/DataList";
 import PersonnelTardinessConfirmDelete from "./PersonnelTardinessConfirmDelete";
+import AddPersonnelTardiness from "./AddPersonnelTardiness";
 
 interface PersonnelTardinessProps extends PageProps {
     attendance: PaginateData;
@@ -80,7 +80,7 @@ function PersonnelTardiness({
     const { setList, data, pages, loading, setLoading } = usePageList();
 
     const [filter, setFilter] = useState<string>(
-        getYear(new Date()).toString()
+        years.length !== 0 ? getYear(new Date()).toString() : 'All'
     );
 
     const navigateTo = (nav: string) => {
@@ -178,11 +178,12 @@ function PersonnelTardiness({
                     Attendance
                 </Button>
 
-                <TeacherAttendance
+                <AddPersonnelTardiness
                     show={showAddAttendance}
                     onClose={setShowAddAttendance}
                     user={selectedPersonnel}
                     initialList={personnels}
+                    exisiting={data}
                 />
             </div>
 
@@ -232,7 +233,6 @@ const PersonnelRow: React.FC<PersonnelRowProps> = ({
     onEdit,
     onDelete,
 }) => {
-    console.log(personnel);
     return (
         <div className="hover:bg-secondary transition-colors">
             <div className="grid grid-cols-[repeat(4,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1">

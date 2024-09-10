@@ -51,7 +51,7 @@ const LeavePDF = React.forwardRef<
                         middle: leave?.user?.middle_name,
                         dateOfFiling: leave?.created_at,
                         position: leave?.user?.position,
-
+                        salary: leave.salary
                     }} isDownload={isDownload} />
 
                     <LeavePDFDetailsOfApplication

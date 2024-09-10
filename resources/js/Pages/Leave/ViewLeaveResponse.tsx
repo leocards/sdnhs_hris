@@ -34,7 +34,7 @@ const ViewLeaveResponse = ({ response, show, onClose }: Props) => {
                     <div className="grid sm:grid-cols-[auto,1fr] mt-1 gap-1">
                         <div className="font-medium opacity-80">Message: </div>
                         <div className="">
-                            {response.principal.message??"Your application has been approved."}
+                            {response.principal.message??(response.principal.reponse === "Approved" ? "Your application has been approved." : "" )}
                         </div>
                     </div>
                 </div>
@@ -48,7 +48,7 @@ const ViewLeaveResponse = ({ response, show, onClose }: Props) => {
                     <div className="grid sm:grid-cols-[auto,1fr] mt-1 gap-1">
                         <div className="font-medium opacity-80">Message: </div>
                         <div className="">
-                            {response.hr.message??"Your application has been approved."}
+                            {(response.hr.message)??(response.hr.reponse === "Approved" ? "Your application has been approved." : "" )}
                         </div>
                     </div>
                 </div>

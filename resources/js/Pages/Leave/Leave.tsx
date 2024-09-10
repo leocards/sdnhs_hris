@@ -13,8 +13,8 @@ import {
 } from "@/Components/ui/menubar";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { PageProps, PaginateData, User } from "@/types";
-import { router, usePage } from "@inertiajs/react";
+import { PageProps, PaginateData } from "@/types";
+import { Head, router, usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import { EllipsisVertical, Eye, Search, Trash2, Upload, X } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -23,6 +23,7 @@ import ViewMedical from "./ViewMedical";
 import useDebounce from "@/hooks/useDebounce";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import PaginationButton from "@/Components/PaginationButton";
+import DataList from "@/Components/DataList";
 
 export default function Index({
     auth,
@@ -30,12 +31,13 @@ export default function Index({
 }: PageProps & {
     pageData: PaginateData;
 }) {
-
     return (
         <PageListProvider initialValue={pageData}>
+            <Head title="Leave" />
+
             <Leave auth={auth} pageData={pageData} />
         </PageListProvider>
-    )
+    );
 }
 
 function Leave({
@@ -61,8 +63,9 @@ function Leave({
         medical: "",
         user: { id: null, first_name: "", last_name: "" },
     });
-    const { setList, data, clearList } = usePageList()
-    const debounceSearch = useDebounce<string>(search, search?700:0)
+    const { setList, data, clearList } = usePageList();
+    const debounceSearch = useDebounce<string>(search, search ? 700 : 0);
+    const [loading, setLoading] = useState(false);
 
     const searchRef = useRef<HTMLInputElement | null>(null);
 
@@ -70,6 +73,11 @@ function Leave({
         const input = event.target.value.replace(/\s+/g, " ");
 
         setSearch(input);
+        if (!input) {
+            setLoading(false);
+        } else {
+            setLoading(true);
+        }
     };
 
     const clearSearch = () => {
@@ -95,38 +103,47 @@ function Leave({
     };
 
     const getPageData = (page?: number) => {
-        window.axios.get(route('leave.json', {
-            _query: {
-                filter: filter,
-                sort: sort,
-                search: debounceSearch.trim(),
-                page: page
-            }
-        })).then((response) => {
-            let data = response.data
-            setList(data)
-        })
-    }
+        setLoading(true);
+        window.axios
+            .get(
+                route("leave.json", {
+                    _query: {
+                        filter: filter,
+                        sort: sort,
+                        search: debounceSearch.trim(),
+                        page: page,
+                    },
+                })
+            )
+            .then((response) => {
+                let data = response.data;
+                setList(data);
+                setLoading(false);
+            });
+    };
 
     useEffect(() => {
-        if(filter != "All" || sort.sort != "Date created" || sort.order !== "DESC" || debounceSearch.trim() !== "") {
-            getPageData(1)
+        if (
+            filter != "All" ||
+            sort.sort != "Date created" ||
+            sort.order !== "DESC" ||
+            debounceSearch.trim() !== ""
+        ) {
+            getPageData(1);
         } else {
-            setList(pageData)
+            setList(pageData);
         }
 
         return () => {
-            clearList()
-        }
-    }, [filter, sort, debounceSearch])
+            clearList();
+        };
+    }, [filter, sort, debounceSearch]);
 
     return (
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl leading-tight">
-                    Leave
-                </h2>
+                <h2 className="font-semibold text-xl leading-tight">Leave</h2>
             }
         >
             {auth.user.role !== "HOD" && (
@@ -182,15 +199,19 @@ function Leave({
                             { sort: "Name" },
                             { sort: "Leave type" },
                             { sort: "Date created" },
-                        ].filter(({sort}) => {
-                            if(sort == "Name") {
-                                if(['HOD', 'Principal', 'HR'].includes(auth.user.role)) {
-                                    return sort
+                        ].filter(({ sort }) => {
+                            if (sort == "Name") {
+                                if (
+                                    ["HOD", "Principal", "HR"].includes(
+                                        auth.user.role
+                                    )
+                                ) {
+                                    return sort;
                                 }
 
-                                return
+                                return;
                             }
-                            return sort
+                            return sort;
                         })}
                     />
                 </div>
@@ -199,7 +220,7 @@ function Leave({
                     <Input
                         className="w-full px-10"
                         value={search}
-                        placeholder="Search"
+                        placeholder="Search name"
                         ref={searchRef}
                         onInput={onSearch}
                     />
@@ -227,21 +248,25 @@ function Leave({
                     <div className=""></div>
                 </div>
 
-                {data.length === 0 && (
-                    <div className="text-center py-5 text-foreground/60">
-                        No record.
-                    </div>
-                )}
+                <DataList
+                    empty={data.length === 0}
+                    emptyResults={debounceSearch}
+                    loading={loading}
+                >
+                    {data?.map((leave, index) => (
+                        <LeaveRow
+                            key={index}
+                            leave={leave}
+                            onMenuAction={onMenuAction}
+                        />
+                    ))}
+                </DataList>
 
-                {data?.map((leave, index) => (
-                    <LeaveRow
-                        key={index}
-                        leave={leave}
-                        onMenuAction={onMenuAction}
-                    />
-                ))}
-
-                <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
+                <PaginationButton
+                    onPage={getPageData}
+                    onNext={getPageData}
+                    onPrevious={getPageData}
+                />
             </div>
 
             <UploadMedical
@@ -346,14 +371,16 @@ const LeaveRow: React.FC<{
                                     <>
                                         <MenubarItem
                                             className="px-4 gap-5"
-                                            onClick={() =>{
-                                                if(medical_certificate)
-                                                    onMenuAction("View medical", {
-                                                        medical:
-                                                            medical_certificate.file_path,
-                                                        user: user,
-                                                    })
-
+                                            onClick={() => {
+                                                if (medical_certificate)
+                                                    onMenuAction(
+                                                        "View medical",
+                                                        {
+                                                            medical:
+                                                                medical_certificate.file_path,
+                                                            user: user,
+                                                        }
+                                                    );
                                             }}
                                             disabled={!medical_certificate}
                                         >

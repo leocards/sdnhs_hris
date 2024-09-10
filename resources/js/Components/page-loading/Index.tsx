@@ -25,6 +25,7 @@ export default function isPageLoading(): boolean {
         "/leave/view",
         "/leave/apply-for-leave",
         "/general-search/view",
+        "/notification/redirect",
     ];
 
     const exclude = [
@@ -40,6 +41,9 @@ export default function isPageLoading(): boolean {
         route("profile.edit", { _query: { c: "C3", section: "VII" } }),
         route("profile.edit", { _query: { c: "C3", section: "VIII" } }),
         route("profile.edit", { _query: { c: "C4" } }),
+        route("personnel.tardiness.add"),
+        "/personnel/tardiness-update/",
+        "/personnel/tardiness-delete/",
     ];
 
     useEffect(() => {

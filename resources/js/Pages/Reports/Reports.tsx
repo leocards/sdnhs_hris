@@ -1,27 +1,11 @@
-import { Button } from "@/Components/ui/button";
-import { ScrollArea, ScrollBar } from "@/Components/ui/scroll-area";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { cn } from "@/lib/utils";
 import { PageProps } from "@/types";
-import {
-    ChevronDown,
-    PencilLine,
-    Plus,
-    Printer,
-    Trash2,
-    Upload,
-} from "lucide-react";
-import { Fragment, useState } from "react";
-import IPCRPrint from "./IPCRPrint";
-import SALNPrint from "./SALNPrint";
-import UploadIPCR from "./UploadIPCR";
-import UploadSALN from "./UploadSALN";
-import Filter from "@/Components/buttons/FilterButton";
-import Processing from "@/Components/Processing";
-import { router } from "@inertiajs/react";
-import { useToast } from "@/Components/ui/use-toast";
+import ListOfEmployees from "./ListOfEmployees";
+import ListOfSALN from "./ListOfSALN";
+import ListOfIPCR from "./ListOfIPCR";
+import { Head } from "@inertiajs/react";
 
-type IPCRType = {
+export type IPCRType = {
     id: number;
     rating: string;
     user_id: number;
@@ -36,7 +20,7 @@ type IPCRType = {
     created_at: string;
 };
 
-type SALNType = {
+export type SALNType = {
     id: number;
     joint: boolean;
     networth: string;
@@ -49,592 +33,43 @@ type SALNType = {
         middle_name: string;
         position: string;
         personnel_id: string;
+        pds_personal_information: any;
     };
     created_at: string;
-};
-
-const equivalent = (rate: number): string => {
-    if (rate >= 4.5 && rate <= 5) {
-        return "Outstanding";
-    } else if (rate >= 3.5 && rate <= 4.499) {
-        return "Very Satisfactory";
-    } else if (rate >= 2.5 && rate <= 3.499) {
-        return "Satisfactory";
-    } else if (rate >= 1.5 && rate <= 2.499) {
-        return "Moderate";
-    } else if (rate >= 1 && rate <= 1.499) {
-        return "Fair";
-    } else {
-        return "Poor";
-    }
 };
 
 export default function Reports({
     auth,
     ipcr,
     saln,
-}: PageProps & { ipcr: Array<IPCRType>; saln: Array<SALNType> }) {
-    const [showIPCRPrint, setShowIPCRPrint] = useState<boolean>(false);
-    const [showSALNPrint, setShowSALNPrint] = useState<boolean>(false);
-    const [showList, setShowList] = useState<{
-        showEmployee: boolean;
-        showIPCR: boolean;
-        showSALN: boolean;
-    }>({ showEmployee: true, showIPCR: true, showSALN: true });
-    const [showIPCRUpload, setShowIPCRUpload] = useState<{
-        upload: boolean;
-        add: boolean;
-    }>({ upload: false, add: false });
-    const [showSALNUpload, setShowSALNUpload] = useState<{
-        upload: boolean;
-        add: boolean;
-    }>({ upload: false, add: false });
-    const [filterSALN, setFilterSALN] = useState<string>("");
-    const [filterIPCR, setFilterIPCR] = useState<string>("");
-    const [isEditIPCR, setIsEditIPCR] = useState<IPCRType|null>(null);
-    const [isEditSALN, setIsEditSALN] = useState<SALNType|null>(null);
-    const [isProcessing, setIsProcessing] = useState<boolean>(false)
-    const { toast } = useToast()
-
-    const deleteRow = (deletRoute: string) => {
-        setIsProcessing(true)
-        router.delete(deletRoute, {
-            onSuccess: page => {
-                toast({
-                    variant: "success",
-                    description: page.props.success?.toString()
-                })
-            },
-            onError: error => {
-                toast({
-                    variant: "success",
-                    description: error[0]
-                })
-            },
-            onFinish: () => {
-                setIsProcessing(false)
-            }
-        })
-    }
-
+    list,
+}: PageProps & {
+    ipcr: Array<IPCRType>;
+    saln: Array<SALNType>;
+    list: {
+        jhs: Array<any>;
+        shs: Array<any>;
+        accounting: Array<any>;
+        principal: Array<any>;
+    };
+}) {
     return (
         <Authenticated
             user={auth.user}
             header={
-                <h2 className="font-semibold text-xl leading-tight">
-                    Reports
-                </h2>
+                <h2 className="font-semibold text-xl leading-tight">Reports</h2>
             }
         >
-            <Processing is_processing={isProcessing} label="Deleting..." />
-            <div className="mt-10">
-                <div className="flex justify-between items-center mb-5">
-                    <div className="flex items-center gap-3">
-                        <Button
-                            className="size-6"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() =>
-                                setShowList({
-                                    ...showList,
-                                    showEmployee: !showList.showEmployee,
-                                })
-                            }
-                        >
-                            <ChevronDown
-                                className={cn(
-                                    "size-5 transition duration-200",
-                                    showList.showEmployee && "rotate-180"
-                                )}
-                            />
-                        </Button>
-                        <div className="font-semibold uppercase">
-                            List of Employees
-                        </div>
-                    </div>
-                    <Button className="h-8 hidden">Print</Button>
-                </div>
+            <Head title="Reports" />
 
-                {showList.showEmployee && (
-                    <>
-                        <div className="border mb-4 divide-y rounded-md [&>div>div:nth-child(4)]:text-red-500">
-                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5 font-semibold">
-                                <div></div>
-                                <div>MALE</div>
-                                <div>FEMALE</div>
-                                <div>TOTAL</div>
-                            </div>
-                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                                <div className="text-left uppercase">
-                                    Junior high school
-                                </div>
-                                <div>10</div>
-                                <div>36</div>
-                                <div>47</div>
-                            </div>
-                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                                <div className="text-left uppercase">
-                                    Senior high school
-                                </div>
-                                <div>3</div>
-                                <div>7</div>
-                                <div>10</div>
-                            </div>
-                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                                <div className="text-left uppercase">
-                                    Accounting
-                                </div>
-                                <div>0</div>
-                                <div>4</div>
-                                <div>4</div>
-                            </div>
-                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                                <div className="text-left uppercase">
-                                    Principal
-                                </div>
-                                <div>0</div>
-                                <div>1</div>
-                                <div>1</div>
-                            </div>
-                            <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5">
-                                <div></div>
-                                <div>13</div>
-                                <div>48</div>
-                                <div>61</div>
-                            </div>
-                        </div>
+            <ListOfEmployees list={list} />
 
-                        <div className="grid grid-cols-[repeat(3,minmax(17rem,1fr))] gap-2">
-                            <div className="rounded-lg overflow-hidden">
-                                <div className="bg-zinc-200 dark:bg-white/10 p-2 font-semibold rounded-t-lg">
-                                    Junior High School
-                                </div>
-                                <div className="divide-y border rounded-b-lg">
-                                    <ScrollArea className="h-[40rem]">
-                                        <div className="divide-y">
-                                            {JuniorHighList.map(
-                                                (name, index) => (
-                                                    <Fragment key={index}>
-                                                        <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
-                                                            <div className="text-right pr-1 border-r">
-                                                                {++index}
-                                                            </div>
-                                                            <div className="pl-2">
-                                                                {name}
-                                                            </div>
-                                                        </div>
-                                                    </Fragment>
-                                                )
-                                            )}
-                                        </div>
-                                    </ScrollArea>
-                                </div>
-                            </div>
+            <ListOfIPCR ipcr={ipcr} />
 
-                            <div className="">
-                                <div className="bg-zinc-200 dark:bg-white/10 p-2 font-semibold rounded-t-lg">
-                                    Senior High School
-                                </div>
-                                <div className="divide-y border rounded-b-lg">
-                                    <ScrollArea className="h-[40rem]">
-                                        <div className="divide-y">
-                                            {SeniorHighList.map(
-                                                (name, index) => (
-                                                    <Fragment key={index}>
-                                                        <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
-                                                            <div className="text-right pr-1 border-r">
-                                                                {++index}
-                                                            </div>
-                                                            <div className="pl-2">
-                                                                {name}
-                                                            </div>
-                                                        </div>
-                                                    </Fragment>
-                                                )
-                                            )}
-                                        </div>
-                                    </ScrollArea>
-                                </div>
-                            </div>
-
-                            <div className="">
-                                <div className="bg-zinc-200 dark:bg-white/10 p-2 font-semibold rounded-t-lg">
-                                    Accounting
-                                </div>
-                                <div className="divide-y border rounded-b-lg">
-                                    <ScrollArea className="h-[40rem]">
-                                        <div className="divide-y">
-                                            {Accounting.map((name, index) => (
-                                                <Fragment key={index}>
-                                                    <div className="grid grid-cols-[3rem,1fr] [&>div]:p-2">
-                                                        <div className="text-right pr-1 border-r">
-                                                            {++index}
-                                                        </div>
-                                                        <div className="pl-2">
-                                                            {name}
-                                                        </div>
-                                                    </div>
-                                                </Fragment>
-                                            ))}
-                                        </div>
-                                    </ScrollArea>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-            </div>
-
-            <div className="mt-8">
-                <div className="flex justify-between items-center mb-5">
-                    <div className="flex items-center gap-3">
-                        <Button
-                            className="size-6"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() =>
-                                setShowList({
-                                    ...showList,
-                                    showIPCR: !showList.showIPCR,
-                                })
-                            }
-                        >
-                            <ChevronDown
-                                className={cn(
-                                    "size-5 transition duration-200",
-                                    showList.showIPCR && "rotate-180"
-                                )}
-                            />
-                        </Button>
-                        <div className="font-semibold  ">INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR)</div>
-                        <Filter
-                            filter="Filter by year"
-                            active={filterIPCR}
-                            items={[
-                                { filter: "2024", onClick: setFilterIPCR },
-                                { filter: "2023", onClick: setFilterIPCR },
-                                { filter: "2022", onClick: setFilterIPCR },
-                                { filter: "2021", onClick: setFilterIPCR },
-                                { filter: "2020", onClick: setFilterIPCR },
-                            ]}
-                            onClear={() => setFilterIPCR("")}
-                        />
-                    </div>
-                    {showList.showIPCR && (
-                        <div className="flex gap-3">
-                            <Button
-                                className="h-8 gap-2"
-                                variant="ghost"
-                                onClick={() => setShowIPCRPrint(true)}
-                            >
-                                <Printer className="size-4" strokeWidth={2.3} />
-                                <span>Print</span>
-                            </Button>
-                            <Button
-                                className="h-8 gap-2"
-                                variant="secondary"
-                                onClick={() =>
-                                    setShowIPCRUpload({
-                                        ...showIPCRUpload,
-                                        upload: true,
-                                    })
-                                }
-                            >
-                                <Upload className="size-4" strokeWidth={2.7} />
-                                <span>Upload</span>
-                            </Button>
-                            <Button
-                                className="h-8 gap-2"
-                                onClick={() =>
-                                    setShowIPCRUpload({
-                                        ...showIPCRUpload,
-                                        add: true,
-                                    })
-                                }
-                            >
-                                <Plus className="size-4" strokeWidth={2.7} />
-                                <span>Add</span>
-                            </Button>
-                        </div>
-                    )}
-                </div>
-                {showList.showIPCR && (
-                    <div className="border divide-y rounded-lg">
-                        <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] text-sm [&>div:not(:nth-child(2))]:text-center h-11 [&>div]:my-auto [&>div]:font-semibold opacity-60">
-                            <div className="">No.</div>
-                            <div className="">Name of Personnel</div>
-                            <div className="">Position</div>
-                            <div className="">Performance Rating</div>
-                            <div className="">Adjectival Equivalent</div>
-                            <div className=""></div>
-                        </div>
-                        <ScrollArea className="h-[30rem]">
-                            <div className="divide-y">
-                                {ipcr.map((list, index) => (
-                                    <div key={index}>
-                                        <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
-                                            <div className="">{++index}</div>
-                                            <div className="">{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
-                                            <div className="">
-                                                {list.user.position}
-                                            </div>
-                                            <div className="">
-                                                {list.rating}
-                                            </div>
-                                            <div className="">
-                                                {equivalent(+list.rating)}
-                                            </div>
-                                            <div className="flex items-center justify-center gap-2">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="size-7"
-                                                    onClick={() => {
-                                                        setShowIPCRUpload({
-                                                            ...showIPCRUpload,
-                                                            add: true,
-                                                        });
-                                                        setIsEditIPCR(list);
-                                                    }}
-                                                >
-                                                    <PencilLine
-                                                        className="size-5"
-                                                        strokeWidth={1.8}
-                                                    />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </ScrollArea>
-                    </div>
-                )}
-
-                <UploadIPCR
-                    show={showIPCRUpload.add || showIPCRUpload.upload}
-                    onClose={(close: any) => {
-                        setIsEditIPCR(null);
-                        setShowIPCRUpload(close);
-                    }}
-                    isAdd={showIPCRUpload.add}
-                    isEdit={isEditIPCR}
-                />
-            </div>
-
-            <div className="mt-8">
-                <div className="flex justify-between items-center mb-5">
-                    <div className="flex items-center gap-3">
-                        <Button
-                            className="size-6"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() =>
-                                setShowList({
-                                    ...showList,
-                                    showSALN: !showList.showSALN,
-                                })
-                            }
-                        >
-                            <ChevronDown
-                                className={cn(
-                                    "size-5 transition duration-200",
-                                    showList.showSALN && "rotate-180"
-                                )}
-                            />
-                        </Button>
-                        <div className="font-semibold uppercase ">Statement of Assets, Liabilities and Network (SALN)</div>
-                        <Filter
-                            filter="Filter by year"
-                            active={filterSALN}
-                            items={[
-                                { filter: "2024", onClick: setFilterSALN },
-                                { filter: "2023", onClick: setFilterSALN },
-                                { filter: "2022", onClick: setFilterSALN },
-                                { filter: "2021", onClick: setFilterSALN },
-                                { filter: "2020", onClick: setFilterSALN },
-                            ]}
-                            onClear={() => setFilterSALN("")}
-                        />
-                    </div>
-                    {showList.showSALN && (
-                        <div className="flex gap-3">
-                            <Button
-                                className="h-8 gap-2"
-                                variant="ghost"
-                                onClick={() => setShowSALNPrint(true)}
-                            >
-                                <Printer className="size-4" strokeWidth={2.3} />
-                                <span>Print</span>
-                            </Button>
-                            <Button
-                                className="h-8 gap-2"
-                                variant="secondary"
-                                onClick={() =>
-                                    setShowSALNUpload({
-                                        ...showSALNUpload,
-                                        upload: true,
-                                    })
-                                }
-                            >
-                                <Upload className="size-4" strokeWidth={2.7} />
-                                <span>Upload</span>
-                            </Button>
-                            <Button
-                                className="h-8 gap-2"
-                                onClick={() =>
-                                    setShowSALNUpload({
-                                        ...showSALNUpload,
-                                        add: true,
-                                    })
-                                }
-                            >
-                                <Plus className="size-4" strokeWidth={2.7} />
-                                <span>Add</span>
-                            </Button>
-                        </div>
-                    )}
-                </div>
-                {showList.showSALN && (
-                    <ScrollArea className="border rounded-md h-[30rem]">
-                        <div className="divide-y w-max relative">
-                            <div
-                                className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] border-b [&>div]:text-center
-                            h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-white dark:bg-zinc-900"
-                            >
-                                <div className=""></div>
-                                <div className="">Name</div>
-                                <div className="">TIN</div>
-                                <div className="">Position</div>
-                                <div className="">Net worth</div>
-                                <div className="">
-                                    If spouse is with government service, Please
-                                    indicate Name of Spouse/Employer/Address
-                                </div>
-                                <div className="">
-                                    Please check (/) if Joint Filing
-                                </div>
-                                <div className=""></div>
-                            </div>
-                            {saln.map((list, index) => (
-                                <div
-                                    key={index}
-                                    className={cn(index === 0 && "!border-t-0")}
-                                >
-                                    <div className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] [&>div]:text-center [&>div]:py-3">
-                                        <div className="">{++index}</div>
-                                        <div className="">{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
-
-                                        <div className="">
-                                            {Array.from({ length: 9 }, () =>
-                                                Math.floor(Math.random() * 10)
-                                            ).join("")}
-                                        </div>
-                                        <div className="">
-                                            {list.user.position}
-                                        </div>
-                                        <div className="">&#8369; {list.networth}</div>
-                                        <div className="">{list.spouse}</div>
-                                        <div className="">
-                                            {list.joint ? "/" : ""}
-                                        </div>
-                                        <div className="flex items-center justify-center gap-2">
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                className="size-7"
-                                                onClick={() => {
-                                                    setIsEditSALN(list);
-                                                    setShowSALNUpload({
-                                                        ...showSALNUpload,
-                                                        add: true,
-                                                    });
-                                                }}
-                                            >
-                                                <PencilLine
-                                                    className="size-5"
-                                                    strokeWidth={1.8}
-                                                />
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <ScrollBar
-                            orientation="horizontal"
-                            className="h-3"
-                            forceMount
-                        />
-                    </ScrollArea>
-                )}
-
-                <UploadSALN
-                    show={showSALNUpload.add || showSALNUpload.upload}
-                    onClose={(close: any) => {
-                        setIsEditSALN(null);
-                        setShowSALNUpload(close);
-                    }}
-                    isAdd={showSALNUpload.add}
-                    isEdit={isEditSALN}
-                />
-            </div>
-
-            <IPCRPrint show={showIPCRPrint} onClose={setShowIPCRPrint} />
-            <SALNPrint show={showSALNPrint} onClose={setShowSALNPrint} />
+            <ListOfSALN saln={saln} />
         </Authenticated>
     );
 }
-
-const JuniorHighList = [
-    "ABAYA, ELARDE",
-    "AGUDO, ERWIN P.",
-    "ANDO, ANNIE LOURDE SHYRREL S.",
-    "BALABA, MARISA B.",
-    "BALAGOSA, JEREMIE F.",
-    "BARBATON, LUCILLE G.",
-    "BELGIRA, RODUARD A.",
-    "BOHOL, GECEL N.",
-    "BULIGAN, CHRISTINE JOY B.",
-    "CAMACHO, LORIE JEAN",
-    "CANATE, JOHNREY G.",
-    "CAÑIZARES, JEMIMA B.",
-    "DACALUS, CARMELA MIA P.",
-    "DAQUIO, APPLE JEAN",
-    "DELEGADO, HERMAINE L.",
-    "DIGAO, YENSEN P.",
-    "DUMAS, ANA MARIE",
-    "DUMBASE, LOUELA M.",
-    "EMBALSADO, ANGELICA C.",
-    "ESPINOSA, MARIVENE P",
-    "GEMENTIZA, DANICA JOYCE P.",
-    "JACINTO, DIANNE H.",
-    "LABOS, RUBY P.",
-    "LEGARA, JENNIFER T.",
-    "LOPEZ, FLORAMIE D.",
-    "MARTIN, JANIVIC B.",
-    "MORALES, DAVIE ROSE",
-    "NAVARES, JAYVENT",
-    "OLMILLO, ANNABELLE S.",
-    "PALMA, MARY JOY C.",
-    "PAMA, JOANALLE P.",
-    "PASAGUI, MIA KRIS ZHEL M.",
-    "PEÑANO, JERAVEN D.",
-    "PILOTO, ESTELA G.",
-    "QUEMA, ROMMEL B.",
-    "RELAMPAGOS, JANICE MAY E.",
-    "ROMEO, NOEL M.",
-    "SINDA, LP SHEENA S.",
-    "SUAN, CRISEL D.",
-    "SUMAGAYSAY, AIRES JANE D.",
-    "TABLATE, FRANPERL L.",
-    "TAGPUNO, ANNE CLARENCE B.",
-    "TINASAS, BELEN R.",
-    "TUBAC, APRIL JOEY A.",
-    "TUBOSO, CRISTINE G.",
-    "VERTUDES, REYMUND A.",
-    "YBAÑEZ, JASMIN P.",
-];
 
 export const SeniorHighList = [
     "ALABA, KARL RANIEL",
@@ -646,10 +81,10 @@ export const SeniorHighList = [
     "OMBLERO, SARAH JANE R.",
     "QUIBO, JANICE C.",
     "SANGILAN, DEITHER E.",
-    "TASIC, ALMA DONNA L."
+    "TASIC, ALMA DONNA L.",
 ];
 
-const Accounting = [
+export const Accounting = [
     "CUBIJANO, YVONY C.",
     "DOSOL, RESEL F.",
     "MALABAD, CHELSEE GWEN",

@@ -2,7 +2,7 @@ import { Form } from "@/Components/ui/form";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { router, useForm } from "@inertiajs/react";
+import { Head, router, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { useForm as reactForm } from "react-hook-form";
 import { z } from "zod";
@@ -58,9 +58,6 @@ export default function NewPersonnel({ auth, user }: PageProps & { user?: any })
                         description: page.props.success?.toString(),
                     });
                     form.reset();
-                    reset();
-                    setIsSubmit(true);
-                    router.get(route('personnel'))
                 },
                 onError: (error) => {
                     for (const key in error) {
@@ -69,9 +66,11 @@ export default function NewPersonnel({ auth, user }: PageProps & { user?: any })
                             message: error[key],
                         });
                     }
+                },
+                onFinish: () => {
                     setIsSubmit(false);
                     reset();
-                },
+                }
             });
         }
     }, [isSubmit]);
@@ -121,6 +120,8 @@ export default function NewPersonnel({ auth, user }: PageProps & { user?: any })
                 </h2>
             }
         >
+            <Head title="Personnel" />
+
             <div className="mt-3">
                 <Breadcrumbs
                     home="Personnel"

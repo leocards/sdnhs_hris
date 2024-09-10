@@ -46,7 +46,7 @@ class PersonnelController extends Controller
     public function tardiness()
     {
         return Inertia::render('Personnel/PersonnelTardiness', [
-            'attendance' => PersonnelTardiness::with(['users:id,first_name,last_name,middle_name,avatar'])
+            'attendance' => PersonnelTardiness::with(['users:id,first_name,last_name,middle_name,avatar,created_at'])
                 ->whereYear('created_at', Carbon::now()->format('Y'))
                 ->orderBy(
                     User::select('first_name')
@@ -60,10 +60,21 @@ class PersonnelController extends Controller
                 ->orderBy('year', 'desc')
                 ->pluck('year'),
             'personnels' => User::whereNotIn('role', ['HR', 'HOD'])
-                ->rightJoin('personnel_tardinesses as pt', 'pt.user_id', '=', 'users.id')
-                ->whereYear('pt.created_at', '!=', Carbon::now()->format('Y'))
-                ->get(['users.id', 'users.first_name', 'users.last_name', 'users.middle_name', 'users.avatar'])
-                ->append('name')
+                ->get(['id', 'first_name', 'last_name', 'middle_name'])
+                ->map(function ($user) {
+                    return collect([
+                        'personnelId' => $user->id,
+                        'name' => $user->name
+                    ]);
+                }),
+            'existing' => (PersonnelTardiness::with(['users:id,first_name,last_name,middle_name,avatar,created_at'])
+            ->whereYear('created_at', Carbon::now()->format('Y'))
+            ->orderBy(
+                User::select('first_name')
+                    ->whereColumn('personnel_tardinesses.user_id', 'users.id')
+                    ->orderBy('last_name')
+                    ->limit(1)
+            )->get())
         ]);
     }
 
@@ -240,7 +251,12 @@ class PersonnelController extends Controller
             ->orWhere('middle_name', 'LIKE', "%$search%")
             ->whereNotIn('role', ['HR', 'HOD'])
             ->get(['id', 'first_name', 'last_name', 'middle_name'])
-            ->append('name');
+            ->map(function ($user) {
+                return collect([
+                    'personnelId' => $user->id,
+                    'name' => $user->name
+                ]);
+            });
 
         return response()->json($result);
     }

@@ -87,6 +87,7 @@ const LeavePDFApplicant = ({
                 </div>
                 <div className="">
                     <div className={cn(isDownload && "-mt-1.5")}>5. Salary</div>
+                    <div className="pl-3">&#8369;   {salary}</div>
                 </div>
             </div>
         </>

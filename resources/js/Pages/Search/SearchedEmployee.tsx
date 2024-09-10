@@ -4,7 +4,7 @@ import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
-import { router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { format } from "date-fns";
 import { MessageCircle, Undo2 } from "lucide-react";
 import useWindowSize from "@/hooks/useWindowResize";
@@ -16,6 +16,7 @@ import { Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import pdsPDF from "@/pds.pdf";
+import EmployeeDetails from "./EmployeeDetails";
 
 type PagesType = { prev: number; current: number; next: number };
 
@@ -38,8 +39,12 @@ const initialPages = {
 export default function SearchedEmployee({
     auth,
     user,
-}: PageProps & { user: any }) {
-    const [activeTab, setActiveTab] = useState<string>("attendance");
+    open,
+    leave,
+}: PageProps & { user: any; open: any; leave: number }) {
+    const [activeTab, setActiveTab] = useState<string>(
+        open && open === "certificate" ? "certificates" : "details"
+    );
     const { width } = useWindowSize();
     const [size, setSize] = useState<number>(900);
     const [numPages, setNumPages] = useState<number>();
@@ -74,6 +79,8 @@ export default function SearchedEmployee({
 
     return (
         <Authenticated user={auth.user}>
+            <Head title="Search" />
+
             <div className="mb-8">
                 <Button
                     className="gap-3 ml-auto"
@@ -92,7 +99,9 @@ export default function SearchedEmployee({
                         <Label className="w-28 flex items-center">
                             Name <span className="ml-auto mr-3">:</span>{" "}
                         </Label>
-                        <div className="font-semibold text-lg">{`${user.first_name} ${user.middle_name??''} ${user.last_name}`}</div>
+                        <div className="font-semibold text-lg">{`${
+                            user.first_name
+                        } ${user.middle_name ?? ""} ${user.last_name}`}</div>
                     </div>
                     <div className="flex items-center">
                         <Label className="w-28 flex items-center">
@@ -114,80 +123,13 @@ export default function SearchedEmployee({
                 </Button>
             </div>
 
-            <div className="mt-8 grid grid-cols-3 gap-8">
-                <div className="">
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Date of Birth{" "}
-                            <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>{format(user.date_of_birth, "PPP")}</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Sex <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>{user.sex}</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Address <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>{user.address}</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Email <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>{user.email}</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Phone number <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>{user.phone_number}</div>
-                    </div>
-                </div>
-                <div className="">
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Staff ID <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>SDNH-1234</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Date hired <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>{format(new Date(), "PPP")}</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Department <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>{user.department}</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Credits <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>4</div>
-                    </div>
-                    <div className="flex items-center">
-                        <Label className="w-40 flex items-center">
-                            Leave <span className="ml-auto mr-3">:</span>{" "}
-                        </Label>
-                        <div>2</div>
-                    </div>
-                </div>
-            </div>
-
             <div className="mt-8">
                 <Tabs
                     id="searched-view"
-                    active={"attendance"}
+                    active={activeTab}
                     navigate={setActiveTab}
                     tabs={[
+                        { id: "details", label: "Details" },
                         { id: "attendance", label: "Attendance" },
                         { id: "certificates", label: "Certificates" },
                         { id: "PDS", label: "PDS" },
@@ -197,6 +139,19 @@ export default function SearchedEmployee({
             </div>
 
             <div className="mt-5">
+                {activeTab === "details" && <EmployeeDetails user={{
+                    birthDate: user.date_of_birth,
+                    sex: user.sex,
+                    address: user.address,
+                    email: user.email,
+                    phoneNumber: user.phone_number,
+                    staffId: user.personnel_id,
+                    dateHired: user.date_hired,
+                    department: user.department,
+                    credits: user.leave_credits,
+                    leave: leave.toString(),
+                }} />}
+
                 {activeTab === "attendance" && (
                     <div className="border rounded-lg divide-y">
                         <div className="grid grid-cols-3 px-2 py-3 bg-secondary font-medium">
@@ -316,7 +271,6 @@ const PDFPages = ({
                 pageNumber={page}
                 width={size}
                 onRenderSuccess={() => setIsRendered(true)}
-
             />
         </div>
     );

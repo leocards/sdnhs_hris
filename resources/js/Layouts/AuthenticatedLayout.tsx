@@ -124,7 +124,7 @@ export default function Authenticated({
                     <div
                         className={cn(
                             "mx-auto max-w-6xl",
-                            isLoading && "flex flex-col h-full"
+                            isLoading && "flex flex-col lg:h-full h-[calc(100vh-7.5rem)]"
                         )}
                     >
                         <Loading>

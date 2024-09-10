@@ -19,7 +19,9 @@ class SearchController extends Controller
     public function view_searched(User $user)
     {
         return Inertia::render('Search/SearchedEmployee', [
-            'user' => $user
+            'user' => $user,
+            'leave' => $user->getLeaveRendered(),
+            'open' => session('open')
         ]);
     }
 
@@ -29,7 +31,7 @@ class SearchController extends Controller
             User::where('first_name', 'LIKE', "%".$request->query('search')."%")
                 ->orWhere('last_name', 'LIKE', "%".$request->query('search')."%")
                 ->orWhere('middle_name', 'LIKE', "%".$request->query('search')."%")
-                ->get(['first_name', 'middle_name', 'last_name', 'position', 'department', 'leave_credits'])
+                ->get(['id', 'first_name', 'middle_name', 'last_name', 'position', 'department', 'leave_credits'])
         );
     }
 }

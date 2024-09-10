@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\IPCRImport;
+use App\Imports\SALNImport;
 use App\Models\PerformanceRating;
 use App\Models\Saln;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -23,6 +27,21 @@ class ReportController extends Controller
     public function index(Request $request)
     {
         return Inertia::render('Reports/Reports', [
+            "list" => collect([
+                "jhs" => DB::table('users')
+                    ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))
+                    ->where('department', 'Junior High School')
+                    ->get(),
+                "shs" => DB::table('users')
+                    ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))
+                    ->where('department', 'Senior High School')
+                    ->get(),
+                "accounting" => DB::table('users')
+                    ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))
+                    ->where('department', 'Accounting')
+                    ->get(),
+                "principal" => User::where('role', 'HOD')->get('sex')
+            ]),
             "ipcr" => PerformanceRating::with(['user:id,first_name,last_name,middle_name,position,personnel_id'])
                 ->join('users', 'performance_ratings.user_id', '=', 'users.id')
                 ->whereYear('performance_ratings.created_at', $request->query('ipcr') ?? $this->date->format("Y"))
@@ -33,21 +52,118 @@ class ReportController extends Controller
         ]);
     }
 
+    public function upload_ipcr(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240', // 10MB max size
+        ]);
+
+        // import the file and read its contents.
+        $data = Excel::toCollection(new IPCRImport, $request->file('file'));
+
+        DB::beginTransaction();
+
+        try {
+            // check if there is data.
+            if ($data->count() > 0) {
+                // check if there is data
+                if ($data[0]->count() !== 0) {
+
+                    foreach ($data[0] as $key => $value) {
+
+                        // check if there is number indicator in the data to verify if it is the valid content to add
+                        if (is_int($value[0])) {
+                            $searchName = strtolower($value[1]);
+                            $user = User::searchByFullName($searchName)->first(['id']);
+
+                            // validate if user exist and check if it has already been added otherwise add the rating.
+                            if ($user){
+                                $existIPCR = PerformanceRating::where('user_id', $user->id)->whereYear('created_at', Carbon::now()->format("Y"))->exists();
+                                if(!$existIPCR)
+                                    PerformanceRating::create([
+                                        'user_id' => $user->id,
+                                        'rating' => $value[3]
+                                    ]);
+                            }
+                        } else {
+                            // break the loop if there is no number indicator.
+                            break;
+                        }
+                    }
+                } else {
+                    throw new Exception("The sheet is empty.", 1);
+                }
+            } else {
+                throw new Exception("The uploaded file is empty.", 1);
+            }
+
+            DB::commit();
+
+            return back()->with('success', 'Uploaded successfully.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            return back()->withErrors($th->getMessage());
+        }
+
+    }
+
     public function upload_saln(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:10240', // 10MB max size
         ]);
 
-        $path = null;
+        // import the file and read its contents.
+        $data = Excel::toCollection(new SALNImport, $request->file('file'));
 
         DB::beginTransaction();
-        try {
-            
-        
 
+        try {
+            // check if there is data.
+            if ($data->count() > 0) {
+                // check if there is data
+                if ($data[0]->count() !== 0) {
+
+                    foreach ($data[0] as $key => $value) {
+
+                        // check if there is number indicator in the data to verify if it is the valid content to add
+                        if (is_int($value[0])) {
+                            $searchLName = strtolower($value[1]);
+                            $searchFName = strtolower($value[2]);
+                            $user = User::searchByLastAndFirstName($searchLName, $searchFName)->first('id');
+
+                            // validate if user exist and check if it has already been added otherwise add the rating.
+                            if ($user){
+                                $existIPCR = Saln::where('user_id', $user->id)->whereYear('created_at', Carbon::now()->format("Y"))->exists();
+                                if(!$existIPCR)
+                                    Saln::create([
+                                        'user_id' => $user->id,
+                                        "networth" => $value[6],
+                                        "spouse" => $value[7],
+                                        "joint" => $value[8] === "/" ? true : false,
+                                        'rating' => $value[3]
+                                    ]);
+                            }
+                        } else {
+                            // break the loop if there is no number indicator.
+                            break;
+                        }
+                    }
+                } else {
+                    throw new Exception("The sheet is empty.", 1);
+                }
+            } else {
+                throw new Exception("The uploaded file is empty.", 1);
+            }
+
+            DB::commit();
+
+            return back()->with('success', 'Uploaded successfully.');
         } catch (\Throwable $th) {
-            //throw $th;
+            DB::rollBack();
+
+            return back()->withErrors($th->getMessage());
         }
     }
 
@@ -55,17 +171,18 @@ class ReportController extends Controller
     {
         $user = User::where('personnel_id', $request->add['personnelid'])->first();
 
-        if(!$user) {
+        if (!$user) {
             return back()->withErrors("Personnel ID does not exist");
         }
 
         $request->validate([
             "add.personnelid" => [
-                'required', 
+                'required',
                 function ($attribute, $value, $fail) use ($user) {
                     if (PerformanceRating::where('user_id', $user->id)
                         ->whereYear('created_at', $this->date->format("Y"))
-                        ->exists()) {
+                        ->exists()
+                    ) {
                         $fail('The personnel ID already exists.');
                     }
                 }
@@ -95,17 +212,18 @@ class ReportController extends Controller
     {
         $user = User::where('personnel_id', $request->add['personnelid'])->first();
 
-        if(!$user) {
+        if (!$user) {
             return back()->withErrors("Personnel ID does not exist");
         }
 
         $request->validate([
             "add.personnelid" => [
-                'required', 
+                'required',
                 function ($attribute, $value, $fail) use ($user) {
                     if (Saln::where('user_id', $user->id)
                         ->whereYear('created_at', $this->date->format("Y"))
-                        ->exists()) {
+                        ->exists()
+                    ) {
                         $fail('The personnel ID already exists.');
                     }
                 }

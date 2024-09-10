@@ -23,6 +23,7 @@ const PersonnelTardinessConfirmDelete = ({
     const { toast } = useToast()
 
     const onDelete = () => {
+        setProcessing(true)
         router.post(route('personnel.tardiness.delete', [personnel?.id]), {}, {
             onSuccess: (page) => {
                 toast({

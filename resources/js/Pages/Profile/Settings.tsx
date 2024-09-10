@@ -5,6 +5,7 @@ import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationFor
 import { useTheme } from "@/hooks/themeProvider";
 import { Moon, Sun, Monitor } from "lucide-react"
 import { Button } from "@/Components/ui/button";
+import { Checkbox } from "@/Components/ui/checkbox";
 
 export default function Settings({
     auth,
@@ -45,6 +46,23 @@ export default function Settings({
                             <Monitor className="size-4" />
                             <span>System theme</span>
                         </Button>
+                    </div>
+                </div>
+
+                <div className="mt-10">
+                    <header>
+                        <h2 className="text-lg font-medium text-">Notification</h2>
+                    </header>
+
+                    <div className="space-y-3 mt-5">
+                        <div className="flex items-center">
+                            <Checkbox checked className="text-primary" />
+                            <div className="ml-3">Enable email notifications</div>
+                        </div>
+                        <div className="flex items-center">
+                            <Checkbox className="text-primary" />
+                            <div className="ml-3">Enable email notification for new messages</div>
+                        </div>
                     </div>
                 </div>
 

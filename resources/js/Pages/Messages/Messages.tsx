@@ -9,6 +9,7 @@ import { Description } from "@headlessui/react";
 import { Search, X } from "lucide-react";
 import { ChangeEvent, useRef, useState } from "react";
 import ChatBox from "./ChatBox";
+import { Head } from "@inertiajs/react";
 
 export default function Messages({ auth }: PageProps) {
     const [search, setSearch] = useState<string>("");
@@ -34,6 +35,8 @@ export default function Messages({ auth }: PageProps) {
                 </h2>
             }
         >
+            <Head title="Messages" />
+
             <div className="mt-8 grid grid-cols-1 grid-rows-1">
                 <div className="grid [@media(min-width:720px)]:grid-cols-[20rem,1fr] row-span-1 gap-3 [&>div]:h-[calc(100vh-10.5em)]">
                     <div className="border rounded-lg grid grid-rows-[auto,1fr] [@media(max-width:720px)]:hidden">

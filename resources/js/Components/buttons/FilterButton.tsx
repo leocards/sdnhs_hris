@@ -24,6 +24,7 @@ type FilterProps = {
 	size?: string;
 	bgStyle?: string;
 	bordered?: boolean;
+    labelClass?: string;
 	items: ItemsType[];
     icon?: React.ReactNode;
 	position?: POSITIONS;
@@ -40,7 +41,8 @@ export default function Filter({
 	const [popOver, setPopOver] = useState<boolean>(false);
 
 	const Sizes = {
-		sm: "h-8",
+        xs: "h-8",
+		sm: "h-[2.05rem]",
 		md: "h-9",
 		lg: "h-10",
 		xl: "h-11",
@@ -61,8 +63,8 @@ export default function Filter({
                                 "hover:before:scale-100 hover:before:opacity-100"
 							)}
 						>
-							{props.icon??<ListFilter className="w-4 h-4 sm:mr-2 z-10" />}
-							<span className="max-sm:hidden z-10">
+							{props.icon??<ListFilter className="w-4 h-4 z-10" />}
+							<span className={cn("max-sm:hidden sm:ml-2 z-10", props.labelClass)}>
 								{!props.active ? props.filter : props.active}
 							</span>
 						</PopoverButton>

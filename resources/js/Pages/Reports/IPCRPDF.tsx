@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     body: {
         padding: 35,
         fontFamily: "Inter-Regular",
-        fontSize: 10,
+        fontSize: 9,
         // transform: "scale(0.90)"
     },
     textCenter: {
@@ -143,14 +143,14 @@ export default function IPCRPDF({size}: {size: PageSize}) {
                         <Cell style={{borderRight: 1, height: 40, flex: 1, justifyContent: "center" }}>
                             <Text style={[styles.textCenter]}>Name of Personnel</Text>
                         </Cell>
-                        <Cell style={{borderRight: 1, height: 40, flex: 1, justifyContent: "center", maxWidth: 120 }}>
+                        <Cell style={{borderRight: 1, height: 40, flex: 1, justifyContent: "center", maxWidth: 110 }}>
                             <Text style={[styles.textCenter]}>Position</Text>
                         </Cell>
-                        <Cell style={{borderRight: 1, height: 40, flex: 1, justifyContent: "center", maxWidth: 83 }}>
+                        <Cell style={{borderRight: 1, height: 40, flex: 1, justifyContent: "center", maxWidth: 75 }}>
                             <Text style={[styles.textCenter]}>Performance Rating</Text>
                             <Text style={[styles.textCenter]}>(SY 2022-2023)</Text>
                         </Cell>
-                        <Cell style={{height: 40, flex: 1, justifyContent: "center", maxWidth: 65 }}>
+                        <Cell style={{height: 40, flex: 1, justifyContent: "center", maxWidth: 93 }}>
                             <Text style={[styles.textCenter]}>Adjectival Equivalent</Text>
                         </Cell>
                     </Row>
@@ -165,13 +165,13 @@ export default function IPCRPDF({size}: {size: PageSize}) {
                             <Cell style={{borderRight: 1, flex: 1, justifyContent: "center", paddingVertical: 4, paddingHorizontal: 2 }}>
                                 <Text>{list.name}</Text>
                             </Cell>
-                            <Cell style={{borderRight: 1, flex: 1, justifyContent: "center", maxWidth: 120, paddingVertical: 4, paddingHorizontal: 2 }}>
+                            <Cell style={{borderRight: 1, flex: 1, justifyContent: "center", maxWidth: 110, paddingVertical: 4, paddingHorizontal: 2 }}>
                                 <Text style={[styles.textCenter]}>{list.position}</Text>
                             </Cell>
-                            <Cell style={{borderRight: 1, flex: 1, justifyContent: "center", maxWidth: 83, paddingVertical: 4, paddingHorizontal: 2 }}>
+                            <Cell style={{borderRight: 1, flex: 1, justifyContent: "center", maxWidth: 75, paddingVertical: 4, paddingHorizontal: 2 }}>
                                 <Text style={[styles.textCenter]}>{list.rate}</Text>
                             </Cell>
-                            <Cell style={{flex: 1, justifyContent: "center", maxWidth: 65, paddingVertical: 4, paddingHorizontal: 2 }}>
+                            <Cell style={{flex: 1, justifyContent: "center", maxWidth: 93, paddingVertical: 4, paddingHorizontal: 2 }}>
                                 <Text style={[styles.textCenter]}>{list.equivalent}</Text>
                             </Cell>
                         </Row>

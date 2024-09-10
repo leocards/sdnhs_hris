@@ -16,8 +16,11 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->unsignedBigInteger('from_user_id');
             $table->string('message');
+            $table->enum('type', ['leave', 'certificate', 'profile', 'medical', 'response'])->nullable();
+            $table->string('go_to_link', 500)->nullable();
             $table->boolean('viewed')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('from_user_id')->references('id')->on('users');
 

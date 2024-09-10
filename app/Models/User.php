@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -76,7 +77,7 @@ class User extends Authenticatable
         return $this->role == $role;
     }
 
-    protected $appends = ['name'];
+    protected $appends = ['name', 'employee_list_name'];
 
     /**
      * Get the full name (first name and last name) of a user
@@ -96,9 +97,30 @@ class User extends Authenticatable
         return $this->first_name . ' ' . ($this->middle_name ? substr($this->middle_name, 0, 1) . '. ' : ' ') . $this->last_name;
     }
 
+    public function employeeListName()
+    {
+        return Str::upper($this->last_name. ', '. $this->first_name. ' '. substr($this->middle_name, 0, 1).'. ');
+    }
+
+    protected function getEmployeeListNameAttribute()
+    {
+        return $this->employeeListName();
+    }
+
     public function scopeSearchByFullName($query, $name)
     {
-        return $query->where(DB::raw("CONCAT(first_name, ' ', last_name)"), 'LIKE', "%{$name}%");
+        return $query->where(DB::raw("LOWER(CONCAT(last_name, ', ', first_name, ' ', LEFT(middle_name, 1), '.'))"), 'LIKE', "%{$name}%");
+    }
+
+    public function scopeSearchByLastAndFirstName($query, $lname, $fname)
+    {
+        return $query->where(DB::raw("LOWER(last_name)"), 'LIKE', "%{$lname}%")
+            ->where(DB::raw("LOWER(first_name)"), 'LIKE', "%{$fname}%");
+    }
+
+    public function getLeaveRendered()
+    {
+        return Leave::where('user_id', $this->id)->where('principal_status', 'Approved')->where('hr_status', 'Approved')->count();
     }
 
     public function pdsPersonalInformation()

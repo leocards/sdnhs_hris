@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PersonalDataSheetController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -40,7 +41,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/view/{user}', 'view_searched')->name('general-search.view');
         });
     });
-
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -99,7 +99,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-
     Route::prefix('service-records')->group(function () {
         Route::controller(ServiceRecordController::class)->group(function () {
             Route::get('/', 'index')->name('service-records');
@@ -114,6 +113,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::controller(ReportController::class)->group(function () {
             Route::get('/', 'index')->name('reports');
 
+            Route::post('/excel-ipcr-upload', 'upload_ipcr')->name('reports.excel.ipcr.upload');
+            Route::post('/excel-saln-upload', 'upload_saln')->name('reports.excel.saln.upload');
             Route::post('/add-ipcr', 'addIPCRRow')->name('reports.addIPCR');
             Route::post('/add-saln', 'addSALNRow')->name('reports.addSALN');
             Route::post('/update-ipcr/{ipcrId}', 'updateIPCRRow')->name('reports.updateIPCR');
@@ -124,7 +125,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/messages', fn () => Inertia::render('Messages/Messages'))->name("messages");
-    Route::get('/notification', fn () => Inertia::render('Notification/Notification'))->name("notification");
+
+    Route::prefix('notification')->group(function () {
+        Route::controller(NotificationController::class)->group(function () {
+            Route::get('/', 'index')->name("notification");
+            Route::get('/json', 'indexJson')->name("notification.json");
+            Route::get('/notif-read/{notif}', 'markAsRead')->name("notification.masrkRead");
+            Route::get('/redirect/{notif}', 'redirectFromNotification')->name("notification.redirect");
+        });
+    });
 
     Route::get("/reports/salnpdf", fn () => Inertia::render('Reports/samplePdf'));
 });

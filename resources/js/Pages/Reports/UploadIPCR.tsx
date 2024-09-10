@@ -83,7 +83,7 @@ export default function UploadIPCR(props: {
         resolver: zodResolver(UPLOADSCHEMA),
     });
 
-    const { setData, post, processing, reset } = useForm<IFormUpload>();
+    const { setData, data, post, processing, reset } = useForm<IFormUpload>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const { toast } = useToast()
 
@@ -118,36 +118,60 @@ export default function UploadIPCR(props: {
 
     useEffect(() => {
         if(isSubmit) {
-            post(props.isEdit?route('reports.updateIPCR', [props.isEdit?.id]):route('reports.addIPCR'), {
-                onSuccess: page => {
-                    if(page.props.success) {
+            if(!isFormAdd){
+                post(route('reports.excel.ipcr.upload'), {
+                    onSuccess: page => {
                         toast({
                             variant: "success",
-                            description: page.props.success.toString()
+                            description: page.props.success?.toString()
                         })
                         form.reset()
                         onClose({ upload: false, add: false })
-                    }
-                },
-                onError: error => {
-                    for (const key in error) {
-                        form.setError(key as keyof IFormUpload, {
-                            type: "manual",
-                            message: error[key],
-                        });
-                    }
-                    
-                    if(error[0])
+                    },
+                    onError: error => {
+                        console.log(error[0])
                         toast({
                             variant: "destructive",
                             description: error[0]
                         })
-                },
-                onFinish: () => {
-                    reset()
-                    setIsSubmit(false)
-                }
-            })
+                    },
+                    onFinish: () => {
+                        reset()
+                        setIsSubmit(false)
+                    }
+                })
+            } else {
+                post(props.isEdit?route('reports.updateIPCR', [props.isEdit?.id]):route('reports.addIPCR'), {
+                    onSuccess: page => {
+                        if(page.props.success) {
+                            toast({
+                                variant: "success",
+                                description: page.props.success.toString()
+                            })
+                            form.reset()
+                            onClose({ upload: false, add: false })
+                        }
+                    },
+                    onError: error => {
+                        for (const key in error) {
+                            form.setError(key as keyof IFormUpload, {
+                                type: "manual",
+                                message: error[key],
+                            });
+                        }
+
+                        if(error[0])
+                            toast({
+                                variant: "destructive",
+                                description: error[0]
+                            })
+                    },
+                    onFinish: () => {
+                        reset()
+                        setIsSubmit(false)
+                    }
+                })
+            }
         }
     }, [isSubmit])
 
@@ -156,6 +180,7 @@ export default function UploadIPCR(props: {
             show={show}
             onClose={() => onClose({ upload: false, add: false })}
             maxWidth="lg"
+            center
         >
             {processing && <Processing is_processing={processing} backdrop="" />}
             {!processing && (

@@ -45,7 +45,7 @@ const LeavePDF = React.forwardRef<
 
                 <div className={cn("mt-4 border", isDownload ? "border-black" : "dark:border-border border-black")}>
                     <LeavePDFApplicant applicant={{
-                        department: leave?.user?.first_name,
+                        department: leave?.user?.department,
                         first: leave?.user?.first_name,
                         last: leave?.user?.last_name,
                         middle: leave?.user?.middle_name,

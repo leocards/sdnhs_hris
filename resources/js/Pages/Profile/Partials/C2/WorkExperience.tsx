@@ -38,7 +38,7 @@ export default function WorkExperience({ form }: { form: any }) {
                         className="px-8 w-full"
                         onClick={() => prepend(defaultWE)}
                     >
-                        Add
+                        Add new row
                     </Button>
                 </div>
                 {fields.map((item, index) => (
@@ -113,6 +113,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                 }
                                 name={`we.${index}.inclusivedates.to`}
                                 isRequired={false}
+                                asInput
                             />
 
                         </div>

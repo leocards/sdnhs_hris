@@ -42,7 +42,7 @@ const ApplyLeave = ({ auth }: PageProps) => {
         if (watchInclusiveDates) {
             const leavetype = form.getValues("leavetype.type");
             const { from, to } = watchInclusiveDates;
-            if(leavetype === "Maternity Leave" && from){ 
+            if(leavetype === "Maternity Leave" && from){
                 // get the 105 days of leave for maternity
                 const dateTo = new Date(from).setDate(new Date(from).getDate() + 104)
                 const dates = eachDayOfInterval({ start: from, end: dateTo })
@@ -137,11 +137,11 @@ const ApplyLeave = ({ auth }: PageProps) => {
 
                         <DetailsOfApplication form={form} />
 
-                        <div className="font-medium uppercase text-lg mb-5 mt-8 text-center">
+                        {/* <div className="font-medium uppercase text-lg mb-5 mt-8 text-center">
                             Details of Action on Application
-                        </div>
+                        </div> */}
 
-                        <DetailsOfActionOnApplication form={form} />
+                        {/* <DetailsOfActionOnApplication form={form} /> */}
 
                         {form.watch("leavetype.type") === "Maternity Leave" && (
                         <FormField

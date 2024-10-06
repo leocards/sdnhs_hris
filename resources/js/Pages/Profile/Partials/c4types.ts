@@ -174,7 +174,29 @@ const C4SCHEMA = z.object({
 
 type IFormC4 = z.infer<typeof C4SCHEMA>
 
+const referenceDefault = [
+    {
+        c4id: null,
+        name: "",
+        address: "",
+        telno: ""
+    },
+    {
+        c4id: null,
+        name: "",
+        address: "",
+        telno: ""
+    },
+    {
+        c4id: null,
+        name: "",
+        address: "",
+        telno: ""
+    }
+]
+
 export {
     C4SCHEMA,
     type IFormC4,
+    referenceDefault
 }

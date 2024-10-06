@@ -97,7 +97,7 @@ const LeavePDFDetailsOfApplication = (
                     6. Details of Application
                 </div>
             </div>
-            <div className={cn("grid grid-cols-2 divide-x h-[19rem] [&>div]:p-[1pt]", isDownload ? "divide-black" : "dark:divide-border divide-black")}>
+            <div className={cn("grid grid-cols-[1.25fr,1fr] divide-x h-[18rem] [&>div]:p-[1pt]", isDownload ? "divide-black" : "dark:divide-border divide-black")}>
                 <div>
                     <div className={cn("uppercase", isDownload && "-mt-1.5")}>
                         6.A Types of Leave to be availed of:{" "}
@@ -286,7 +286,7 @@ const LeavePDFDetailsOfApplication = (
                 </div>
             </div>
             <div className={cn(
-                "border-t border-black grid grid-cols-2 divide-x divide-black h-[6.5rem] [&>div]:p-[1pt]",
+                "border-t border-black grid grid-cols-[1.25fr,1fr] divide-x divide-black h-[6.5rem] [&>div]:p-[1pt]",
                 isDownload ? "border-black divide-black" : "dark:border-border dark:divide-border border-black divide-black"
             )}>
                 <div>

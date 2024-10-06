@@ -68,7 +68,7 @@ class ServiceRecordController extends Controller
                     Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
-                        'message' => ": has uploaded a certificate.",
+                        'message' => " has uploaded a certificate.",
                         'type' => 'certificate',
                         'go_to_link' => route('general-search.view', [Auth::id()])
                     ]);
@@ -79,7 +79,7 @@ class ServiceRecordController extends Controller
                     Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
-                        'message' => ": has uploaded a certificate.",
+                        'message' => " has uploaded a certificate.",
                         'type' => 'certificate',
                         'go_to_link' => route('general-search.view', [Auth::id()])
                     ]);

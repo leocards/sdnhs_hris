@@ -77,6 +77,27 @@
     body {
         @apply text-base h-screen overflow-y-auto;
     }
+
+    @font-face {
+        font-family: 'arial';
+        src: url('./ARIAL.TTF');
+    }
+    @font-face {
+        font-family: 'arial-narrow';
+        src: url('./ARIALN.TTF');
+    }
+    @font-face {
+        font-family: 'arial-black';
+        src: url('./ARIBLK.TTF');
+    }
+    @font-face {
+        font-family: 'arial-narrow-italic';
+        src: url('./ARIALNI.TTF');
+    }
+    @font-face {
+        font-family: 'calibri';
+        src: url('./calibri-regular.ttf');
+    }
 }
 
 @layer components {

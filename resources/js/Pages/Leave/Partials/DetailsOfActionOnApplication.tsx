@@ -1,6 +1,4 @@
 import NumberInput from "@/Components/NumberInput";
-import { Button } from "@/Components/ui/button";
-import { Calendar } from "@/Components/ui/calendar";
 import { Checkbox } from "@/Components/ui/checkbox";
 import {
     FormControl,
@@ -11,15 +9,6 @@ import {
     FormProps,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/Components/ui/popover";
-import { Textarea } from "@/Components/ui/textarea";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
 import { useEffect } from "react";
 
 const DetailsOfActionOnApplication: React.FC<FormProps> = ({ form }) => {

@@ -25,6 +25,11 @@ module.exports = {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
                 open: ['Open Sans', ...defaultTheme.fontFamily.sans],
+                calibri: ['calibri'],
+                arial: ['arial'],
+                'arial-narrow': ['arial-narrow'],
+                'arial-black': ['arial-black'],
+                'arial-narrow-italic': ['arial-narrow-italic']
             },
             colors: {
                 border: "hsl(var(--border))",

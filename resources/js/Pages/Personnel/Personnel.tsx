@@ -48,7 +48,7 @@ export default function Index({ auth, pageData, statistics }: PersonnelProps) {
     return (
         <PageListProvider initialValue={pageData}>
             <Head title="Personnel" />
-            
+
             <Personnel auth={auth} pageData={pageData} statistics={statistics} />
         </PageListProvider>
     )
@@ -88,6 +88,7 @@ function Personnel({ auth, pageData, statistics }: PersonnelProps) {
 
     const onClickMenu = (action: string, id: any) => {
         if (action === "upload_pds") {
+            setSelectedPersonnel(id)
             setShowUploadPDS(true);
         } else if (action === "edit") {
             router.get(route('personnel.edit', [id]))
@@ -237,7 +238,7 @@ function Personnel({ auth, pageData, statistics }: PersonnelProps) {
                 <PaginationButton onPage={getPageData} onNext={getPageData} onPrevious={getPageData} />
             </div>
 
-            <UploadPDS show={showUploadPDS} onClose={setShowUploadPDS} />
+            <UploadPDS show={showUploadPDS} onClose={setShowUploadPDS} user={selectedPersonnel} />
             <ViewPDS show={showPDS} onClose={setShowPDS} />
             <PersonnelDetails user={selectedPersonnel} show={showPersonnelDetails} onClose={setShowPersonnelDetails} onViewPDS={setShowPDS} />
             <DeletePersonnelModel user={selectedPersonnel} show={showDeletePersonnel} onClose={setShowDeletePersonnel} />
@@ -318,7 +319,7 @@ const PersonnelRow: React.FC<PersonnelListProps & { auth: string }> = ({
                                         <MenubarItem
                                             className="px-4 gap-5"
                                             onClick={() =>
-                                                onClick && onClick("upload_pds", user.id)
+                                                onClick && onClick("upload_pds", user)
                                             }
                                         >
                                             <Upload

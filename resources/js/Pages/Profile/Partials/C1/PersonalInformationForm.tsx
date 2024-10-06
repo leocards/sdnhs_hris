@@ -45,6 +45,8 @@ const PersonalInformationForm = ({
             dateofbirth: new Date(user.date_of_birth),
             bloodtype: pds_pi?.blood_type,
             mobile: user.phone_number,
+            email: pds_pi?.email,
+            telephone: pds_pi?.telephone,
             citizenship: {
                 citizen: pds_pi?.citizenship,
                 dualby: pds_pi?.dual_by,

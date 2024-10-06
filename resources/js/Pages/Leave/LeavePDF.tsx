@@ -1,7 +1,5 @@
 import React from "react";
-import { Square, SquareCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import LeavePDFApplicant from "./Partials/LeavePDFApplicant";
 import LeavePDFDetailsOfApplication from "./Partials/LeavePDFDetailsOfApplication";
 import LeavePDFDetailsOfActionOnApplication from "./Partials/LeavePDFDetailsOfActionOnApplication";

@@ -14,14 +14,14 @@ return new class extends Migration
         Schema::create('p_d_s_work_experiences', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->date('from');
-            $table->date('to');
-            $table->string('position_title');
-            $table->string('company');
-            $table->string('monthly_salary', 20);
-            $table->string('salary_grade');
-            $table->string('status', 45);
-            $table->boolean('is_government_service')->default(false);
+            $table->string('from', 10)->nullable();
+            $table->string('to', 10)->nullable();
+            $table->string('position_title')->nullable();
+            $table->string('company')->nullable();
+            $table->string('monthly_salary', 20)->nullable();
+            $table->string('salary_grade')->nullable();
+            $table->string('status', 45)->nullable();
+            $table->boolean('is_government_service')->nullable()->default(false);
             $table->timestamps();
         });
     }

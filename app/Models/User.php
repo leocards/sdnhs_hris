@@ -123,6 +123,11 @@ class User extends Authenticatable
         return Leave::where('user_id', $this->id)->where('principal_status', 'Approved')->where('hr_status', 'Approved')->count();
     }
 
+    public function certificates()
+    {
+        return $this->hasMany(ServiceRecord::class);
+    }
+
     public function pdsPersonalInformation()
     {
         return $this->hasOne(PDSPersonalInformation::class);
@@ -168,7 +173,7 @@ class User extends Authenticatable
         return $this->hasMany(PDSc4::class);
     }
 
-    public function pdsReferece()
+    public function pdsReference()
     {
         return $this->hasMany(PDSReferences::class);
     }

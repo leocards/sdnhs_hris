@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('p_d_sc4s', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->enum('question', ['34', '35', '36', '37', '38', '39', '40']);
-            $table->enum('sets', ['a', 'b', 'c', 'question']);
-            $table->boolean('choices');
+            $table->enum('question', ['34', '35', '36', '37', '38', '39', '40'])->nullable();
+            $table->enum('sets', ['a', 'b', 'c', 'question'])->nullable();
+            $table->boolean('choices')->nullable();
             $table->string('details', 500)->nullable();
-            $table->date('date_filed')->nullable();
+            $table->string('date_filed', 15)->nullable();
             $table->string('case_status')->nullable();
             $table->timestamps();
         });

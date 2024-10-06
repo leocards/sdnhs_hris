@@ -21,7 +21,7 @@ type FB = {
     children: Array<any>;
 };
 
-const getFamilyData = (data: Array<any>): FB => {
+export const getFamilyData = (data: Array<any>, withDefault?: boolean): FB => {
     let spouse: any = null;
     let father: any = null;
     let mother: any = null;
@@ -30,9 +30,15 @@ const getFamilyData = (data: Array<any>): FB => {
     data.forEach((fb) => {
         if (fb.family_type === "child") children.push(fb);
         else if (fb.family_type === "spouse") spouse = fb;
-        else if (fb.family_type === "mother") father = fb;
-        else if (fb.family_type === "father") mother = fb;
+        else if (fb.family_type === "mother") mother = fb;
+        else if (fb.family_type === "father") father = fb;
     });
+
+    if(children.length < 12 && withDefault) {
+        Array.from({ length: 12 - children.length }).forEach(() => {
+            children.push({ full_name: '', birthday: '' })
+        })
+    }
 
     return {
         spouse,

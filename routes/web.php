@@ -39,6 +39,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', 'index')->name('general-search');
             Route::get('/json', 'indexJson')->name('general-search.json');
             Route::get('/view/{user}', 'view_searched')->name('general-search.view');
+            Route::get('/attendances/{user}', 'attendances')->name('general-search.attendances');
+            Route::get('/certificates/{user}', 'certificates')->name('general-search.certificates');
+            Route::get('/user-pds/{userId}', 'getPds')->name('general-search.pds');
         });
     });
 
@@ -85,7 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('pds')->group(function () {
         Route::controller(PersonalDataSheetController::class)->group(function () {
-            Route::post('/pds-excel-upload', 'store_excel_pds')->name('pds.upload');
+            Route::post('/pds-excel-upload/{user}', 'store_excel_pds')->name('pds.upload');
             Route::post('/pds-c1-upload', 'store_c1')->name('pds.c1.upload');
             Route::post('/pds-c1-pi-upload', 'store_pi')->name('pds.c1.pi.upload');
             Route::post('/pds-c1-fb-upload', 'store_fb')->name('pds.c1.fb.upload');

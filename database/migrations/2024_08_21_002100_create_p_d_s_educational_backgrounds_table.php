@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('p_d_s_educational_backgrounds', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->enum('education_type', ['elementary', 'secondary', 'vocational', 'college', 'graduate']);
-            $table->string('school');
+            $table->enum('education_type', ['elementary', 'secondary', 'senior high', 'vocational', 'college', 'graduate'])->nullable();
+            $table->string('school')->nullable();
             $table->string('course')->nullable();
-            $table->year('from');
-            $table->year('to');
+            $table->string('from', 15)->nullable();
+            $table->string('to', 15)->nullable();
             $table->string('highest_earned')->nullable();
             $table->year('year_graduated')->nullable();
             $table->string('honors')->nullable();

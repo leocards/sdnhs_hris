@@ -31,18 +31,8 @@ export default function Question41({ form }: { form: any }) {
                 {fields.map((item, index) => (
                     <div
                         key={item.id}
-                        className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3 relative mt-4 border rounded-md p-3 pt-4"
+                        className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3 relative mt-4 border rounded-md p-3"
                     >
-                        <Button
-                            size="icon"
-                            variant={"ghost"}
-                            className="size-7 absolute right-1 top-1"
-                            onClick={() => {
-                                remove(index)
-                            }}
-                        >
-                            <X className="size-4" />
-                        </Button>
                         <FormField
                             control={form.control}
                             name={`q41.${index}.name`}
@@ -95,20 +85,6 @@ export default function Question41({ form }: { form: any }) {
                         />
                     </div>
                 ))}
-                <div className="flex mt-4">
-                    <Button
-                        className="px-7 w-full"
-                        onClick={() => append({
-                            c4id: null,
-                            name: "",
-                            address: "",
-                            telno: ""
-                        })}
-                        type="button"
-                    >
-                        Add new reference
-                    </Button>
-                </div>
             </div>
         </div>
     );

@@ -16,10 +16,10 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('career_service');
             $table->string('rating', 20)->nullable();
-            $table->date('examination');
-            $table->string('place_examination');
+            $table->string('examination', 12)->nullable();
+            $table->string('place_examination')->nullable();
             $table->string('license_number', 20)->nullable();
-            $table->date('license_date_validity')->nullable();
+            $table->string('license_date_validity', 15)->nullable();
             $table->timestamps();
 
         });

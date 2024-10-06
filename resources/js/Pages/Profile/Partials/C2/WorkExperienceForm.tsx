@@ -8,6 +8,7 @@ import { useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/Components/ui/use-toast";
 import WorkExperience from "./WorkExperience";
+import { isValidDate } from "@/Pages/types";
 
 type WorkExperienceFormProps = {
     user: UserInfoType;
@@ -18,14 +19,14 @@ const getWEData = (data: any): any => {
     return {
         weid: data?.id,
         inclusivedates: {
-            from: new Date(data?.from),
-            to: new Date(data?.to)
+            from: isValidDate(data?.from) ? new Date(data?.from) : data?.from,
+            to: isValidDate(data?.to) ? new Date(data?.to) : data?.to
         },
-        positiontitle: data?.position_title,
-        department: data?.company,
-        monthlysalary: data?.monthly_salary,
-        salarygrade: data?.salary_grade,
-        statusofappointment: data?.status,
+        positiontitle: data?.position_title ?? "",
+        department: data?.company ?? "",
+        monthlysalary: data?.monthly_salary ?? "",
+        salarygrade: data?.salary_grade ?? "",
+        statusofappointment: data?.status ?? "",
         isgovernment: data?.is_government_service ? "Y" : "N"
     }
 }

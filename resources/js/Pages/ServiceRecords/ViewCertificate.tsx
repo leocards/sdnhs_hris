@@ -11,7 +11,6 @@ type Certificate = {
     file_path: string;
     date_from: string;
     date_to: string;
-    updated_at: string;
     credits: number;
 } | null;
 

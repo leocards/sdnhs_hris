@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('p_d_s_references', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('name');
-            $table->string('address');
+            $table->string('name')->nullable();
+            $table->string('address')->nullable();
             $table->string('telephone')->nullable();
             $table->timestamps();
         });

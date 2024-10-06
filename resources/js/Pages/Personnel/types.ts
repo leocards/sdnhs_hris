@@ -26,7 +26,7 @@ export const NEWPERSONNELSCHEMA = z.object({
     middleName: z.string().optional().default(""),
     lastName: z.string().min(1, requiredError("last name")).default(""),
     birthDate: z.date({ required_error: requiredError("birth date") }).nullable().default(null),
-    sex: z.enum(["Male", "Female"], { required_error: requiredError("sex") }),
+    sex: z.enum(["Male", "Female"], { required_error: requiredError("sex"), invalid_type_error: requiredError("sex"), message: requiredError("sex") }),
     email: z.string().min(1, requiredError("email")).email().default(""),
     address: z.string().min(1, requiredError("address")).default(""),
     phoneNumber: z
@@ -34,10 +34,10 @@ export const NEWPERSONNELSCHEMA = z.object({
         .startsWith("09", "Must starts with 09")
         .length(11, "Must be 11 characters long")
         .default(""),
-    position: z.enum(PERSONNELPOSITIONS, { required_error: requiredError("position") }),
+    position: z.enum(PERSONNELPOSITIONS, { required_error: requiredError("position"), message: requiredError("position"), invalid_type_error: requiredError("position") }),
     personnelId: z.string().min(1, requiredError("personnel Id")).default(""),
-    department: z.string().optional().default(""),
-    userRole: z.enum(ROLE, { required_error: requiredError("user role") }),
+    department: z.enum(['Junior High School', 'Senior High School', 'Accounting', 'N/A'], { required_error: requiredError("department"), invalid_type_error: requiredError("department"), message: requiredError("department") }),
+    userRole: z.enum(ROLE, { required_error: requiredError("user role"), invalid_type_error: requiredError("user role"), message: requiredError("user role") }),
     dateHired: z.date({ required_error: requiredError("date hired") }).nullable().default(null),
     currentCredits: z.preprocess(
         (value) => {

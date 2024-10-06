@@ -181,58 +181,58 @@ export const LEAVEFORMSCHEMA = z.object({
     }, {
         message: 'Please select only 1 commutation.'
     }),
-    certificationLeaveCredits: z.object({
-        asOf: z.string().min(1, requiredError('\'as of\'')).default(''),
-        totalEarned: z.object({
-            vacationLeave: z.string().min(1, 'required').default(''),
-            sickLeave: z.string().min(1, 'required').default('')
-        }),
-        lessThisApplication: z.object({
-            vacationLeave: z.string().min(1, 'required').default(''),
-            sickLeave: z.string().min(1, 'required').default('')
-        }),
-        balance: z.object({
-            vacationLeave: z.string().min(1, 'required').default(''),
-            sickLeave: z.string().min(1, 'required').default('')
-        })
-    }),
-    recommendation: z.object({
-        forApproval: z.boolean().optional().default(false),
-        forDisapproval: z.object({
-            checked: z.boolean().optional().default(false),
-            input: z.string().optional()
-        }).refine(({ checked }) => {
-            return checked ? false : true
-        }, { message: "Please provide details", path: ['input'] })
-    }).refine(data => {
-        const checkedFields = [
-            data.forApproval,
-            data.forDisapproval?.checked,
-        ].filter(Boolean);
+    // certificationLeaveCredits: z.object({
+    //     asOf: z.string().min(1, requiredError('\'as of\'')).default(''),
+    //     totalEarned: z.object({
+    //         vacationLeave: z.string().min(1, 'required').default(''),
+    //         sickLeave: z.string().min(1, 'required').default('')
+    //     }),
+    //     lessThisApplication: z.object({
+    //         vacationLeave: z.string().min(1, 'required').default(''),
+    //         sickLeave: z.string().min(1, 'required').default('')
+    //     }),
+    //     balance: z.object({
+    //         vacationLeave: z.string().min(1, 'required').default(''),
+    //         sickLeave: z.string().min(1, 'required').default('')
+    //     })
+    // }),
+    // recommendation: z.object({
+    //     forApproval: z.boolean().optional().default(false),
+    //     forDisapproval: z.object({
+    //         checked: z.boolean().optional().default(false),
+    //         input: z.string().optional()
+    //     }).refine(({ checked }) => {
+    //         return checked ? false : true
+    //     }, { message: "Please provide details", path: ['input'] })
+    // }).refine(data => {
+    //     const checkedFields = [
+    //         data.forApproval,
+    //         data.forDisapproval?.checked,
+    //     ].filter(Boolean);
 
-        return checkedFields.length === 0 ? false : (checkedFields.length <= 1);
-    }, {
-        message: 'Please select only 1 recommendation.'
-    }),
-    approvedFor: z.object({
-        daysWithPay: z.string().optional().default(''),
-        daysWithOutPay: z.string().optional().default(''),
-        others: z.string().optional().default('')
-    }).refine(data => {
-        const checkedFields = [
-            !!data.daysWithPay,
-            !!data.daysWithOutPay,
-            !!data.others
-        ].filter(Boolean);
+    //     return checkedFields.length === 0 ? false : (checkedFields.length <= 1);
+    // }, {
+    //     message: 'Please select only 1 recommendation.'
+    // }),
+    // approvedFor: z.object({
+    //     daysWithPay: z.string().optional().default(''),
+    //     daysWithOutPay: z.string().optional().default(''),
+    //     others: z.string().optional().default('')
+    // }).refine(data => {
+    //     const checkedFields = [
+    //         !!data.daysWithPay,
+    //         !!data.daysWithOutPay,
+    //         !!data.others
+    //     ].filter(Boolean);
 
-        return checkedFields.length === 0 ? false : (checkedFields.length <= 1);
-    }, {
-        message: 'Please specify only 1 approved for.'
-    }),
-    disapprovedDueTo: z.string().optional(),
+    //     return checkedFields.length === 0 ? false : (checkedFields.length <= 1);
+    // }, {
+    //     message: 'Please specify only 1 approved for.'
+    // }),
+    // disapprovedDueTo: z.string().optional(),
     medicalForMaternity: z
-    .instanceof(File, { message: "Please choose a file." })
-    .optional()
+        .instanceof(File, { message: "Please choose a file." })
+        .optional()
 }).refine(({ leavetype, medicalForMaternity }) => {
     if(leavetype.type === "Maternity Leave") {
         console.log(medicalForMaternity)
@@ -300,26 +300,26 @@ export const initialValues = {
     leavetype: { others: '' },
     detailsOfLeave: defaultDetailsOfLeave,
     numDaysApplied: '',
-    certificationLeaveCredits: {
-        asOf: '',
-        totalEarned: {
-            vacationLeave: '',
-            sickLeave: ''
-        },
-        lessThisApplication: {
-            vacationLeave: '',
-            sickLeave: ''
-        },
-        balance: {
-            vacationLeave: '',
-            sickLeave: ''
-        },
-    },
-    recommendation: { forDisapproval: { input: '' } },
-    approvedFor: {
-        daysWithPay: '',
-        daysWithOutPay: '',
-        others: ''
-    },
-    disapprovedDueTo: ''
+    // certificationLeaveCredits: {
+    //     asOf: '',
+    //     totalEarned: {
+    //         vacationLeave: '',
+    //         sickLeave: ''
+    //     },
+    //     lessThisApplication: {
+    //         vacationLeave: '',
+    //         sickLeave: ''
+    //     },
+    //     balance: {
+    //         vacationLeave: '',
+    //         sickLeave: ''
+    //     },
+    // },
+    // recommendation: { forDisapproval: { input: '' } },
+    // approvedFor: {
+    //     daysWithPay: '',
+    //     daysWithOutPay: '',
+    //     others: ''
+    // },
+    // disapprovedDueTo: ''
 }

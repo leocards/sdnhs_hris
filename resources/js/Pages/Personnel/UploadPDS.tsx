@@ -23,7 +23,7 @@ const UPLOADPDSSCHEMA = z.object({
 
 type IFormPDS = z.infer<typeof UPLOADPDSSCHEMA>;
 
-const UploadPDS: React.FC<{ show: boolean, onClose: (close: false) => void }> = ({ show, onClose }) => {
+const UploadPDS: React.FC<{ show: boolean, onClose: (close: false) => void; user: any }> = ({ user, show, onClose }) => {
     const form = reactForm<IFormPDS>({
         resolver: zodResolver(UPLOADPDSSCHEMA),
     });
@@ -41,7 +41,7 @@ const UploadPDS: React.FC<{ show: boolean, onClose: (close: false) => void }> = 
 
     useEffect(() => {
         if(isSubmit) {
-            post(route('pds.upload'), {
+            post(route('pds.upload', [user?.id]), {
                 onSuccess: page => {
                     toast({
                         variant: "success",
@@ -113,7 +113,7 @@ const UploadPDS: React.FC<{ show: boolean, onClose: (close: false) => void }> = 
                         <div className="mt-10 flex">
                             <Button variant="ghost" type="button" onClick={() => onClose(false)} disabled={processing}>
                                 <span>Cancel</span>
-                            </Button>   
+                            </Button>
                             <Button className="gap-3 ml-auto" disabled={processing}>
                                 <span>Upload</span>
                             </Button>

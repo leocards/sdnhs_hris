@@ -146,22 +146,22 @@ class LeaveController extends Controller
                 'is_terminal_leave' => $checkedFields[8] ? true : null
             ]);
 
-            $leave->details_of_action_leave()->create([
-                'as_of' => $request->certificationLeaveCredits['asOf'],
-                'total_earned_vacation' => $request->certificationLeaveCredits['totalEarned']['vacationLeave'],
-                'total_earned_sick' => $request->certificationLeaveCredits['totalEarned']['sickLeave'],
-                'less_application_vacation' => $request->certificationLeaveCredits['lessThisApplication']['vacationLeave'],
-                'less_application_sick' => $request->certificationLeaveCredits['lessThisApplication']['sickLeave'],
-                'balanced_vacation' => $request->certificationLeaveCredits['balance']['vacationLeave'],
-                'balanced_sick' => $request->certificationLeaveCredits['balance']['sickLeave'],
-                'is_for_approval' => $request->recommendation['forApproval'],
-                'is_for_disapproval' => $request->recommendation['forDisapproval']['checked'] ? true : null,
-                'is_for_disapproval_input' => $request->recommendation['forDisapproval']['checked'] ? $request->recommendation['forDisapproval']['input'] : null,
-                'approved_for_days_with_pay' => $request->approvedFor['daysWithPay'],
-                'approved_for_days_with_out_pay' => $request->approvedFor['daysWithOutPay'],
-                'approved_for_others' => $request->approvedFor['others'],
-                'disapproved' => $request->disapprovedDueTo
-            ]);
+            // $leave->details_of_action_leave()->create([
+                // 'as_of' => $request->certificationLeaveCredits['asOf'],
+                // 'total_earned_vacation' => $request->certificationLeaveCredits['totalEarned']['vacationLeave'],
+                // 'total_earned_sick' => $request->certificationLeaveCredits['totalEarned']['sickLeave'],
+                // 'less_application_vacation' => $request->certificationLeaveCredits['lessThisApplication']['vacationLeave'],
+                // 'less_application_sick' => $request->certificationLeaveCredits['lessThisApplication']['sickLeave'],
+                // 'balanced_vacation' => $request->certificationLeaveCredits['balance']['vacationLeave'],
+                // 'balanced_sick' => $request->certificationLeaveCredits['balance']['sickLeave'],
+                // 'is_for_approval' => $request->recommendation['forApproval'],
+                // 'is_for_disapproval' => $request->recommendation['forDisapproval']['checked'] ? true : null,
+                // 'is_for_disapproval_input' => $request->recommendation['forDisapproval']['checked'] ? $request->recommendation['forDisapproval']['input'] : null,
+                // 'approved_for_days_with_pay' => $request->approvedFor['daysWithPay'],
+                // 'approved_for_days_with_out_pay' => $request->approvedFor['daysWithOutPay'],
+                // 'approved_for_others' => $request->approvedFor['others'],
+                // 'disapproved' => $request->disapprovedDueTo
+            // ]);
 
             if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
                 $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');

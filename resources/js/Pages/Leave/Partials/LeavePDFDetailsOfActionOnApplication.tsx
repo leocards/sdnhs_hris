@@ -49,14 +49,24 @@ const LeavePDFDetailsOfActionOnApplication = (
         <>
             <div
                 className={cn(
-                    "border-y text-center font-bold uppercase p-[1pt]", isDownload ? "border-black" : "dark:border-border border-black"
+                    "border-y text-center font-bold uppercase p-[1pt]",
+                    isDownload
+                        ? "border-black"
+                        : "dark:border-border border-black"
                 )}
             >
                 <div className={cn(isDownload && "-mt-3 py-1.5")}>
                     7. Details of Action on Application
                 </div>
             </div>
-            <div className={cn("grid grid-cols-2 divide-x h- [&>div]:p-[1pt]", isDownload ? "divide-black" : "dark:divide-border divide-black")}>
+            <div
+                className={cn(
+                    "grid grid-cols-[1.25fr,1fr] divide-x h- [&>div]:p-[1pt]",
+                    isDownload
+                        ? "divide-black"
+                        : "dark:divide-border divide-black"
+                )}
+            >
                 <div>
                     <div
                         className={cn(
@@ -69,14 +79,15 @@ const LeavePDFDetailsOfActionOnApplication = (
                     <div className="flex flex-col">
                         <div className="flex gap-1 mx-auto mb-1">
                             As of{" "}
-                            <div className={cn("border-b w-32 shrink-0 text-center", isDownload ? "border-black" : "dark:border-border border-black")}>
-                                <div
-                                    className={cn(
-                                        isDownload && "-mt-1.5 mb-1 pt-1"
-                                    )}
-                                >
-                                    {as_of}
-                                </div>
+                            <div
+                                className={cn(
+                                    "border-b w-32 shrink-0 text-center",
+                                    isDownload
+                                        ? "border-black"
+                                        : "dark:border-border border-black"
+                                )}
+                            >
+
                             </div>
                         </div>
                         <div
@@ -85,7 +96,14 @@ const LeavePDFDetailsOfActionOnApplication = (
                                 isDownload && "pt-2"
                             )}
                         >
-                            <div className={cn("grid grid-cols-3 border divide-x text-[10px] h-5", isDownload ? "border-black divide-black" : "dark:border-border dark:divide-border border-black divide-black")}>
+                            <div
+                                className={cn(
+                                    "grid grid-cols-3 border divide-x text-[10px] h-5",
+                                    isDownload
+                                        ? "border-black divide-black"
+                                        : "dark:border-border dark:divide-border border-black divide-black"
+                                )}
+                            >
                                 <div className=""></div>
                                 <div
                                     className={cn(
@@ -104,7 +122,14 @@ const LeavePDFDetailsOfActionOnApplication = (
                                     Sick Leave
                                 </div>
                             </div>
-                            <div className={cn("grid grid-cols-3 border border-t-0 divide-x text-[10px] h-[1.05rem]", isDownload ? "border-black divide-black" : "dark:border-border dark:divide-border border-black divide-black")}>
+                            <div
+                                className={cn(
+                                    "grid grid-cols-3 border border-t-0 divide-x text-[10px] h-[1.05rem]",
+                                    isDownload
+                                        ? "border-black divide-black"
+                                        : "dark:border-border dark:divide-border border-black divide-black"
+                                )}
+                            >
                                 <div
                                     className={cn(
                                         "italic",
@@ -119,7 +144,6 @@ const LeavePDFDetailsOfActionOnApplication = (
                                         isDownload && "-mt-1.5"
                                     )}
                                 >
-                                    {total_earned_vacation}
                                 </div>
                                 <div
                                     className={cn(
@@ -127,10 +151,16 @@ const LeavePDFDetailsOfActionOnApplication = (
                                         isDownload && "-mt-1.5"
                                     )}
                                 >
-                                    {total_earned_sick}
                                 </div>
                             </div>
-                            <div className={cn("grid grid-cols-3 border border-t-0 divide-x text-[10px] h-[1.05rem]", isDownload ? "border-black divide-black" : "dark:border-border dark:divide-border border-black divide-black")}>
+                            <div
+                                className={cn(
+                                    "grid grid-cols-3 border border-t-0 divide-x text-[10px] h-[1.05rem]",
+                                    isDownload
+                                        ? "border-black divide-black"
+                                        : "dark:border-border dark:divide-border border-black divide-black"
+                                )}
+                            >
                                 <div
                                     className={cn(
                                         "italic",
@@ -145,7 +175,6 @@ const LeavePDFDetailsOfActionOnApplication = (
                                         isDownload && "-mt-1.5"
                                     )}
                                 >
-                                    {less_application_vacation}
                                 </div>
                                 <div
                                     className={cn(
@@ -153,10 +182,16 @@ const LeavePDFDetailsOfActionOnApplication = (
                                         isDownload && "-mt-1.5"
                                     )}
                                 >
-                                    {less_application_sick}
                                 </div>
                             </div>
-                            <div className={cn("grid grid-cols-3 border border-t-0 divide-x text-[10px] h-[1.05rem]", isDownload ? "border-black divide-black" : "dark:border-border dark:divide-border border-black divide-black")}>
+                            <div
+                                className={cn(
+                                    "grid grid-cols-3 border border-t-0 divide-x text-[10px] h-[1.05rem]",
+                                    isDownload
+                                        ? "border-black divide-black"
+                                        : "dark:border-border dark:divide-border border-black divide-black"
+                                )}
+                            >
                                 <div
                                     className={cn(
                                         "italic",
@@ -171,7 +206,6 @@ const LeavePDFDetailsOfActionOnApplication = (
                                         isDownload && "-mt-1.5"
                                     )}
                                 >
-                                    {balanced_vacation}
                                 </div>
                                 <div
                                     className={cn(
@@ -179,31 +213,56 @@ const LeavePDFDetailsOfActionOnApplication = (
                                         isDownload && "-mt-1.5"
                                     )}
                                 >
-                                    {balanced_sick}
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-4 mb-2 w-[60%] mx-auto">
-                        <div
-                            className={cn(
-                                "h-4 text-center font-bold uppercase"
-                            )}
-                        >
-                            <div className={cn(isDownload && "-mt-3")}>
-                                {hr}
+                    <div className="flex">
+                        <div className="mt-4 mb-2 w-[60%] mx-auto">
+                            <div
+                                className={cn(
+                                    "h-4 text-center font-bold uppercase"
+                                )}
+                            >
+                                <div
+                                    className={cn(isDownload && "-mt-3")}
+                                >
+                                    NEO CARLO R. MAGNO
+                                </div>
+                            </div>
+                            <div
+                                className={cn(
+                                    "text-center",
+                                    isDownload ? "mt-2 mb-4" : "pt-0.5"
+                                )}
+                            >
+                                <div className={cn(isDownload && "-mt-1")}>
+                                    Administrative Officer IV (HRMO)
+                                </div>
                             </div>
                         </div>
-                        <div
-                            className={cn(
-                                "border-t text-center",
-                                isDownload ? "border-black" : "dark:border-border border-black",
-                                isDownload ? "mt-2 mb-4" : "pt-0.5"
-                            )}
-                        >
-                            <div className={cn(isDownload && "-mt-1")}>
-                                Administrative Officer IV (HRMO)
+                        <div className="mt-4 mb-2 w-[60%] mx-auto">
+                            <div
+                                className={cn(
+                                    "h-4 text-center font-bold uppercase"
+                                )}
+                            >
+                                <div
+                                    className={cn(isDownload && "-mt-3")}
+                                >
+                                    RAUL E. GACUS
+                                </div>
+                            </div>
+                            <div
+                                className={cn(
+                                    "text-center",
+                                    isDownload ? "mt-2 mb-4" : "pt-0.5"
+                                )}
+                            >
+                                <div className={cn(isDownload && "-mt-1")}>
+                                    Administrative Officer
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -218,7 +277,7 @@ const LeavePDFDetailsOfActionOnApplication = (
                         7.B Recommendation
                     </div>
                     <div className="pl-2 flex flex-col grow">
-                        <div className="flex gap-1 relative">
+                        <div className="flex gap-1 relative mt-1">
                             {is_for_approval ? (
                                 <SquareCheck className="size-4" />
                             ) : (
@@ -228,18 +287,23 @@ const LeavePDFDetailsOfActionOnApplication = (
                                 For approval
                             </div>
                         </div>
-                        <div className="flex gap-1 relative">
+                        <div className={cn("flex gap-1 relative mt-1")}>
                             {is_for_disapproval ? (
                                 <SquareCheck className="size-4" />
                             ) : (
                                 <Square className="size-4 shrink-0" />
                             )}
-                            <div className={cn(isDownload && "-mt-1.5")}>
+                            <div className={cn(isDownload && "-mt-1.5", !is_for_disapproval_input && "flex w-full")}>
                                 For disapproval due to
-                                <span className="underline ml-2">
+                                <span className="undeline -mt-2">
                                     {is_for_disapproval_input}
                                 </span>
+                                {!is_for_disapproval_input && (<div className="border-b border-black grow mx-2"></div>)}
                             </div>
+
+                            {!is_for_disapproval_input && (
+                                <div className="absolute -bottom-5 w-[90.5%] right-2 border-b border-black"></div>
+                            )}
                         </div>
 
                         <div className="w-[80%] mx-auto mt-auto mb-2">
@@ -250,24 +314,34 @@ const LeavePDFDetailsOfActionOnApplication = (
                             >
                                 <div className={cn(isDownload && "-mt-3")}>
                                     {/* Lorem ipsum dolor est */}
+                                    {/* Postion */}
                                 </div>
                             </div>
                             <div
                                 className={cn(
                                     "border-t text-center",
-                                    isDownload ? "border-black" : "dark:border-border border-black",
+                                    isDownload
+                                        ? "border-black"
+                                        : "dark:border-border border-black",
                                     isDownload ? "mt-2 mb-2" : "pt-0.5"
                                 )}
                             >
                                 <div className={cn(isDownload && "-mt-1")}>
-                                    (Authorized Officer)
+                                    Immediate Supervisor
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className={cn("grid grid-cols-2 border-t [&>div]:p-[1pt]", isDownload ? "border-black" : "dark:border-border border-black")}>
+            <div
+                className={cn(
+                    "grid grid-cols-[1.25fr,1fr] border-t [&>div]:p-[1pt]",
+                    isDownload
+                        ? "border-black"
+                        : "dark:border-border border-black"
+                )}
+            >
                 <div>
                     <div className={cn("uppercase", isDownload && "-mt-1.5")}>
                         7.C Approved for:
@@ -276,7 +350,9 @@ const LeavePDFDetailsOfActionOnApplication = (
                         <div
                             className={cn(
                                 "w-14 border-b text-center",
-                                isDownload ? "border-black" : "dark:border-border border-black",
+                                isDownload
+                                    ? "border-black"
+                                    : "dark:border-border border-black",
                                 isDownload && "-mt-1.5 pb-1"
                             )}
                         >
@@ -296,7 +372,9 @@ const LeavePDFDetailsOfActionOnApplication = (
                         <div
                             className={cn(
                                 "w-14 border-b text-center",
-                                isDownload ? "border-black" : "dark:border-border border-black",
+                                isDownload
+                                    ? "border-black"
+                                    : "dark:border-border border-black",
                                 isDownload && "-mt-1.5 pb-1"
                             )}
                         >
@@ -317,7 +395,9 @@ const LeavePDFDetailsOfActionOnApplication = (
                         <div
                             className={cn(
                                 "w-14 border-b text-center",
-                                isDownload ? "border-black" : "dark:border-border border-black",
+                                isDownload
+                                    ? "border-black"
+                                    : "dark:border-border border-black",
                                 isDownload && "-mt-1.5 pb-1"
                             )}
                         >
@@ -340,12 +420,17 @@ const LeavePDFDetailsOfActionOnApplication = (
                     </div>
                     <div
                         className={cn(
-                            !disapproved && ("border border-x-0 relative "+ (isDownload ? "border-black" : "dark:border-border border-black")),
-                            !disapproved && ("after:border-b after:border-black after:w-full after:absolute after:-bottom-4 h-4 ml-4 mt-3 w-[95%] "
-                                + (isDownload ? "after:border-black" : "after:dark:border-border after:border-black")
-                            ),
-                            isDownload && disapproved && "-mt-px",
-
+                            !disapproved &&
+                                "border border-x-0 relative " +
+                                    (isDownload
+                                        ? "border-black"
+                                        : "dark:border-border border-black"),
+                            !disapproved &&
+                                "after:border-b after:border-black after:w-full after:absolute after:-bottom-4 h-4 ml-4 mt-3 w-[95%] " +
+                                    (isDownload
+                                        ? "after:border-black"
+                                        : "after:dark:border-border after:border-black"),
+                            isDownload && disapproved && "-mt-px"
                         )}
                     >
                         {disapproved}
@@ -354,10 +439,16 @@ const LeavePDFDetailsOfActionOnApplication = (
             </div>
             <div className="pt-10 mb-2">
                 <div className="w-[50%] mx-auto">
-                    <div className="h-4 text-center font-bold uppercase"></div>
-                    <div className={cn("pt-0.5 text-center border-t", isDownload ? "border-black" : "dark:border-border border-black")}>
+                    <div className="h-4 text-center font-bold uppercase">
+                        Basilio P. Mana-ay, Jr. Ceso VI
+                    </div>
+                    <div
+                        className={cn(
+                            "pt-0.5 text-center "
+                        )}
+                    >
                         <div className={cn(isDownload && "-mt-1 mb-4")}>
-                            (Authorized Official)
+                            Assistant Schools Division Superintendent
                         </div>
                     </div>
                 </div>

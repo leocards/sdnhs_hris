@@ -114,7 +114,57 @@ export default function Authenticated({
                 <div className="min-w-0 flex-1">
                     <nav className="flex flex-1 items-center gap-4 py-2.5">
                         <div aria-hidden="true" className="-ml-4 flex-1"></div>
-                        <div className="flex items-center gap-3"></div>
+                        <div className="flex items-center gap-3">
+                        <Popover className="group">
+                            <PopoverButton
+                                className={cn(
+                                    "grid grid-cols-[auto,1fr,auto] items-center p-1 w-full rounded-lg relative focus:outline-none",
+                                    "transition duration-150 [&>*]:z-10",
+                                    "before:w-full before:h-full before:absolute before:left-0 before:rounded-[inherit] before:bg-zinc-200 dark:before:!bg-white/10",
+                                    "before:scale-[.45] before:hover:scale-100 before:trasition before:duration-200 before:opacity-0 before:hover:opacity-100",
+                                    "group-data-[open]:before:scale-100 group-data-[open]:before:opacity-100"
+                                )}
+                            >
+                                <AvatarProfile src={user.avatar} className="size-7 rounded-md" />
+                            </PopoverButton>
+                            <PopoverPanel
+                                anchor={
+                                    "bottom end"
+                                }
+                                transition
+                                className="border w-40 rounded-lg bg-background dark:bg-secondary [--anchor-gap:var(--spacing-10)] z-30 shadow-md dark:shadow-3xl min-w-[11rem] mt-1"
+                            >
+                                <ul className="p-1 text-sm font-medium [&>li]:flex [&>li]:items-center [&>li]:gap-4 [&>li]:pl-3 [&>li]:py-2 [&>li]:cursor-default [&>li]:rounded-md space-y-1">
+                                    <CloseButton
+                                        as="li"
+                                        className="hover:bg-primary hover:text-primary-foreground"
+                                        onClick={() =>
+                                            router.get(route("profile.edit"))
+                                        }
+                                    >
+                                        <UserRound className="size-4" strokeWidth={2.4} /> My account
+                                    </CloseButton>
+                                    <CloseButton
+                                        as="li"
+                                        className="hover:bg-primary hover:text-primary-foreground"
+                                        onClick={() =>
+                                            router.get(route("profile.settings"))
+                                        }
+                                    >
+                                        <Settings className="size-4" strokeWidth={2.4} /> Settings
+                                    </CloseButton>
+                                    <hr className="borde-t dark:border-white/10" />
+                                    <CloseButton
+                                        as="li"
+                                        className="hover:bg-primary hover:text-primary-foreground"
+                                        onClick={() => router.post(route("logout"))}
+                                    >
+                                        <LogOut className="size-4" strokeWidth={2.4} /> Sign out
+                                    </CloseButton>
+                                </ul>
+                            </PopoverPanel>
+                        </Popover>
+                        </div>
                     </nav>
                 </div>
             </header>

@@ -20,15 +20,18 @@ const initialValue = {
     firstName: "",
     lastName: "",
     middleName: "",
+    sex: undefined,
     email: "",
     address: "",
     phoneNumber: "",
     personnelId: "",
-    department: "",
-    curretCredits: "",
+    department: undefined,
+    currentCredits: 0,
     password: "12345678",
     birthDate: null,
     dateHired: null,
+    position: undefined,
+    userRole: undefined,
 };
 
 type IFormNewPersonnel = z.infer<typeof NEWPERSONNELSCHEMA>;

@@ -17,6 +17,9 @@ import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
 import pdsPDF from "@/pds.pdf";
 import EmployeeDetails from "./EmployeeDetails";
+import AttendanceDetails from "./AttendanceDetails";
+import Certificates from "./Certificates";
+import PersonalDataSheets from "./PersonalDataSheets";
 
 type PagesType = { prev: number; current: number; next: number };
 
@@ -43,39 +46,23 @@ export default function SearchedEmployee({
     leave,
 }: PageProps & { user: any; open: any; leave: number }) {
     const [activeTab, setActiveTab] = useState<string>(
-        open && open === "certificate" ? "certificates" : "details"
+        // open && open === "certificate" ? "certificates" : "details"
+        "PDS"
     );
     const { width } = useWindowSize();
-    const [size, setSize] = useState<number>(900);
-    const [numPages, setNumPages] = useState<number>();
-    const [pages, setPages] = useState<PagesType>(initialPages);
-
-    function onDocumentLoadSuccess({
-        numPages: nextNumPages,
-    }: PDFDocumentProxy): void {
-        setNumPages(nextNumPages);
-        if (nextNumPages > 1) {
-            setPages((prev) => ({ ...prev, next: 2 }));
-        }
-    }
+    const [pdsData, setPdsData] = useState([])
 
     useEffect(() => {
-        if (width >= 1289) {
-            setSize(900);
-        } else if (width <= 1288 && width >= 1199) {
-            setSize(800);
-        } else if (width <= 1997 && width >= 1046) {
-            setSize(650);
-        } else if (width <= 1045 && width >= 1024) {
-            setSize(450);
-        } else if (width <= 1023 && width >= 810) {
-            setSize(700);
-        } else if (width <= 809 && width >= 598) {
-            setSize(500);
-        } else {
-            setSize(350);
-        }
-    }, [width]);
+        if(pdsData.length === 0)
+            window.axios
+                .get(route('general-search.pds', [user.id]))
+                .then((response) => {
+                    setPdsData(response.data)
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+    }, []);
 
     return (
         <Authenticated user={auth.user}>
@@ -153,61 +140,16 @@ export default function SearchedEmployee({
                 }} />}
 
                 {activeTab === "attendance" && (
-                    <div className="border rounded-lg divide-y">
-                        <div className="grid grid-cols-3 px-2 py-3 bg-secondary font-medium">
-                            <div>Year</div>
-                            <div>Days present</div>
-                            <div>Days absent</div>
-                        </div>
-                        <div className="grid grid-cols-3 px-2 py-3">
-                            <div>2023</div>
-                            <div>162 days</div>
-                            <div>3 days</div>
-                        </div>
-                        <div className="grid grid-cols-3 px-2 py-3">
-                            <div>2022</div>
-                            <div>162 days</div>
-                            <div>3 days</div>
-                        </div>
-                        <div className="grid grid-cols-3 px-2 py-3">
-                            <div>2021</div>
-                            <div>162 days</div>
-                            <div>3 days</div>
-                        </div>
-                    </div>
+                    <AttendanceDetails userId={user.id} />
                 )}
 
                 {activeTab === "certificates" && (
-                    <div className="text-center text-foreground/60">
-                        No certificates uploaded
-                    </div>
+                    <Certificates userId={user.id} />
                 )}
 
                 {activeTab === "PDS" && (
                     <div className={cn("mx-auto w-fit")}>
-                        <Document
-                            file={pdsPDF}
-                            onLoadSuccess={onDocumentLoadSuccess}
-                            options={options}
-                            className={"flex flex-col space-y-6 h-fit"}
-                            loading={
-                                <div className="flex items-center gap-3 justify-center p-5">
-                                    <span className="loading loading-spinner loading-md"></span>
-                                    Loading
-                                </div>
-                            }
-                        >
-                            {Array.from(new Array(numPages), (_, index) => (
-                                <PDFPages
-                                    key={index}
-                                    index={index}
-                                    size={size}
-                                    pdfpages={pages}
-                                    totalPages={numPages}
-                                    inView={setPages}
-                                />
-                            ))}
-                        </Document>
+                        <PersonalDataSheets data={{ ...auth.user, ...pdsData}} />
                     </div>
                 )}
             </div>

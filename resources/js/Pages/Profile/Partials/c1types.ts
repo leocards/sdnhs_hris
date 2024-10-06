@@ -111,8 +111,8 @@ const EDUCATION = z.object({
     nameofschool: z.string().optional().default(""),
     basiceddegreecourse: z.string().optional().default(""),
     period: z.object({
-        from: z.string().length(4, "YYYY format").optional().or(z.literal("")).default(""),
-        to: z.string().length(4, "YYYY format").optional().or(z.literal("")).default("")
+        from: z.string().optional().or(z.literal("")).default(""),
+        to: z.string().optional().or(z.literal("")).default("")
     }, { required_error: requiredError('period of attendance') }).optional(),
     highestlvl: z.string().optional().default(""),
     yeargraduated: z.string().length(4, "The year graduated field must be YYYY format.").optional().or(z.literal("")).default(""),
@@ -122,76 +122,12 @@ const EDUCATION = z.object({
 type EducationType = z.infer<typeof EDUCATION>
 
 const EDUCATIONALBACKGROUNDSCHEMA = z.object({
-    attained: z.object({
-        isElementary: z.boolean().optional().default(false),
-        isSecondary: z.boolean().optional().default(false),
-        isVocational: z.boolean().optional().default(false),
-        isCollege: z.boolean().optional().default(false),
-        isGraduate: z.boolean().optional().default(false),
-    }),
-    elementary: EDUCATION,
-    secondary: EDUCATION,
-    vocational: EDUCATION,
-    college: EDUCATION,
-    graduatestudies: EDUCATION
-}).superRefine((data, ctx) => {
-    const checkRequiredFields = (fields: { name: string; value: string; message: string }[], path: string[]) => {
-        fields.forEach(field => {
-            if (field.value.trim() === "") {
-                ctx.addIssue({
-                    code: "custom",
-                    path: [...path, field.name],
-                    message: field.message,
-                });
-            }
-        });
-    };
-
-    if (data.attained.isElementary) {
-        checkRequiredFields([
-            { name: 'nameofschool', value: data.elementary?.nameofschool ?? "", message: requiredError('Name of school') },
-            { name: 'period.from', value: data.elementary?.period?.from ?? "", message: requiredError('Period from') },
-            { name: 'period.to', value: data.elementary?.period?.to ?? "", message: requiredError('Period to') },
-            { name: 'yeargraduated', value: data.elementary?.yeargraduated ?? "", message: requiredError('Year graduated') }
-        ], ['elementary']);
-    }
-
-    if (data.attained.isSecondary) {
-        checkRequiredFields([
-            { name: 'nameofschool', value: data.secondary?.nameofschool ?? "", message: requiredError('Name of school') },
-            { name: 'period.from', value: data.secondary?.period?.from ?? "", message: requiredError('Period from') },
-            { name: 'period.to', value: data.secondary?.period?.to ?? "", message: requiredError('Period to') },
-            { name: 'yeargraduated', value: data.secondary?.yeargraduated ?? "", message: requiredError('Year graduated') }
-        ], ['secondary']);
-    }
-
-    if (data.attained.isVocational) {
-        checkRequiredFields([
-            { name: 'nameofschool', value: data.vocational?.nameofschool ?? "", message: requiredError('Name of school') },
-            { name: 'period.from', value: data.vocational?.period?.from ?? "", message: requiredError('Period from') },
-            { name: 'period.to', value: data.vocational?.period?.to ?? "", message: requiredError('Period to') },
-            { name: 'yeargraduated', value: data.vocational?.yeargraduated ?? "", message: requiredError('Year graduated') }
-        ], ['vocational']);
-    }
-
-    if (data.attained.isCollege) {
-        checkRequiredFields([
-            { name: 'nameofschool', value: data.college?.nameofschool ?? "", message: requiredError('Name of school') },
-            { name: 'period.from', value: data.college?.period?.from ?? "", message: requiredError('Period from') },
-            { name: 'period.to', value: data.college?.period?.to ?? "", message: requiredError('Period to') },
-            { name: 'yeargraduated', value: data.college?.yeargraduated ?? "", message: requiredError('Year graduated') }
-        ], ['college']);
-    }
-
-    if (data.attained.isGraduate) {
-        checkRequiredFields([
-            { name: 'nameofschool', value: data.graduatestudies?.nameofschool ?? "", message: requiredError('Name of school') },
-            { name: 'period.from', value: data.graduatestudies?.period?.from ?? "", message: requiredError('Period from') },
-            { name: 'period.to', value: data.graduatestudies?.period?.to ?? "", message: requiredError('Period to') },
-            { name: 'yeargraduated', value: data.graduatestudies?.yeargraduated ?? "", message: requiredError('Year graduated') }
-        ], ['graduatestudies']);
-    }
-});
+    elementary: z.array(EDUCATION).optional(),
+    secondary: z.array(EDUCATION).optional(),
+    vocational: z.array(EDUCATION).optional(),
+    college: z.array(EDUCATION).optional(),
+    graduatestudies: z.array(EDUCATION).optional()
+})
 
 type IFormEB = z.infer<typeof EDUCATIONALBACKGROUNDSCHEMA>
 

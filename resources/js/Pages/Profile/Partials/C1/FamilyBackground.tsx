@@ -6,7 +6,6 @@ import {
     FormMessage,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
-import { c1 } from "../../type";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/Components/ui/button";
 import { CalendarIcon, X } from "lucide-react";
@@ -15,10 +14,11 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/Components/ui/calendar";
+import { isValidDate } from "@/Pages/types";
 
 type FamilyBackgroundProps = {
     form: any;
@@ -407,7 +407,16 @@ export const CalendarInput: React.FC<{
     isRequired?: boolean;
     disabled?: boolean;
     className?: string;
-}> = ({ form, name, label = "Date of birth", isRequired = true, disabled, className }) => {
+    asInput?: boolean;
+}> = ({
+    form,
+    name,
+    label = "Date of birth",
+    isRequired = true,
+    disabled,
+    className,
+    asInput,
+}) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
     return (
@@ -419,46 +428,83 @@ export const CalendarInput: React.FC<{
                     <FormLabel className={cn(isRequired && "required")}>
                         {label}
                     </FormLabel>
-                    <Popover
-                        open={isCalendarOpen}
-                        onOpenChange={setIsCalendarOpen}
-                    >
-                        <PopoverTrigger
-                            asChild
-                            className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
-                        >
+                    <div className="flex relative">
+                        {asInput && (
                             <FormControl>
-                                <Button
-                                    variant={"outline"}
-                                    className={cn(
-                                        "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
-                                        !field.value && "text-muted-foreground",
-                                        className
-                                    )}
-                                    disabled={disabled}
-                                >
-                                    {field.value ? (
-                                        <span>
-                                            {format(field.value, "PPP")}
-                                        </span>
-                                    ) : (
-                                        <span>Pick a date</span>
-                                    )}
-                                    <CalendarIcon className="ml-auto size-5 opacity-50" />
-                                </Button>
+                                <Input
+                                    className="form-input pr-10"
+                                    {...field}
+                                    value={
+                                        isValidDate(field.value)
+                                            ? format(field.value, "P")
+                                            : field.value
+                                    }
+                                    placeholder="mm/dd/yyyy"
+                                />
                             </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={(date) => {
-                                    field.onChange(date);
-                                    setIsCalendarOpen(false);
-                                }}
-                            />
-                        </PopoverContent>
-                    </Popover>
+                        )}
+                        <Popover
+                            open={isCalendarOpen}
+                            onOpenChange={setIsCalendarOpen}
+                        >
+                            <PopoverTrigger
+                                asChild
+                                className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive dark:border-zinc-700 dark:bg-zinc-800"
+                            >
+                                {asInput ? (
+                                    <Button
+                                        type="button"
+                                        variant={"ghost"}
+                                        size={"icon"}
+                                        className={cn(
+                                            "shrink-0 !size-8 absolute top-1/2 -translate-y-1/2 right-1 data-[state=open]:!bg-accent"
+                                        )}
+                                        disabled={disabled}
+                                    >
+                                        <CalendarIcon className="size-4 opacity-50" />
+                                    </Button>
+                                ) : (
+                                    <FormControl>
+                                        <Button
+                                            type="button"
+                                            variant={"outline"}
+                                            className={cn(
+                                                "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                !field.value &&
+                                                    "text-muted-foreground",
+                                                className
+                                            )}
+                                            disabled={disabled}
+                                        >
+                                            {field.value ? (
+                                                <span>
+                                                    {isValidDate(field.value)
+                                                        ? format(
+                                                              field.value,
+                                                              "P"
+                                                          )
+                                                        : field.value}
+                                                </span>
+                                            ) : (
+                                                <span>mm/dd/yyyy</span>
+                                            )}
+                                            <CalendarIcon className="ml-auto size-5 opacity-50" />
+                                        </Button>
+                                    </FormControl>
+                                )}
+                            </PopoverTrigger>
+                            <PopoverContent className="w-auto p-0" align="end">
+                                <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={(date) => {
+                                        field.onChange(date);
+                                        setIsCalendarOpen(false);
+                                    }}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
                     <FormMessage />
                 </FormItem>
             )}

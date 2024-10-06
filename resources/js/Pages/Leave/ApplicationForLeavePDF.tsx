@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import { Margin, usePDF } from "react-to-pdf";
 import { useReactToPrint } from "react-to-print";
 import LeaveRespond from "./LeaveRespond";
-import LeaveStatus from "@/Components/LeaveStatus";
 import { Breadcrumbs } from "@/Components/ui/breadcrumb";
 import LeavePDF from "./LeavePDF";
 import ViewLeaveResponse from "./ViewLeaveResponse";
@@ -15,7 +14,6 @@ import {
     MenubarContent,
     MenubarItem,
     MenubarMenu,
-    MenubarSeparator,
     MenubarTrigger,
 } from "@/Components/ui/menubar";
 import UploadMedical from "./UploadMedical";
@@ -27,7 +25,7 @@ const ApplicationForLeavePDF = ({
     leave,
     hr,
     open,
-}: PageProps<{ leave: any; hr: string, open: any }>) => {
+}: PageProps<{ leave: any; hr: string; open: any }>) => {
     const [showRespond, setShowRespond] = useState<boolean>(false);
     const [showViewResponse, setShowViewResponse] = useState<boolean>(false);
     const [showUploadMedical, setUploadMedical] = useState(false);
@@ -35,7 +33,7 @@ const ApplicationForLeavePDF = ({
     const [respondLeave, setRespondLeave] = useState<
         "rejected" | "approved" | null
     >(null);
-    const { toPDF, targetRef } = usePDF({
+    const { targetRef } = usePDF({
         method: "open",
         filename: "application-for-leave.pdf",
         page: { format: "A4", margin: Margin.MEDIUM },
@@ -51,10 +49,10 @@ const ApplicationForLeavePDF = ({
     });
 
     useEffect(() => {
-        if(open && open === "response") {
-            setShowViewResponse(true)
+        if (open && open === "response") {
+            setShowViewResponse(true);
         }
-    }, [open])
+    }, [open]);
 
     return (
         <Authenticated
@@ -82,18 +80,38 @@ const ApplicationForLeavePDF = ({
                 </div>
                 <div className="ml-auto flex gap-2">
                     <Button
-                        onClick={handlePrint}
+                        onClick={() => {
+                            if (
+                                leave.hr_status !== "Pending" ||
+                                leave.principal_status !== "Pending"
+                            )
+                                handlePrint();
+                        }}
                         className="gap-2"
                         size="icon"
                         variant="ghost"
+                        disabled={
+                            leave.hr_status !== "Pending" ||
+                            leave.principal_status !== "Pending"
+                        }
                     >
                         <Printer className="size-5" />
                     </Button>
                     <Button
-                        onClick={() => download_pdf.toPDF()}
+                        onClick={() => {
+                            if (
+                                leave.hr_status !== "Pending" ||
+                                leave.principal_status !== "Pending"
+                            )
+                                download_pdf.toPDF();
+                        }}
                         className="gap-2"
                         size="icon"
                         variant="ghost"
+                        disabled={
+                            leave.hr_status !== "Pending" ||
+                            leave.principal_status !== "Pending"
+                        }
                     >
                         <Download className="size-5" />
                     </Button>
@@ -110,12 +128,17 @@ const ApplicationForLeavePDF = ({
                                 if (event === "upload") {
                                     setUploadMedical(true);
                                 }
-                                if(event === "view") {
-                                    setShowMedical(true)
+                                if (event === "view") {
+                                    setShowMedical(true);
                                 }
                             }}
                             isSickLeave={leave?.leave_type === "Sick Leave"}
-                            isResponded={false}
+                            isResponded={
+                                (auth.user.role === "HR" &&
+                                    leave.hr_status !== "Pending") ||
+                                (auth.user.role === "HOD" &&
+                                    leave.principal_status !== "Pending")
+                            }
                             hasMedical={leave.medical_certificate}
                             isOwner={leave.user.id === auth.user.id}
                             withResponse={["HR", "HOD"].includes(
@@ -176,7 +199,7 @@ const ApplicationForLeavePDF = ({
                     user: {
                         id: leave.user.id,
                         first_name: leave.user.first_name,
-                        last_name: leave.user.last_name
+                        last_name: leave.user.last_name,
                     },
                 }}
                 onClose={setShowMedical}
@@ -212,8 +235,13 @@ const MoreMenu = ({
                             {!isOwner ? (
                                 <>
                                     <MenubarItem
-                                        onClick={() => hasMedical && onClick("view")}
-                                        className={cn(!hasMedical && "opacity-50 pointer-events-none")}
+                                        onClick={() =>
+                                            hasMedical && onClick("view")
+                                        }
+                                        className={cn(
+                                            !hasMedical &&
+                                                "opacity-50 pointer-events-none"
+                                        )}
                                     >
                                         {" "}
                                         View medical{" "}
@@ -250,7 +278,7 @@ const MoreMenu = ({
                         </>
                     ) : (
                         withResponse && (
-                            <div className="text-center">
+                            <div className="text-center py-2 text-secondary-foreground/50">
                                 You have responded
                             </div>
                         )

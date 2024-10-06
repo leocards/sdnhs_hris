@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('p_d_s_other_information', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->enum('info_type', ['skills', 'recognition', 'association']);
-            $table->string('detail', 300);
+            $table->enum('info_type', ['skills', 'recognition', 'association'])->nullable();
+            $table->string('detail', 500)->nullable();
             $table->timestamps();
 
         });

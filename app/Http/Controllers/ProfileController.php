@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\PDSEducationalBackground;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -31,8 +32,22 @@ class ProfileController extends Controller
                 $pds->load(['pdsPersonalInformation']);
             if($pds_cs_section === "II")
                 $pds->load(['pdsFamilyBackground']);
-            if($pds_cs_section === "III")
-                $pds->load(['pdsEducationalBackground']);
+            if($pds_cs_section === "III") {
+                $newPdsEducationalBackground = PDSEducationalBackground::where('user_id', Auth::id())->get()->map(function ($data) {
+                    return collect([
+                        'type' => $data->education_type,
+                        'ebid' => $data->id,
+                        'nameofschool' => $data->school??"",
+                        'basiceddegreecourse' => $data->course??"",
+                        'period' => collect([ 'from' => $data->from??"", 'to' => $data->to??"" ]),
+                        'highestlvl' => $data->highest_earned??"",
+                        'yeargraduated' => $data->year_graduated??"",
+                        'scholarshiphonor' => $data->honors??"",
+                    ]);
+                });
+
+                $pds->pds_educational_background = $newPdsEducationalBackground;
+            }
         } else if($pds_cs === "C2") {
             if($pds_cs_section === "IV" || !$pds_cs_section)
                 $pds->load(['pdsCivilServiceEligibility']);
@@ -46,7 +61,7 @@ class ProfileController extends Controller
             if($pds_cs_section === "VIII")
                 $pds->load(['pdsOtherInformation']);
         } else if($pds_cs === "C4") {
-            $pds->load(['pdsCs4', 'pdsReferece', 'pdsGovernment']);
+            $pds->load(['pdsCs4', 'pdsReference', 'pdsGovernment']);
         }
 
         return Inertia::render('Profile/Edit', [

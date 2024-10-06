@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('p_d_s_government_ids', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained();
-            $table->string('government_id');
-            $table->string('id_number');
-            $table->string('issued');
+            $table->string('government_id')->nullable();
+            $table->string('id_number')->nullable();
+            $table->string('issued')->nullable();
             $table->timestamps();
         });
     }

@@ -40,6 +40,8 @@ type CertificateRowData = {
     date_to: string;
     updated_at: string;
     credits: number;
+    venue: string;
+    organizer: string;
 };
 
 function ServiceRecords({

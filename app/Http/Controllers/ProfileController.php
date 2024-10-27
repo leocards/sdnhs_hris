@@ -68,6 +68,7 @@ class ProfileController extends Controller
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
             'userinfo' => $pds,
+            'userRoles' => User::where('role', 'HOD')->orWhere('role', 'HR')->pluck('role'),
         ]);
     }
 
@@ -135,6 +136,27 @@ class ProfileController extends Controller
 
             return back()->withErrors($th->getMessage());
         }
+    }
+
+    public function enableEmails(Request $request)
+    {
+        $user = User::find(Auth::id());
+        
+        $isEnableFor = $request->enableFor;
+        $isEnabled = $request->enable;
+
+        if($isEnableFor == "notification")
+            $user->enable_email_notification = $isEnabled;
+
+        if($isEnableFor == "message")
+            $user->enable_email_message_notification = $isEnabled;
+
+        if($isEnableFor == "note")
+            $user->enable_email_note_reminder = $isEnabled;
+
+        $user->save();
+
+        return response()->json('success', 200);
     }
 
     /**

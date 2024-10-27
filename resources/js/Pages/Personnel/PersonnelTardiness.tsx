@@ -17,15 +17,14 @@ import {
     ClipboardCheck,
     EllipsisVertical,
     PenLine,
-    Trash2,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { format, getYear } from "date-fns";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import PaginationButton from "@/Components/PaginationButton";
 import DataList from "@/Components/DataList";
-import PersonnelTardinessConfirmDelete from "./PersonnelTardinessConfirmDelete";
 import AddPersonnelTardiness from "./AddPersonnelTardiness";
+import { useMessage } from "@/hooks/MessageProvider";
 
 interface PersonnelTardinessProps extends PageProps {
     attendance: PaginateData;
@@ -74,11 +73,9 @@ function PersonnelTardiness({
     years,
 }: PersonnelTardinessProps) {
     const [showAddAttendance, setShowAddAttendance] = useState<boolean>(false);
-    const [showDeleteAttendance, setShowDeleteAttendance] =
-        useState<boolean>(false);
     const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel>();
     const { setList, data, pages, loading, setLoading } = usePageList();
-
+    const { activeUsers } = useMessage()
     const [filter, setFilter] = useState<string>(
         years.length !== 0 ? getYear(new Date()).toString() : 'All'
     );
@@ -90,11 +87,6 @@ function PersonnelTardiness({
     const onEditPersonnel = (personnel: Personnel) => {
         setSelectedPersonnel(personnel);
         setShowAddAttendance(true);
-    };
-
-    const onDeletePersonnel = (personnel: Personnel) => {
-        setSelectedPersonnel(personnel);
-        setShowDeleteAttendance(true);
     };
 
     const getPageData = (page?: number) => {
@@ -127,14 +119,14 @@ function PersonnelTardiness({
 
     // unset the setSelected personnel on add or delete close
     useEffect(() => {
-        if (!showAddAttendance && !showDeleteAttendance) {
+        if (!showAddAttendance) {
             setTimeout(() => setSelectedPersonnel(undefined), 300);
         }
-    }, [showAddAttendance, showDeleteAttendance]);
+    }, [showAddAttendance]);
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight flex items-center gap-2">
                     Personnel <ChevronRight className="size-5" /> Tardiness
@@ -200,9 +192,9 @@ function PersonnelTardiness({
                     {data.map((personnel, index) => (
                         <PersonnelRow
                             key={index}
+                            active={!!(activeUsers.find((au) => au.id === personnel.users.id))}
                             personnel={personnel}
                             onEdit={onEditPersonnel}
-                            onDelete={onDeletePersonnel}
                         />
                     ))}
                 </DataList>
@@ -212,11 +204,6 @@ function PersonnelTardiness({
                     onNext={getPageData}
                     onPrevious={getPageData}
                 />
-                <PersonnelTardinessConfirmDelete
-                    personnel={selectedPersonnel}
-                    show={showDeleteAttendance}
-                    onClose={setShowDeleteAttendance}
-                />
             </div>
         </Authenticated>
     );
@@ -224,24 +211,29 @@ function PersonnelTardiness({
 
 type PersonnelRowProps = {
     personnel: Personnel;
+    active: boolean;
     onEdit: (personnel: Personnel) => void;
-    onDelete: (personnel: Personnel) => void;
 };
 
 const PersonnelRow: React.FC<PersonnelRowProps> = ({
     personnel,
+    active,
     onEdit,
-    onDelete,
 }) => {
     return (
         <div className="hover:bg-secondary transition-colors">
             <div className="grid grid-cols-[repeat(4,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1">
                 <div className="">
                     <div className="flex items-center gap-2">
-                        <AvatarProfile
-                            src={personnel.users?.avatar}
-                            className="size-8"
-                        />
+                        <div className="relative">
+                            <AvatarProfile
+                                src={personnel.users?.avatar}
+                                className="size-8"
+                            />
+                            {active && (
+                                <span className="absolute bottom-0 right-px size-2 bg-green-500 z-10 rounded-full ring ring-white" />
+                            )}
+                        </div>
                         <div className="line-clamp-1">{personnel.name}</div>
                     </div>
                 </div>
@@ -257,35 +249,9 @@ const PersonnelRow: React.FC<PersonnelRowProps> = ({
                     </div>
                 </div>
                 <div className="">
-                    <Menubar className="p-0 border-none group size-8 bg-transparent">
-                        <MenubarMenu>
-                            <MenubarTrigger className="h-full cursor-pointer p-0 flex grow justify-center before:!bg-zinc-200">
-                                <EllipsisVertical className="size-5" />
-                            </MenubarTrigger>
-                            <MenubarContent className="w-52" align="end">
-                                <MenubarItem
-                                    className="px-4 gap-5"
-                                    onClick={() => onEdit(personnel)}
-                                >
-                                    <PenLine
-                                        className="size-5"
-                                        strokeWidth={1.8}
-                                    />
-                                    <div>Edit</div>
-                                </MenubarItem>
-                                <MenubarItem
-                                    className="px-4 gap-5"
-                                    onClick={() => onDelete(personnel)}
-                                >
-                                    <Trash2
-                                        className="size-5"
-                                        strokeWidth={1.8}
-                                    />
-                                    <div>Delete</div>
-                                </MenubarItem>
-                            </MenubarContent>
-                        </MenubarMenu>
-                    </Menubar>
+                    <Button className="size-8 before:hover:bg-gray-300/60" variant={"ghost"} size={"icon"} onClick={() => onEdit(personnel)}>
+                        <PenLine className="size-5" strokeWidth={1.8} />
+                    </Button>
                 </div>
             </div>
         </div>

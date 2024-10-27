@@ -56,7 +56,7 @@ const ApplicationForLeavePDF = ({
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">Leave</h2>
             }
@@ -91,8 +91,8 @@ const ApplicationForLeavePDF = ({
                         size="icon"
                         variant="ghost"
                         disabled={
-                            leave.hr_status !== "Pending" ||
-                            leave.principal_status !== "Pending"
+                            (leave.hr_status === "Pending" ||
+                            leave.principal_status === "Pending")
                         }
                     >
                         <Printer className="size-5" />
@@ -109,8 +109,8 @@ const ApplicationForLeavePDF = ({
                         size="icon"
                         variant="ghost"
                         disabled={
-                            leave.hr_status !== "Pending" ||
-                            leave.principal_status !== "Pending"
+                            (leave.hr_status === "Pending" ||
+                            leave.principal_status === "Pending")
                         }
                     >
                         <Download className="size-5" />

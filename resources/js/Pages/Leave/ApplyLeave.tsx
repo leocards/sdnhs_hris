@@ -76,7 +76,7 @@ const ApplyLeave = ({ auth }: PageProps) => {
         form.setValue("middleName", middle_name ?? "");
         form.setValue("department", department);
         form.setValue("position", position);
-        form.setValue("dateOfFiling", new Date());
+        form.setValue("dateOfFiling.from", new Date());
     }, []);
 
     useEffect(() => {
@@ -105,7 +105,7 @@ const ApplyLeave = ({ auth }: PageProps) => {
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
                     Leave

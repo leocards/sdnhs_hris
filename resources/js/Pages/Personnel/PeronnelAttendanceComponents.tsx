@@ -1,5 +1,3 @@
-import Modal, { ModalProps } from "@/Components/Modal";
-import { Button } from "@/Components/ui/button";
 import {
     FormControl,
     FormField,
@@ -31,35 +29,12 @@ type PersonnelDataType = {
     name: string;
 };
 
-type HeaderProps = {
-    tardinessDraft: boolean;
-    getDraft: CallableFunction;
-};
-
-export const AttendanceHeader: React.FC<PropsWithChildren & HeaderProps> = ({
+export const AttendanceHeader: React.FC<PropsWithChildren> = ({
     children,
-    tardinessDraft,
-    getDraft,
 }) => {
     return (
         <div className="p-6 px-5">
             <div className="font-bold text-xl px-1 mb-2">Attendance Form</div>
-
-            {tardinessDraft && (
-                <div className="flex text-sm items-center bg-secondary/60 rounded-full px-1 py-1 mb-3">
-                    <div className="ml-3">
-                        You have a draft attendance record.
-                    </div>
-                    <Button
-                        variant="ghost"
-                        className="rounded-full h-9 before:!bg-gray-200 ml-auto text-xs"
-                        onClick={() => getDraft(true)}
-                    >
-                        <span>Use draft</span>
-                    </Button>
-                </div>
-            )}
-
             {children}
         </div>
     );
@@ -256,73 +231,5 @@ export const ComboBox = ({
                 </FormItem>
             )}
         />
-    );
-};
-
-export const ConfirmDraft: React.FC<
-    {
-        useDraft: CallableFunction;
-    } & ModalProps
-> = ({ useDraft, show, onClose }) => {
-    return (
-        <Modal
-            show={show}
-            onClose={() => onClose(false)}
-            closeable={false}
-            maxWidth="sm"
-            center
-        >
-            <div className="p-6">
-                <div>
-                    Continuing this action will remove the current data and
-                    replace it with the drafted data. Do you want to continue?
-                </div>
-
-                <div className="flex mt-6 justify-between">
-                    <Button variant="ghost" onClick={() => onClose(false)}>
-                        <span>Cancel</span>
-                    </Button>
-
-                    <Button onClick={() => useDraft()}>
-                        <span>Confirm</span>
-                    </Button>
-                </div>
-            </div>
-        </Modal>
-    );
-};
-
-export const ConfirmClearForm: React.FC<
-    {
-        clearForm: CallableFunction;
-    } & ModalProps
-> = ({ clearForm, show, onClose }) => {
-    return (
-        <Modal
-            show={show}
-            onClose={() => onClose(false)}
-            closeable={false}
-            maxWidth="sm"
-            center
-        >
-            <div className="p-6">
-                <div>
-                    This action will erase the current form. Are you sure you want to clear the form?
-                </div>
-
-                <div className="flex mt-6 justify-between">
-                    <Button variant="ghost" onClick={() => onClose(false)}>
-                        <span>Cancel</span>
-                    </Button>
-
-                    <Button onClick={() => {
-                        clearForm()
-                        onClose(false)
-                    }}>
-                        <span>Confirm</span>
-                    </Button>
-                </div>
-            </div>
-        </Modal>
     );
 };

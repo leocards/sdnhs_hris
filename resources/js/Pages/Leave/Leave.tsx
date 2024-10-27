@@ -24,6 +24,7 @@ import useDebounce from "@/hooks/useDebounce";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import PaginationButton from "@/Components/PaginationButton";
 import DataList from "@/Components/DataList";
+import { useMessage } from "@/hooks/MessageProvider";
 
 export default function Index({
     auth,
@@ -66,7 +67,7 @@ function Leave({
     const { setList, data, clearList } = usePageList();
     const debounceSearch = useDebounce<string>(search, search ? 700 : 0);
     const [loading, setLoading] = useState(false);
-
+    const { activeUsers } = useMessage()
     const searchRef = useRef<HTMLInputElement | null>(null);
 
     const onSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -141,7 +142,7 @@ function Leave({
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">Leave</h2>
             }
@@ -258,6 +259,7 @@ function Leave({
                             key={index}
                             leave={leave}
                             onMenuAction={onMenuAction}
+                            active={!!(activeUsers.find(({ id }) => id === leave.user.id))}
                         />
                     ))}
                 </DataList>
@@ -287,7 +289,8 @@ const LeaveRow: React.FC<{
     leave: {
         id: number;
         leave_type: string;
-        date_of_filing: Date;
+        date_of_filing_from: Date;
+        date_of_filing_to: Date;
         principal_status: "Approved" | "Rejected" | "Pending";
         hr_status: "Approved" | "Rejected" | "Pending";
         user: {
@@ -302,12 +305,15 @@ const LeaveRow: React.FC<{
             file_name: string;
         };
     };
+    active: boolean;
     onMenuAction: (action: string, route?: any) => void;
 }> = ({
+    active,
     leave: {
         id,
         leave_type,
-        date_of_filing,
+        date_of_filing_from,
+        date_of_filing_to,
         principal_status,
         hr_status,
         user,
@@ -324,7 +330,7 @@ const LeaveRow: React.FC<{
             <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
                 <div className="">
                     <div className="flex items-center gap-2">
-                        <AvatarProfile src={user.avatar} className="size-8" />
+                        <AvatarProfile src={user.avatar} className="size-8" active={active} />
                         <div className="line-clamp-1">
                             {user.first_name + " " + user.last_name}
                         </div>
@@ -335,7 +341,7 @@ const LeaveRow: React.FC<{
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        {format(date_of_filing, "PP")}
+                        {format(date_of_filing_from, "PP")}
                     </div>
                 </div>
                 <div className="">

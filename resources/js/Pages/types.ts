@@ -22,3 +22,31 @@ export function isValidDate(dateString: string): boolean {
     const date = new Date(dateString);
     return date instanceof Date && !isNaN(date.getTime());
 }
+
+export const formatDateRange = (dateRange: {
+    from: string;
+    to: string;
+}): string => {
+    const { from, to } = dateRange;
+
+    const fromFormatted = format(from, "MMMM d, yyyy");
+
+    if (!to) {
+        // Single date
+        return fromFormatted;
+    } else if (format(from, "yyyy") === format(to, "yyyy")) {
+        if (format(from, "MMMM") === format(to, "MMMM")) {
+            // Same month and year
+            return `${format(from, "MMMM d")} - ${format(to, "d, yyyy")}`;
+        } else {
+            // Same year, different month
+            return `${format(from, "MMMM d")} - ${format(
+                to,
+                "MMMM d, yyyy"
+            )}`;
+        }
+    } else {
+        // Different years
+        return `${fromFormatted} - ${format(to, "MMMM d, yyyy")}`;
+    }
+};

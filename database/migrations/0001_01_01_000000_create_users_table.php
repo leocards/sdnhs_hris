@@ -34,6 +34,9 @@ return new class extends Migration
             $table->integer('leave_rendered')->nullable();
             $table->integer('leave_credits')->nullable();
             $table->string('avatar')->nullable();
+            $table->boolean('enable_email_notification')->nullable();
+            $table->boolean('enable_email_message_notification')->nullable();
+            $table->boolean('enable_email_note_reminder')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

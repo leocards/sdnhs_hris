@@ -121,7 +121,7 @@ class SearchController extends Controller
 
     public function certificates(User $user)
     {
-        $certificates = ServiceRecord::where('user_id', $user->id)->get(['id', 'file_name', 'file_path', 'date_from', 'date_to', 'credits']);
+        $certificates = ServiceRecord::where('user_id', $user->id)->latest()->get(['id', 'file_name', 'file_path', 'date_from', 'date_to', 'credits', 'venue', 'organizer']);
 
         return response()->json($certificates);
     }

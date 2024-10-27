@@ -9,8 +9,6 @@ import Processing from "@/Components/Processing";
 import {
     AttendanceHeader,
     ComboBox,
-    ConfirmClearForm,
-    ConfirmDraft,
     Counter,
     setDraftData,
 } from "./PeronnelAttendanceComponents";
@@ -62,9 +60,6 @@ const AddPersonnelTardiness: React.FC<Props> = ({
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const [confirmDraft, setConfirmDraft] = useState<boolean>(false);
     const [personnels, setPersonnels] = useState<Array<any>>(initialList);
-    const [tardinessDraft, setTardinessDraft] = useState(
-        localStorage.getItem("tardinessDraft")
-    );
     const [confirmClearForm, setConfirmClearForm] = useState(false)
     const { toast } = useToast();
 
@@ -136,8 +131,6 @@ const AddPersonnelTardiness: React.FC<Props> = ({
                 <Processing is_processing={processing} backdrop={""} />
             ) : (
                 <AttendanceHeader
-                    tardinessDraft={!!tardinessDraft}
-                    getDraft={setConfirmDraft}
                 >
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
@@ -256,23 +249,6 @@ const AddPersonnelTardiness: React.FC<Props> = ({
                                     </Button>
                                 </div>
                                 <div className="flex items-center ml-auto gap-3">
-                                    {!user && !tardinessDraft && (
-                                        <Button
-                                            type="button"
-                                            variant="secondary"
-                                            onClick={() => {
-                                                setDraftData(form);
-                                                setTardinessDraft(
-                                                    localStorage.getItem(
-                                                        "tardinessDraft"
-                                                    )
-                                                );
-                                            }}
-                                        >
-                                            <span>Save as draft</span>
-                                        </Button>
-                                    )}
-
                                     <Button>
                                         {user ? (
                                             <span>Update</span>
@@ -284,24 +260,6 @@ const AddPersonnelTardiness: React.FC<Props> = ({
                             </div>
                         </form>
                     </Form>
-
-                    <ConfirmDraft
-                        show={confirmDraft}
-                        onClose={setConfirmDraft}
-                        useDraft={() => {
-                            setConfirmDraft(false);
-                            setDraftData(form);
-                            setTardinessDraft(
-                                localStorage.getItem("tardinessDraft")
-                            );
-                        }}
-                    />
-
-                    <ConfirmClearForm
-                        show={confirmClearForm}
-                        onClose={setConfirmClearForm}
-                        clearForm={() => form.reset()}
-                    />
                 </AttendanceHeader>
             )}
         </Modal>

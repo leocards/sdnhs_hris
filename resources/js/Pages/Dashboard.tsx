@@ -1,19 +1,12 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { Head, router, usePage } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { PageProps, PaginateData } from "@/types";
-import { AvatarProfile } from "@/Components/ui/avatar";
-import {
-    Menubar,
-    MenubarMenu,
-    MenubarTrigger,
-    MenubarContent,
-    MenubarItem,
-} from "@/Components/ui/menubar";
-import { EllipsisVertical, Eye, Trash2, Upload } from "lucide-react";
-import { Button } from "@/Components/ui/button";
-import LeaveStatus from "@/Components/LeaveStatus";
 import { format } from "date-fns";
-import { useEffect } from "react";
+import LeaveApplicationsChart from "./Dashboard/LeaveApplicationsChart";
+import Notes from "./Dashboard/Notes";
+import ActiveLeave from "./Dashboard/ActiveLeave";
+import PersonnelList from "./Dashboard/PersonnelList";
+import PageListProvider from "@/hooks/pageListProvider";
 
 type Statistics = {
     recent: number;
@@ -21,23 +14,64 @@ type Statistics = {
     total: number;
 };
 
-export default function Dashboard({
-    auth,
-    leaves,
-    totalEmployee,
-    approved,
-    pending,
-    reject,
-}: PageProps<{
-    leaves: PaginateData;
+interface DashboardProps extends PageProps {
     totalEmployee?: Statistics;
     approved: Statistics;
     pending: Statistics;
     reject: Statistics;
-}>) {
+    leave: Array<{
+        id: number;
+        leave_type: string;
+        inclusive_date_from: string;
+        inclusive_date_to: string;
+    }>;
+    leaveApplications: Array<{
+        leave_type: string;
+        total: number;
+    }>;
+    pageData: PaginateData;
+}
+
+export default function Index({
+    auth,
+    pageData,
+    totalEmployee,
+    approved,
+    pending,
+    reject,
+    leave,
+    leaveApplications,
+}: DashboardProps) {
+    return (
+        <PageListProvider initialValue={pageData}>
+            <Head title="Dashboard" />
+
+            <Dashboard
+                auth={auth}
+                pageData={pageData}
+                totalEmployee={totalEmployee}
+                approved={approved}
+                pending={pending}
+                reject={reject}
+                leave={leave}
+                leaveApplications={leaveApplications}
+            />
+        </PageListProvider>
+    );
+}
+
+function Dashboard({
+    auth,
+    totalEmployee,
+    approved,
+    pending,
+    reject,
+    leave,
+    leaveApplications,
+}: DashboardProps) {
     return (
         <AuthenticatedLayout
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">
                     Good{" "}
@@ -141,132 +175,20 @@ export default function Dashboard({
                 </div>
             </div>
 
-            <div className="mt-12">
-                <div className="flex items-center mb-5">
-                    <div className="font-semibold text-xl">
-                        Recent Leave Applications
-                    </div>
-                    <Button
-                        variant="ghost"
-                        className="ml-auto"
-                        onClick={() => router.get(route("leave"))}
-                    >
-                        <span>View all</span>
-                    </Button>
-                </div>
-                <div className="divide-y min-h-[22rem]">
-                    <div className="grid grid-cols-[repeat(5,1fr),3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
-                        <div className="">Name</div>
-                        <div className="">Type</div>
-                        <div className="">Date</div>
-                        <div className="">Principal status</div>
-                        <div className="">HR status</div>
-                        <div className=""></div>
-                    </div>
+            <div className="min-h-96 mt-12 flex max-md:flex-col gap-4">
+                <ActiveLeave leave={leave} />
 
-                    {leaves.data.length === 0 && (
-                        <div className="text-center py-5 text-foreground/60">
-                            No record.
-                        </div>
-                    )}
-
-                    {leaves.data.map((list, index) => (
-                        <RecentLeaveRow key={index} leave={list} />
-                    ))}
-                </div>
+                <Notes />
             </div>
+
+            {auth.user.role == "HR" && (
+                <>
+                    <LeaveApplicationsChart
+                        leaveApplications={leaveApplications}
+                    />
+                    <PersonnelList />
+                </>
+            )}
         </AuthenticatedLayout>
     );
 }
-
-type LeaveType = {
-    id: number;
-    leave_type: string;
-    date_of_filing: Date;
-    principal_status: "Approved" | "Rejected" | "Pending";
-    hr_status: "Approved" | "Rejected" | "Pending";
-    user: {
-        id: number;
-        first_name: string;
-        last_name: string;
-        avatar?: string;
-    };
-    medical_certificate: {
-        id: number;
-        file_path: string;
-        file_name: string;
-    };
-};
-
-const RecentLeaveRow: React.FC<{ leave: LeaveType }> = ({
-    leave: {
-        id,
-        leave_type,
-        date_of_filing,
-        principal_status,
-        hr_status,
-        user,
-        medical_certificate,
-    },
-}) => {
-    const {
-        props: { auth },
-    } = usePage<PageProps>();
-
-    useEffect(() => {}, []);
-
-    return (
-        <div className="hover:bg-secondary transition-colors">
-            <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
-                <div className="">
-                    <div className="flex items-center gap-2">
-                        <AvatarProfile src={user.avatar} className="size-8" />
-                        <div className="line-clamp-1">
-                            {user.first_name + " " + user.last_name}
-                        </div>
-                    </div>
-                </div>
-                <div className="">
-                    <div className="line-clamp-1">{leave_type}</div>
-                </div>
-                <div className="">
-                    <div className="line-clamp-1">
-                        {format(date_of_filing, "PP")}
-                    </div>
-                </div>
-                <div className="">
-                    <div className="line-clamp-1">
-                        <LeaveStatus status={principal_status} />
-                    </div>
-                </div>
-                <div className="">
-                    <div className="line-clamp-1">
-                        <LeaveStatus status={hr_status} />
-                    </div>
-                </div>
-                <div className="">
-                    <Menubar className="p-0 border-none group size-8 bg-transparent">
-                        <MenubarMenu>
-                            <MenubarTrigger className="h-full cursor-pointer p-0 flex grow justify-center before:!bg-zinc-200">
-                                <EllipsisVertical className="size-5" />
-                            </MenubarTrigger>
-                            <MenubarContent className="w-52" align="end">
-                                <MenubarItem
-                                    className="px-4 gap-5"
-                                    onClick={() =>
-                                        router.get(
-                                            route("leave.view", [id, user.id])
-                                        )
-                                    }
-                                >
-                                    <Eye className="size-5" strokeWidth={1.8} />
-                                    <div>View</div>
-                                </MenubarItem>
-                            </MenubarContent>
-                        </MenubarMenu>
-                    </Menubar>
-                </div>
-            </div>
-        </div>
-    );
-};

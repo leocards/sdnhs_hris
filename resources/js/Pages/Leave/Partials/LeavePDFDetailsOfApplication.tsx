@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { formatDateRange } from "@/Pages/types";
 import { format } from "date-fns";
 import { Square, SquareCheck } from "lucide-react";
 import React from "react";
@@ -58,33 +59,6 @@ const LeavePDFDetailsOfApplication = (
         },
     } = props;
 
-    const formatDateRange = (dateRange: {
-        from: string;
-        to: string;
-    }): string => {
-        const { from, to } = dateRange;
-
-        const fromFormatted = format(from, "MMMM d, yyyy");
-
-        if (!to) {
-            // Single date
-            return fromFormatted;
-        } else if (format(from, "yyyy") === format(to, "yyyy")) {
-            if (format(from, "MMMM") === format(to, "MMMM")) {
-                // Same month and year
-                return `${format(from, "MMMM d")} - ${format(to, "d, yyyy")}`;
-            } else {
-                // Same year, different month
-                return `${format(from, "MMMM d")} - ${format(
-                    to,
-                    "MMMM d, yyyy"
-                )}`;
-            }
-        } else {
-            // Different years
-            return `${fromFormatted} - ${format(to, "MMMM d, yyyy")}`;
-        }
-    };
 
     return (
         <>
@@ -301,7 +275,7 @@ const LeavePDFDetailsOfApplication = (
                     >
                         <div className={cn(isDownload && "mb-1.5 mt-1")}>
                             {num_days_applied}{" "}
-                            {num_days_applied && "working day/s"}
+                            {num_days_applied && " day/s"}
                         </div>
                     </div>
                     <div className="uppercase ml-4 mt-3"> Inclusive dates</div>

@@ -25,8 +25,8 @@ class ServiceRecordRequest extends FormRequest
         return [
             'certificateName' => ['required', 'string'],
             'file' => ['required', 'mimes:pdf,jpeg,jpg,png', 'max:10240'],
-            'daysRendered.from' => ['required', 'date'],
-            'daysRendered.to' => ['date', 'nullable'],
+            'datefrom' => ['required', 'date'],
+            'dateto' => ['date', 'nullable'],
         ];
     }
 }

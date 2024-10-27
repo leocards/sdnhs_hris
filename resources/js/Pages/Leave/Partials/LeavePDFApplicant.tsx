@@ -6,7 +6,7 @@ type LeavePDFApplicantProps = {
     first: string;
     last: string;
     middle: string;
-    dateOfFiling: string;
+    dateOfFilingFrom: string;
     position: string;
     salary?: string;
 };
@@ -17,7 +17,7 @@ const LeavePDFApplicant = ({
         first,
         last,
         middle,
-        dateOfFiling,
+        dateOfFilingFrom,
         position,
         salary,
     },
@@ -76,11 +76,6 @@ const LeavePDFApplicant = ({
                             </div>
                         </div>
                     </div>
-                    {/* <div className="mt-0.5 mx-auto flex gap-5">
-                        <div className="">{last},</div>
-                        <div className="">{first}</div>
-                        <div className="">{middle}</div>
-                    </div> */}
                 </div>
             </div>
             <div className={cn("border-t uppercase h-9 grid grid-cols-3 p-[1pt] pb-2", isDownload ? "border-black" : "dark:border-border border-black")}>
@@ -88,7 +83,7 @@ const LeavePDFApplicant = ({
                     <div className={cn(isDownload && "-mt-1.5")}>
                         3. Date of filing
                     </div>
-                    <div className="pl-3">{format(dateOfFiling, "PP")}</div>
+                    <div className="pl-3">{format(dateOfFilingFrom, "PP")}</div>
                 </div>
                 <div className="">
                     <div className={cn(isDownload && "-mt-1.5")}>

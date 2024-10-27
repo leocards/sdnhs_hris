@@ -43,11 +43,11 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                 <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3">
                     <FormField
                         control={form.control}
-                        name="firstName"
+                        name="lastName"
                         render={({ field }) => (
                             <FormItem className="grow">
                                 <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                    First name
+                                    Last name
                                 </FormLabel>
                                 <FormControl>
                                     <Input
@@ -61,11 +61,11 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                     />
                     <FormField
                         control={form.control}
-                        name="lastName"
+                        name="firstName"
                         render={({ field }) => (
                             <FormItem className="grow">
                                 <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                    Last name
+                                    First name
                                 </FormLabel>
                                 <FormControl>
                                     <Input

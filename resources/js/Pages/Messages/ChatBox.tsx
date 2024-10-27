@@ -1,241 +1,105 @@
-import { AvatarProfile } from "@/Components/ui/avatar";
-import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
-import {
-    Menubar,
-    MenubarContent,
-    MenubarItem,
-    MenubarMenu,
-    MenubarTrigger,
-} from "@/Components/ui/menubar";
+import MessageBoxInput from "./MessageBoxInput";
+
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
-import { ArrowLeft, EllipsisVertical, Send } from "lucide-react";
-import MessageBoxInput from "./MessageBox";
+import { MessagesSquare, UserRound } from "lucide-react";
+import { useMessage } from "@/hooks/MessageProvider";
+import ChatBoxHeader from "./ChatBoxHeader";
+import ConversationBox from "./ConversationBox";
+import { formatISO } from "date-fns";
+import SearchConversation from "./SearchConversation";
+import { useState } from "react";
+import DeleteConversationConfirmation from "./DeleteConversationConfirmation";
 
-export default function ChatBox({ user }: { user: User }) {
-
-    /* useEffect(() => {
-        window.Echo.channel(`message.${user.id}`)
-            .listen('SendMessageEvent', (e: any) => {
-                console.log(e)
-            })
-    }, []) */
-
-    return (
-        <div className="border rounded-lg grid grid-rows-[auto,1fr,auto]">
-            <div className="h-14 border-b p-2 flex items-center gap-2">
-                <div className="[@media(min-width:720px)]:hidden">
-                    <Button variant={"ghost"} size={"icon"}>
-                        <ArrowLeft className="size-4" />
-                    </Button>
-                </div>
-                <div className="">
-                    <AvatarProfile src="/storage/assets/profile.png" />
-                </div>
-                <div className="max-w-96 w-full mr-2">
-                    <Label className="line-clamp-1">Lorem ipsum dolor</Label>
-                    <div className="text-xs text-green-600 font-medium">
-                        Active
-                    </div>
-                </div>
-
-                <Menubar className="p-0 h-fit border-none ml-auto">
-                    <MenubarMenu>
-                        <MenubarTrigger className="size-10 p-0 justify-center !cursor-pointer">
-                            <EllipsisVertical className="size-4" />
-                        </MenubarTrigger>
-                        <MenubarContent align="end">
-                            <MenubarItem className="transition duration-200">
-                                Search
-                            </MenubarItem>
-                            <MenubarItem className="transition duration-200">
-                                Export chat
-                            </MenubarItem>
-                            <MenubarItem className="text-destructive hover:!bg-destructive/10 dark:hover:!bg-destructive/50 hover:!text-destructive dark:!text-red-500 transition duration-200">
-                                Delete conversation
-                            </MenubarItem>
-                        </MenubarContent>
-                    </MenubarMenu>
-                </Menubar>
-            </div>
-            <div className="flex flex-col-reverse overflow-y-auto py-2">
-                <div className="flex flex-col space-y-0.5">
-                    <MessageBox
-                        auth={user}
-                        position="sender-t"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor \n Lorem",
-                            from: 1,
-                            to: 2,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-                    <MessageBox
-                        auth={user}
-                        position="sender-m"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 1,
-                            to: 2,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-                    <MessageBox
-                        auth={user}
-                        position="sender-b"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 1,
-                            to: 2,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-
-                    <MessageBox
-                        auth={user}
-                        position="receiver-t"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 2,
-                            to: 1,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-                    <MessageBox
-                        auth={user}
-                        position="receiver-m"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 2,
-                            to: 1,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-                    <MessageBox
-                        auth={user}
-                        position="receiver-b"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 2,
-                            to: 1,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-
-                    <MessageBox
-                        auth={user}
-                        position="sender"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 1,
-                            to: 2,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-
-                    <MessageBox
-                        auth={user}
-                        position="receiver"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 2,
-                            to: 1,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-
-                    <MessageBox
-                        auth={user}
-                        position="sender"
-                        message={{
-                            id: 1001,
-                            message: "Lorem ipsum dolor",
-                            from: 1,
-                            to: 2,
-                            time: new Date().getTime().toString(),
-                        }}
-                    />
-                </div>
-            </div>
-            <div className="border-t p-2 overflow-hidden flex items-end gap-3">
-                <MessageBoxInput  />
-
-                <Button
-                    size="icon"
-                    className="shrink-0"
-                    onClick={() => {
-                        /* router.post(route('message.send', [2]), {
-                        message: "hello there"
-                    }) */
-                    }}
-                >
-                    <Send className="size-5" />
-                </Button>
-            </div>
-        </div>
-    );
-}
-
-interface MessageBoxProps {
-    id: number;
-    message: string;
-    from: number;
-    to: number;
-    time: string;
-}
-
-type MessagePosition =
-    | "sender-t"
-    | "sender-m"
-    | "sender-b"
-    | "sender"
-    | "receiver-b"
-    | "receiver-t"
-    | "receiver-m"
-    | "receiver";
-
-const MessageBox: React.FC<{
-    message: MessageBoxProps;
-    auth: User;
-    position: MessagePosition;
-}> = ({ message, auth, position }) => {
-    const messageBoxVariant = {
-        sender: "ml-auto mr-2 bg-blue-600 text-white",
-        receiver: "ml-2 bg-accent",
-    }[message.from === 1 ? "sender" : "receiver"];
-
-    const roundedBox = {
-        "sender-t": "rounded-[1.25rem] rounded-br-md",
-        "sender-m": "rounded-[1.25rem] rounded-e-md",
-        "sender-b": "rounded-[1.25rem] rounded-tr-md",
-        sender: "rounded-[1.25rem]",
-        "receiver-t": "rounded-[1.25rem] rounded-bl-md",
-        "receiver-m": "rounded-[1.25rem] rounded-s-md",
-        "receiver-b": "rounded-[1.25rem] rounded-tl-md",
-        receiver: "rounded-[1.25rem]",
-    }[position];
+export default function ChatBox({ auth }: { auth: User }) {
+    const { user, setUser, conversation, setConversation, setMessageList, setMessage } =
+        useMessage();
+    const [searchConversation, setSearchConversation] = useState(false)
+    const [deleteConversation, setDeleteConversation] = useState(false)
 
     return (
         <div
             className={cn(
-                "max-w-96 w-fit py-2 px-3",
-                messageBoxVariant,
-                roundedBox
+                "grid border rounded-lg",
+                user
+                    ? "grid-rows-[auto,1fr,auto]"
+                    : "items-center justify-center"
             )}
         >
-            <div className="whitespace-pre-line break-words">
-                {message.message}
-            </div>
+            {user ? (
+                <>
+                    <ChatBoxHeader onSearchConvo={() => setSearchConversation(true)} onDeleteConversation={() => setDeleteConversation(true)}/>
+                    <ConversationBox auth={auth} />
+                    <div className="border-t p -2 overflow-hidden flex items-end gap-3">
+                        <MessageBoxInput
+                            onMessage={(message) => {
+                                if (message) {
+                                    let chat = {
+                                        id: null,
+                                        sender: auth.id,
+                                        message: message,
+                                        seen_at: null,
+                                        created_at: formatISO(new Date()),
+                                    };
+
+                                    window.axios
+                                        .post(
+                                            route("messages.send", [
+                                                user.id,
+                                                user.messageId,
+                                            ]),
+                                            chat
+                                        )
+                                        .then((response) => {
+                                            let res = response.data;
+                                            let convo = [...conversation];
+
+                                            // if the conversation is new, append user at the beginning of the list
+                                            if (res.isNew) {
+                                                setMessageList(
+                                                    [res.data],
+                                                    true
+                                                );
+                                            } else {
+                                                setMessage(
+                                                    user.id,
+                                                    chat.message,
+                                                    chat.sender,
+                                                    chat.created_at
+                                                );
+                                            }
+
+                                            if (!user.messageId)
+                                                setUser({
+                                                    ...user,
+                                                    messageId: res.data.id,
+                                                });
+                                        })
+                                        .catch((error) => console.log(error));
+
+                                    setConversation([chat]);
+                                }
+                            }}
+                        />
+                    </div>
+                </>
+            ) : (
+                <div className="text-center">
+                    <div className="relative w-fit mx-auto opacity-30">
+                        <UserRound className="size-16" strokeWidth={1} />
+                        <MessagesSquare
+                            className="absolute top-1 -right-0.5 size-5"
+                            strokeWidth={2.2}
+                        />
+                    </div>
+                    <div className="text-xs font-medium text-foreground/60">
+                        Select user to start conversation
+                    </div>
+                </div>
+            )}
+
+            <SearchConversation show={searchConversation} onClose={setSearchConversation} />
+            <DeleteConversationConfirmation show={deleteConversation} onClose={setDeleteConversation} />
         </div>
     );
-};
+}

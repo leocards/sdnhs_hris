@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\NoteController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PersonalDataSheetController;
 use App\Http\Controllers\ProfileController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceRecordController;
 use App\Http\Controllers\PersonnelController;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
@@ -26,11 +29,13 @@ Route::get('/', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile/profile', [ProfileController::class, 'edit'])->name('profile.profile');
     Route::get('/profile/settings', [ProfileController::class, 'edit'])->name('profile.settings');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     Route::post('/profile/upload-avatar', [ProfileController::class, 'upload_avatar'])->name('profile.avatar');
+    Route::post('/profile/settings/enable-emails', [ProfileController::class, 'enableEmails'])->name('profile.settings.emails');
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -46,6 +51,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/pannelList', [DashboardController::class, 'personnelList'])->name('dashboard.personnelList');
+
+    Route::prefix('notes')->group(function () {
+        Route::controller(NoteController::class)->group(function () {
+            Route::get('/', 'index')->name('notes');
+            Route::get('/view', 'show')->name('notes.show');
+
+            Route::post('/save/{note?}', 'store')->name('notes.save');
+            Route::post('/delete/{note}', 'destroy')->name('notes.delete');
+        });
+    });
 
     Route::prefix('personnel')->group(function () {
         Route::controller(PersonnelController::class)->group(function () {
@@ -57,11 +73,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/tardiness/json', 'tardinessJson')->name('personnel.tardiness.json');
                 Route::get('/tardiness/search-attendance', 'tardiness_search')->name('personnel.tardiness.att.search');
                 Route::get('/new-personnel', 'create')->name('personnel.new');
+                Route::get('/view-pds-user/{userId}', fn ($userId) => response()->json(User::find($userId)))->name('personnel.view-pds.user');
+
 
                 Route::post('/new-personnel', 'store')->name('personnel.new.store');
                 Route::post('/update-personnel/{user?}', 'update')->name('personnel.update');
                 Route::post('/delete-personnel/{user?}', 'delete')->name('personnel.delete');
-                Route::post('/tardiness', 'store_tardiness')->name('personnel.tardiness.add');
+                Route::post('/tardiness/add', 'store_tardiness')->name('personnel.tardiness.add');
                 Route::post('/tardiness-update/{tardiness}', 'update_tardiness')->name('personnel.tardiness.update');
                 Route::post('/tardiness-delete/{tardiness}', 'delete_tardiness')->name('personnel.tardiness.delete');
             });
@@ -115,6 +133,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('reports')->group(function () {
         Route::controller(ReportController::class)->group(function () {
             Route::get('/', 'index')->name('reports');
+            Route::get('/search-ipcr', 'searchIPCR')->name('reports.searchIPCR');
+            Route::get('/ipcr-personnel-unlisted', 'getIPCRUnlisted')->name('reports.unlistedIPCR');
+            Route::get('/saln-personnel-unlisted', 'getSALNUnlisted')->name('reports.unlistedSALN');
 
             Route::post('/excel-ipcr-upload', 'upload_ipcr')->name('reports.excel.ipcr.upload');
             Route::post('/excel-saln-upload', 'upload_saln')->name('reports.excel.saln.upload');
@@ -127,7 +148,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-    Route::get('/messages', fn () => Inertia::render('Messages/Messages'))->name("messages");
+    Route::prefix('messages')->group(function () {
+        Route::controller(MessageController::class)->group(function () {
+            Route::get('/', 'index')->name("messages");
+            Route::get('/messages-list', 'messages')->name('messages.list');
+            Route::get('/conversations/{userId}/{messageId?}', 'conversations')->name('messages.conversation');
+            Route::get('/search/{search}', 'searchUser')->name("messages.search");
+            Route::get('/unreadmessages', 'countUnreadMessages')->name('messages.unreadmessages');
+            Route::get('/search/conversation/{messageId}/{search}', 'searchConversation')->name('messages.search_conversation');
+            Route::get('/searched-conversation/{messageId}/{convoId}', 'getConversationOnSearch')->name('messages.searched_convo');
+
+            Route::post('/send/{user}/{messageId?}', 'send')->name('messages.send');
+            Route::post('/seen/{message}', 'setMessageAsSeen')->name('message.seen');
+            Route::post('/delete/{message}', 'deleteMessage')->name('messages.delete');
+        });
+    });
 
     Route::prefix('notification')->group(function () {
         Route::controller(NotificationController::class)->group(function () {
@@ -135,6 +170,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/json', 'indexJson')->name("notification.json");
             Route::get('/notif-read/{notif}', 'markAsRead')->name("notification.masrkRead");
             Route::get('/redirect/{notif}', 'redirectFromNotification')->name("notification.redirect");
+            Route::get('/unread-notifications', 'unreadNotifications')->name('notification.unreads');
         });
     });
 

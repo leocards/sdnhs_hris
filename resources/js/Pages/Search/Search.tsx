@@ -64,7 +64,7 @@ export default function Search({
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">Search</h2>
             }

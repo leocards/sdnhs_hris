@@ -7,6 +7,7 @@ import { Head } from "@inertiajs/react";
 
 export type IPCRType = {
     id: number;
+    counter?: number;
     rating: string;
     user_id: number;
     user: {
@@ -16,12 +17,15 @@ export type IPCRType = {
         middle_name: string;
         position: string;
         personnel_id: string;
+        employee_list_name: string;
+        name: string;
     };
     created_at: string;
 };
 
 export type SALNType = {
     id: number;
+    counter?: number;
     joint: boolean;
     networth: string;
     spouse: string;
@@ -34,8 +38,10 @@ export type SALNType = {
         position: string;
         personnel_id: string;
         pds_personal_information: any;
+        name: string;
     };
     created_at: string;
+    pds_personal_information: {tin: string}
 };
 
 export default function Reports({
@@ -43,6 +49,8 @@ export default function Reports({
     ipcr,
     saln,
     list,
+    principal,
+    hr,
 }: PageProps & {
     ipcr: Array<IPCRType>;
     saln: Array<SALNType>;
@@ -52,10 +60,12 @@ export default function Reports({
         accounting: Array<any>;
         principal: Array<any>;
     };
+    principal: {name: string; position: string};
+    hr: {name: string};
 }) {
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">Reports</h2>
             }
@@ -64,9 +74,9 @@ export default function Reports({
 
             <ListOfEmployees list={list} />
 
-            <ListOfIPCR ipcr={ipcr} />
+            <ListOfIPCR ipcr={ipcr} principal={principal} hr={hr}/>
 
-            <ListOfSALN saln={saln} />
+            <ListOfSALN saln={saln} principal={principal} hr={hr} />
         </Authenticated>
     );
 }

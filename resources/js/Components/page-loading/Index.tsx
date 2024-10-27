@@ -15,6 +15,7 @@ export default function isPageLoading(): boolean {
         "/notification",
         "/general-search",
         "/profile",
+        "/profile/profile",
         "/profile/settings",
         "/personnel/new-personnel",
     ];
@@ -26,6 +27,7 @@ export default function isPageLoading(): boolean {
         "/leave/apply-for-leave",
         "/general-search/view",
         "/notification/redirect",
+        "/personnel/tardiness",
     ];
 
     const exclude = [

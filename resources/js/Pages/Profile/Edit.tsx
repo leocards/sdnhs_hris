@@ -9,34 +9,38 @@ import PersonalDataSheet from "./PersonalDataSheet";
 import Settings from "./Settings";
 import { useState } from "react";
 import UploadAvatar from "./UploadAvatar";
+import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 
-export type UserInfoType = User & UserInfo & {
-    pds_educational_background: Array<any>;
-    pds_family_background: Array<any>;
-    pds_personal_information: any;
-    pds_civil_service_eligibility: any;
-    pds_work_experience: any;
-    pds_voluntary_work: any;
-    pds_learning_development: any;
-    pds_other_information: any;
-    pds_cs4: any;
-    pds_government: any;
-    pds_referece: any;
-    birth_place: string;
-    civil_status: string;
-    height: string;
-    weight: string;
-}
+export type UserInfoType = User &
+    UserInfo & {
+        pds_educational_background: Array<any>;
+        pds_family_background: Array<any>;
+        pds_personal_information: any;
+        pds_civil_service_eligibility: any;
+        pds_work_experience: any;
+        pds_voluntary_work: any;
+        pds_learning_development: any;
+        pds_other_information: any;
+        pds_cs4: any;
+        pds_government: any;
+        pds_referece: any;
+        birth_place: string;
+        civil_status: string;
+        height: string;
+        weight: string;
+    };
 
 export default function Edit({
     auth,
     userinfo,
     mustVerifyEmail,
     status,
+    userRoles,
 }: PageProps<{
     mustVerifyEmail: boolean;
     status?: string;
     userinfo: UserInfoType;
+    userRoles: string[];
 }>) {
     const name = auth.user.first_name + " " + auth.user.last_name;
     const [uploadAvatar, setUploadAvatar] = useState<boolean>(false);
@@ -45,7 +49,7 @@ export default function Edit({
 
     return (
         <AuthenticatedLayout
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-secondary-foreground leading-tight">
                     Profile
@@ -80,10 +84,16 @@ export default function Edit({
 
             <div className="mt-8 flex gap-3">
                 <Button
-                    variant={url !== "/profile/settings" ? "default" : "ghost"}
+                    variant={(url !== "/profile/settings" && url !== "/profile/profile") ? "default" : "ghost"}
                     onClick={() => router.get(route("profile.edit"))}
                 >
                     <span>Personal Data Sheet</span>
+                </Button>
+                <Button
+                    variant={url.startsWith("/profile/profile") ? "default" : "ghost"}
+                    onClick={() => router.get(route("profile.profile"))}
+                >
+                    <span>Profile</span>
                 </Button>
                 <Button
                     variant={
@@ -98,7 +108,20 @@ export default function Edit({
             </div>
 
             <div>
-                {url !== "/profile/settings" && <PersonalDataSheet user={userinfo} />}
+                {(url !== "/profile/settings" && url !== "/profile/profile") && (
+                    <PersonalDataSheet user={userinfo} />
+                )}
+            </div>
+            <div>
+                {url.startsWith("/profile/profile") && (
+                    <div className="py-12">
+                        <UpdateProfileInformationForm
+                            mustVerifyEmail={mustVerifyEmail}
+                            status={status}
+                            userRoles={userRoles}
+                        />
+                    </div>
+                )}
             </div>
             <div>
                 {url.startsWith("/profile/settings") && (

@@ -32,8 +32,7 @@ class ProfileUpdate extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address($this->email, $this->user['name']),
-            to: env("MAIL_FROM_ADDRESS"),
+            from: new Address(env("MAIL_FROM_ADDRESS"), "HRIS"),
             subject: 'Profile Update',
         );
     }

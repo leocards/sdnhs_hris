@@ -11,6 +11,9 @@ export interface User {
     role: string;
     email_verified_at: string;
     avatar: string;
+    enable_email_notification: boolean | null;
+    enable_email_message_notification: boolean | null;
+    enable_email_note_reminder: boolean | null;
 }
 
 export interface UserInfo {

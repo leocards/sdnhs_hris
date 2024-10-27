@@ -6,13 +6,15 @@ import { SALNType } from "./Reports";
 import { cn } from "@/lib/utils";
 import { ScrollBar, ScrollArea } from "@/Components/ui/scroll-area";
 import UploadSALN from "./UploadSALN";
-import SALNPrint from "./SALNPrint";
+import PrintSALN from "./PrintSALN";
 
 type Props = {
     saln: Array<SALNType>;
+    principal: {name: string; position: string};
+    hr: {name: string};
 };
 
-const ListOfSALN = ({ saln }: Props) => {
+const ListOfSALN = ({ saln, principal, hr }: Props) => {
     const [showList, setShowList] = useState(true);
     const [showPrint, setShowPrint] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>("");
@@ -193,7 +195,7 @@ const ListOfSALN = ({ saln }: Props) => {
                 />
             </div>
 
-            <SALNPrint show={showPrint} onClose={setShowPrint} />
+            <PrintSALN saln={saln} show={showPrint} onClose={setShowPrint} principal={principal} hr={hr} />
         </>
     );
 };

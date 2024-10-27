@@ -46,8 +46,7 @@ export default function SearchedEmployee({
     leave,
 }: PageProps & { user: any; open: any; leave: number }) {
     const [activeTab, setActiveTab] = useState<string>(
-        // open && open === "certificate" ? "certificates" : "details"
-        "PDS"
+        open && open === "certificate" ? "certificates" : "details"
     );
     const { width } = useWindowSize();
     const [pdsData, setPdsData] = useState([])
@@ -65,7 +64,7 @@ export default function SearchedEmployee({
     }, []);
 
     return (
-        <Authenticated user={auth.user}>
+        <Authenticated userAuth={auth.user}>
             <Head title="Search" />
 
             <div className="mb-8">

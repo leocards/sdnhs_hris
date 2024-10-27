@@ -36,7 +36,7 @@ const initialValue = {
 
 type IFormNewPersonnel = z.infer<typeof NEWPERSONNELSCHEMA>;
 
-export default function NewPersonnel({ auth, user }: PageProps & { user?: any }) {
+export default function NewPersonnel({ auth, user, userRoles }: PageProps & { user?: any, userRoles: Array<string> }) {
     const form = reactForm<IFormNewPersonnel>({
         resolver: zodResolver(NEWPERSONNELSCHEMA),
         defaultValues: initialValue,
@@ -116,7 +116,7 @@ export default function NewPersonnel({ auth, user }: PageProps & { user?: any })
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
                     Personnel
@@ -145,7 +145,7 @@ export default function NewPersonnel({ auth, user }: PageProps & { user?: any })
 
                         <ContactInformation form={form} />
 
-                        <PersonnelInformation form={form} />
+                        <PersonnelInformation form={form} user_roles={userRoles} />
 
                         <UserCredentials form={form} />
 

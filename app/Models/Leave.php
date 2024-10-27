@@ -12,7 +12,8 @@ class Leave extends Model
 
     protected $fillable = [
         'user_id',
-        'date_of_filing',
+        'date_of_filing_from',
+        'date_of_filing_to',
         'salary',
         'leave_type',
         'leave_type_others',

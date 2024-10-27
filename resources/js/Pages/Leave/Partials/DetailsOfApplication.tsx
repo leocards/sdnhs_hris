@@ -7,14 +7,7 @@ import {
     FormMessage,
     FormProps,
 } from "@/Components/ui/form";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
-import { defaultDetailsOfLeave, LEAVETYPES } from "../types";
+import { LEAVETYPES } from "../types";
 import { Input } from "@/Components/ui/input";
 import { cn } from "@/lib/utils";
 import NumberInput from "@/Components/NumberInput";
@@ -28,7 +21,7 @@ import {
 } from "@/Components/ui/popover";
 import { format, isWeekend } from "date-fns";
 import { CalendarIcon, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
     SelectOption,
     SelectOptionContent,
@@ -156,7 +149,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                     <Input
                                         {...field}
                                         disabled={watchLeaveType !== "Others"}
-                                        className="form-input"
+                                        className="form-input disabled:!opacity-100 disabled:text-foreground/40"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -220,7 +213,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
-                                                        className="form-input"
+                                                        className="form-input disabled:!opacity-100 disabled:text-foreground/40"
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -263,7 +256,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
-                                                        className="form-input"
+                                                        className="form-input disabled:!opacity-100 disabled:text-foreground/40"
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -316,7 +309,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
-                                                        className="form-input"
+                                                        className="form-input disabled:!opacity-100 disabled:text-foreground/40"
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -360,7 +353,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                                 <FormControl>
                                                     <Input
                                                         {...field}
-                                                        className="form-input"
+                                                        className="form-input disabled:!opacity-100 disabled:text-foreground/40"
                                                     />
                                                 </FormControl>
                                                 <FormMessage />
@@ -570,7 +563,7 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                         <NumberInput
                                             {...field}
                                             disabled
-                                            className="form-input"
+                                            className="form-input disabled:!opacity-100 disabled:text-foreground/40"
                                         />
                                     </FormControl>
                                     <FormDescription className="text-xs">

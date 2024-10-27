@@ -26,6 +26,7 @@ import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { useToast } from "@/Components/ui/use-toast";
 import Processing from "@/Components/Processing";
+import { CalendarInput } from "../Profile/Partials/C1/FamilyBackground";
 
 type UploadCertificateProps = {
     show: boolean;
@@ -51,27 +52,23 @@ const SCHEMA = z.object({
         }).refine((file) => file.size <= 10 * 1024 * 1024, {
             message: "File size should not exceed 10MB",
         }),
-    daysRendered: z
-        .object(
-            {
-                from: z.date(),
-                to: z.date().optional(),
-            },
-            { required_error: requiredError("Days rendered") }
-        ).refine(
-            (dates) => {
-                if (dates.to) {
-                    dates.from.setHours(0, 0, 0, 0);
-                    dates.to.setHours(0, 0, 0, 0);
+    venue: z.string().min(1, requiredError("venue")),
+    organizer: z.string().min(1, requiredError("organizer")),
+    datefrom: z.date({required_error: requiredError("from")}),
+    dateto: z.date().optional()
+}).refine((dates) => {
+    if(dates.dateto) {
+        if (dates.dateto) {
+            dates.datefrom.setHours(0, 0, 0, 0);
+            dates.dateto.setHours(0, 0, 0, 0);
 
-                    return !(dates.to.getTime() === dates.from.getTime());
-                }
-                return true;
-            },
-            {
-                message: "Days rendered 'to' must not the same.",
-            }
-        ),
+            return !(dates.dateto.getTime() === dates.datefrom.getTime());
+        }
+        return true;
+    }
+},{
+    message: "Days rendered 'to' must not the same.",
+    path: ['dateto']
 })
 
 type IFormCertificate = z.infer<typeof SCHEMA>;
@@ -84,6 +81,8 @@ export default function UploadCertificate({
         resolver: zodResolver(SCHEMA),
         defaultValues: {
             certificateName: "",
+            venue: "",
+            organizer: ""
         },
     });
     const { toast } = useToast()
@@ -93,6 +92,7 @@ export default function UploadCertificate({
     const onFormSubmit = (form: IFormCertificate) => {
         setData(form);
         setIsSubmit(true);
+        console.log(form)
     };
 
     useEffect(() => {
@@ -137,7 +137,7 @@ export default function UploadCertificate({
 
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
-                            <div className="space-y-5">
+                            <div className="space-y-4">
                                 <FormField
                                     control={form.control}
                                     name="certificateName"
@@ -145,6 +145,42 @@ export default function UploadCertificate({
                                         <FormItem>
                                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                                 Certificate name
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="venue"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                                Venue
+                                            </FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    {...field}
+                                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="organizer"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
+                                                Organizer
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
@@ -183,31 +219,20 @@ export default function UploadCertificate({
                                         </FormItem>
                                     )}
                                 />
-                                <FormField
-                                    control={form.control}
-                                    name="daysRendered"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                                Days rendered
-                                            </FormLabel>
-                                            <Popover>
-                                                <CalendarPickerButton form={form} />
-                                                <PopoverContent
-                                                    className="w-auto p-0"
-                                                    align="start"
-                                                >
-                                                    <Calendar
-                                                        mode="range"
-                                                        selected={field.value}
-                                                        onSelect={field.onChange}
-                                                    />
-                                                </PopoverContent>
-                                            </Popover>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
+
+                                <div className="grid sm:grid-cols-2 gap-3">
+                                    <CalendarInput
+                                        form={form}
+                                        name={`datefrom`}
+                                        label="Date from"
+                                    />
+                                    <CalendarInput
+                                        form={form}
+                                        name={`dateto`}
+                                        label="Date to"
+                                        isRequired={false}
+                                    />
+                                </div>
                             </div>
 
                             <div className="flex items-center mt-8 pt-3">
@@ -231,48 +256,3 @@ export default function UploadCertificate({
         </Modal>
     );
 }
-
-const CalendarPickerButton: React.FC<{ form: any }> = ({ form }) => {
-    const daysRendered = form.watch("daysRendered");
-
-    return (
-        <PopoverTrigger
-            asChild
-            className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-        >
-            <FormControl>
-                <Button
-                    id="date"
-                    variant={"outline"}
-                    className={cn(
-                        "w-full pl-3 text-left justify-start font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
-                        !daysRendered?.from && "text-muted-foreground"
-                    )}
-                >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {daysRendered?.from ? (
-                        <span>
-                            {daysRendered?.to ? (
-                                <>
-                                    {format(
-                                        daysRendered?.from,
-                                        "LLL dd, y"
-                                    )}{" "}
-                                    -{" "}
-                                    {format(
-                                        daysRendered?.to,
-                                        "LLL dd, y"
-                                    )}
-                                </>
-                            ) : (
-                                format(daysRendered?.from, "LLL dd, y")
-                            )}
-                        </span>
-                    ) : (
-                        <span>Pick a date</span>
-                    )}
-                </Button>
-            </FormControl>
-        </PopoverTrigger>
-    );
-};

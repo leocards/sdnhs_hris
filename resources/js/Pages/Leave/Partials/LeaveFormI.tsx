@@ -6,13 +6,6 @@ import {
     FormMessage,
     FormProps,
 } from "@/Components/ui/form";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
 import { Input } from "@/Components/ui/input";
 import {
     Popover,
@@ -30,6 +23,8 @@ import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigge
 import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const LeaveFormI: React.FC<FormProps> = ({ form }) => {
+    const dateFiled = form.watch('dateOfFiling')
+
     return (
         <>
             <div className="">
@@ -47,7 +42,8 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring ",
+                                                "disabled:!opacity-100 disabled:text-foreground/40 disabled:!cursor-not-allowed disabled:!pointer-events-auto",
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}
@@ -60,11 +56,6 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                         </Button>
                                     </FormControl>
                                 </SelectOptionTrigger>
-                                <SelectOptionContent>
-                                    <SelectOptionItem value="Junior High School" />
-                                    <SelectOptionItem value="Senior High School" />
-                                    <SelectOptionItem value="Accounting" />
-                                </SelectOptionContent>
                             </SelectOption>
                             <FormMessage />
                         </FormItem>
@@ -78,26 +69,6 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                 <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3">
                     <FormField
                         control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel className="required">
-                                    First name
-                                </FormLabel>
-                                <FormControl>
-                                    <Input
-                                        {...field}
-                                        disabled
-                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-
-                    <FormField
-                        control={form.control}
                         name="lastName"
                         render={({ field }) => (
                             <FormItem>
@@ -108,13 +79,34 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                     <Input
                                         {...field}
                                         disabled
-                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm disabled:!opacity-100 disabled:text-foreground/40"
                                     />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
+
+                    <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="required">
+                                    First name
+                                </FormLabel>
+                                <FormControl>
+                                    <Input
+                                        {...field}
+                                        disabled
+                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm disabled:!opacity-100 disabled:text-foreground/40"
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+
                     <FormField
                         control={form.control}
                         name="middleName"
@@ -127,7 +119,7 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                     <Input
                                         {...field}
                                         disabled
-                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
+                                        className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm disabled:!opacity-100 disabled:text-foreground/40"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -159,9 +151,30 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                                     "text-muted-foreground"
                                             )}
                                         >
-                                            {field.value ? (
+                                            {/* {field.value ? (
                                                 <span>
-                                                    {format(field.value, "PPP")}
+                                                    { format(field.value, "PP") }
+                                                </span>
+                                            ) : (
+                                                <span>Pick a date</span>
+                                            )} */}
+                                            {dateFiled?.from ? (
+                                                <span>
+                                                    {dateFiled?.to ? (
+                                                        <>
+                                                            {format(
+                                                                dateFiled?.from,
+                                                                "LLL dd, y"
+                                                            )}{" "}
+                                                            -{" "}
+                                                            {format(
+                                                                dateFiled?.to,
+                                                                "LLL dd, y"
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        format(dateFiled?.from, "LLL dd, y")
+                                                    )}
                                                 </span>
                                             ) : (
                                                 <span>Pick a date</span>
@@ -175,7 +188,7 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                     align="start"
                                 >
                                     <Calendar
-                                        mode="single"
+                                        mode="range"
                                         selected={field.value}
                                         onSelect={field.onChange}
                                     />
@@ -200,6 +213,7 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                                             variant={"outline"}
                                             className={cn(
                                                 "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                "disabled:!opacity-100 disabled:text-foreground/40",
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}

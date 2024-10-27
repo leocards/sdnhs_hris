@@ -47,7 +47,37 @@ export const LEAVEFORMSCHEMA = z.object({
         .string({ required_error: requiredError("last name") })
         .min(1, requiredError("last name"))
         .default(""),
-    dateOfFiling: z.date({ required_error: requiredError("date of filing") }),
+    dateOfFiling: z.object({
+        from: z.date({ required_error: requiredError("date of filing") }),
+        to: z.date().optional().nullable(),
+    }).refine(
+        (dates) => {
+            // return error if the given dates are past of current dates
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            dates.from.setHours(0, 0, 0, 0);
+
+            return dates.from > today;
+        },
+        {
+            message: "Date of filing cannot be present or past dates.",
+        }
+    )
+    .refine(
+        (dates) => {
+            // validates if the date to of inclusive date is the same or not
+            if (dates.to) {
+                dates.from.setHours(0, 0, 0, 0);
+                dates.to.setHours(0, 0, 0, 0);
+
+                return !(dates.to.getTime() === dates.from.getTime());
+            }
+            return true;
+        },
+        {
+            message: "Date of filing must not be the same.",
+        }
+    ),
     position: z.enum(PERSONNELPOSITIONS, { required_error: requiredError("position") }),
     salary: z.string().min(1, requiredError("salary")),
     leavetype: z
@@ -164,7 +194,7 @@ export const LEAVEFORMSCHEMA = z.object({
                 return true;
             },
             {
-                message: "Inclusive dates must not the same.",
+                message: "Inclusive dates must not be the same.",
             }
         ),
     numDaysApplied: z.string().min(1, "Set the number of days applied for."),

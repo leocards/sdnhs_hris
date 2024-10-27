@@ -1,11 +1,9 @@
 import PersonalDataSheetPDF from "./PDSPDF";
 import Tabs from "@/Components/framer/Tabs";
 
-import { PDSPDFIsDownloadProvider } from "./PDSPDF/context";
 import { useEffect, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { Margin, usePDF } from "react-to-pdf";
-import { useReactToPrint } from "react-to-print";
 import { Button } from "@/Components/ui/button";
 import { Download } from "lucide-react";
 
@@ -26,7 +24,7 @@ const PersonalDataSheets: React.FC<Props> = ({ data }) => {
     const [activeTab, setActiveTab] = useState<pds_cs>(queryParams.get("c") as pds_cs ?? "C1");
 
     const download_pdf = usePDF({
-        method: "open",
+        method: "save",
         filename: "application-for-leave.pdf",
         page: { format: "A4", margin: Margin.MEDIUM },
     });

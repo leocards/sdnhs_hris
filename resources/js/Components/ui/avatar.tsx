@@ -46,17 +46,20 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-const AvatarProfile: React.FC<{ src?: string; name?: string; className?: string, fallbackSize?: number }> =
-({ src, name = "John Doe", className, fallbackSize = 16 }) => {
+const AvatarProfile: React.FC<{ src?: string; name?: string; className?: string, fallbackSize?: number, active?: boolean, activeStatusPosition?: string; }> =
+({ src, name = "John Doe", className, fallbackSize = 16, active, activeStatusPosition }) => {
     const userInitials = name.split(' ').map((ui) => ui[0]).join("").toUpperCase()
 
 	return (
-		<Avatar className={className}>
-			<AvatarImage src={src??"/storage/assets/profile.png"} alt="profile" />
-			<AvatarFallback>
-                <UserRound size={fallbackSize} />
-            </AvatarFallback>
-		</Avatar>
+		<div className={cn("size-fit", active && 'relative')}>
+            <Avatar className={cn(className)}>
+                <AvatarImage src={src??"/storage/assets/profile.png"} alt="profile" />
+                <AvatarFallback>
+                    <UserRound size={fallbackSize} />
+                </AvatarFallback>
+            </Avatar>
+            {active && (<span className={cn("absolute size-2 bg-green-500 z-10 rounded-full ring ring-white", activeStatusPosition??"bottom-0 right-px")} />)}
+        </div>
 	);
 };
 

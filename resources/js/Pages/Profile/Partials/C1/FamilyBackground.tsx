@@ -408,6 +408,9 @@ export const CalendarInput: React.FC<{
     disabled?: boolean;
     className?: string;
     asInput?: boolean;
+    withLabel?: boolean;
+    placeholder?: string;
+    align?: "center" | "end" | "start";
 }> = ({
     form,
     name,
@@ -416,6 +419,9 @@ export const CalendarInput: React.FC<{
     disabled,
     className,
     asInput,
+    withLabel = true,
+    placeholder,
+    align,
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
@@ -425,9 +431,9 @@ export const CalendarInput: React.FC<{
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel className={cn(isRequired && "required")}>
+                    {withLabel && <FormLabel className={cn(isRequired && "required")}>
                         {label}
-                    </FormLabel>
+                    </FormLabel>}
                     <div className="flex relative">
                         {asInput && (
                             <FormControl>
@@ -439,7 +445,7 @@ export const CalendarInput: React.FC<{
                                             ? format(field.value, "P")
                                             : field.value
                                     }
-                                    placeholder="mm/dd/yyyy"
+                                    placeholder={placeholder??"mm/dd/yyyy"}
                                 />
                             </FormControl>
                         )}
@@ -486,14 +492,14 @@ export const CalendarInput: React.FC<{
                                                         : field.value}
                                                 </span>
                                             ) : (
-                                                <span>mm/dd/yyyy</span>
+                                                <span>{placeholder??'mm/dd/yyyy'}</span>
                                             )}
                                             <CalendarIcon className="ml-auto size-5 opacity-50" />
                                         </Button>
                                     </FormControl>
                                 )}
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align="end">
+                            <PopoverContent className="w-auto p-0" align={align??"end"}>
                                 <Calendar
                                     mode="single"
                                     selected={field.value}

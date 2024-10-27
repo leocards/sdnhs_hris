@@ -6,13 +6,6 @@ import {
     FormMessage,
     FormProps,
 } from "@/Components/ui/form";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
 import NumberInput from "@/Components/NumberInput";
 import { PERSONNELPOSITIONS } from "../types";
 import { Input } from "@/Components/ui/input";
@@ -35,7 +28,7 @@ import {
 } from "@/Components/SelectOption";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 
-const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
+const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> = ({ form, user_roles }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
     const userRole = form.watch("userRole");
@@ -47,6 +40,9 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
             form.setValue("currentCredits", 0);
         } else if(userRole !== "HOD" && !!department) {
             form.setValue("department", undefined);
+            form.setValue("position", undefined);
+        } else {
+            form.setValue("position", undefined);
         }
     }, [userRole]);
 
@@ -180,8 +176,8 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                                     </FormControl>
                                 </SelectOptionTrigger>
                                 <SelectOptionContent>
-                                    <SelectOptionItem value="HR" />
-                                    <SelectOptionItem value="HOD" />
+                                    {!user_roles.includes('HR') && <SelectOptionItem value="HR" />}
+                                    {!user_roles.includes('HOD') && <SelectOptionItem value="HOD" />}
                                     <SelectOptionItem value="Teaching" />
                                     <SelectOptionItem value="Non-teaching" />
                                 </SelectOptionContent>
@@ -208,7 +204,7 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}
-                                            disabled={userRole === "HOD"}
+                                            disabled={userRole === "HOD" || !userRole}
                                         >
                                             <span>
                                                 {!field.value
@@ -220,10 +216,16 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                                     </FormControl>
                                 </SelectOptionTrigger>
                                 <SelectOptionContent>
-                                    <SelectOptionItem value="Junior High School" />
-                                    <SelectOptionItem value="Senior High School" />
-                                    <SelectOptionItem value="Accounting" />
-                                    <SelectOptionItem value="N/A" />
+                                    {userRole == "Teaching" ? (
+                                        <>
+                                            <SelectOptionItem value="Junior High School" />
+                                            <SelectOptionItem value="Senior High School" />
+                                        </>
+                                    ) : userRole == "Non-teaching" || userRole == "HR" ? (
+                                        <SelectOptionItem value="Accounting" />
+                                    ) : (
+                                        <SelectOptionItem value="N/A" />
+                                    )}
                                 </SelectOptionContent>
                             </SelectOption>
                             <FormMessage />
@@ -248,6 +250,7 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}
+                                            disabled={!userRole}
                                         >
                                             <span>
                                                 {field.value ??
@@ -258,8 +261,11 @@ const PersonnelInformation: React.FC<FormProps> = ({ form }) => {
                                     </FormControl>
                                 </SelectOptionTrigger>
                                 <SelectOptionContent>
-                                    <ScrollArea className="h-72">
-                                        {PERSONNELPOSITIONS.map(
+                                    <ScrollArea className="h-[14rem]">
+                                        {[...PERSONNELPOSITIONS].splice(
+                                            (userRole == "Teaching" ? 0 : (userRole == "Non-teaching" ? 7 : (userRole == "HOD" ? 10 : 13))),
+                                            (userRole == "Teaching" ? 7 : (userRole == "Non-teaching" ? 3 : (userRole == "HOD" ? 3 : 1)))
+                                        ).map(
                                             (pos, index) => (
                                                 <SelectOptionItem
                                                     key={index}

@@ -14,6 +14,8 @@ import {
     CLEAR_EDITOR_COMMAND,
 } from "lexical";
 import { ErrorBoundary as ReactErrorBoundary } from "react-error-boundary";
+import { Button } from "@/Components/ui/button";
+import { Send } from "lucide-react";
 
 const theme = {
     // Define any custom theme styling here
@@ -38,6 +40,28 @@ function TextContentListener({ onChange }: { onChange: CallableFunction }) {
 
     return null;
 }
+
+const SendButton: React.FC<{
+    message: string;
+    onMessageSend: CallableFunction;
+}> = ({ message, onMessageSend }) => {
+    const [editor] = useLexicalComposerContext();
+
+    const handleMessageSubmit = () => {
+        onMessageSend(message);
+        editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+    };
+
+    return (
+        <Button
+            size="icon"
+            className="shrink-0 absolute bottom-3 right-3 size-9"
+            onClick={handleMessageSubmit}
+        >
+            <Send className="size-4" />
+        </Button>
+    );
+};
 
 const EnterCommand = ({ onSubmit = () => {} }) => {
     const [editor] = useLexicalComposerContext();
@@ -69,7 +93,11 @@ const ErrorBoundary: React.FC<{ error: Error }> = ({ error }) => {
     return <div className="error">Something went wrong: {error.message}</div>;
 };
 
-const MessageBoxInput: React.FC = () => {
+type Props = {
+    onMessage: (message: string) => void;
+};
+
+const MessageBoxInput: React.FC<Props> = ({ onMessage }) => {
     const editorRef = React.useRef<LexicalEditor | null>(null);
     const [message, setMessage] = useState("");
 
@@ -81,13 +109,13 @@ const MessageBoxInput: React.FC = () => {
 
     return (
         <LexicalComposer initialConfig={initialConfig}>
-            <div className="w-full relative self-end border rounded-md overflow-hidden">
+            <div className="w-full relative self-end b order rounded-md overflow-hidden pr-14">
                 <PlainTextPlugin
                     contentEditable={
-                        <ContentEditable className="px-2 my-2 ring-inset relative outline-none max-h-28 overflow-y-auto rounded-scrollbar" />
+                        <ContentEditable className="px-4 my-[18px] ring-inset relative outline-none max-h-28 overflow-y-auto rounded-scrollbar" />
                     }
                     placeholder={
-                        <div className="placeholder absolute top-1/2 -translate-y-1/2 left-2 pointer-events-none opacity-60">
+                        <div className="placeholder absolute top-1/2 -translate-y-1/2 left-4 pointer-events-none opacity-60">
                             Aa
                         </div>
                     }
@@ -99,13 +127,14 @@ const MessageBoxInput: React.FC = () => {
                     )}
                 />
                 <OnChangePlugin onChange={onChange} />
-                <EnterCommand onSubmit={() => console.log(message)} />
+                <EnterCommand onSubmit={() => onMessage(message)} />
                 <TextContentListener
                     onChange={(text: string) => {
                         if (text.trim() != "") setMessage(text);
                         else setMessage(text.trim());
                     }}
                 />
+                <SendButton message={message} onMessageSend={onMessage} />
                 <ClearEditorPlugin />
                 <HistoryPlugin />
             </div>

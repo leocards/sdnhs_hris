@@ -10,10 +10,12 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Str;
 
 class ReportController extends Controller
 {
@@ -48,8 +50,55 @@ class ReportController extends Controller
                 ->orderBy('users.last_name')
                 ->select('performance_ratings.*')
                 ->get(),
-            "saln" => Saln::with(['user:id,first_name,last_name,middle_name,position,personnel_id'])->whereYear('created_at', $request->query('saln') ?? $this->date->format("Y"))->get(),
+            "saln" => Saln::with(['user' => function ($query) {
+                $query->select(['id','first_name','last_name','middle_name','position','personnel_id'])->with(['pdsPersonalInformation:id,user_id,tin']);
+            }])
+                ->whereYear('created_at', $request->query('saln') ?? $this->date->format("Y"))->get(),
+            "principal" => User::where('role', 'HOD')->first(['first_name', 'last_name', 'middle_name', 'position']),
+            "hr" => Auth::user()->role == "HR" ? ["name" => Auth::user()->name] : User::where('role', 'HR')->first(['first_name', 'last_name', 'middle_name', 'position']),
         ]);
+    }
+
+    public function getIPCRUnlisted()
+    {
+        return response()->json(
+            User::whereDoesntHave('performanceRatings', function ($query) {
+               $query->whereYear('created_at', $this->date->format('Y'));
+            })
+            ->with('performanceRatings:id')
+            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+        );
+    }
+
+    public function getSALNUnlisted()
+    {
+        return response()->json(
+            User::whereDoesntHave('saln', function ($query) {
+               $query->whereYear('created_at', $this->date->format('Y'));
+            })
+            ->with('saln:id')
+            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+        );
+    }
+
+    public function searchIPCR(Request $request)
+    {
+        $search = $request->search;
+
+        return response()->json(
+            User::when($search, function ($query) use ($search) {
+                $query->searchByFullName($search);
+            })->whereDoesntHave('performanceRatings', function ($query) {
+               $query->whereYear('created_at', $this->date->format('Y'));
+            })
+            ->with('performanceRatings:id')
+            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+        );
+    }
+
+    public function searchSALN()
+    {
+
     }
 
     public function upload_ipcr(Request $request)
@@ -74,11 +123,22 @@ class ReportController extends Controller
                         // check if there is number indicator in the data to verify if it is the valid content to add
                         if (is_int($value[0])) {
                             $searchName = strtolower($value[1]);
-                            $user = User::searchByFullName($searchName)->first(['id']);
+                            $searchName = explode(',', $searchName);
+                            $searchName = array_map(function($str) {
+                                // Remove spaces
+                                $str = preg_replace('/\b\w\.\s*/', '', $str);
+
+                                // Remove middle initial (like 'h.' or 'k.')
+                                return Str::trim($str);
+                            }, $searchName);
+
+                            $user = User::whereIn(DB::raw('first_name'), $searchName)
+                                ->whereIn(DB::raw('last_name'), $searchName)
+                                ->first(['id']);
 
                             // validate if user exist and check if it has already been added otherwise add the rating.
                             if ($user){
-                                $existIPCR = PerformanceRating::where('user_id', $user->id)->whereYear('created_at', Carbon::now()->format("Y"))->exists();
+                                $existIPCR = PerformanceRating::where('user_id', $user->id)->whereYear('created_at', $this->date->format("Y"))->exists();
                                 if(!$existIPCR)
                                     PerformanceRating::create([
                                         'user_id' => $user->id,
@@ -135,7 +195,7 @@ class ReportController extends Controller
 
                             // validate if user exist and check if it has already been added otherwise add the rating.
                             if ($user){
-                                $existIPCR = Saln::where('user_id', $user->id)->whereYear('created_at', Carbon::now()->format("Y"))->exists();
+                                $existIPCR = Saln::where('user_id', $user->id)->whereYear('created_at', $this->date->format("Y"))->exists();
                                 if(!$existIPCR)
                                     Saln::create([
                                         'user_id' => $user->id,
@@ -169,21 +229,21 @@ class ReportController extends Controller
 
     public function addIPCRRow(Request $request)
     {
-        $user = User::where('personnel_id', $request->add['personnelid'])->first();
+        $user = User::where('id', $request->add['personnelid']['id'])->first();
 
         if (!$user) {
-            return back()->withErrors("Personnel ID does not exist");
+            return back()->withErrors("Personnel does not exist");
         }
 
         $request->validate([
-            "add.personnelid" => [
+            "add.personnelid.name" => [
                 'required',
                 function ($attribute, $value, $fail) use ($user) {
                     if (PerformanceRating::where('user_id', $user->id)
                         ->whereYear('created_at', $this->date->format("Y"))
                         ->exists()
                     ) {
-                        $fail('The personnel ID already exists.');
+                        $fail('The personnel already exists.');
                     }
                 }
             ],
@@ -210,21 +270,21 @@ class ReportController extends Controller
 
     public function addSALNRow(Request $request)
     {
-        $user = User::where('personnel_id', $request->add['personnelid'])->first();
+        $user = User::where('personnel_id', $request->add['personnelid']['id'])->first();
 
         if (!$user) {
-            return back()->withErrors("Personnel ID does not exist");
+            return back()->withErrors("Personnel does not exist");
         }
 
         $request->validate([
-            "add.personnelid" => [
+            "add.personnelid.name" => [
                 'required',
                 function ($attribute, $value, $fail) use ($user) {
                     if (Saln::where('user_id', $user->id)
                         ->whereYear('created_at', $this->date->format("Y"))
                         ->exists()
                     ) {
-                        $fail('The personnel ID already exists.');
+                        $fail('The personnel already exists.');
                     }
                 }
             ],

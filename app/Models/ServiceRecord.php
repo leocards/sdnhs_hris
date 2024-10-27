@@ -13,6 +13,8 @@ class ServiceRecord extends Model
     protected $fillable = [
         'user_id',
         'file_name',
+        'venue',
+        'organizer',
         'file_path',
         'date_from',
         'date_to',

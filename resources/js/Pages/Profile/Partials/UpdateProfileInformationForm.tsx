@@ -73,14 +73,16 @@ interface User {
 
 type UserProps = { auth: { user: User } };
 
-export default function     UpdateProfileInformation({
+export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
     className = "",
+    userRoles,
 }: {
     mustVerifyEmail: boolean;
     status?: string;
     className?: string;
+    userRoles: string[];
 }) {
     const user = usePage<UserProps>().props.auth.user;
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -164,7 +166,7 @@ export default function     UpdateProfileInformation({
 
                     <ContactInformation form={form} />
 
-                    <PersonnelInformation form={form} />
+                    <PersonnelInformation form={form} user_roles={userRoles} />
 
                     {mustVerifyEmail && user.email_verified_at === null && (
                         <div>

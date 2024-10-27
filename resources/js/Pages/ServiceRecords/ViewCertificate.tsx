@@ -12,6 +12,8 @@ type Certificate = {
     date_from: string;
     date_to: string;
     credits: number;
+    venue: string;
+    organizer: string;
 } | null;
 
 export default function ViewCertificate(props: {
@@ -65,6 +67,14 @@ export default function ViewCertificate(props: {
                     <div>
                         <span className="font-semibold">Certificate Name:</span>{" "}
                         {serviceRecord?.file_name}
+                    </div>
+                    <div>
+                        <span className="font-semibold">Organizer:</span>{" "}
+                        {serviceRecord?.organizer}
+                    </div>
+                    <div>
+                        <span className="font-semibold">Venue:</span>{" "}
+                        {serviceRecord?.venue}
                     </div>
                     <div>
                         <span className="font-semibold">Date covered:</span>{" "}

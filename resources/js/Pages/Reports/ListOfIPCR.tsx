@@ -7,28 +7,34 @@ import { ChevronDown, PencilLine, Plus, Printer, Upload } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Filter from "@/Components/buttons/FilterButton";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import PrintIPCR from "./PrintIPCR";
 
 type Props = {
     ipcr: Array<IPCRType>;
+    principal: {name: string; position: string};
+    hr: {name: string};
 };
 
-const equivalent = (rate: number): string => {
-    if (rate >= 4.5 && rate <= 5) {
-        return "Outstanding";
-    } else if (rate >= 3.5 && rate <= 4.499) {
-        return "Very Satisfactory";
-    } else if (rate >= 2.5 && rate <= 3.499) {
-        return "Satisfactory";
-    } else if (rate >= 1.5 && rate <= 2.499) {
-        return "Moderate";
-    } else if (rate >= 1 && rate <= 1.499) {
-        return "Fair";
-    } else {
-        return "Poor";
-    }
+export const equivalent = (rate: number|null): string => {
+    if(rate)
+        if (rate >= 4.5 && rate <= 5) {
+            return "Outstanding";
+        } else if (rate >= 3.5 && rate <= 4.499) {
+            return "Very Satisfactory";
+        } else if (rate >= 2.5 && rate <= 3.499) {
+            return "Satisfactory";
+        } else if (rate >= 1.5 && rate <= 2.499) {
+            return "Moderate";
+        } else if (rate >= 1 && rate <= 1.499) {
+            return "Fair";
+        } else {
+            return "Poor";
+        }
+
+    return ""
 };
 
-const ListOfIPCR = ({ ipcr }: Props) => {
+const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
     const [showList, setShowList] = useState(true);
     const [showPrint, setShowPrint] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>("");
@@ -141,7 +147,7 @@ const ListOfIPCR = ({ ipcr }: Props) => {
                                                     {list.rating}
                                                 </div>
                                                 <div className="">
-                                                    {equivalent(+list.rating)}
+                                                    {equivalent(list.rating?+list.rating:null)}
                                                 </div>
                                                 <div className="flex items-center justify-center gap-2">
                                                     <Button
@@ -186,7 +192,7 @@ const ListOfIPCR = ({ ipcr }: Props) => {
                 />
             </div>
 
-            <IPCRPrint show={showPrint} onClose={setShowPrint} />
+            <PrintIPCR show={showPrint} onClose={setShowPrint} ipcr={ipcr}  principal={principal} hr={hr} />
         </div>
     );
 };

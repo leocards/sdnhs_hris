@@ -11,11 +11,18 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
+import { IPCRType } from "./Reports";
 
 export default function IPCRPrint({
+    principal,
+    hr,
+    ipcr,
     show,
     onClose,
 }: {
+    ipcr: Array<IPCRType>;
+    principal: {name: string; position: string};
+    hr: {name: string};
     show: boolean;
     onClose: (close: false) => void;
 }) {
@@ -24,7 +31,7 @@ export default function IPCRPrint({
     const [pageSize, setPageSize] = useState<{
         size: PageSize;
         selectedSize: string;
-    }>({ size: "LETTER", selectedSize: "LETTER" });
+    }>({ size: "A4", selectedSize: "A4" });
     const [showSelectSize, setShowSelectSize] = useState<boolean>(false);
 
     useEffect(() => {
@@ -138,7 +145,7 @@ export default function IPCRPrint({
                     className="h-[100vh] rounded-md"
                     width={size}
                 >
-                    <IPCRPDF size={pageSize.size} />
+                    <IPCRPDF size={pageSize.size} ipcr={ipcr} principal={principal} hr={hr} />
                 </PDFViewer>
             </div>
         </Modal>

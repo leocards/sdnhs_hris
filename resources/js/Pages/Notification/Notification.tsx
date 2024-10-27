@@ -10,6 +10,7 @@ import {
     MenubarTrigger,
 } from "@/Components/ui/menubar";
 import { useToast } from "@/Components/ui/use-toast";
+import { useNotification } from "@/hooks/NotificationProvider";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
 import { PageProps, PaginateData } from "@/types";
@@ -33,6 +34,8 @@ export default function Notification({ auth, notifications }: Props) {
         data: any;
     }>({ index: 0, data: null });
 
+    const { unreadNotifications, setUnreadNotifications } = useNotification();
+
     const getData = async (nav: string) => {
         setLoading(true);
         if (nav === "all") setData(notifications);
@@ -55,6 +58,9 @@ export default function Notification({ auth, notifications }: Props) {
                 },
             })
         );
+        
+        if(!notif.viewed)
+            setUnreadNotifications(-1)
     };
 
     const markAsReadNotification = (
@@ -69,6 +75,10 @@ export default function Notification({ auth, notifications }: Props) {
                     indx === index ? { ...item, viewed: 1 } : item
                 ),
             });
+
+            if(unreadNotifications > 0)
+                setUnreadNotifications(-1)
+
             window.axios
                 .get(route("notification.masrkRead", [id]))
                 .catch((error) => {
@@ -142,7 +152,7 @@ export default function Notification({ auth, notifications }: Props) {
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">
                     Notification

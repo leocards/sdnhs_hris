@@ -47,8 +47,8 @@ class ServiceRecordController extends Controller
         try {
             $path = $request->file('file')->store('public/certificates');
 
-            $from = Carbon::parse($request->daysRendered['from']);
-            $to = $request->daysRendered['to'] ? Carbon::parse($request->daysRendered['to']) : null;
+            $from = Carbon::parse($request->datefrom);
+            $to = $request->dateto ? Carbon::parse($request->dateto) : null;
             $credits = $to ? ($from->diffInDays($to) + 1) : 1;
 
             User::whereId(Auth::id())->update(['leave_credits' => (Auth::user()->leave_credits + $credits)]);
@@ -56,14 +56,20 @@ class ServiceRecordController extends Controller
             ServiceRecord::create([
                 'user_id' => Auth::id(),
                 'file_name' => $request->certificateName,
+                'venue' => $request->venue,
+                'organizer' => $request->organizer,
                 'file_path' => $path,
                 'date_from' => $from->format('Y-m-d'),
                 'date_to' => $to ? $to->format('Y-m-d') : null,
                 'credits' => $credits
             ]);
 
+            $emails_to_send = collect([]);
+
+            // if the notifier is not the HR or Principal
+            // send notification to HR or Principal
             if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
-                $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
+                $receivers = User::whereIn('role', ['HR'])->get(['id', 'email', 'enable_email_notification']);
                 foreach ($receivers as $value) {
                     Notifications::create([
                         'user_id' => $value['id'],
@@ -73,24 +79,37 @@ class ServiceRecordController extends Controller
                         'go_to_link' => route('general-search.view', [Auth::id()])
                     ]);
                 }
+                $emails_to_send->push(...$receivers);
             } else {
-                $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
+                $receivers = User::whereIn('role', ['HR'])->where('id', '!=', Auth::id())->get(['id', 'email', 'enable_email_notification']);
                 foreach ($receivers as $value) {
                     Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
-                        'message' => " has uploaded a certificate.",
+                        'message' => " has uploaded \"".$request->certificateName."\" certificate.",
                         'type' => 'certificate',
                         'go_to_link' => route('general-search.view', [Auth::id()])
                     ]);
                 }
+                $emails_to_send->push(...$receivers);
             }
 
             DB::commit();
 
             $userSender = User::find(Auth::id());
 
-            Mail::queue(new ProfileUpdate("recently uploaded a service record: " . $request->certificateName, ["name" => $userSender->name(), "position" => $userSender->position], Auth::user()->email));
+            $emails_to_send->each(function ($emails) use ($request, $userSender) {
+                if($emails['enable_email_notification'])
+                    Mail::to($emails['email'])
+                    ->queue(
+                        new ProfileUpdate(
+                            "recently uploaded a service certificate: " . $request->certificateName,
+                            ["name" => $userSender->name(),
+                            "position" => $userSender->position],
+                            Auth::user()->email
+                        )
+                    );
+            });
 
             return back()->with('success', 'Certificate uploaded successfully.');
         } catch (\Throwable $th) {

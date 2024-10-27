@@ -92,7 +92,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[10px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[0].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[0]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -107,7 +107,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[10px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[0].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[0]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -129,7 +129,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[7px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[1].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[1]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -144,7 +144,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[7px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[1].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[1]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -165,7 +165,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 checkIfDownLoad("h-[20px]", "h-[17px]")
                             )}
                         >
-                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[1].details}</div>
+                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[1]?.details}</div>
                         </TextCenter>
                     </div>
                 </div>
@@ -203,7 +203,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 <div className="flex items-center gap-2">
                                     <div className="border-2 border-black size-[11px]">
                                         <div className={cn('font-bold text-[6pt] leading-[10px] px-px', checkIfDownLoad('-mt-1'))}>
-                                            {(questions && questions[2].choices == true) && (<span>&#x2714;</span>)}
+                                            {(questions && questions[2]?.choices == true) && (<span>&#x2714;</span>)}
                                         </div>
                                     </div>
                                     <div
@@ -218,7 +218,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 <div className="flex items-center gap-2">
                                     <div className="border-2 border-black size-[11px]">
                                         <div className={cn('font-bold text-[6pt] leading-[10px] px-px', checkIfDownLoad('-mt-1'))}>
-                                            {(questions && questions[2].choices == false) && (<span>&#x2714;</span>)}
+                                            {(questions && questions[2]?.choices == false) && (<span>&#x2714;</span>)}
                                         </div>
                                     </div>
                                     <div
@@ -236,7 +236,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 If YES, give details:
                             </div>
                             <TextCenter className="border-b-2 border-black w-[17.5rem] ml-3 !justify-start h-[24px]">
-                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[2].details}</div>
+                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[2]?.details}</div>
                             </TextCenter>
                         </div>
                         {/* 35 b */}
@@ -245,7 +245,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 <div className="flex items-center gap-2">
                                     <div className="border-2 border-black size-[11px]">
                                         <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                            {(questions && questions[3].choices == true) && (<span>&#x2714;</span>)}
+                                            {(questions && questions[3]?.choices == true) && (<span>&#x2714;</span>)}
                                         </div>
                                     </div>
                                     <div
@@ -260,7 +260,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 <div className="flex items-center gap-2">
                                     <div className="border-2 border-black size-[11px]">
                                         <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                            {(questions && questions[3].choices == false) && (<span>&#x2714;</span>)}
+                                            {(questions && questions[3]?.choices == false) && (<span>&#x2714;</span>)}
                                         </div>
                                     </div>
                                     <div
@@ -287,7 +287,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                         checkIfDownLoad("h-[20px]", "h-[17px]")
                                     )}
                                 >
-                                    <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[3].date_filed}</div>
+                                    <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[3]?.date_filed}</div>
                                 </TextCenter>
                             </div>
                             <div className="flex pr-2.5">
@@ -300,7 +300,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                         checkIfDownLoad("h-[20px]", "h-[17px]")
                                     )}
                                 >
-                                    <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[3].case_status}</div>
+                                    <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[3]?.case_status}</div>
                                 </TextCenter>
                             </div>
                         </div>
@@ -336,7 +336,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[4].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[4]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -351,7 +351,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[4].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[4]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -379,7 +379,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 checkIfDownLoad("h-[22px]", "h-[20px]")
                             )}
                         >
-                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[4].details}</div>
+                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[4]?.details}</div>
                         </TextCenter>
                     </div>
                 </div>
@@ -421,7 +421,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[5].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[5]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -436,7 +436,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[5].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[5]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -464,7 +464,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 checkIfDownLoad("h-[23px]", "h-[20px]")
                             )}
                         >
-                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[5].details}</div>
+                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[5]?.details}</div>
                         </TextCenter>
                     </div>
                 </div>
@@ -510,7 +510,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[6].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[6]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -525,7 +525,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[7].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[7]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -549,7 +549,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 If YES, give details:
                             </div>
                             <TextCenter className="border-b-2 border-black w-[17.5rem] ml-3 h-[20px] !justify-start">
-                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[6].details}</div>
+                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[6]?.details}</div>
                             </TextCenter>
                         </div>
 
@@ -564,7 +564,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[7].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[7]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div className="text-[7pt]">YES</div>
@@ -572,7 +572,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[7].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[7]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div className="text-[7pt]">NO</div>
@@ -584,7 +584,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 If YES, give details:
                             </div>
                             <TextCenter className="border-b-2 border-black w-[17.5rem] ml-3 h-[20px] !justify-start">
-                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[7].details}</div>
+                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[7]?.details}</div>
                             </TextCenter>
                         </div>
                     </div>
@@ -618,7 +618,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[8].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[8]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -633,7 +633,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[8].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[8]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -656,7 +656,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 checkIfDownLoad("h-[22px]", "h-[17px]")
                             )}
                         >
-                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[8].details}</div>
+                            <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[8]?.details}</div>
                         </TextCenter>
                     </div>
                 </div>
@@ -704,7 +704,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[9].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[9]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -719,7 +719,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[9].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[9]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -743,7 +743,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 If YES, please specify:
                             </div>
                             <TextCenter className="border-b-2 border-black w-[17.5rem] ml-3 h-[20px] !justify-start">
-                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[9].details}</div>
+                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[9]?.details}</div>
                             </TextCenter>
                         </div>
 
@@ -756,7 +756,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[10].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[10]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -771,7 +771,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[10].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[10]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -795,7 +795,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 If YES, please specify ID No:
                             </div>
                             <TextCenter className="border-b-2 border-black w-[17.5rem] ml-3 h-[20px] !justify-start">
-                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[10].details}</div>
+                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[10]?.details}</div>
                             </TextCenter>
                         </div>
 
@@ -808,7 +808,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[11].choices == true) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[11]?.choices == true) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -823,7 +823,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                             <div className="flex items-center gap-2">
                                 <div className="border-2 border-black size-[11px]">
                                     <div className={cn('font-bold text-[6pt] leading-[8px] px-px', checkIfDownLoad('-mt-1'))}>
-                                        {(questions && questions[11].choices == false) && (<span>&#x2714;</span>)}
+                                        {(questions && questions[11]?.choices == false) && (<span>&#x2714;</span>)}
                                     </div>
                                 </div>
                                 <div
@@ -847,7 +847,7 @@ const C4pdf: React.FC<Props> = ({ questions, reference, government }) => {
                                 If YES, please specify ID No:
                             </div>
                             <TextCenter className="border-b-2 border-black w-[17.5rem] ml-3 h-[20px] !justify-start">
-                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[11].details}</div>
+                                <div className={cn('', checkIfDownLoad('-mt-2.5'))}>{questions && questions[11]?.details}</div>
                             </TextCenter>
                         </div>
                     </div>

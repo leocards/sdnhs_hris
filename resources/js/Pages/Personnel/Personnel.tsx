@@ -32,6 +32,7 @@ import PaginationButton from "@/Components/PaginationButton";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import DataList from "@/Components/DataList";
 import DeletePersonnelModel from "./DeletePersonnelModel";
+import { useMessage } from "@/hooks/MessageProvider";
 
 interface PersonnelProps extends PageProps {
     pageData: PaginateData;
@@ -66,6 +67,7 @@ function Personnel({ auth, pageData, statistics }: PersonnelProps) {
     const [showDeletePersonnel, setShowDeletePersonnel] = useState<boolean>(false)
     const [selectedPersonnel, setSelectedPersonnel] = useState<any>(null)
     const { data, setList, pages, clearList, setLoading, loading } = usePageList()
+    const { activeUsers } = useMessage()
 
     const navigateTo = (nav: string) => {
         router.get(route(nav));
@@ -97,9 +99,6 @@ function Personnel({ auth, pageData, statistics }: PersonnelProps) {
             setShowPersonnelDetails(true)
         } else if(action === "messages") {
             router.get(route('messages') + `?user=${id}`)
-        } else if(action === "delete") {
-            setSelectedPersonnel(id)
-            setShowDeletePersonnel(true)
         }
     };
 
@@ -122,7 +121,7 @@ function Personnel({ auth, pageData, statistics }: PersonnelProps) {
 
     return (
         <Authenticated
-            user={auth.user}
+            userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">
                     Personnel
@@ -229,6 +228,7 @@ function Personnel({ auth, pageData, statistics }: PersonnelProps) {
                         <PersonnelRow
                             key={index}
                             user={data}
+                            active={!!(activeUsers.find((au) => au.id === data.id))}
                             onClick={onClickMenu}
                             auth={auth.user.role}
                         />
@@ -239,16 +239,17 @@ function Personnel({ auth, pageData, statistics }: PersonnelProps) {
             </div>
 
             <UploadPDS show={showUploadPDS} onClose={setShowUploadPDS} user={selectedPersonnel} />
-            <ViewPDS show={showPDS} onClose={setShowPDS} />
+            <ViewPDS show={showPDS} onClose={setShowPDS} authId={selectedPersonnel?.id} />
             <PersonnelDetails user={selectedPersonnel} show={showPersonnelDetails} onClose={setShowPersonnelDetails} onViewPDS={setShowPDS} />
             <DeletePersonnelModel user={selectedPersonnel} show={showDeletePersonnel} onClose={setShowDeletePersonnel} />
         </Authenticated>
     );
 }
 
-const PersonnelRow: React.FC<PersonnelListProps & { auth: string }> = ({
+const PersonnelRow: React.FC<PersonnelListProps & { auth: string, active: boolean }> = ({
     user,
     auth,
+    active,
     onClick,
 }) => {
     return (
@@ -256,7 +257,7 @@ const PersonnelRow: React.FC<PersonnelListProps & { auth: string }> = ({
             <div className="grid grid-cols-[1fr,1fr,3rem] [@media(min-width:642px)]:grid-cols-[repeat(4,minmax(6rem,1fr)),8rem,3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1">
                 <div className="">
                     <div className="flex items-center gap-2">
-                        <AvatarProfile src={user.avatar} className="size-8" />
+                        <AvatarProfile src={user.avatar} className="size-8" active={active} />
                         <div className="line-clamp-1 break-words">
                             {user.first_name + " " + user.last_name}
                         </div>
@@ -316,6 +317,7 @@ const PersonnelRow: React.FC<PersonnelListProps & { auth: string }> = ({
                                             />
                                             <div>Edit</div>
                                         </MenubarItem>
+                                        <MenubarSeparator />
                                         <MenubarItem
                                             className="px-4 gap-5"
                                             onClick={() =>
@@ -330,17 +332,6 @@ const PersonnelRow: React.FC<PersonnelListProps & { auth: string }> = ({
                                         </MenubarItem>
                                     </Fragment>
                                 )}
-                                <MenubarSeparator />
-                                <MenubarItem
-                                    className="px-4 gap-5 !text-destructive hover:!bg-destructive/10 dark:hover:!bg-destructive/50 dark:!text-red-500"
-                                    onClick={() => onClick && onClick("delete", user)}
-                                >
-                                    <Trash2
-                                        className="size-5"
-                                        strokeWidth={1.8}
-                                    />
-                                    <div>Delete</div>
-                                </MenubarItem>
                             </MenubarContent>
                         </MenubarMenu>
                     </Menubar>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotificationEvent;
 use App\Http\Requests\LeaveRequest;
 use App\Mail\LeaveApproval;
 use App\Mail\ProfileUpdate;
@@ -101,13 +102,15 @@ class LeaveController extends Controller
         DB::beginTransaction();
         try {
 
-            if (Auth::user()->leave_credits < (int) $request->numDaysApplied && $request->leavetype['type'] !== "Maternity Leave") {
-                throw new Exception("You don't have enough leave credits.", 1);
-            }
+            if($request->leavetype['type'] !== "Maternity Leave")
+                if (Auth::user()->leave_credits < (int) $request->numDaysApplied) {
+                    throw new Exception("You don't have enough leave credits.", 1);
+                }
 
             $leave = Leave::create([
                 'user_id' => Auth::id(),
-                'date_of_filing' => Carbon::parse($request->dateOfFiling)->format('Y-m-d'),
+                'date_of_filing_from' => Carbon::parse($request->dateOfFiling['from'])->format('Y-m-d'),
+                'date_of_filing_to' => $request->dateOfFiling['to'] ? Carbon::parse($request->dateOfFiling['to'])->format('Y-m-d') : null,
                 'salary' => $request->salary,
                 'leave_type' => $request->leavetype['type'],
                 'leave_type_others' => $request->leavetype['type'] === "Others" ? $request->leavetype['others'] : null,
@@ -163,27 +166,36 @@ class LeaveController extends Controller
                 // 'disapproved' => $request->disapprovedDueTo
             // ]);
 
+            // Not hr or principal user
             if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
                 $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
                 foreach ($receivers as $value) {
-                    Notifications::create([
+                    $notification = Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
                         'message' => " has submitted an Application for leave.",
                         'type' => 'leave',
                         'go_to_link' => route('leave.view', [$leave->id, Auth::id()])
                     ]);
+
+                    $notification->load(['sender']);
+
+                    broadcast(new SendNotificationEvent($notification, $value['id']));
                 }
             } else {
                 $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
                 foreach ($receivers as $value) {
-                    Notifications::create([
+                    $notification = Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
                         'message' => " has submitted an Application for leave.",
                         'type' => 'leave',
                         'go_to_link' => route('leave.view', [$leave->id, Auth::id()])
                     ]);
+
+                    $notification->load(['sender']);
+
+                    broadcast(new SendNotificationEvent($notification, $value['id']));
                 }
             }
 
@@ -220,11 +232,13 @@ class LeaveController extends Controller
         DB::beginTransaction();
         try {
 
+            $notificationResponse = null;
+
             if ($request->respond === "approved") {
                 if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Approved";
 
-                    Notifications::create([
+                    $notificationResponse = Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
                         'message' => ': Your application for leave has been approved by the HR.',
@@ -235,7 +249,7 @@ class LeaveController extends Controller
                 } else {
                     $leave->principal_status = "Approved";
 
-                    Notifications::create([
+                    $notificationResponse = Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
                         'message' => ': Your application for leave has been approved by the Principal.',
@@ -250,7 +264,7 @@ class LeaveController extends Controller
                     $leave->hr_status = "Rejected";
                     $leave->hr_reject_msg = $request->message;
 
-                    Notifications::create([
+                    $notificationResponse = Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
                         'message' => ': Your application for leave has been rejected by the HR.',
@@ -261,7 +275,7 @@ class LeaveController extends Controller
                     $leave->principal_status = "Rejected";
                     $leave->principal_reject_msg = $request->message;
 
-                    Notifications::create([
+                    $notificationResponse = Notifications::create([
                         'user_id' => $user->id,
                         'from_user_id' => Auth::id(),
                         'message' => ': Your application for leave has been rejected by the HR.',
@@ -275,8 +289,14 @@ class LeaveController extends Controller
             /* Send email */
             $userSender = User::find(Auth::id());
 
-            Mail::to($user->email)
-                ->queue(new LeaveApproval(["name" => $userSender->name(), "position" => $userSender->position], $user->name(), $request->query('respond'), $request->message));
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
+            }
+
+            if($userSender->role != "HR" && $user->enable_email_notification)
+                Mail::to($user->email)
+                    ->queue(new LeaveApproval(["name" => $userSender->name(), "position" => $userSender->position], $user->name(), $request->query('respond'), $request->message));
 
             DB::commit();
 
@@ -311,10 +331,12 @@ class LeaveController extends Controller
                     'file_path' => $path,
                 ]);
 
+                $notification = null;
+
                 if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
                     $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
                     foreach ($receivers as $value) {
-                        Notifications::create([
+                        $notification = Notifications::create([
                             'user_id' => $value['id'],
                             'from_user_id' => Auth::id(),
                             'message' => ": has uploaded medical certificate.",
@@ -325,7 +347,7 @@ class LeaveController extends Controller
                 } else {
                     $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
                     foreach ($receivers as $value) {
-                        Notifications::create([
+                        $notification = Notifications::create([
                             'user_id' => $value['id'],
                             'from_user_id' => Auth::id(),
                             'message' => ": has uploaded medical certificate.",
@@ -336,6 +358,11 @@ class LeaveController extends Controller
                 }
 
                 $userSender = User::find(Auth::id());
+
+                if($notification) {
+                    $notification->load(['sender']);
+                    broadcast(new SendNotificationEvent($notification, $notification->user_id));
+                }
 
                 Mail::to(env("MAIL_FROM_ADDRESS"))
                     ->queue(new ProfileUpdate("recently uploaded a medical certificate.", ["name" => $userSender->name(), "position" => $userSender->position], Auth::user()->email));

@@ -1,9 +1,10 @@
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, ReactNode } from "react";
 
 type Props = {
     empty: boolean;
     loading?: boolean;
     emptyResults?: string;
+    customEmpty?: string | ReactNode
 };
 
 const DataList = ({
@@ -19,7 +20,7 @@ const DataList = ({
                     <div>Loading...</div>
                 </div>
             ) : (empty && !emptyResults) ? (
-                <div className="text-center py-4 opacity-65">No records</div>
+                <div className="text-center py-4 opacity-65">{props.customEmpty??'No records'}</div>
             ) : (empty && emptyResults) ? (
                 <div className="text-center py-4 opacity-65">
                     No results found for "{emptyResults}"

@@ -38,6 +38,9 @@ class User extends Authenticatable
         'position',
         'date_hired',
         'leave_credits',
+        'enable_email_notification',
+        'enable_email_message_notification',
+        'enable_email_note_reminder',
         'avatar',
         'password',
     ];
@@ -94,12 +97,12 @@ class User extends Authenticatable
 
     public function getNameAttribute()
     {
-        return $this->first_name . ' ' . ($this->middle_name ? substr($this->middle_name, 0, 1) . '. ' : ' ') . $this->last_name;
+        return Str::of($this->first_name . ' ' . ($this->middle_name ? substr($this->middle_name, 0, 1) . '. ' : ''). '' . $this->last_name)->replaceMatches('/\s+/', ' ');
     }
 
     public function employeeListName()
     {
-        return Str::upper($this->last_name. ', '. $this->first_name. ' '. substr($this->middle_name, 0, 1).'. ');
+        return Str::rtrim(Str::upper($this->last_name. ', '. $this->first_name. (substr($this->middle_name, 0, 1) ? ' '. substr($this->middle_name, 0, 1) .'. ' : '')));
     }
 
     protected function getEmployeeListNameAttribute()
@@ -109,13 +112,19 @@ class User extends Authenticatable
 
     public function scopeSearchByFullName($query, $name)
     {
-        return $query->where(DB::raw("LOWER(CONCAT(last_name, ', ', first_name, ' ', LEFT(middle_name, 1), '.'))"), 'LIKE', "%{$name}%");
+        $name = strtolower($name);
+        return $query->where(DB::raw("LOWER(CONCAT(last_name, ', ', first_name))"), 'LIKE', "%{$name}%");
     }
 
     public function scopeSearchByLastAndFirstName($query, $lname, $fname)
     {
         return $query->where(DB::raw("LOWER(last_name)"), 'LIKE', "%{$lname}%")
             ->where(DB::raw("LOWER(first_name)"), 'LIKE', "%{$fname}%");
+    }
+
+    public function leaveApplications()
+    {
+        return $this->hasMany(Leave::class);
     }
 
     public function getLeaveRendered()
@@ -126,6 +135,16 @@ class User extends Authenticatable
     public function certificates()
     {
         return $this->hasMany(ServiceRecord::class);
+    }
+
+    public function performanceRatings()
+    {
+        return $this->hasMany(PerformanceRating::class);
+    }
+
+    public function saln()
+    {
+        return $this->hasMany(Saln::class);
     }
 
     public function pdsPersonalInformation()
@@ -181,5 +200,20 @@ class User extends Authenticatable
     public function pdsGovernment()
     {
         return $this->hasOne(PDSGovernmentId::class);
+    }
+
+    public function senderMessage()
+    {
+        return $this->hasMany(Message::class, 'sender_id', 'id');
+    }
+
+    public function receiverMessage()
+    {
+        return $this->hasMany(Message::class, 'receiver_id', 'id');
+    }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id', 'id');
     }
 }

@@ -7,7 +7,7 @@ import {
     Image,
     Font,
 } from "@react-pdf/renderer";
-import { IPCR, SALN } from "./Reports";
+import { IPCR, IPCRType, SALN } from "./Reports";
 import { PageSize } from "@react-pdf/types";
 
 Font.register({
@@ -109,8 +109,15 @@ const styles = StyleSheet.create({
     },
 });
 
-export default function IPCRPDF({size}: {size: PageSize}) {
+type Props = {
+    size: PageSize;
+    principal: {name: string; position: string};
+    hr: {name: string;}
+    ipcr: Array<IPCRType>;
+}
 
+export default function IPCRPDF({size, hr, ipcr, principal}: Props) {
+    console.log(principal, hr)
     return (
         <Document title="IPCR">
             <Page size={size} style={styles.body}>
@@ -157,7 +164,7 @@ export default function IPCRPDF({size}: {size: PageSize}) {
                 </Table>
 
                 <Table style={{borderTop: 0}}>
-                    {IPCR.map((list, index) => (
+                    {[...IPCR].map((list, index) => (
                         <Row key={index} style={{borderTop: 1}}>
                             <Cell style={{borderRight: 1, flex: 1, justifyContent: "center", maxWidth: 30, paddingVertical: 4, paddingHorizontal: 2 }}>
                                 <Text style={[styles.textCenter]}>{++index}</Text>
@@ -176,6 +183,36 @@ export default function IPCRPDF({size}: {size: PageSize}) {
                             </Cell>
                         </Row>
                     ))}
+                </Table>
+
+
+                <Table style={{ border: 0, marginTop: 20 }}>
+                    <Row>
+                        <Cell>
+                            <Text>Prepared by:</Text>
+                        </Cell>
+                        <Cell style={{ flex: 1, justifyContent: "flex-end" }}>
+                            <Text style={{ textAlign: "right", width: 220 }}>Certified Correct and Approved by:</Text>
+                        </Cell>
+                    </Row>
+                    <Row style={{ marginTop: 25 }}>
+                        <Cell>
+                            <View style={{borderBottom: 1, width: 200}}>
+                                <Text style={{textAlign: "center", fontFamily: "Inter-SemiBold"}}>{hr?.name??""}</Text>
+                            </View>
+                            <View style={{width: 200}}>
+                                <Text style={{textAlign: "center"}}>School HR</Text>
+                            </View>
+                        </Cell>
+                        <Cell style={{width: 130 }}>
+                            <View style={{borderBottom: 1}}>
+                                <Text style={{textAlign: "center"}}>{principal?.name??""}</Text>
+                            </View>
+                            <View>
+                                <Text style={{textAlign: "center"}}>{principal?.position??""}</Text>
+                            </View>
+                        </Cell>
+                    </Row>
                 </Table>
             </Page>
         </Document>

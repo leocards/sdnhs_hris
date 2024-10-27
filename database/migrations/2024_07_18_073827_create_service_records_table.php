@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->string('file_name');
+            $table->string('venue', 500);
+            $table->string('organizer', 1000);
             $table->string('file_path', 1000);
             $table->date('date_from')->nullable();
             $table->date('date_to')->nullable();

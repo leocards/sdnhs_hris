@@ -27,13 +27,15 @@ class PersonnelController extends Controller
                 'shs' => User::where('department', 'Senior High School')->count(),
                 'accounting' => User::where('department', 'Accounting')->count(),
                 'admin' => User::where('role', 'HR')->count()
-            ])
+            ]),
         ]);
     }
 
     public function create()
     {
-        return Inertia::render('Personnel/NewPersonnel');
+        return Inertia::render('Personnel/NewPersonnel', [
+            'userRoles' => User::where('role', 'HOD')->orWhere('role', 'HR')->pluck('role')
+        ]);
     }
 
     public function edit(User $user)
@@ -154,7 +156,8 @@ class PersonnelController extends Controller
                 'leave_credits' => $request->userRole != "HOD" ? $request->currentCredits : null,
                 'date_hired' => Carbon::parse($request->date_hired)->format('Y-m-d'),
                 'password' => Hash::make($request->password),
-                'avatar' => '/storage/assets/profile.png'
+                'avatar' => '/storage/assets/profile.png',
+                'enable_email_notification' => true
             ]);
 
             DB::commit();

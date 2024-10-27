@@ -17,12 +17,16 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import { useToast } from "@/Components/ui/use-toast";
+import ComboBox from "@/Components/ComboBox";
 
 const UPLOADSCHEMA = z
     .object({
         add: z
             .object({
-                personnelid: z.string(),
+                personnelid: z.object({
+                    id: z.number().default(0),
+                    name: z.string()
+                }),
                 rating: z.string(),
             })
             .partial(),
@@ -44,10 +48,10 @@ const UPLOADSCHEMA = z
     })
     .superRefine((data, ctx) => {
         if (data.isAdd) {
-            if (!data.add.personnelid) {
+            if (!data.add.personnelid?.name) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: requiredError("personnel ID"),
+                    message: requiredError("personnel"),
                     path: ["add.personnelid"],
                 });
             } else if (!data.add.rating) {
@@ -78,18 +82,24 @@ export default function UploadIPCR(props: {
 }) {
     const { show, isAdd = false, onClose } = props;
     const [isFormAdd, setIsFormAdd] = useState<boolean>(false)
+    const [initialListIPCR, setInitialListIPCR] = useState<Array<any>>([])
 
     const form = reactForm<IFormUpload>({
         resolver: zodResolver(UPLOADSCHEMA),
     });
 
-    const { setData, data, post, processing, reset } = useForm<IFormUpload>();
+    const { setData, post, processing, reset } = useForm<IFormUpload>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const { toast } = useToast()
 
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
         setData(formData)
+        if(isAdd) {
+            let filtered = initialListIPCR.filter((ilipcr) => ilipcr.id !== formData.add.personnelid?.id)
+
+            setInitialListIPCR(filtered)
+        }
     };
 
     useEffect(() => {
@@ -103,14 +113,20 @@ export default function UploadIPCR(props: {
             }
 
             if(props.isEdit) {
-                form.setValue('add.personnelid', props.isEdit?.user.personnel_id, {
+                form.setValue('add.personnelid', {
+                    id: props.isEdit?.user.id,
+                    name: props.isEdit?.user.name
+                }, {
                     shouldDirty: true,
                     shouldTouch: true,
                     shouldValidate: true,
                 })
                 form.setValue('add.rating', props.isEdit?.rating)
             } else {
-                form.setValue('add.personnelid', "")
+                form.setValue('add.personnelid', {
+                    id: 0,
+                    name: ""
+                })
                 form.setValue('add.rating', "")
             }
         }
@@ -175,6 +191,16 @@ export default function UploadIPCR(props: {
         }
     }, [isSubmit])
 
+    useEffect(() => {
+        window.axios
+            .get(route('reports.unlistedIPCR'))
+            .then((response) => {
+                let data = response.data
+
+                setInitialListIPCR(data)
+            })
+    }, [])
+
     return (
         <Modal
             show={show}
@@ -194,23 +220,26 @@ export default function UploadIPCR(props: {
                                 <div className="space-y-4">
                                     <FormField
                                         control={form.control}
-                                        name="add.personnelid"
+                                        name="add.personnelid.name"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="required">
-                                                    Personnel ID
+                                                    Personnel
                                                 </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        disabled={props.isEdit}
-                                                        className="form-input"
-                                                    />
-                                                </FormControl>
+                                                <ComboBox
+                                                    label="Select personnel"
+                                                    routeSearch="reports.searchIPCR"
+                                                    onSelectResult={(selectedPersonnel: {id: number; name: string;}) => {
+                                                        form.setValue('add.personnelid', selectedPersonnel)
+                                                    }}
+                                                    selected={form.getValues('add.personnelid')??{id: 0, name: ""}}
+                                                    initialList={initialListIPCR}
+                                                />
                                                 <FormMessage />
                                             </FormItem>
                                         )}
                                     />
+
                                     <FormField
                                         control={form.control}
                                         name="add.rating"

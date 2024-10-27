@@ -8,6 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class DashboardController extends Controller
@@ -16,7 +17,6 @@ class DashboardController extends Controller
     {
         if (in_array(Auth::user()->role, ['HR', 'HOD', 'Principal'])) {
             return Inertia::render("Dashboard", [
-                "leaves" => Leave::with(['user:id,first_name,last_name,avatar'])->with('medical_certificate')->orderBy('created_at', 'desc')->paginate(20),
                 "totalEmployee" => [
                     "recent" => User::whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
                     "recent_deduction" => User::whereDate('created_at', '>=', Carbon::now()->subDays(7))->whereNotNull('deleted_at')->count(),
@@ -33,16 +33,22 @@ class DashboardController extends Controller
                 "reject" => [
                     "recent" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
                     "total" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->count(),
-                ]
+                ],
+                "leave" => Leave::where('user_id', Auth::id())->where('principal_status', 'Approved')->where('hr_status', 'Approved')
+                    ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
+                "leaveApplications" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
+                    ->where('hr_status', 'Approved')
+                    ->where('principal_status', 'Approved')
+                    ->groupBy('leave_type')
+                    ->get()
             ]);
         }
 
         return Inertia::render("Dashboard", [
-            "leaves" => Leave::with(['user:id,first_name,last_name,avatar'])->with('medical_certificate')->where('user_id', Auth::id())->orderBy('created_at', 'desc')->paginate(20),
             "totalEmployee" => [
                 "recent" => ServiceRecord::where('user_id', Auth::id())->whereDate('created_at', '>=', Carbon::now()->subDays(7))->sum('credits'),
                 "recent_deduction" => ServiceRecord::where('user_id', Auth::id())->whereDate('deleted_at', '>=', Carbon::now()->subDays(7))
-                ->whereNotNull('deleted_at')->withTrashed()->sum('credits'),
+                    ->whereNotNull('deleted_at')->withTrashed()->sum('credits'),
                 "total" => 0
             ],
             "approved" => [
@@ -56,7 +62,28 @@ class DashboardController extends Controller
             "reject" => [
                 "recent" => Leave::where('user_id', Auth::id())->where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
                 "total" => Leave::where('user_id', Auth::id())->where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->count(),
-            ]
+            ],
+            "leave" => Leave::where('user_id', Auth::id())->where('principal_status', 'Approved')->where('hr_status', 'Approved')
+                ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
+            "leaveApplications" => []
         ]);
+    }
+
+    public function personnelList(Request $request)
+    {
+        $search = $request->search;
+
+        $list = User::with(['leaveApplications' => function ($query) {
+                $query->select('leave_type')->whereYear('inclusive_date_from', Carbon::now()->format('Y'))->distinct('leave_type');
+            }])
+            ->when($search, function ($query) use ($search) {
+                $query->where('first_name', 'LIKE', "%{$search}%")
+                    ->orWhere('middle_name', 'LIKE', "%{$search}%")
+                    ->orWhere('last_name', 'LIKE', "%{$search}%");
+            })
+            ->select(['id', 'first_name', 'middle_name', 'last_name', 'avatar'])
+            ->paginate(50);
+
+        return response()->json($list);
     }
 }

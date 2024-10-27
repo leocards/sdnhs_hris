@@ -18,12 +18,16 @@ import { Input } from "@/Components/ui/input";
 import { Button } from "@/Components/ui/button";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { useToast } from "@/Components/ui/use-toast";
+import ComboBox from "@/Components/ComboBox";
 
 const UPLOADSCHEMA = z
     .object({
         add: z
             .object({
-                personnelid: z.string(),
+                personnelid: z.object({
+                    id: z.number().default(0),
+                    name: z.string()
+                }),
                 networth: z.string(),
                 spouse: z.string().optional().default(""),
                 isjoint: z.boolean().default(false),
@@ -46,11 +50,11 @@ const UPLOADSCHEMA = z
     })
     .superRefine((data, ctx) => {
         if (data.isAdd) {
-            if (!data.add.personnelid) {
+            if (!data.add.personnelid.name) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: requiredError("personnel ID"),
-                    path: ["add.personnelid"],
+                    message: requiredError("personnel"),
+                    path: ["add.personnelid.name"],
                 });
             } else if (!data.add.networth) {
                 ctx.addIssue({
@@ -80,6 +84,7 @@ export default function UploadSALN(props: {
 }) {
     const { show, isAdd = false, onClose } = props;
     const [isFormAdd, setIsFormAdd] = useState<boolean>(false);
+    const [initialListSALN, setInitialListSALN] = useState<Array<any>>([])
 
     const form = reactForm<IFormUpload>({
         resolver: zodResolver(UPLOADSCHEMA),
@@ -92,6 +97,11 @@ export default function UploadSALN(props: {
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
         setData(formData)
+        if(isAdd) {
+            let filtered = initialListSALN.filter((ilsaln) => ilsaln.id !== formData.add.personnelid?.id)
+
+            setInitialListSALN(filtered)
+        }
     };
 
     useEffect(() => {
@@ -105,7 +115,10 @@ export default function UploadSALN(props: {
             }
 
             if(props.isEdit) {
-                form.setValue('add.personnelid', props.isEdit?.user.personnel_id, {
+                form.setValue('add.personnelid', {
+                    id: props.isEdit?.user.id,
+                    name: props.isEdit?.user.name
+                }, {
                     shouldDirty: true,
                     shouldTouch: true,
                     shouldValidate: true,
@@ -114,7 +127,9 @@ export default function UploadSALN(props: {
                 form.setValue('add.spouse', props.isEdit?.spouse)
                 form.setValue('add.isjoint', !!props.isEdit?.joint)
             } else {
-                form.setValue('add.personnelid', '')
+                form.setValue('add.personnelid', {
+                    id: 0, name: ""
+                })
                 form.setValue('add.networth', '')
                 form.setValue('add.isjoint', false)
             }
@@ -181,6 +196,16 @@ export default function UploadSALN(props: {
         }
     }, [isSubmit])
 
+    useEffect(() => {
+        window.axios
+            .get(route('reports.unlistedSALN'))
+            .then((response) => {
+                let data = response.data
+
+                setInitialListSALN(data)
+            })
+    }, [])
+
     return (
         <Modal
             show={show}
@@ -200,19 +225,21 @@ export default function UploadSALN(props: {
                                 <div className="space-y-4">
                                     <FormField
                                         control={form.control}
-                                        name="add.personnelid"
+                                        name="add.personnelid.name"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel className="required">
-                                                    Personnel ID
+                                                    Personnel
                                                 </FormLabel>
-                                                <FormControl>
-                                                    <Input
-                                                        {...field}
-                                                        disabled={props.isEdit}
-                                                        className="form-input"
-                                                    />
-                                                </FormControl>
+                                                <ComboBox
+                                                    label="Select personnel"
+                                                    routeSearch="reports.searchSALN"
+                                                    onSelectResult={(selectedPersonnel: {id: number; name: string;}) => {
+                                                        form.setValue('add.personnelid', selectedPersonnel)
+                                                    }}
+                                                    selected={form.getValues('add.personnelid')??{id: 0, name: ""}}
+                                                    initialList={initialListSALN}
+                                                />
                                                 <FormMessage />
                                             </FormItem>
                                         )}

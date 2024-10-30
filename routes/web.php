@@ -11,6 +11,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceRecordController;
 use App\Http\Controllers\PersonnelController;
+use App\Http\Controllers\StatementOfAssetsLiabilityAndNetworthController;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -117,6 +118,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/pds-c3-ld-upload', 'store_ld')->name('pds.c3.ld.upload');
             Route::post('/pds-c3-oi-upload', 'store_oi')->name('pds.c3.oi.upload');
             Route::post('/pds-c4-upload', 'store_c4')->name('pds.c4.upload');
+            Route::post('/pds-validate', 'setApprovePDSDownload')->name('pds.validation');
         });
     });
 
@@ -174,7 +176,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
-    Route::get("/reports/salnpdf", fn () => Inertia::render('Reports/samplePdf'));
+    Route::prefix('saln')->group(function () {
+        Route::controller(StatementOfAssetsLiabilityAndNetworthController::class)->group(function () {
+            Route::get('/', 'index')->name('saln');
+            Route::get('/add/{saln?}', 'create')->name('saln.create');
+
+            Route::post('/save/{idToUpdate?}', 'store')->name('saln.save');
+            Route::post('/approve/{saln}', 'setApproveSaln')->name('saln.approve');
+        });
+    });
 });
 
 require __DIR__.'/auth.php';

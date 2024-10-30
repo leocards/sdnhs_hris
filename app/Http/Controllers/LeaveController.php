@@ -34,7 +34,7 @@ class LeaveController extends Controller
                 })
                 ->with('medical_certificate')
                 ->orderBy('created_at', 'desc')
-                ->paginate(50)
+                ->paginate(50),
         ]);
     }
 

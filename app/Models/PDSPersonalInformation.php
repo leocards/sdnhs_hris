@@ -24,6 +24,7 @@ class PDSPersonalInformation extends Model
         'citizenship',
         'dual_by',
         'citizenship_country',
+        'is_approved'
     ];
 
     protected $appends = ['address'];

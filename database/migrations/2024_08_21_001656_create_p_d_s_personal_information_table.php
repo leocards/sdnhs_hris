@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('agency')->nullable();
             $table->string('telephone')->nullable();
             $table->string('mobile')->nullable();
+            $table->boolean('is_approved')->nullable();
             $table->timestamps();
         });
     }

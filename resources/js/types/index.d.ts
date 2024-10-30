@@ -6,6 +6,7 @@ export interface User {
     extension_name: string | null;
     department: string;
     position: any;
+    address: string;
     leave_credits?: number | null;
     email: string;
     role: string;

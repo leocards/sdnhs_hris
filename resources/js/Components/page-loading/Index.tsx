@@ -18,6 +18,7 @@ export default function isPageLoading(): boolean {
         "/profile/profile",
         "/profile/settings",
         "/personnel/new-personnel",
+        "/saln",
     ];
 
     const subpages = [
@@ -28,6 +29,7 @@ export default function isPageLoading(): boolean {
         "/general-search/view",
         "/notification/redirect",
         "/personnel/tardiness",
+        "/saln/add",
     ];
 
     const exclude = [

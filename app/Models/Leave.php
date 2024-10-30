@@ -27,7 +27,6 @@ class Leave extends Model
         'reject_msg',
         'leave_credits',
         'leave_rendered',
-        'date_hired'
     ];
 
     public function user()

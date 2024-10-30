@@ -19,7 +19,10 @@ class PersonnelController extends Controller
     public function index()
     {
         return Inertia::render('Personnel/Personnel', [
-            'pageData' => User::whereNot('id', Auth::id())
+            'pageData' => User::with(['statementOfAssestLiabilities' => function ($query) {
+                $query->select('id', 'user_id', 'isApproved', 'asof')
+                      ->whereNull('isApproved');
+            }])->whereNot('id', Auth::id())
                 ->orderBy('first_name', 'ASC')
                 ->paginate(50),
             'statistics' => collect([
@@ -28,6 +31,7 @@ class PersonnelController extends Controller
                 'accounting' => User::where('department', 'Accounting')->count(),
                 'admin' => User::where('role', 'HR')->count()
             ]),
+            "pds_uploads" => User::whereHas('personalDataSheetExcel')->pluck('id')
         ]);
     }
 

@@ -90,7 +90,7 @@ export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
     }, [show]);
 
     return (
-        <Modal show={show} onClose={() => onClose(false)} maxWidth="5xl">
+        <Modal show={show} onClose={() => onClose(false)} maxWidth="5xl" closeable={false}>
             <div className="p-6">
                 <div className="flex items-center mb-4">
                     <Button

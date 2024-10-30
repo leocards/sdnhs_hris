@@ -15,6 +15,7 @@ import {
     Menu,
     X,
     ChevronDown,
+    ReceiptText,
 } from "lucide-react";
 import {
     CloseButton,
@@ -358,6 +359,11 @@ const Navigation: React.FC<{
             label: "Reports",
             icon: <FilePieChart className="size-5" />,
         },
+        {
+            id: "saln",
+            label: "SALN",
+            icon: <ReceiptText className="size-5" />,
+        },
     ];
 
     const roles = {
@@ -377,6 +383,7 @@ const Navigation: React.FC<{
             "leave",
             "notification",
             "messages",
+            "saln"
         ],
         "Non-teaching": [
             "dashboard",
@@ -384,6 +391,7 @@ const Navigation: React.FC<{
             "leave",
             "notification",
             "messages",
+            "saln"
         ],
     }[user.role];
 

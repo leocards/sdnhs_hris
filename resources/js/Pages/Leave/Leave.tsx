@@ -26,17 +26,14 @@ import PaginationButton from "@/Components/PaginationButton";
 import DataList from "@/Components/DataList";
 import { useMessage } from "@/hooks/MessageProvider";
 
-export default function Index({
-    auth,
-    pageData,
-}: PageProps & {
+export default function Index(props: PageProps & {
     pageData: PaginateData;
 }) {
     return (
-        <PageListProvider initialValue={pageData}>
+        <PageListProvider initialValue={props.pageData}>
             <Head title="Leave" />
 
-            <Leave auth={auth} pageData={pageData} />
+            <Leave {...props} />
         </PageListProvider>
     );
 }
@@ -327,7 +324,7 @@ const LeaveRow: React.FC<{
 
     return (
         <div className="hover:bg-secondary transition-colors">
-            <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
+            <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm">
                 <div className="">
                     <div className="flex items-center gap-2">
                         <AvatarProfile src={user.avatar} className="size-8" active={active} />

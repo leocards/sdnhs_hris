@@ -202,6 +202,11 @@ class User extends Authenticatable
         return $this->hasOne(PDSGovernmentId::class);
     }
 
+    public function personalDataSheetExcel()
+    {
+        return $this->hasOne(PersonalDataSheet::class);
+    }
+
     public function senderMessage()
     {
         return $this->hasMany(Message::class, 'sender_id', 'id');
@@ -215,5 +220,10 @@ class User extends Authenticatable
     public function messages()
     {
         return $this->hasMany(Message::class, 'receiver_id', 'id');
+    }
+
+    public function statementOfAssestLiabilities()
+    {
+        return $this->hasMany(StatementOfAssetsLiabilityAndNetwork::class);
     }
 }

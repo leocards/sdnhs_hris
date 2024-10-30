@@ -39,18 +39,16 @@ class PersonalDataSheetController extends Controller
 
         $path = null;
 
-        // dd($data["C3"]);
-
         DB::beginTransaction();
         try {
 
-            /* $path = $request->file('file')->store('public/PDSfiles');
+            $path = $request->file('file')->store('public/PDSfiles');
 
             PersonalDataSheet::create([
                 'user_id' => $user->id,
                 "file" => $path,
                 "original" => $request->file('file')->getClientOriginalName(),
-            ]); */
+            ]);
 
 
             $this->getC1Data($data["C1"], $user);
@@ -511,6 +509,20 @@ class PersonalDataSheetController extends Controller
             DB::rollBack();
 
             return back()->withErrors($th->getMessage());
+        }
+    }
+
+    public function setApprovePDSDownload(Request $request, PDSPersonalInformation $pds)
+    {
+        try {
+            DB::transaction(function () use ($request, $pds) {
+                $pds->is_approve = $request->isApprove;
+                $pds->save();
+            });
+
+            return response()->json('success', 200);
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage());
         }
     }
 

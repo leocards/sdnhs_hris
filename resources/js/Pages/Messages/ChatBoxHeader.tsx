@@ -18,7 +18,7 @@ type Props = {
 
 const ChatBoxHeader: React.FC<Props> = ({ onSearchConvo, onDeleteConversation }) => {
     const { user, activeUsers } = useMessage()
-    const isActive = activeUsers.find((au) => au.id === user?.id)
+    const isActive = !!(activeUsers.find((au) => au.id === user?.id))
 
     return (
         <div className="h-14 border-b p-2 flex items-center gap-2">

@@ -270,7 +270,7 @@ export default function Authenticated({
                 />
             </NavigationModal>
 
-            <header className="flex items-center px-4 lg:hidden sticky top-0 bg-white dark:bg-background z-50">
+            <header className="flex items-center px-4 lg:hidden sticky top-0 bg-background dark:bg-zinc-900 z-50">
                 <div className="py-2.5">
                     <span className="relative">
                         <Button
@@ -289,7 +289,7 @@ export default function Authenticated({
             </header>
 
             <main className="flex flex-1 flex-col lg:pb-2 lg:min-w-0 lg:pl-72 lg:pr-2 lg:pt-2">
-                <div className="grow lg:rounded-lg lg:bg-white lg:shadow-sm lg:ring-1 lg:ring-zinc-950/5 dark:lg:bg-zinc-900 dark:lg:ring-white/10">
+                <div className="grow lg:rounded-lg bg-background lg:shadow-sm lg:ring-1 lg:ring-zinc-950/5 dark:bg-zinc-900 dark:lg:ring-white/10">
                     <div className="h-11 mb-2 mt-2 flex items-center max-lg:hidden px-4">
                         <HeaderNavigation user={userAuth} iconSizes="size-8" />
                     </div>
@@ -505,7 +505,7 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                     className={cn(
                         "size-9 relative flex items-center justify-center rounded-md",
                         url.startsWith("/notification")
-                            ? "bg-neutral-content"
+                            ? "bg-neutral-content dark:bg-secondary"
                             : "hover:bg-secondary transition duration-200"
                     )}
                     onClick={() => router.get(route("notification"))}
@@ -550,7 +550,7 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                     className={cn(
                         "size-9 relative flex items-center justify-center rounded-md",
                         url.startsWith("/messages")
-                            ? "bg-neutral-content"
+                            ? "bg-neutral-content dark:bg-secondary"
                             : "hover:bg-secondary transition duration-200"
                     )}
                     onClick={() => router.get(route("messages"))}

@@ -132,7 +132,7 @@ const NewNotes: React.FC<Props> = ({ show, note, onClose, onSuccess }) => {
                                                 )}
                                             >
                                                 <Input
-                                                    className="!ring-0 !border-none text-lg font-medium px-0"
+                                                    className="!ring-0 !border-none text-lg font-medium px-2.5"
                                                     placeholder="Title"
                                                     {...field}
                                                 />

@@ -65,7 +65,7 @@ export default function Modal({
                 >
                     <DialogPanel
                         className={cn(
-                            `h-fit bg-white dark:bg-zinc-900 rounded-lg overflow-hidd en shadow-xl transform transition-all sm: w-full sm:mx-auto
+                            `h-fit bg-background dark:bg-zinc-900 rounded-lg overflow-hidd en shadow-xl transform transition-all sm: w-full sm:mx-auto
                             ${typeof center === 'string' ? center : center &&"my-auto"} ${dialogStyle} ${maxWidthClass}`,
                             isFullScreen ? "" : "my-6"
                         )}

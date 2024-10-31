@@ -22,7 +22,7 @@ const PersonalDataSheetPDF = React.forwardRef<HTMLDivElement, Props>(
         const { elementary, secondary, vocational, college, graduatestudies } = useMemo(() => getEducationalData(props.data.educationalBackground??[]), [props.data.educationalBackground])
 
         return (
-            <div className="inline-flex gap-4 w-[calc(900px-20pt)] overflow-hidden">
+            <div className="inline-flex gap-4 w-[calc(900px-20pt)] overflow-hidden !bg-gray-50">
                 {props.tab === 'C1' && (<>
                     <div>
                         <PDSPDFIsDownloadProvider>

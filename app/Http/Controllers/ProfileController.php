@@ -69,6 +69,7 @@ class ProfileController extends Controller
             'status' => session('status'),
             'userinfo' => $pds,
             'userRoles' => User::where('role', 'HOD')->orWhere('role', 'HR')->pluck('role'),
+            'isApprovedPds' => User::with('pdsPersonalInformation:id,user_id,is_approved')->where('id', Auth::id())->first('id')
         ]);
     }
 
@@ -141,7 +142,7 @@ class ProfileController extends Controller
     public function enableEmails(Request $request)
     {
         $user = User::find(Auth::id());
-        
+
         $isEnableFor = $request->enableFor;
         $isEnabled = $request->enable;
 

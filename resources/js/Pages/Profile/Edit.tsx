@@ -23,7 +23,7 @@ export type UserInfoType = User &
         pds_other_information: any;
         pds_cs4: any;
         pds_government: any;
-        pds_referece: any;
+        pds_reference: any;
         birth_place: string;
         civil_status: string;
         height: string;
@@ -36,11 +36,13 @@ export default function Edit({
     mustVerifyEmail,
     status,
     userRoles,
+    isApprovedPds,
 }: PageProps<{
     mustVerifyEmail: boolean;
     status?: string;
     userinfo: UserInfoType;
     userRoles: string[];
+    isApprovedPds: any;
 }>) {
     const name = auth.user.first_name + " " + auth.user.last_name;
     const [uploadAvatar, setUploadAvatar] = useState<boolean>(false);
@@ -109,7 +111,7 @@ export default function Edit({
 
             <div>
                 {(url !== "/profile/settings" && url !== "/profile/profile") && (
-                    <PersonalDataSheet user={userinfo} />
+                    <PersonalDataSheet user={userinfo} isApprovedPds={!!(isApprovedPds?.pds_personal_information?.is_approved)} />
                 )}
             </div>
             <div>

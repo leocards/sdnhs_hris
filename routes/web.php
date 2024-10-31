@@ -68,14 +68,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::controller(PersonnelController::class)->group(function () {
             Route::get('/', 'index')->middleware(['role:HR,HOD'])->name('personnel');
             Route::get('/new-personnel/edit/{user?}', 'edit')->name('personnel.edit');
+            Route::get('/view-pds-user/{userId}', fn ($userId) => response()->json(User::find($userId)))->name('personnel.view-pds.user');
 
             Route::middleware(['role:HR'])->group(function () {
                 Route::get('/tardiness', 'tardiness')->name('personnel.tardiness');
                 Route::get('/tardiness/json', 'tardinessJson')->name('personnel.tardiness.json');
                 Route::get('/tardiness/search-attendance', 'tardiness_search')->name('personnel.tardiness.att.search');
                 Route::get('/new-personnel', 'create')->name('personnel.new');
-                Route::get('/view-pds-user/{userId}', fn ($userId) => response()->json(User::find($userId)))->name('personnel.view-pds.user');
-
 
                 Route::post('/new-personnel', 'store')->name('personnel.new.store');
                 Route::post('/update-personnel/{user?}', 'update')->name('personnel.update');
@@ -119,6 +118,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/pds-c3-oi-upload', 'store_oi')->name('pds.c3.oi.upload');
             Route::post('/pds-c4-upload', 'store_c4')->name('pds.c4.upload');
             Route::post('/pds-validate', 'setApprovePDSDownload')->name('pds.validation');
+            Route::post('/pds-approve/{pds}', 'setApprovePDSDownload')->name('pds.approve');
         });
     });
 

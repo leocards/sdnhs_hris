@@ -2,7 +2,7 @@ import { Form } from "@/Components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm as reactForm } from "react-hook-form";
 import { useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { forwardRef, useEffect, useState } from "react";
 import Question34 from "./C4/Question34";
 import Question35to37 from "./C4/Question35to37";
 import Question38 from "./C4/Question38";
@@ -14,9 +14,13 @@ import { C4SCHEMA, IFormC4, referenceDefault } from "./c4types";
 import { useToast } from "@/Components/ui/use-toast";
 import Processing from "@/Components/Processing";
 import { UserInfoType } from "../Edit";
+import { PDSPDFIsDownloadProvider } from "@/Pages/Search/PDSPDF/context";
+import { Pages } from "@/Pages/Search/PDSPDF";
+import C4pdf from "@/Pages/Search/PDSPDF/C4";
 
 type C4Props = {
     user: UserInfoType;
+    data: any;
 };
 
 const getQkuestionData = (
@@ -41,10 +45,10 @@ const getQkuestionData = (
     }
 };
 
-export default function C4({ user }: C4Props) {
-    const pds_questions = user.pds_cs4;
-    const pds_refence = user.pds_referece;
-    const pds_government = user.pds_government;
+const C4 = forwardRef<HTMLDivElement, C4Props>(({ user, data }, ref) => {
+    const pds_questions = user?.pds_cs4;
+    const pds_refence = user?.pds_reference;
+    const pds_government = user?.pds_government;
 
     const form = reactForm<IFormC4>({
         resolver: zodResolver(C4SCHEMA),
@@ -168,7 +172,7 @@ export default function C4({ user }: C4Props) {
                 },
             },
             q41:
-                pds_refence.length === 0
+                pds_refence?.length === 0
                     ? referenceDefault
                     : pds_refence.map((data: any) => ({
                           c4id: data.id,
@@ -233,26 +237,49 @@ export default function C4({ user }: C4Props) {
     }, [pds_questions]);
 
     return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onFormSubmit)} className="mt-5">
-                <Question34 form={form} />
-                <Question35to37 form={form} />
-                <Question38 form={form} />
-                <Question39to40 form={form} />
-                <Question41 form={form} />
-                <GovernmentIds form={form} />
-
-                <Processing is_processing={processing} />
-
-                <div className="mt-10 pt-2 border-t flex">
-                    <Button
-                        type="submit"
-                        className="px-10 ml-auto max-sm:w-full"
+        <div className="flex overflow-x-hidden gap-2">
+            <div className="w-full shrink-0">
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onFormSubmit)}
+                        className="mt-5"
                     >
-                        Save
-                    </Button>
+                        <Question34 form={form} />
+                        <Question35to37 form={form} />
+                        <Question38 form={form} />
+                        <Question39to40 form={form} />
+                        <Question41 form={form} />
+                        <GovernmentIds form={form} />
+
+                        <Processing is_processing={processing} />
+
+                        <div className="mt-10 pt-2 border-t flex">
+                            <Button
+                                type="submit"
+                                className="px-10 ml-auto max-sm:w-full"
+                            >
+                                Save
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </div>
+
+            {data && (
+                <div className="w-[calc(900px-20pt)]">
+                    <PDSPDFIsDownloadProvider initialValue={true}>
+                        <Pages ref={ref} pageNumber={4}>
+                            <C4pdf
+                                questions={data.c4}
+                                reference={data.references}
+                                government={data.governmentid}
+                            />
+                        </Pages>
+                    </PDSPDFIsDownloadProvider>
                 </div>
-            </form>
-        </Form>
+            )}
+        </div>
     );
-}
+});
+
+export default C4;

@@ -46,7 +46,10 @@ const PersonalDataSheets: React.FC<Props> = ({ data }) => {
                     navigate={(nav) => setActiveTab(nav as pds_cs)}
                 />
 
-                <Button className="h-9 ml-auto" size={'icon'} variant={'secondary'} onClick={() => download_pdf.toPDF()}>
+                <Button className="h-9 ml-auto" size={'icon'} variant={'secondary'} onClick={() => {
+                    if(data?.personalInformation?.is_approved)
+                        download_pdf.toPDF()
+                }} disabled={!(data?.personalInformation?.is_approved)}>
                     <Download className="size-5" />
                 </Button>
             </div>

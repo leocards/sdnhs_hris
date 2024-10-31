@@ -516,13 +516,13 @@ class PersonalDataSheetController extends Controller
     {
         try {
             DB::transaction(function () use ($request, $pds) {
-                $pds->is_approve = $request->isApprove;
+                $pds->is_approved = $request->isApprove;
                 $pds->save();
             });
 
-            return response()->json('success', 200);
+            return back()->with('success', "PDS has bee approved.");
         } catch (\Throwable $th) {
-            return response()->json($th->getMessage());
+            return back()->withErrors($th->getMessage());
         }
     }
 

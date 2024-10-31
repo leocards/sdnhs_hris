@@ -11,6 +11,9 @@ import { Download, X } from "lucide-react";
 import PersonalDataSheetPDF from "../Search/PDSPDF";
 import { Margin, usePDF } from "react-to-pdf";
 import Tabs from "@/Components/framer/Tabs";
+import { router } from "@inertiajs/react";
+import { useToast } from "@/Components/ui/use-toast";
+import Processing from "@/Components/Processing";
 
 type ViewPDSProps = {
     authId: number;
@@ -42,12 +45,39 @@ export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
     const [data, setData] = useState<any>();
     const [activeTab, setActiveTab] = useState<"C1" | "C2" | "C3" | "C4">("C1");
     const [loading, setLoading] = useState(false);
+    const [processing, setProcessing] = useState(false);
+    const { toast } = useToast()
 
     const download_pdf = usePDF({
         method: "save",
         filename: "application-for-leave.pdf",
         page: { format: "A4", margin: Margin.MEDIUM },
     });
+
+    const setPdsApprove = () => {
+        setProcessing(true)
+        router.post(route('pds.approve', [data.personalInformation.id]), {
+            isApprove: true
+        }, {
+            onSuccess: () => {
+                toast({
+                    variant: "success",
+                    description: "PDS has been approved."
+                })
+
+                onClose(false)
+            },
+            onError: (error) => {
+                toast({
+                    variant: "destructive",
+                    description: error[0]
+                })
+            },
+            onFinish: () => {
+                setProcessing(false)
+            }
+        })
+    }
 
     useEffect(() => {
         if (width >= 1125) {
@@ -90,9 +120,24 @@ export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
     }, [show]);
 
     return (
-        <Modal show={show} onClose={() => onClose(false)} maxWidth="5xl" closeable={false}>
+        <Modal
+            show={show}
+            onClose={() => onClose(false)}
+            maxWidth="5xl"
+            closeable={false}
+        >
             <div className="p-6">
                 <div className="flex items-center mb-4">
+                    {(!loading && (!data?.personalInformation ||
+                        !data?.personalInformation?.is_approved)) && (
+                        <Button
+                            className="px-6 !bg-green-600"
+                            onClick={setPdsApprove}
+                        >
+                            Approve
+                        </Button>
+                    )}
+
                     <Button
                         variant="secondary"
                         className="ml-auto px-6"
@@ -102,12 +147,12 @@ export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
                     </Button>
                 </div>
 
-                { loading ? (
+                {loading ? (
                     <div className="w-fit h-fit mx-auto my-auto flex flex-col items-center gap-2">
                         <span className="loading loading-spinner loading-md"></span>
                         <div>Loading...</div>
                     </div>
-                ) :
+                ) : (
                     <>
                         <div className="border-b w-[calc(900px-20pt)] mx-auto flex items-center justify-between">
                             <Tabs
@@ -132,7 +177,12 @@ export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
                                 className="h-9 ml-auto"
                                 size={"icon"}
                                 variant={"secondary"}
-                                onClick={() => download_pdf.toPDF()}
+                                onClick={() => {
+                                    if(data?.personalInformation || data?.personalInformation?.is_approved)
+                                        download_pdf.toPDF()
+                                }}
+                                disabled={(!data?.personalInformation ||
+                                    !data?.personalInformation?.is_approved)}
                             >
                                 <Download className="size-5" />
                             </Button>
@@ -148,8 +198,10 @@ export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
                             )}
                         </div>
                     </>
-                }
+                )}
             </div>
+
+            <Processing is_processing={processing} />
         </Modal>
     );
 }

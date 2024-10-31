@@ -239,7 +239,7 @@ const PersonalDataSheetPDF = React.forwardRef<HTMLDivElement, Props>(
     }
 );
 
-const DefaultEducationalBackground = [{
+export const DefaultEducationalBackground = [{
     nameofschool: '',
     basiceddegreecourse: '',
     period: { from: '', to: '' },
@@ -253,7 +253,7 @@ type PagesProps = {
     className?: string;
 } & PropsWithChildren;
 
-const Pages = React.forwardRef<HTMLDivElement, PagesProps>(
+export const Pages = React.forwardRef<HTMLDivElement, PagesProps>(
     ({ ...props }, ref) => {
         const { checkIfDownLoad } = useIsDownloadChecker();
 

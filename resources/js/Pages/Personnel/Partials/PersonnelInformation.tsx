@@ -200,7 +200,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                "w-full pl-3 text-left justify-between disabled:!opacity-100 disabled:!cursor-not-allowed disabled:pointer-events-auto disabled:!text-foreground/40 font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}
@@ -246,7 +246,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                "w-full pl-3 text-left justify-between disabled:!opacity-100 disabled:!cursor-not-allowed disabled:pointer-events-auto disabled:!text-foreground/40 font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}

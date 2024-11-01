@@ -58,7 +58,7 @@ const AvatarProfile: React.FC<{ src?: string; name?: string; className?: string,
                     <UserRound size={fallbackSize} />
                 </AvatarFallback>
             </Avatar>
-            {active && (<span className={cn("absolute size-2 bg-green-500 z-10 rounded-full ring ring-white", activeStatusPosition??"bottom-0 right-px")} />)}
+            {active && (<span className={cn("absolute size-2 bg-green-500 z-10 rounded-full ring ring-background", activeStatusPosition??"bottom-0 right-px")} />)}
         </div>
 	);
 };

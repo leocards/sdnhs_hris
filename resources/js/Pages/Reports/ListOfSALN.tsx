@@ -105,7 +105,7 @@ const ListOfSALN = ({ saln, principal, hr }: Props) => {
                         <div className="divide-y w-max relative">
                             <div
                                 className="grid grid-cols-[3rem,1fr,repeat(3,10rem),20rem,10rem,8rem] border-b [&>div]:text-center
-                                    h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-white dark:bg-zinc-900"
+                                    h-fit [&>div]:my-auto [&>div]:font-medium text-foreground/60 sticky top-0 z-[11] bg-background dark:bg-zinc-900"
                             >
                                 <div className=""></div>
                                 <div className="">Name</div>

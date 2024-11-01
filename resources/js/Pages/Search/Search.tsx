@@ -93,7 +93,7 @@ export default function Search({
             </div>
 
             <div className="border rounded-lg overflow-hidden p-1">
-                <div className="h-12 flex items-center border-b w-full bg-white dark:bg-zinc-900 px-2">
+                <div className="h-12 flex items-center border-b w-full bg-background dark:bg-zinc-900 px-2">
                     <div className="grid grid-cols-[1fr,12rem,12rem,5rem,4rem] grow relative z-10">
                         <div>Name</div>
                         <div>Position</div>

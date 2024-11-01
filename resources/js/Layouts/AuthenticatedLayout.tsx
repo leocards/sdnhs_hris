@@ -3,14 +3,12 @@ import {
     ChevronUp,
     Home,
     LogOut,
-    MessageCircle,
     Search,
     Settings,
     UserRound,
     UsersRound,
     ClipboardPaste,
     FilePieChart,
-    Bell,
     FolderKanban,
     Menu,
     X,
@@ -46,6 +44,7 @@ import {
     NOTIFICATIONTYPE,
     useNotification,
 } from "@/hooks/NotificationProvider";
+import sdnhslogo from "@/assets/sdnhs-logo.png";
 
 export default function Authenticated({
     userAuth,
@@ -432,7 +431,7 @@ const Navigation: React.FC<{
 
                 <div className="flex items-center px-4 max-lg:h-fit">
                     <img
-                        src="/storage/assets/sdnhs-logo.png"
+                        src={sdnhslogo}
                         alt="sdnhs logo"
                         className="size-12"
                     />

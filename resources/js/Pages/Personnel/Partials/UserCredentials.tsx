@@ -30,9 +30,9 @@ const UserCredentials: React.FC<UserCredentialsProps> = ({ form }) => {
             <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-2 w-full gap-3">
                 <div className="space-y-2">
                     <FormLabel className="text-foreground w-full">Email</FormLabel>
-                    <Input readOnly disabled value={form.watch('email')} className="h-10 shadow-sm" />
+                    <Input readOnly disabled value={form.watch('email')} className="h-10 shadow-sm disabled:!opacity-100 disabled:text-foreground/40" />
                 </div>
-                
+
                 <FormField
                     control={form.control}
                     name="password"

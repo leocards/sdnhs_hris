@@ -1,8 +1,4 @@
 import { useEffect, FormEventHandler, useRef, useState } from "react";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
 import { Head, Link, useForm } from "@inertiajs/react";
 import { z } from "zod";
 import { useForm as reactForm } from "react-hook-form";
@@ -20,6 +16,7 @@ import { Button } from "@/Components/ui/button";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
+import sdnhslogo from "@/assets/sdnhs-logo.png";
 
 const LOGINSCHEMA = z.object({
     email: z.string({ required_error: "Email field is required." }).email().default(""),
@@ -78,7 +75,7 @@ export default function Login({ status }: { status?: string | expired }) {
     return (
         <div className="w-[26rem]">
             <img
-                src="/storage/assets/sdnhs-logo.png"
+                src={sdnhslogo}
                 alt="sdnhs logo"
                 className="size-32 mx-auto mb-7"
             />
@@ -196,7 +193,7 @@ export default function Login({ status }: { status?: string | expired }) {
                             </FormItem>
                         )}
                     />
-                    
+
                     <Button className="w-full h-12 !mt-8 !bg-yellow-950" disabled={processing}>
                         {
                             processing ? (

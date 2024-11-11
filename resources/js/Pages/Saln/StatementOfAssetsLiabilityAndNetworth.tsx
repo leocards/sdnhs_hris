@@ -28,7 +28,18 @@ const Saln: React.FC<Props> = ({ auth, success, saln }) => {
     const [filter, setFilter] = useState("");
     const { data, setList } = usePageList();
     const [viewSaln, setViewSaln] = useState(false)
-    const [selected, setSelected] = useState<any>(null)
+    const [selected, setSelected] = useState<{
+        id: number;
+        user_id: number;
+        asof: string;
+        date: string;
+        isjoint: "joint"|"separate"|"none";
+        isApproved: number | null;
+        created_at: string;
+        updated_at: string;
+        saln_liability_sum_balances: number;
+        saln_assets_sum_cost: number;
+    }|null>(null)
 
     const { toast } = useToast();
 
@@ -127,7 +138,7 @@ const Saln: React.FC<Props> = ({ auth, success, saln }) => {
                 </DataList>
             </div>
 
-            <ViewSaln show={viewSaln} onClose={setViewSaln} isApproved={selected?.isApproved} />
+            <ViewSaln show={viewSaln} onClose={setViewSaln} saln={selected} user={auth.user} />
         </Authenticated>
     );
 };

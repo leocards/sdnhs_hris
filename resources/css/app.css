@@ -110,6 +110,11 @@
         font-family: 'calibri';
         src: url('./calibri-regular.ttf');
     }
+
+    @font-face {
+        font-family: 'bookman';
+        src: url('./BOOKOS.TTF');
+    }
 }
 
 @layer components {

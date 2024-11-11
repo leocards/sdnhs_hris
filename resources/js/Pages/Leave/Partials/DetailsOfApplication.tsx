@@ -29,6 +29,7 @@ import {
     SelectOptionTrigger,
 } from "@/Components/SelectOption";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import { CalendarInput } from "@/Pages/Profile/Partials/C1/FamilyBackground";
 
 const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
     const watchLeaveType = form.watch("leavetype.type");
@@ -514,43 +515,42 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                             </div>
                         )}
 
-                    <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-2 w-full gap-3 mt-6">
-                        <FormField
-                            control={form.control}
-                            name="inclusiveDates"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="required uppercase opacity-70">
-                                        Inclusive dates
-                                    </FormLabel>
-                                    <Popover>
-                                        <CalendarPickerButton form={form} />
-                                        <PopoverContent
-                                            className="w-auto p-0"
-                                            align="start"
-                                        >
-                                            <Calendar
-                                                mode="range"
-                                                selected={form.watch(
-                                                    "inclusiveDates"
-                                                )}
-                                                onSelect={field.onChange}
-                                                disabled={(date) => {
-                                                    if (
-                                                        form.getValues(
-                                                            "leavetype.type"
-                                                        ) !== "Maternity Leave"
-                                                    )
-                                                        return isWeekend(date);
-                                                    else return false;
-                                                }}
-                                            />
-                                        </PopoverContent>
-                                    </Popover>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
+                    <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3 mt-6 [&>div>label]:opacity-70">
+                        <CalendarInput
+                            label="ICLUSIVE DATES FROM"
+                            form={form}
+                            name={`includiveDates.from`}
+                            placeholder="Pick a date"
+                            formatDate="LLLL dd, y"
+                            disabledCalendar={(date) => {
+                                if (
+                                    form.getValues(
+                                        "leavetype.type"
+                                    ) !== "Maternity Leave"
+                                )
+                                    return isWeekend(date);
+                                else return false;
+                            }}
                         />
+
+                        <CalendarInput
+                            label="ICLUSIVE DATES TO"
+                            form={form}
+                            name={`includiveDates.to`}
+                            placeholder="Pick a date"
+                            formatDate="LLLL dd, y"
+                            disabledCalendar={(date) => {
+                                if (
+                                    form.getValues(
+                                        "leavetype.type"
+                                    ) !== "Maternity Leave"
+                                )
+                                    return isWeekend(date);
+                                else return false;
+                            }}
+                            isRequired={false}
+                        />
+
                         <FormField
                             control={form.control}
                             name="numDaysApplied"

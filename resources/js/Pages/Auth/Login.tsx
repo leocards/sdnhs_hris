@@ -17,11 +17,12 @@ import { Checkbox } from "@/Components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import sdnhslogo from "@/assets/sdnhs-logo.png";
+import { requiredError } from "../types";
 
 const LOGINSCHEMA = z.object({
-    email: z.string({ required_error: "Email field is required." }).email().default(""),
+    email: z.string().min(1, requiredError('Email')).email().default(""),
     password: z
-        .string({ required_error: "Password field is required." })
+        .string()
         .min(8, "Password must be atleast 8 characters.")
         .default(""),
     remember: z.boolean().optional().default(false),
@@ -34,6 +35,11 @@ type expired = {expired: string}
 export default function Login({ status }: { status?: string | expired }) {
     const form = reactForm<IFormLogin>({
         resolver: zodResolver(LOGINSCHEMA),
+        defaultValues: {
+            email: "",
+            password: "",
+            remember: false
+        }
     });
 
     const { data, setData, post, processing, errors, reset, isDirty } = useForm<IFormLogin>();

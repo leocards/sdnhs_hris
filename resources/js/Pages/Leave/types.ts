@@ -77,7 +77,10 @@ export const LEAVEFORMSCHEMA = z.object({
         {
             message: "Date of filing must not be the same.",
         }
-    ),
+    ).refine(data => !data.to || data.to > data.from, {
+        message: "'To' date must be after the 'from' date",
+        path: ["to"]
+    }),
     position: z.enum(PERSONNELPOSITIONS, { required_error: requiredError("position") }),
     salary: z.string().min(1, requiredError("salary")),
     leavetype: z
@@ -169,34 +172,18 @@ export const LEAVEFORMSCHEMA = z.object({
         }, {
             required_error: requiredError("inclusive dates")
         })
-        .refine(
-            (dates) => {
-                // return error if the given dates are past of current dates
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                dates.from.setHours(0, 0, 0, 0);
-
-                return dates.from > today;
-            },
-            {
-                message: "Inclusive dates cannot be present or past dates.",
-            }
-        )
-        .refine(
-            (dates) => {
-                // validates if the date to of inclusive date is the same or not
-                if (dates.to) {
-                    dates.from.setHours(0, 0, 0, 0);
-                    dates.to.setHours(0, 0, 0, 0);
-
-                    return !(dates.to.getTime() === dates.from.getTime());
-                }
-                return true;
-            },
-            {
-                message: "Inclusive dates must not be the same.",
-            }
-        ),
+        .refine(data => data.from > new Date(), {
+            message: "The 'from' date cannot be today or a past date",
+            path: ["from"]
+        })
+        .refine(data => !data.to || data.from.getTime() !== data.to.getTime(), {
+            message: "'From' and 'to' dates should not be the same",
+            path: ["to"]
+        })
+        .refine(data => !data.to || data.to > data.from, {
+            message: "'To' date must be after the 'from' date",
+            path: ["to"]
+        }),
     numDaysApplied: z.string().min(1, "Set the number of days applied for."),
     commutation: z.object({
         notRequested: z.boolean().optional(),
@@ -211,55 +198,6 @@ export const LEAVEFORMSCHEMA = z.object({
     }, {
         message: 'Please select only 1 commutation.'
     }),
-    // certificationLeaveCredits: z.object({
-    //     asOf: z.string().min(1, requiredError('\'as of\'')).default(''),
-    //     totalEarned: z.object({
-    //         vacationLeave: z.string().min(1, 'required').default(''),
-    //         sickLeave: z.string().min(1, 'required').default('')
-    //     }),
-    //     lessThisApplication: z.object({
-    //         vacationLeave: z.string().min(1, 'required').default(''),
-    //         sickLeave: z.string().min(1, 'required').default('')
-    //     }),
-    //     balance: z.object({
-    //         vacationLeave: z.string().min(1, 'required').default(''),
-    //         sickLeave: z.string().min(1, 'required').default('')
-    //     })
-    // }),
-    // recommendation: z.object({
-    //     forApproval: z.boolean().optional().default(false),
-    //     forDisapproval: z.object({
-    //         checked: z.boolean().optional().default(false),
-    //         input: z.string().optional()
-    //     }).refine(({ checked }) => {
-    //         return checked ? false : true
-    //     }, { message: "Please provide details", path: ['input'] })
-    // }).refine(data => {
-    //     const checkedFields = [
-    //         data.forApproval,
-    //         data.forDisapproval?.checked,
-    //     ].filter(Boolean);
-
-    //     return checkedFields.length === 0 ? false : (checkedFields.length <= 1);
-    // }, {
-    //     message: 'Please select only 1 recommendation.'
-    // }),
-    // approvedFor: z.object({
-    //     daysWithPay: z.string().optional().default(''),
-    //     daysWithOutPay: z.string().optional().default(''),
-    //     others: z.string().optional().default('')
-    // }).refine(data => {
-    //     const checkedFields = [
-    //         !!data.daysWithPay,
-    //         !!data.daysWithOutPay,
-    //         !!data.others
-    //     ].filter(Boolean);
-
-    //     return checkedFields.length === 0 ? false : (checkedFields.length <= 1);
-    // }, {
-    //     message: 'Please specify only 1 approved for.'
-    // }),
-    // disapprovedDueTo: z.string().optional(),
     medicalForMaternity: z
         .instanceof(File, { message: "Please choose a file." })
         .optional()
@@ -330,26 +268,4 @@ export const initialValues = {
     leavetype: { others: '' },
     detailsOfLeave: defaultDetailsOfLeave,
     numDaysApplied: '',
-    // certificationLeaveCredits: {
-    //     asOf: '',
-    //     totalEarned: {
-    //         vacationLeave: '',
-    //         sickLeave: ''
-    //     },
-    //     lessThisApplication: {
-    //         vacationLeave: '',
-    //         sickLeave: ''
-    //     },
-    //     balance: {
-    //         vacationLeave: '',
-    //         sickLeave: ''
-    //     },
-    // },
-    // recommendation: { forDisapproval: { input: '' } },
-    // approvedFor: {
-    //     daysWithPay: '',
-    //     daysWithOutPay: '',
-    //     others: ''
-    // },
-    // disapprovedDueTo: ''
 }

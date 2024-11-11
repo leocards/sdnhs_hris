@@ -51,7 +51,7 @@ export default function Modal({
                 data-state={show?'open':'close'}
                 className={cn(
                     "fixed inline-flex inset-0 px-4 outline-none sm:px-0 z-50 transform transition-all max-h-screen bg-black/75 overflow-y-auto",
-                    isFullScreen ? "py-3" : "py-6"
+                    isFullScreen ? "py-3" : "py-5"
                 )}
                 onClose={close}
             >

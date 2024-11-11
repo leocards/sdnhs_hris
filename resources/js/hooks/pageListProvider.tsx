@@ -3,7 +3,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 type ProviderProps = {
     children: React.ReactNode;
-    initialValue?: PaginateData; 
+    initialValue?: PaginateData;
 }
 
 type Pages = {
@@ -53,7 +53,7 @@ const generateSequentialArray = (length: number) => Array.from({ length }, (_, i
 const getVisiblePages = (pages: Array<number>, current_page: number, pagesPerSet = 3) => {
     // Calculate the index of the first page in the current set
     const startIndex = Math.floor((current_page - 1) / pagesPerSet) * pagesPerSet;
-    
+
     // Slice the array to get the current set of pages
     return pages.slice(startIndex, startIndex + pagesPerSet);
 }

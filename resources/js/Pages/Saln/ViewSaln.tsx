@@ -1,81 +1,47 @@
 import Modal, { ModalProps } from "@/Components/Modal";
-import React, { useState, useEffect } from "react";
-import { Document, Page } from "react-pdf";
-import { pdfjs } from "react-pdf";
-import type { PDFDocumentProxy } from "pdfjs-dist";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
-import useWindowSize from "@/hooks/useWindowResize";
-import { InView } from "react-intersection-observer";
-import { cn } from "@/lib/utils";
+import React, { useState, useEffect, Fragment, useRef } from "react";
 import { Button } from "@/Components/ui/button";
-import file from "@/assets/2015 SALN Form.pdf";
-import { Download } from "lucide-react";
-import { saveAs } from 'file-saver';
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-	"pdfjs-dist/build/pdf.worker.min.mjs",
-	import.meta.url
-).toString();
-
-const options = {
-	cMapUrl: "/cmaps/",
-	standardFontDataUrl: "/standard_fonts/",
-};
-
-type PDFFile = string | File | null;
-
-type PDFViewerProps = {
-	file?: PDFFile;
-	isViewDetails?: boolean;
-};
-
-type PagesType = { prev: number; current: number; next: number };
-
-const initialPages = {
-	prev: 0,
-	current: 1,
-	next: 0,
-};
+import { Printer } from "lucide-react";
+import { SALNTYPE, User } from "@/types";
+import SALNPage1 from "../Personnel/Partials/SALNPage1";
+import SALNPage2 from "../Personnel/Partials/SALNPage2";
+import SALNSeparatePage from "../Personnel/Partials/SALNSeparatePage";
+import { useReactToPrint } from "react-to-print";
 
 type Props = {
-    isApproved: boolean;
+    user: User;
+    saln: {
+        id: number;
+        user_id: number;
+        asof: string;
+        date: string;
+        isjoint: "joint" | "separate" | "none";
+        isApproved: number | null;
+        created_at: string;
+        updated_at: string;
+        saln_liability_sum_balances: number;
+        saln_assets_sum_cost: number;
+    } | null;
 } & ModalProps;
 
-const ViewSaln: React.FC<Props> = ({ show, isApproved, onClose }) => {
-    const { width } = useWindowSize();
-	const [size, setSize] = useState<number>(800);
-	const [numPages, setNumPages] = useState<number>();
-	const [pages, setPages] = useState<PagesType>(initialPages);
+const ViewSaln: React.FC<Props> = ({ show, saln, user, onClose }) => {
+    const [salnData, setSalnData] = useState<SALNTYPE | null>(null);
 
-	useEffect(() => {
-		if (width >= 1234) {
-			setSize(800);
-		} else if (width >= 856) {
-			setSize(800);
-		} else if (width >= 755) {
-			setSize(700);
-		} else if (width >= 556) {
-			setSize(500);
-		} else if (width > 456) {
-			setSize(350);
-		} else {
-			setSize(300);
-		}
-	}, [width]);
+    const contentRef = useRef(null)
+    const handlePrint = useReactToPrint({
+        content: () => contentRef.current,
+        bodyClass: "margin-0"
+    })
 
-    const handleDownload = () => {
-        saveAs(file, 'SALN.pdf');
-    };
-
-	function onDocumentLoadSuccess({
-		numPages: nextNumPages,
-	}: PDFDocumentProxy): void {
-		setNumPages(nextNumPages);
-		if (nextNumPages > 1) {
-			setPages((prev) => ({ ...prev, next: 2 }));
-		}
-	}
+    useEffect(() => {
+        if (show && saln) {
+            window.axios
+                .get<SALNTYPE>(route("saln.json.view", [saln.id]))
+                .then((response) => {
+                    setSalnData(response.data);
+                });
+        }
+    }, [show]);
 
     return (
         <Modal show={show} onClose={() => onClose(false)} maxWidth="5xl" center>
@@ -83,11 +49,11 @@ const ViewSaln: React.FC<Props> = ({ show, isApproved, onClose }) => {
                 <div className="flex items-center mb-4">
                     <Button
                         variant="ghost"
-                        onClick={() => isApproved && handleDownload()}
+                        onClick={handlePrint}
                         size={"icon"}
-                        disabled={!isApproved}
+                        disabled={!saln?.isApproved}
                     >
-                        <Download className="size-5" />
+                        <Printer className="size-5" />
                     </Button>
 
                     <Button
@@ -98,85 +64,71 @@ const ViewSaln: React.FC<Props> = ({ show, isApproved, onClose }) => {
                         Close
                     </Button>
                 </div>
-                <div className="h-[30rem] overflow-y-auto rounded-scrollbar flex justify-center">
-                    <Document
-                        file={file}
-                        onLoadSuccess={onDocumentLoadSuccess}
-                        options={options}
-                        className={"flex flex-col space-y-4"}
-                    >
-                        {Array.from(new Array(numPages), (_, index) => (
-                            <PDFPages
-                                key={index}
-                                index={index}
-                                size={size}
-                                pdfpages={pages}
-                                totalPages={numPages}
-                                inView={setPages}
-                            />
-                        ))}
-                    </Document>
+                <div className="h-[31rem] overflow-y-auto rounded-scrollbar flex flex-col items-center p-4 bg-gray-200 rounded-md">
+                    <div ref={contentRef} className="space-y-3 print:space-y-0">
+                        {salnData?.pages.map(
+                            (
+                                {
+                                    children,
+                                    real,
+                                    personal,
+                                    liabilities,
+                                    bifc,
+                                    relatives,
+                                    saln_totals,
+                                },
+                                index
+                            ) =>
+                                index === 0 ? (
+                                    <Fragment key={index}>
+                                        <SALNPage1
+                                            page={{
+                                                page: 1, totalPage: salnData?.pages.length + 1
+                                            }}
+                                            user={user}
+                                            isjoint={saln?.isjoint}
+                                            asof={saln?.asof || ""}
+                                            spouse={salnData?.spouse}
+                                            children={children}
+                                            real={real}
+                                            personal={personal}
+                                            saln_totals={saln_totals}
+                                        />
+                                        <SALNPage2
+                                            page={{
+                                                page: 2, totalPage: salnData?.pages.length + 1
+                                            }}
+                                            user={user}
+                                            spouse={salnData?.spouse}
+                                            liabilities={liabilities}
+                                            bifc={bifc}
+                                            relatives={relatives}
+                                            saln_totals={saln_totals}
+                                            declarant={salnData?.declarant}
+                                        />
+                                    </Fragment>
+                                ) : (
+                                    <SALNSeparatePage
+                                        page={{
+                                            page: index + 2, totalPage: salnData?.pages.length + 1
+                                        }}
+                                        user={user}
+                                        key={index}
+                                        asof={saln?.asof || ""}
+                                        real={real}
+                                        personal={personal}
+                                        bifc={bifc}
+                                        relatives={relatives}
+                                        saln_totals={saln_totals}
+                                        liabilities={liabilities}
+                                    />
+                                )
+                        )}
+                    </div>
                 </div>
             </div>
         </Modal>
     );
-};
-
-const PDFPages = ({
-	size,
-	index,
-	inView,
-	pdfpages,
-	totalPages,
-}: {
-	totalPages?: number;
-	pdfpages: PagesType;
-	index: number;
-	size: number;
-	inView?: (pageview: PagesType) => void;
-}) => {
-	const [isRendered, setIsRendered] = useState<boolean>(false);
-	const page = index + 1;
-
-	const setInView = (isView: boolean) => {
-		// when page has been rendred and viewed in the screen
-		if (isRendered && inView) {
-			// check if there are more than 1 page
-			if (totalPages && totalPages > 1) {
-				// initialize next page number
-				const next = totalPages > page + 1 ? page + 1 : 0;
-				// check if the page is viewed on the screen
-				if (isView) {
-					// check if the user scroll up by checking if the viewed page is equal to previous page
-					if (pdfpages.prev == page) {
-						inView({ current: page, prev: page - 1, next: next });
-					} else {
-						inView({ ...pdfpages, current: page });
-					}
-				} else {
-					inView({ ...pdfpages, prev: page, next: next });
-				}
-			}
-		}
-	};
-
-	return (
-		<div className="relative shadow-md">
-			<InView
-				threshold={0.4}
-				className={cn(
-					"absolute top-0 left-0 w-full h-full pointer-events-none "
-				)}
-				onChange={setInView}
-			/>
-			<Page
-				key={`page_${page}`}
-				pageNumber={page}
-				width={size}
-				onRenderSuccess={() => setIsRendered(true)}
-			/>
-		</div>
-	);
 };
 
 export default ViewSaln;

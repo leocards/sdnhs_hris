@@ -11,6 +11,7 @@ use App\Models\DetailsOfLeave;
 use App\Models\Leave;
 use App\Models\Medical;
 use App\Models\Notifications;
+use App\Models\PDSWorkExperience;
 use App\Models\ServiceRecord;
 use App\Models\User;
 use Carbon\Carbon;
@@ -92,7 +93,12 @@ class LeaveController extends Controller
 
     public function apply_for_leave()
     {
-        return Inertia::render('Leave/ApplyLeave');
+        return Inertia::render('Leave/ApplyLeave', [
+            "salary" => PDSWorkExperience::where('user_id', Auth::id())
+                ->where(function ($query) {
+                    $query->where('to', 'present');
+                })->first('monthly_salary')
+        ]);
     }
 
     public function store(Request $request)

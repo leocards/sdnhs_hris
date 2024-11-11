@@ -180,6 +180,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::controller(StatementOfAssetsLiabilityAndNetworthController::class)->group(function () {
             Route::get('/', 'index')->name('saln');
             Route::get('/add/{saln?}', 'create')->name('saln.create');
+            Route::get('/view/{saln}', 'jsonSalnView')->name('saln.json.view');
 
             Route::post('/save/{idToUpdate?}', 'store')->name('saln.save');
             Route::post('/approve/{saln}', 'setApproveSaln')->name('saln.approve');

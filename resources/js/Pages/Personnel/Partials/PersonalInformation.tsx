@@ -159,10 +159,10 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                                             >
                                                 {field.value ? (
                                                     <span>
-                                                        {format(
+                                                        {(format(
                                                             field.value,
                                                             "PPP"
-                                                        )}
+                                                        )).replace(/\b(\d+)(st|nd|rd|th)\b/g, "$1")}
                                                     </span>
                                                 ) : (
                                                     <span>Pick a date</span>

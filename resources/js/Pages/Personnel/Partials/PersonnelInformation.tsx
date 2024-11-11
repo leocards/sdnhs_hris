@@ -120,7 +120,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                         >
                                             {field.value ? (
                                                 <span>
-                                                    {format(field.value, "PPP")}
+                                                    {format(field.value, "PPP").replace(/\b(\d+)(st|nd|rd|th)\b/g, "$1")}
                                                 </span>
                                             ) : (
                                                 <span>Pick a date</span>

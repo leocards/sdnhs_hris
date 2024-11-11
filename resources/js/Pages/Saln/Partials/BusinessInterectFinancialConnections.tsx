@@ -113,6 +113,7 @@ const BusinessInterectFinancialConnections: React.FC<{ form: any }> = ({
                                     name={`biandfc.bifc.${index}.date`}
                                     label="Date of acquisition of interest or connection"
                                     isRequired={false}
+                                    formatDate="LLLL dd, y"
                                 />
                             </div>
                         </div>

@@ -116,6 +116,7 @@ const Card: React.FC<{
                     name={`${name}.dateofbirth`}
                     className="w-52 form-input"
                     isRequired={false}
+                    formatDate="LLLL dd, y"
                 />
             </div>
             <div className="space-y-2 text-center">

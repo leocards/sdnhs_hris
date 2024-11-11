@@ -52,12 +52,12 @@ const AddSaln: React.FC<Props> = ({ auth, declarant, saln_user }) => {
             },
             liabilities: getLiabilities(saln_user?.saln_liability),
             biandfc: {
-                biandfcid: saln_user?.saln_bi_fc.id,
+                biandfcid: saln_user?.saln_bi_fc.id||null,
                 nobiandfc: !!(saln_user?.saln_bi_fc.has_bi_fc),
                 bifc: getBiFc(saln_user?.saln_bi_fc.bifc),
             },
             relativesingovernment: {
-                relativesingovernmentid: saln_user?.saln_relative.id,
+                relativesingovernmentid: saln_user?.saln_relative.id||null,
                 norelative: !!(saln_user?.saln_relative.has_relative),
                 relatives: getRelative(saln_user?.saln_relative.relatives),
             },

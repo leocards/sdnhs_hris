@@ -224,6 +224,6 @@ class User extends Authenticatable
 
     public function statementOfAssestLiabilities()
     {
-        return $this->hasMany(StatementOfAssetsLiabilityAndNetwork::class);
+        return $this->hasMany(StatementOfAssetsLiabilityAndNetwork::class, 'user_id', 'id');
     }
 }

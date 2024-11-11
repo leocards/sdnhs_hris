@@ -29,7 +29,8 @@ module.exports = {
     			arial: ['arial'],
     			'arial-narrow': ['arial-narrow'],
     			'arial-black': ['arial-black'],
-    			'arial-narrow-italic': ['arial-narrow-italic']
+    			'arial-narrow-italic': ['arial-narrow-italic'],
+    			'bookman': ['bookman'],
     		},
     		colors: {
     			border: 'hsl(var(--border))',

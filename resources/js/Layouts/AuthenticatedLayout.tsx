@@ -415,7 +415,7 @@ const Navigation: React.FC<{
         >
             <nav
                 className={cn(
-                    "h-screen w-72 max-lg:bg-white max-lg:dark:bg-zinc-900 grid grid-rows-[auto,auto,auto,1fr,auto] lg:grid-rows-[auto,auto,1fr,auto]",
+                    "h-screen w-72 max-lg:bg-background max-lg:dark:bg-zinc-900 grid grid-rows-[auto,auto,auto,1fr,auto] lg:grid-rows-[auto,auto,1fr,auto]",
                     "max-lg:h-[calc(100vh-1rem)]"
                 )}
             >

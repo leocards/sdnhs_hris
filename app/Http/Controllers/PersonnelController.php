@@ -20,10 +20,10 @@ class PersonnelController extends Controller
     {
         return Inertia::render('Personnel/Personnel', [
             'pageData' => User::with(['statementOfAssestLiabilities' => function ($query) {
-                $query->select('id', 'user_id', 'isApproved', 'asof')
+                $query->select('id', 'user_id', 'isApproved', 'asof', 'isjoint')
                       ->whereNull('isApproved');
             }])->whereNot('id', Auth::id())
-                ->orderBy('first_name', 'ASC')
+                ->orderBy('last_name', 'ASC')
                 ->paginate(50),
             'statistics' => collect([
                 'jhs' => User::where('department', 'Junior High School')->count(),

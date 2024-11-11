@@ -42,6 +42,7 @@ const PersonalInformation: React.FC<Props> = ({ form, user, declarant }) => {
                         name="asof"
                         label="As of"
                         className="w-52"
+                        formatDate="LLLL dd, y"
                     />
                 </div>
 

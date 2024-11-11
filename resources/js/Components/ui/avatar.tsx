@@ -1,5 +1,6 @@
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
+import avatarProfile from "@/assets/profile.png";
 
 import { cn } from "@/lib/utils";
 import { UserRound } from "lucide-react";
@@ -53,7 +54,7 @@ const AvatarProfile: React.FC<{ src?: string; name?: string; className?: string,
 	return (
 		<div className={cn("size-fit", active && 'relative')}>
             <Avatar className={cn(className)}>
-                <AvatarImage src={src??"/storage/assets/profile.png"} alt="profile" />
+                <AvatarImage src={src??avatarProfile} alt="profile" />
                 <AvatarFallback>
                     <UserRound size={fallbackSize} />
                 </AvatarFallback>

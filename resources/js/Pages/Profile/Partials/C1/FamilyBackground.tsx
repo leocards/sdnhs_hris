@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Calendar } from "@/Components/ui/calendar";
 import { isValidDate } from "@/Pages/types";
+import { Matcher } from "react-day-picker";
 
 type FamilyBackgroundProps = {
     form: any;
@@ -411,6 +412,8 @@ export const CalendarInput: React.FC<{
     withLabel?: boolean;
     placeholder?: string;
     align?: "center" | "end" | "start";
+    formatDate?: string;
+    disabledCalendar?: Matcher | Matcher[]
 }> = ({
     form,
     name,
@@ -422,6 +425,8 @@ export const CalendarInput: React.FC<{
     withLabel = true,
     placeholder,
     align,
+    formatDate,
+    disabledCalendar
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
 
@@ -442,7 +447,7 @@ export const CalendarInput: React.FC<{
                                     {...field}
                                     value={
                                         isValidDate(field.value)
-                                            ? format(field.value, "P")
+                                            ? format(field.value, formatDate??"LLLL dd, y")
                                             : field.value
                                     }
                                     placeholder={placeholder??"mm/dd/yyyy"}
@@ -487,7 +492,7 @@ export const CalendarInput: React.FC<{
                                                     {isValidDate(field.value)
                                                         ? format(
                                                               field.value,
-                                                              "P"
+                                                              formatDate??"LLLL dd, y"
                                                           )
                                                         : field.value}
                                                 </span>
@@ -507,6 +512,7 @@ export const CalendarInput: React.FC<{
                                         field.onChange(date);
                                         setIsCalendarOpen(false);
                                     }}
+                                    disabled={disabledCalendar}
                                 />
                             </PopoverContent>
                         </Popover>

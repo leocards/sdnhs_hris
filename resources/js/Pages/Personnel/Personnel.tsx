@@ -317,7 +317,13 @@ function Personnel({
                 onClose={setShowDeletePersonnel}
             />
 
-            <ViewSalnPersonnel show={viewSaln} onClose={setViewSaln} id={selectedPersonnel?.id} salnList={selectedPersonnel?.statement_of_assest_liabilities} />
+            <ViewSalnPersonnel
+                show={viewSaln}
+                onClose={setViewSaln}
+                id={selectedPersonnel?.id}
+                salnList={selectedPersonnel?.statement_of_assest_liabilities}
+                user={auth.user}
+            />
         </Authenticated>
     );
 }
@@ -336,7 +342,7 @@ const PersonnelRow: React.FC<
                             active={active}
                         />
                         <div className="line-clamp-1 break-words">
-                            {user.first_name + " " + user.last_name}
+                            {user.last_name + ", " + user.first_name}
                         </div>
                     </div>
                 </div>

@@ -6,6 +6,7 @@ use App\Models\StatementOfAssetsLiabilityAndNetwork;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -35,7 +36,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
         ]);
     }
 
-    public function store(Request $request, $idToUpdate)
+    public function store(Request $request, $idToUpdate = null)
     {
         DB::beginTransaction();
         try {
@@ -163,5 +164,77 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
         } catch (\Throwable $th) {
             return back()->withErrors($th->getMessage());
         }
+    }
+
+    public function jsonSalnView(StatementOfAssetsLiabilityAndNetwork $saln)
+    {
+        $declarant = User::where('id', $saln->user_id)->first(['id']);
+
+        $assets = $saln->salnAssets->groupBy('asset_type');
+
+        $realAssets = $assets->get('real', collect())->chunk(4);
+        $realPersonal = $assets->get('real', collect())->chunk(4);
+        $children = $saln->salnChildren->chunk(4);
+        $liabilities = $saln->salnLiability->chunk(4);
+        $salnbifc = $saln->salnBiFc;
+        $bifc = $saln->salnBiFc->bifc->chunk(4);
+        $salnrelatives = $saln->salnRelative;
+        $relatives = $saln->salnRelative->relatives->chunk(4);
+        $spouse = $saln->salnSpouse;
+
+        $salnPages = collect([]);
+
+        $is_more_pages = true;
+        while ($is_more_pages) {
+            $real = $this->getValue($realAssets->splice(0, 1));
+            $personal = $this->getValue($realPersonal->splice(0, 1));
+            $liability = $this->getValue($liabilities->splice(0, 1));
+
+            $saln_totals = collect([
+                'personal' => $this->totals($personal, 'cost'),
+                'real' => $this->totals($real, 'cost'),
+                'liability' => $this->totals($liability, 'balances'),
+                'networth' => ($this->totals($personal, 'cost') + $this->totals($real, 'cost')) - $this->totals($liability, 'balances')
+            ]);
+
+            $salnPages->push([
+                "children" => $this->getValue($children->splice(0, 1)),
+                "real" => $real,
+                "personal" => $personal,
+                "liabilities" => $liability,
+                "bifc" => collect([
+                    "salnbifc" => $salnbifc,
+                    "bifc" => $this->getValue($bifc->splice(0, 1))
+                ]),
+                "relatives" => collect([
+                    "salnrelatives" => $salnrelatives,
+                    "relatives" => $this->getValue($relatives->splice(0, 1))
+                ]),
+                "saln_totals" => $saln_totals
+            ]);
+
+            if(
+                $realAssets->count() === 0 &&
+                $realPersonal->count() === 0 &&
+                $children->count() === 0 &&
+                $liabilities->count() === 0 &&
+                $bifc->count() === 0 &&
+                $relatives->count() === 0
+            ) {
+                $is_more_pages = false;
+            }
+        }
+
+        return response()->json(["spouse" => $spouse, "declarant" => $declarant->pdsGovernment, "pages" => $salnPages]);
+    }
+
+    function getValue($data)
+    {
+        return $data->count() > 0 ? $data[0] : null;
+    }
+
+    function totals(Collection $data, string $attribute)
+    {
+        return $data->reduce(fn ($carry, $item) => ($carry + $item[$attribute]), 0);
     }
 }

@@ -21,7 +21,7 @@ import { Input } from "@/Components/ui/input";
 
 type IFormLeave = z.infer<typeof LEAVEFORMSCHEMA>;
 
-const ApplyLeave = ({ auth }: PageProps) => {
+const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: string | null }}) => {
     const form = reactForm<IFormLeave>({
         resolver: zodResolver(LEAVEFORMSCHEMA),
         defaultValues: initialValues,
@@ -33,7 +33,6 @@ const ApplyLeave = ({ auth }: PageProps) => {
     const watchInclusiveDates = form.watch("inclusiveDates");
 
     const onFormSubmit = (form: IFormLeave) => {
-        console.log(form);
         setData(form);
         setIsFormConfirm(true);
     };
@@ -76,6 +75,7 @@ const ApplyLeave = ({ auth }: PageProps) => {
         form.setValue("middleName", middle_name ?? "");
         form.setValue("department", department);
         form.setValue("position", position);
+        form.setValue("salary", salary.monthly_salary||"");
         form.setValue("dateOfFiling.from", new Date());
     }, []);
 

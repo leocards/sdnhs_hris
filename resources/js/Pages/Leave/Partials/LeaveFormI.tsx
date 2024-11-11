@@ -21,9 +21,9 @@ import NumberInput from "@/Components/NumberInput";
 import { PERSONNELPOSITIONS } from "@/Pages/Personnel/types";
 import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigger } from "@/Components/SelectOption";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import { CalendarInput } from "@/Pages/Profile/Partials/C1/FamilyBackground";
 
 const LeaveFormI: React.FC<FormProps> = ({ form }) => {
-    const dateFiled = form.watch('dateOfFiling')
 
     return (
         <>
@@ -128,76 +128,23 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                     />
                 </div>
             </div>
-            <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3 mt-5">
-                <FormField
-                    control={form.control}
-                    name="dateOfFiling"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel className="required uppercase">
-                                Date of filing
-                            </FormLabel>
-                            <Popover>
-                                <PopoverTrigger
-                                    asChild
-                                    className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                >
-                                    <FormControl>
-                                        <Button
-                                            variant={"outline"}
-                                            className={cn(
-                                                "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
-                                                !field.value &&
-                                                    "text-muted-foreground"
-                                            )}
-                                        >
-                                            {/* {field.value ? (
-                                                <span>
-                                                    { format(field.value, "PP") }
-                                                </span>
-                                            ) : (
-                                                <span>Pick a date</span>
-                                            )} */}
-                                            {dateFiled?.from ? (
-                                                <span>
-                                                    {dateFiled?.to ? (
-                                                        <>
-                                                            {format(
-                                                                dateFiled?.from,
-                                                                "LLL dd, y"
-                                                            )}{" "}
-                                                            -{" "}
-                                                            {format(
-                                                                dateFiled?.to,
-                                                                "LLL dd, y"
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        format(dateFiled?.from, "LLL dd, y")
-                                                    )}
-                                                </span>
-                                            ) : (
-                                                <span>Pick a date</span>
-                                            )}
-                                            <CalendarIcon className="ml-auto size-5 opacity-50" />
-                                        </Button>
-                                    </FormControl>
-                                </PopoverTrigger>
-                                <PopoverContent
-                                    className="w-auto p-0"
-                                    align="start"
-                                >
-                                    <Calendar
-                                        mode="range"
-                                        selected={field.value}
-                                        onSelect={field.onChange}
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+            <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-4 w-full gap-3 mt-5">
+                <CalendarInput
+                    label="DATE OF FILING FROM"
+                    form={form}
+                    name="dateOfFiling.from"
+                    placeholder="Pick a date"
+                    formatDate="LLLL dd, y"
                 />
+                <CalendarInput
+                    label="DATE OF FILING TO"
+                    form={form}
+                    name="dateOfFiling.to"
+                    placeholder="Pick a date"
+                    formatDate="LLLL dd, y"
+                    isRequired={false}
+                />
+
                 <FormField
                     control={form.control}
                     name="position"

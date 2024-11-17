@@ -267,7 +267,7 @@ class LeaveController extends Controller
                     ]);
                 }
 
-                if($user->role != "Non-teaching") {
+                if($user->role != "Non-teaching" || $user->role != "HOD") {
                     $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
                     $user->save();
                 } else {

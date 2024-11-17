@@ -246,13 +246,12 @@ export default function Authenticated({
             }
 
             // setNotifications([newNotification]);
-
-            console.log(newNotification);
+            console.log(newNotification)
         }
     }, [newNotification]);
 
     return (
-        <div className="relative isolate flex min-h-svh w-full bg-white max-lg:flex-col lg:bg-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
+        <div className="relative isolate flex min-h-svh w-full bg-background max-lg:flex-col lg:bg-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
             {width > 1023 && (
                 <Navigation
                     user={userAuth}

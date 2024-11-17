@@ -10,7 +10,7 @@ class PerformanceRating extends Model
     use HasFactory;
 
     protected $fillable = [
-        "user_id", "rating"
+        "user_id", "rating", "sy"
     ];
 
     public function user()

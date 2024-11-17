@@ -16,7 +16,11 @@ import { cn } from "@/lib/utils";
 import { useMessage, USER } from "@/hooks/MessageProvider";
 import { PageProps } from "@/types";
 
-const SidePanel: React.FC<PageProps> = ({ auth }) => {
+type Props = {
+    user_open_message: USER
+}
+
+const SidePanel: React.FC<PageProps & Props> = ({ auth, user_open_message }) => {
     const [search, setSearch] = useState<string>("");
     const searchRef = useRef<HTMLInputElement | null>(null);
     const [loading, setLoading] = useState(false);
@@ -59,6 +63,14 @@ const SidePanel: React.FC<PageProps> = ({ auth }) => {
         } else {
         }
     }, [debounceSearch]);
+
+    useEffect(() => {
+        if(user_open_message) {
+            setUser(user_open_message, true);
+
+            setUserConversation(user_open_message.id, user_open_message.messageId)
+        }
+    }, [])
 
     return (
         <div className="border rounded-lg grid grid-rows-[auto,1fr] [@media(max-width:720px)]:hidden">

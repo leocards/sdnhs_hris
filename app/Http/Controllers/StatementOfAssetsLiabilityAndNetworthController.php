@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotificationEvent;
+use App\Models\Notifications;
+use App\Models\PerformanceRating;
+use App\Models\Saln;
 use App\Models\StatementOfAssetsLiabilityAndNetwork;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -40,13 +45,27 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
     {
         DB::beginTransaction();
         try {
+            $asof = Carbon::parse($request->asof)->format('Y');
+            $exist = StatementOfAssetsLiabilityAndNetwork::whereYear('asof', $asof)
+                ->where('user_id', Auth::id())
+                ->exist();
 
-            $saln = StatementOfAssetsLiabilityAndNetwork::updateOrCreate(['id' => $idToUpdate],[
+            if ($exist)
+                throw new Exception('You have already submitted your SALN as of ' . Carbon::parse($request->asof)->format('m-d-Y'));
+
+
+            $saln = StatementOfAssetsLiabilityAndNetwork::updateOrCreate(['id' => $idToUpdate], [
                 "user_id" => Auth::id(),
                 "asof" => Carbon::parse($request->asof)->format('Y-m-d'),
                 "date" => Carbon::parse($request->date)->format('Y-m-d'),
                 "isjoint" => $request->isjoint,
             ]);
+
+            $realassets = 0;
+
+            $personalassets = 0;
+
+            $liabilities = 0;
 
             if ($request->spouse['familyname'])
                 $saln->salnSpouse()->updateOrCreate(
@@ -87,6 +106,8 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                         'mode' => $value['acquisition']['mode'],
                         'cost' => $value['acquisitioncost']
                     ]);
+
+                    $realassets = $realassets + floatval($value['acquisitioncost']);
                 }
             }
 
@@ -98,6 +119,8 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                         'year' => $value['yearacquired'],
                         'cost' => $value['acquisitioncost']
                     ]);
+
+                    $personalassets = $personalassets + floatval($value['acquisitioncost']);
                 }
             }
 
@@ -108,6 +131,8 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                         'creditors' => $value['nameofcreditors'],
                         'balances' => $value['outstandingbalances']
                     ]);
+
+                    $liabilities = $liabilities + floatval($value['outstandingbalances']);
                 }
             }
 
@@ -141,9 +166,29 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 }
             }
 
+            $saln = Saln::where('user_id', Auth::id())
+                ->where('year', $asof)
+                ->first();
+
+            $networth = ($realassets + $personalassets) - $liabilities;
+
+            if ($saln) {
+                $saln->networth = $networth;
+                $saln->spouse = $request->spouse['firstname'] .' '. $request->spouse['middleinitial'] .'. '. $request->spouse['familyname'] .'/'. $request->spouse['office'] .'/'. $request->spouse['officeaddress'];
+                $saln->joint = $request->isjoint;
+                $saln->year = $asof;
+            } else {
+                Saln::create([
+                    "networth" => $networth,
+                    "spouse" => $request->spouse['firstname'] .' '. $request->spouse['middleinitial'] .'. '. $request->spouse['familyname'] .'/'. $request->spouse['office'] .'/'. $request->spouse['officeaddress'],
+                    "joint" => $request->isjoint,
+                    "year" => $asof
+                ]);
+            }
+
             DB::commit();
 
-            if($idToUpdate)
+            if ($idToUpdate)
                 return back()->with('success', 'SALN updated successfully.');
             else
                 return redirect(route('saln'))->with('success', 'SALN saved successfully.');
@@ -156,12 +201,28 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
 
     public function setApproveSaln(Request $request, StatementOfAssetsLiabilityAndNetwork $saln)
     {
+        DB::beginTransaction();
         try {
             $saln->isApproved = $request->isApprove;
             $saln->save();
 
-            return back();
+            $notificationResponse = Notifications::create([
+                'user_id' => $saln->user_id,
+                'from_user_id' => Auth::id(),
+                'message' => ': Your SALN has been approved by the HR.',
+                'type' => 'response',
+                'go_to_link' => route('saln')
+            ]);
+
+            DB::commit();
+
+            $notificationResponse->load(['sender']);
+            broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
+
+            return back()->with('success', 'SALN has been approved.');
         } catch (\Throwable $th) {
+            DB::rollback();
+
             return back()->withErrors($th->getMessage());
         }
     }
@@ -213,7 +274,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 "saln_totals" => $saln_totals
             ]);
 
-            if(
+            if (
                 $realAssets->count() === 0 &&
                 $realPersonal->count() === 0 &&
                 $children->count() === 0 &&
@@ -235,6 +296,6 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
 
     function totals(Collection $data, string $attribute)
     {
-        return $data->reduce(fn ($carry, $item) => ($carry + $item[$attribute]), 0);
+        return $data->reduce(fn($carry, $item) => ($carry + $item[$attribute]), 0);
     }
 }

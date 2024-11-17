@@ -25,8 +25,8 @@ const C3 = forwardRef<HTMLDivElement, C3Props>(
         const [processing, setProcessing] = useState(false);
 
         return (
-            <div className="flex overflow-x-hidden gap-2">
-                <div className="w-full shrink-0">
+            <div className="flex overflow-hidden gap-2 relative">
+                <div className="w-full shrink-0 px-1">
                     <div className="w-full border-b mb-6">
                         <Tabs
                             id="pds-sub-tab"
@@ -87,7 +87,7 @@ const C3 = forwardRef<HTMLDivElement, C3Props>(
                 </div>
 
                 {data && (
-                    <div className="w-[calc(900px-20pt)]">
+                    <div className="w-[calc(900px-20pt)] absolute top-0 -right-[120%]">
                         <PDSPDFIsDownloadProvider initialValue={true}>
                             <Pages ref={ref} pageNumber={3}>
                                 <C3pdf voluntarywork={data.voluntarywork} learningdevelopment={data.learningdevelopment} otherinformation={data.otherinformation} />

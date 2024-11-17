@@ -71,9 +71,9 @@ export default function Filter({
 						<Transition {...transitions}>
 							<PopoverPanel
 								anchor={PopoverPanelPositons[position]}
-								className="divide-y border rounded-lg bg-background text-sm/6 [--anchor-gap:var(--spacing-5)] z-30 shadow-md dark:shadow-3xl min-w-[11rem] mt-1"
+								className="divide-y border rounded-lg bg-background text-sm/6 [--anchor-gap:var(--spacing-5)] z-30 shadow-md dark:shadow-3xl min-w-[11rem] !max-h-56 !overflow-hidden mt-1"
 							>
-								<ul className="py-1.5 w-full">
+								<ul className="py-1.5 w-full max-h-40 overflow-auto rounded-scrollbar">
 									{props.items.map(
 										({ filter, onClick }, index) => (
 											<li

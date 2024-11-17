@@ -13,10 +13,7 @@ import { cn } from "@/lib/utils";
 import NumberInput from "@/Components/NumberInput";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { Button } from "@/Components/ui/button";
-import { Calendar } from "@/Components/ui/calendar";
 import {
-    Popover,
-    PopoverContent,
     PopoverTrigger,
 } from "@/Components/ui/popover";
 import { format, isWeekend } from "date-fns";
@@ -517,9 +514,9 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
 
                     <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3 mt-6 [&>div>label]:opacity-70">
                         <CalendarInput
-                            label="ICLUSIVE DATES FROM"
+                            label="INCLUSIVE DATES FROM"
                             form={form}
-                            name={`includiveDates.from`}
+                            name={`inclusiveDates.from`}
                             placeholder="Pick a date"
                             formatDate="LLLL dd, y"
                             disabledCalendar={(date) => {
@@ -534,9 +531,9 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                         />
 
                         <CalendarInput
-                            label="ICLUSIVE DATES TO"
+                            label="INCLUSIVE DATES TO"
                             form={form}
-                            name={`includiveDates.to`}
+                            name={`inclusiveDates.to`}
                             placeholder="Pick a date"
                             formatDate="LLLL dd, y"
                             disabledCalendar={(date) => {

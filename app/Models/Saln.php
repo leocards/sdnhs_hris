@@ -13,7 +13,8 @@ class Saln extends Model
         "user_id",
         "networth",
         "spouse",
-        "joint"
+        "joint",
+        "year",
     ];
 
     public function user()

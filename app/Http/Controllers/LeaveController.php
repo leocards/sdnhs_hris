@@ -116,13 +116,13 @@ class LeaveController extends Controller
             $leave = Leave::create([
                 'user_id' => Auth::id(),
                 'date_of_filing_from' => Carbon::parse($request->dateOfFiling['from'])->format('Y-m-d'),
-                'date_of_filing_to' => $request->dateOfFiling['to'] ? Carbon::parse($request->dateOfFiling['to'])->format('Y-m-d') : null,
+                'date_of_filing_to' => array_key_exists('to', $request->dateOfFiling) ? Carbon::parse($request->dateOfFiling['to'])->format('Y-m-d') : null,
                 'salary' => $request->salary,
                 'leave_type' => $request->leavetype['type'],
                 'leave_type_others' => $request->leavetype['type'] === "Others" ? $request->leavetype['others'] : null,
                 'num_days_applied' => $request->numDaysApplied,
                 'inclusive_date_from' => Carbon::parse($request->inclusiveDates['from'])->format('Y-m-d'),
-                'inclusive_date_to' => Carbon::parse($request->inclusiveDates['to'])->format('Y-m-d') ?? null,
+                'inclusive_date_to' => array_key_exists('to', $request->inclusiveDates) ? Carbon::parse($request->inclusiveDates['to'])->format('Y-m-d') : null,
                 'is_not_requested' => $request->commutation['notRequested'] ?? null,
                 'is_requested' => $request->commutation['requested'] ?? null,
             ]);
@@ -263,8 +263,17 @@ class LeaveController extends Controller
                         'go_to_link' => route('leave.view', [$leave->id, $user->id])
                     ]);
                 }
-                $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
-                $user->save();
+
+                if($user->role != "Non-teaching") {
+                    $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
+                    $user->save();
+                } else {
+                    if($leave->leave_type != "Mandatory/Forced Leave" || $leave->leave_type != "Special Privilege Leave") {
+                        $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
+                        $user->save();
+                    }
+                }
+
             } else {
                 if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Rejected";
@@ -290,6 +299,7 @@ class LeaveController extends Controller
                     ]);
                 }
             }
+
             $leave->save();
 
             /* Send email */

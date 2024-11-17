@@ -1,6 +1,7 @@
 import Modal from "@/Components/Modal";
 import { AspectRatio } from "@/Components/ui/aspect-ratio";
 import { Button } from "@/Components/ui/button";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
@@ -14,6 +15,7 @@ type Certificate = {
     credits: number;
     venue: string;
     organizer: string;
+    approved: "approved" | "rejected" | "pending"
 } | null;
 
 export default function ViewCertificate(props: {
@@ -25,6 +27,12 @@ export default function ViewCertificate(props: {
     const [serviceRecord, setServiceRecord] =
         useState<Certificate>(certificate);
     const type = serviceRecord?.file_path.split(".")[1];
+    const color_status = {
+        "approved": "text-green-600",
+        "rejected": "text-red-600",
+        "pending": "text-amber-600",
+        null: ""
+    }[serviceRecord?.approved||"null"]
 
     const formatDateRange = (dateRange: {
         from: string;
@@ -88,6 +96,10 @@ export default function ViewCertificate(props: {
                     <div>
                         <span className="font-semibold">Credits earned:</span>{" "}
                         {serviceRecord?.credits}
+                    </div>
+                    <div>
+                        <span className="font-semibold">Status:</span>{" "}
+                        <span className={cn("capitalize", color_status)}>{serviceRecord?.approved}</span>
                     </div>
                 </div>
 

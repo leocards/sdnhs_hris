@@ -37,25 +37,40 @@ const Charts: React.FC<Props> = ({ chartData }) => {
                             className="font-medium"
                         />
                         <YAxis width={30} className="font-medium text-[10px]" />
+
                         <Bar
                             dataKey="leave"
-                            fill="hsl(var(--primary))"
+                            fill="#f59e0b"
                             radius={3}
                         >
                             <LabelList
                                 position="insideTop"
                                 offset={8}
 
-                                className="fill-primary-foreground"
+                                className="fill-[#78350f]"
                                 fontSize={12}
                             />
                         </Bar>
+                        <Bar
+                            dataKey="rejected"
+                            fill="#84cc16"
+                            radius={3}
+                        >
+                            <LabelList
+                                position="insideTop"
+                                offset={8}
+
+                                className="fill-[#3f6212]"
+                                fontSize={12}
+                            />
+                        </Bar>
+
                     </BarChart>
                 </ChartContainer>
             ) : (
                 <ChartContainer
                     config={chartConfig}
-                    className="h-[26rem] w-full"
+                    className="h-[28rem] w-full"
                 >
                     <BarChart
                         accessibilityLayer
@@ -76,14 +91,27 @@ const Charts: React.FC<Props> = ({ chartData }) => {
                         />
                         <Bar
                             dataKey="leave"
-                            fill="hsl(var(--primary))"
+                            fill="#f59e0b"
                             radius={5}
                         >
                             <LabelList
                                 dataKey="leave"
                                 position="insideRight"
                                 offset={8}
-                                className="fill-primary-foreground"
+                                className="fill-[#78350f]"
+                                fontSize={12}
+                            />
+                        </Bar>
+                        <Bar
+                            dataKey="rejected"
+                            fill="#84cc16"
+                            radius={5}
+                        >
+                            <LabelList
+                                dataKey="rejected"
+                                position="insideRight"
+                                offset={8}
+                                className="fill-[#3f6212]"
                                 fontSize={12}
                             />
                         </Bar>
@@ -93,7 +121,16 @@ const Charts: React.FC<Props> = ({ chartData }) => {
 
             <div className="mx-auto w-fit mt-3 text-center">
                 <div className="font-medium">Leave applications</div>
-                <div className="text-foreground/60 text-sm">Showing the number of submitted leave applications per type of leave for the year 2024.</div>
+                <div className="flex items-center gap-5">
+                    <div className="flex items-center gap-2 text-sm">
+                        <div className="size-3 shrink-0 rounded-sm bg-[#f59e0b]"></div>
+                        <div>Approved Leave</div>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                        <div className="size-3 shrink-0 rounded-sm bg-[#84cc16]"></div>
+                        <div>Rejected Leave</div>
+                    </div>
+                </div>
             </div>
         </div>
     );

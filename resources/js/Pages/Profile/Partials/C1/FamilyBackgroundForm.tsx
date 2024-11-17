@@ -36,7 +36,7 @@ export const getFamilyData = (data: Array<any>, withDefault?: boolean): FB => {
 
     if(children.length < 12 && withDefault) {
         Array.from({ length: 12 - children.length }).forEach(() => {
-            children.push({ full_name: '', birthday: '' })
+            children.push({ full_name: '', birthdate: '' })
         })
     }
 

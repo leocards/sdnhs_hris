@@ -57,10 +57,11 @@ export const LEAVEFORMSCHEMA = z.object({
             today.setHours(0, 0, 0, 0);
             dates.from.setHours(0, 0, 0, 0);
 
-            return dates.from > today;
+            return dates.from >= today;
         },
         {
-            message: "Date of filing cannot be present or past dates.",
+            message: "Date of filing from cannot be past dates.",
+            path: ['from']
         }
     )
     .refine(
@@ -267,5 +268,6 @@ export const initialValues = {
     salary: "",
     leavetype: { others: '' },
     detailsOfLeave: defaultDetailsOfLeave,
+    inclusiveDates: {from: undefined, to:undefined, dates: []},
     numDaysApplied: '',
 }

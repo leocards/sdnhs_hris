@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('networth');
             $table->string('spouse')->nullable();
             $table->boolean('joint')->nullable();
+            $table->string('year', 5)->nullable();
             $table->timestamps();
         });
     }

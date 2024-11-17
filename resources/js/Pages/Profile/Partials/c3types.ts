@@ -9,6 +9,9 @@ const VOLUNTARYWORK = z.object({
             inclusivedates: z.object({
                 from: z.date({ required_error: requiredError('"from"'), invalid_type_error: requiredError('"from"') }),
                 to: z.date({ required_error: requiredError('"to"'), invalid_type_error: requiredError('"to"') })
+            }).refine(data => !data.to || data.to > data.from, {
+                message: "'To' date must be after the 'from' date",
+                path: ["to"]
             }),
             numberofhours: z.string().min(1, requiredError('number of hours')).default(""),
             positionornatureofwork: z.string().min(1, requiredError('position or nature of work')).default("")

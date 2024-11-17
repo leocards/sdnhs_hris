@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotificationEvent;
 use App\Imports\PDSImport;
+use App\Models\Notifications;
 use App\Models\PDSc4;
 use App\Models\PDSCivilServiceEligibility;
 use App\Models\PDSEducationalBackground;
@@ -300,7 +302,7 @@ class PersonalDataSheetController extends Controller
                     [
                         'user_id' => Auth::id(),
                         'from' => Carbon::parse($value['inclusivedates']['from'])->format('Y-m-d'),
-                        'to' => Carbon::parse($value['inclusivedates']['to'])->isValid() ? Carbon::parse($value['inclusivedates']['to'])->format('Y-m-d') : $value['inclusivedates']['to'],
+                        'to' => Str::lower($value['inclusivedates']['to']) == "present" ? $value['inclusivedates']['to'] : (Carbon::parse($value['inclusivedates']['to'])->isValid() ? Carbon::parse($value['inclusivedates']['to'])->format('Y-m-d') : $value['inclusivedates']['to']),
                         'position_title' => $value['positiontitle'],
                         'company' => $value['department'],
                         'monthly_salary' => preg_replace('/\B(?=(\d{3})+(?!\d))/', ',', $value['monthlysalary']),
@@ -514,14 +516,29 @@ class PersonalDataSheetController extends Controller
 
     public function setApprovePDSDownload(Request $request, PDSPersonalInformation $pds)
     {
+        DB::beginTransaction();
         try {
-            DB::transaction(function () use ($request, $pds) {
-                $pds->is_approved = $request->isApprove;
-                $pds->save();
-            });
+
+            $pds->is_approved = $request->isApprove;
+            $pds->save();
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $pds->user_id,
+                'from_user_id' => Auth::id(),
+                'message' => ': Your personal data sheet has been approved by the HR.',
+                'type' => 'response',
+                'go_to_link' => route('profile.edit')
+            ]);
+
+            DB::commit();
+
+            $notificationResponse->load(['sender']);
+            broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
 
             return back()->with('success', "PDS has bee approved.");
         } catch (\Throwable $th) {
+            DB::rollBack();
+
             return back()->withErrors($th->getMessage());
         }
     }

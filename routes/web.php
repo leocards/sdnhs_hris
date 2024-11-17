@@ -126,9 +126,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::controller(ServiceRecordController::class)->group(function () {
             Route::get('/', 'index')->name('service-records');
             Route::get('/json', 'indexJson')->name('service-records.json');
+            Route::get('/certificates/json/{user}', 'userCertificates')->name('service-records.certificates');
 
             Route::post('/upload', 'store')->name('service-records.post');
             Route::post('/delete/{sr}', 'delete')->name('service-records.delete');
+            Route::post('/respond/certificate/{certificate}', 'respondCertificate')->name('service-records.respond.certificate');
         });
     });
 
@@ -138,6 +140,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/search-ipcr', 'searchIPCR')->name('reports.searchIPCR');
             Route::get('/ipcr-personnel-unlisted', 'getIPCRUnlisted')->name('reports.unlistedIPCR');
             Route::get('/saln-personnel-unlisted', 'getSALNUnlisted')->name('reports.unlistedSALN');
+            Route::get('/filter-ipcr/{year?}', 'filterIPCRByYear')->name('reports.filter.ipcr');
+            Route::get('/filter-saln/{year?}', 'filterSALNByYear')->name('reports.filter.saln');
 
             Route::post('/excel-ipcr-upload', 'upload_ipcr')->name('reports.excel.ipcr.upload');
             Route::post('/excel-saln-upload', 'upload_saln')->name('reports.excel.saln.upload');

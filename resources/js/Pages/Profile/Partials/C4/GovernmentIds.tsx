@@ -14,7 +14,7 @@ export default function GovernmentIds({ form }: { form: any }) {
                 Government Issued ID (i.e.Passport, GSIS, SSS, PRC, Driver's
                 License, etc.) PLEASE INDICATE ID Number and Date of Issuance
             </div>
-            <div className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3">
+            <div className="grid 2xl:grid-cols-3 sm:grid-cols-2 gap-3 px-1">
                 <FormField
                     control={form.control}
                     name={`governmentids.governmentissuedid`}

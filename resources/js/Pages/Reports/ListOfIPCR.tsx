@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import IPCRPrint from "./IPCRPrint";
+import { useEffect, useMemo, useState } from "react";
 import UploadIPCR from "./UploadIPCR";
 import { IPCRType } from "./Reports";
 import { Button } from "@/Components/ui/button";
@@ -11,12 +10,13 @@ import PrintIPCR from "./PrintIPCR";
 
 type Props = {
     ipcr: Array<IPCRType>;
-    principal: {name: string; position: string};
-    hr: {name: string};
+    principal: { name: string; position: string };
+    hr: { name: string };
+    ipcr_years: Array<string>;
 };
 
-export const equivalent = (rate: number|null): string => {
-    if(rate)
+export const equivalent = (rate: number | null): string => {
+    if (rate)
         if (rate >= 4.5 && rate <= 5) {
             return "Outstanding";
         } else if (rate >= 3.5 && rate <= 4.499) {
@@ -31,29 +31,43 @@ export const equivalent = (rate: number|null): string => {
             return "Poor";
         }
 
-    return ""
+    return "";
 };
 
-const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
+const ListOfIPCR = ({ ipcr, principal, hr, ipcr_years }: Props) => {
     const [showList, setShowList] = useState(true);
     const [showPrint, setShowPrint] = useState<boolean>(false);
-    const [filter, setFilter] = useState<string>("");
+    const [filter, setFilter] = useState<string>(ipcr_years.length > 0 ? ipcr_years[0] : "");
     const [isEdit, setIsEdit] = useState<IPCRType | null>(null);
     const [showUpload, setShowUpload] = useState<{
         upload: boolean;
         add: boolean;
     }>({ upload: false, add: false });
+    const [loading, setLoading] = useState(false);
+    const [ipcrList, setIpcrList] = useState<Array<IPCRType>>(ipcr);
+
+    useEffect(() => {
+        if(filter) {
+            window.axios
+                .get(route("reports.filter.ipcr", [filter]))
+                .then((response) => {
+                    let data: Array<IPCRType> = response.data;
+
+                    setIpcrList(data);
+                })
+                .finally(() => setLoading(false));
+        }
+    }, [filter]);
 
     return (
         <div>
             <div className="mt-8">
-                <div className="flex justify-between max-[820px]:flex-col min-[821px]:items-center mb-5">
-                    <div className="flex items-center gap-3">
+                <div className={cn("flex justify-between max-[820px]:flex-col min-[821px]:items-center mb-2 rounded-md", showList ? "bg-amber-300" : "hover:bg-secondary transition duration-150")}>
+                    <div className="flex items-center gap-3 grow py-3 px-2" onClick={() => setShowList(!showList)} role="button">
                         <Button
                             className="size-6"
                             size="icon"
                             variant="ghost"
-                            onClick={() => setShowList(!showList)}
                         >
                             <ChevronDown
                                 className={cn(
@@ -62,25 +76,33 @@ const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
                                 )}
                             />
                         </Button>
-                        <div className="font-semibold  ">
+                        <div className="font-semibold">
                             INDIVIDUAL PERFORMANCE COMMITMENT AND REVIEW (IPCR)
                         </div>
                     </div>
+                </div>
+                <div className="flex justify-end mb-4">
+
                     {showList && (
-                        <div className="flex gap-3 max-[820px]:ml-auto max-[820px]:mt-2">
+                        <div className="flex gap-3">
                             {showList && (
                                 <Filter
                                     filter="Filter by year"
                                     active={filter}
-                                    items={[
-                                        { filter: "2024", onClick: setFilter },
-                                        { filter: "2023", onClick: setFilter },
-                                        { filter: "2022", onClick: setFilter },
-                                        { filter: "2021", onClick: setFilter },
-                                        { filter: "2020", onClick: setFilter },
-                                    ]}
-                                    onClear={() => setFilter("")}
-                                    labelClass="2xl:block hidden"
+                                    items={ipcr_years.map((year) => ({
+                                        filter: year,
+                                        onClick: (fil) => {
+                                            if(fil != filter) {
+                                                setFilter(fil)
+                                                setLoading(true)
+                                            }
+                                        },
+                                    }))}
+                                    onClear={() => {
+                                        setFilter("");
+                                        setLoading(true);
+                                    }}
+                                    labelClass="sm:block hidden"
                                     size="sm"
                                 />
                             )}
@@ -90,7 +112,7 @@ const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
                                 onClick={() => setShowPrint(true)}
                             >
                                 <Printer className="size-4" strokeWidth={2.3} />
-                                <span className="2xl:block hidden" >Print</span>
+                                <span className="sm:block hidden">Print</span>
                             </Button>
                             <Button
                                 className="h-8 gap-2"
@@ -103,7 +125,7 @@ const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
                                 }
                             >
                                 <Upload className="size-4" strokeWidth={2.7} />
-                                <span className="2xl:block hidden" >Upload</span>
+                                <span className="sm:block hidden">Upload</span>
                             </Button>
                             <Button
                                 className="h-8 gap-2"
@@ -115,7 +137,7 @@ const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
                                 }
                             >
                                 <Plus className="size-4" strokeWidth={2.7} />
-                                <span className="2xl:block hidden" >Add</span>
+                                <span className="sm:block hidden">Add</span>
                             </Button>
                         </div>
                     )}
@@ -130,54 +152,70 @@ const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
                             <div className="">Adjectival Equivalent</div>
                             <div className=""></div>
                         </div>
-                        {ipcr.length > 0 ? (
-                            <ScrollArea className="h-[30rem]">
-                                <div className="divide-y">
-                                    {ipcr.map((list, index) => (
-                                        <div key={index}>
-                                            <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
-                                                <div className="">
-                                                    {++index}
-                                                </div>
-                                                <div className="">{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
-                                                <div className="">
-                                                    {list.user.position}
-                                                </div>
-                                                <div className="">
-                                                    {list.rating}
-                                                </div>
-                                                <div className="">
-                                                    {equivalent(list.rating?+list.rating:null)}
-                                                </div>
-                                                <div className="flex items-center justify-center gap-2">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="size-7"
-                                                        onClick={() => {
-                                                            setShowUpload({
-                                                                ...showUpload,
-                                                                add: true,
-                                                            });
-                                                            setIsEdit(list);
-                                                        }}
-                                                    >
-                                                        <PencilLine
-                                                            className="size-5"
-                                                            strokeWidth={1.8}
-                                                        />
-                                                    </Button>
+                        {
+                            (ipcrList.length > 0 && !loading) && (
+                                <ScrollArea className="h-[30rem]">
+                                    <div className="divide-y">
+                                        {ipcrList.map((list, index) => (
+                                            <div key={index}>
+                                                <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
+                                                    <div className="">
+                                                        {++index}
+                                                    </div>
+                                                    <div className="">{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
+                                                    <div className="">
+                                                        {list.user.position}
+                                                    </div>
+                                                    <div className="">
+                                                        {list.rating}
+                                                    </div>
+                                                    <div className="">
+                                                        {equivalent(
+                                                            list.rating
+                                                                ? +list.rating
+                                                                : null
+                                                        )}
+                                                    </div>
+                                                    <div className="flex items-center justify-center gap-2">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="size-7"
+                                                            onClick={() => {
+                                                                setShowUpload({
+                                                                    ...showUpload,
+                                                                    add: true,
+                                                                });
+                                                                setIsEdit(list);
+                                                            }}
+                                                        >
+                                                            <PencilLine
+                                                                className="size-5"
+                                                                strokeWidth={1.8}
+                                                            />
+                                                        </Button>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        ))}
+                                    </div>
+                                </ScrollArea>
+                            )
+                        }
+                        {
+                            (!loading && ipcrList.length === 0) && (
+                                <div className="py-2 text-center text-secondary-foreground/30">
+                                    No records
                                 </div>
-                            </ScrollArea>
-                        ) : (
-                            <div className="py-2 text-center text-secondary-foreground/30">
-                                No records
-                            </div>
-                        )}
+                            )
+                        }
+                        {
+                            loading && (
+                                <div className="flex justify-center py-3">
+                                    <span className="loading loading-dots loading-sm"></span>
+                                </div>
+                            )
+                        }
                     </div>
                 )}
 
@@ -189,10 +227,18 @@ const ListOfIPCR = ({ ipcr, principal, hr }: Props) => {
                     }}
                     isAdd={showUpload.add}
                     isEdit={isEdit}
+                    year={filter}
                 />
             </div>
 
-            <PrintIPCR show={showPrint} onClose={setShowPrint} ipcr={ipcr}  principal={principal} hr={hr} />
+            <PrintIPCR
+                show={showPrint}
+                onClose={setShowPrint}
+                ipcr={ipcrList}
+                principal={principal}
+                hr={hr}
+                year={filter}
+            />
         </div>
     );
 };

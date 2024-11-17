@@ -21,6 +21,7 @@ return new class extends Migration
             $table->date('date_from')->nullable();
             $table->date('date_to')->nullable();
             $table->integer('credits')->nullable();
+            $table->enum('approved', ['approved', 'rejected', 'pending'])->default('pending');
             $table->timestamps();
             $table->softDeletes();
         });

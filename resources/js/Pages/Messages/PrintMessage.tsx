@@ -1,24 +1,18 @@
 import Modal, { ModalProps } from "@/Components/Modal";
-import { SALNType } from "./Reports";
 import { Margin, usePDF } from "react-to-pdf";
-import PDFSALN from "./PDFSALN";
 import { useReactToPrint } from "react-to-print";
 import { Button } from "@/Components/ui/button";
 import { Printer, X } from "lucide-react";
-import { IPCRType } from "./Reports";
-import PDFIPCR from "./PDFIPCR";
+import PDFConversation from "./PDFConversation";
 
 type Props = {
-    ipcr: Array<IPCRType>;
-    principal: {name: string; position: string};
-    hr: {name: string};
-    year: string;
+
 } & ModalProps;
 
-const PrintIPCR: React.FC<Props> = ({ ipcr, show, principal, hr, onClose, year }) => {
+const PrintMessage: React.FC<Props> = ({ show, onClose }) => {
     const download_pdf = usePDF({
         method: "open",
-        filename: "SALN.pdf",
+        filename: `Conversation-.pdf`,
         page: {
             format: "A4",
             margin: Margin.MEDIUM,
@@ -28,6 +22,7 @@ const PrintIPCR: React.FC<Props> = ({ ipcr, show, principal, hr, onClose, year }
 
     const handlePrint = useReactToPrint({
         content: () => download_pdf.targetRef.current,
+        onBeforeGetContent: () => console.log('printing')
     });
 
     return (
@@ -65,12 +60,12 @@ const PrintIPCR: React.FC<Props> = ({ ipcr, show, principal, hr, onClose, year }
                         }
                     `}
                 </style>
-                <div className=" overflow-y-auto rounded-scrollbar overflow-x-hidden">
-                    <PDFIPCR ipcr={ipcr} ref={download_pdf.targetRef}  principal={principal} hr={hr} year={year} />
+                <div className="overflow-y-auto rounded-scrollbar overflow-x-hidden">
+                    <PDFConversation ref={download_pdf.targetRef} />
                 </div>
             </div>
         </Modal>
     );
 };
 
-export default PrintIPCR;
+export default PrintMessage;

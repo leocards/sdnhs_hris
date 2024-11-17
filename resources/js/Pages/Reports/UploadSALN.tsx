@@ -19,19 +19,22 @@ import { Button } from "@/Components/ui/button";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { useToast } from "@/Components/ui/use-toast";
 import ComboBox from "@/Components/ComboBox";
+import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigger } from "@/Components/SelectOption";
+import { ChevronDown } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const UPLOADSCHEMA = z
     .object({
-        add: z
-            .object({
-                personnelid: z.object({
-                    id: z.number().default(0),
-                    name: z.string()
-                }),
-                networth: z.string(),
-                spouse: z.string().optional().default(""),
-                isjoint: z.boolean().default(false),
+        add: z.object({
+            personnelid: z.object({
+                id: z.number().default(0),
+                name: z.string(),
             }),
+            networth: z.string(),
+            spouse: z.string().optional().default(""),
+            isjoint: z.boolean().default(false),
+        }),
         isAdd: z.boolean().optional(),
         file: z
             .instanceof(File, { message: "Please choose a file." })
@@ -47,6 +50,7 @@ const UPLOADSCHEMA = z
                 message: "File size should not exceed 10MB",
             })
             .optional(),
+        year: z.string().length(4, "The calendar year is required."),
     })
     .superRefine((data, ctx) => {
         if (data.isAdd) {
@@ -84,7 +88,7 @@ export default function UploadSALN(props: {
 }) {
     const { show, isAdd = false, onClose } = props;
     const [isFormAdd, setIsFormAdd] = useState<boolean>(false);
-    const [initialListSALN, setInitialListSALN] = useState<Array<any>>([])
+    const [initialListSALN, setInitialListSALN] = useState<Array<any>>([]);
 
     const form = reactForm<IFormUpload>({
         resolver: zodResolver(UPLOADSCHEMA),
@@ -92,15 +96,17 @@ export default function UploadSALN(props: {
 
     const { setData, post, processing, reset } = useForm<IFormUpload>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
-    const { toast } = useToast()
+    const { toast } = useToast();
 
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
-        setData(formData)
-        if(isAdd) {
-            let filtered = initialListSALN.filter((ilsaln) => ilsaln.id !== formData.add.personnelid?.id)
+        setData(formData);
+        if (isAdd) {
+            let filtered = initialListSALN.filter(
+                (ilsaln) => ilsaln.id !== formData.add.personnelid?.id
+            );
 
-            setInitialListSALN(filtered)
+            setInitialListSALN(filtered);
         }
     };
 
@@ -114,97 +120,107 @@ export default function UploadSALN(props: {
                 setIsFormAdd(false);
             }
 
-            if(props.isEdit) {
-                form.setValue('add.personnelid', {
-                    id: props.isEdit?.user.id,
-                    name: props.isEdit?.user.name
-                }, {
-                    shouldDirty: true,
-                    shouldTouch: true,
-                    shouldValidate: true,
-                })
-                form.setValue('add.networth', props.isEdit?.networth)
-                form.setValue('add.spouse', props.isEdit?.spouse)
-                form.setValue('add.isjoint', !!props.isEdit?.joint)
+            if (props.isEdit) {
+                form.setValue(
+                    "add.personnelid",
+                    {
+                        id: props.isEdit?.user.id,
+                        name: props.isEdit?.user.name,
+                    },
+                    {
+                        shouldDirty: true,
+                        shouldTouch: true,
+                        shouldValidate: true,
+                    }
+                );
+                form.setValue("add.networth", props.isEdit?.networth);
+                form.setValue("add.spouse", props.isEdit?.spouse);
+                form.setValue("add.isjoint", !!props.isEdit?.joint);
+                form.setValue("year", props.isEdit?.year);
             } else {
-                form.setValue('add.personnelid', {
-                    id: 0, name: ""
-                })
-                form.setValue('add.networth', '')
-                form.setValue('add.isjoint', false)
+                form.setValue("add.personnelid", {
+                    id: 0,
+                    name: "",
+                });
+                form.setValue("add.networth", "");
+                form.setValue("add.isjoint", false);
+                form.setValue("year", "");
             }
         }
     }, [show]);
 
     useEffect(() => {
-        if(isSubmit) {
-            if(!isFormAdd) {
-                post(route('reports.excel.saln.upload'), {
-                    onSuccess: page => {
+        if (isSubmit) {
+            if (!isFormAdd) {
+                post(route("reports.excel.saln.upload"), {
+                    onSuccess: (page) => {
                         toast({
                             variant: "success",
-                            description: page.props.success?.toString()
-                        })
-                        form.reset()
-                        onClose({ upload: false, add: false })
+                            description: page.props.success?.toString(),
+                        });
+                        form.reset();
+                        onClose({ upload: false, add: false });
                     },
-                    onError: error => {
-                        console.log(error[0])
+                    onError: (error) => {
+                        console.log(error[0]);
                         toast({
                             variant: "destructive",
-                            description: error[0]
-                        })
+                            description: error[0],
+                        });
                     },
                     onFinish: () => {
-                        reset()
-                        setIsSubmit(false)
-                    }
-                })
+                        reset();
+                        setIsSubmit(false);
+                    },
+                });
             } else {
-                post(props.isEdit?route('reports.updateSALN', [props.isEdit?.id]):route('reports.addSALN'), {
-                    onSuccess: page => {
-                        if(page.props.success) {
-                            toast({
-                                variant: "success",
-                                description: page.props.success.toString()
-                            })
-                            form.reset()
-                            onClose({ upload: false, add: false })
-                        }
-                    },
-                    onError: error => {
-                        console.log(error)
-                        for (const key in error) {
-                            form.setError(key as keyof IFormUpload, {
-                                type: "manual",
-                                message: error[key],
-                            });
-                        }
+                post(
+                    props.isEdit
+                        ? route("reports.updateSALN", [props.isEdit?.id])
+                        : route("reports.addSALN"),
+                    {
+                        onSuccess: (page) => {
+                            if (page.props.success) {
+                                toast({
+                                    variant: "success",
+                                    description: page.props.success.toString(),
+                                });
+                                form.reset();
+                                onClose({ upload: false, add: false });
+                            }
+                        },
+                        onError: (error) => {
+                            console.log(error);
+                            for (const key in error) {
+                                form.setError(key as keyof IFormUpload, {
+                                    type: "manual",
+                                    message: error[key],
+                                });
+                            }
 
-                        if(error[0])
-                            toast({
-                                variant: "destructive",
-                                description: error[0]
-                            })
-                    },
-                    onFinish: () => {
-                        reset()
-                        setIsSubmit(false)
+                            if (error[0])
+                                toast({
+                                    variant: "destructive",
+                                    description: error[0],
+                                });
+                        },
+                        onFinish: () => {
+                            reset();
+                            setIsSubmit(false);
+                        },
                     }
-                })
+                );
             }
         }
-    }, [isSubmit])
+    }, [isSubmit]);
 
     useEffect(() => {
-        window.axios
-            .get(route('reports.unlistedSALN'))
-            .then((response) => {
-                let data = response.data
+        window.axios.get(route("reports.unlistedSALN")).then((response) => {
+            let data = response.data;
 
-                setInitialListSALN(data)
-            })
-    }, [])
+            setInitialListSALN(data);
+        });
+    }, []);
 
     return (
         <Modal
@@ -213,13 +229,70 @@ export default function UploadSALN(props: {
             maxWidth="lg"
             center
         >
-            {processing && <Processing is_processing={processing} backdrop="" />}
+            {processing && (
+                <Processing is_processing={processing} backdrop="" />
+            )}
             {!processing && (
                 <div className="p-6">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
                             <div className="font-bold text-xl mb-6 px-1">
-                                {isFormAdd ? props.isEdit? "Edit" : "Add" : "Upload"} SALN
+                                {isFormAdd
+                                    ? props.isEdit
+                                        ? "Edit"
+                                        : "Add"
+                                    : "Upload"}{" "}
+                                SALN
+                            </div>
+                            <div className="mb-4">
+                                <FormField
+                                    control={form.control}
+                                    name="year"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="required">
+                                                Calendar year
+                                            </FormLabel>
+                                            <SelectOption onChange={field.onChange}>
+                                                <SelectOptionTrigger>
+                                                    <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                            !field.value &&
+                                                                "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        <span className="line-clamp-1">
+                                                            {field.value ??
+                                                                "Select year"}
+                                                        </span>
+                                                        <ChevronDown className="size-4" />
+                                                    </Button>
+                                                    </FormControl>
+                                                </SelectOptionTrigger>
+                                                <SelectOptionContent>
+                                                    <ScrollArea className="h-40">
+                                                        <div className="p-2 grid grid-cols-[repeat(auto-fill,minmax(5rem,1fr))] gap-2">
+                                                            {Array.from({length: 50}).map((_, index) => (
+                                                                <SelectOptionItem
+                                                                    key={index}
+                                                                    value={((new Date().getFullYear()) - index).toString()}
+                                                                    className="pr-3"
+                                                                />
+                                                            ))}
+                                                            {/* <Button key={index} type="button" className="!p-0 h-9 shadow-sm" variant="outline" onClick={() => (1980 + index)}>
+                                                                <span>{1980 + index}</span>
+                                                            </Button> */}
+                                                        </div>
+                                                    </ScrollArea>
+                                                </SelectOptionContent>
+                                            </SelectOption>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
                             {isFormAdd && (
                                 <div className="space-y-4">
@@ -234,11 +307,23 @@ export default function UploadSALN(props: {
                                                 <ComboBox
                                                     label="Select personnel"
                                                     routeSearch="reports.searchSALN"
-                                                    onSelectResult={(selectedPersonnel: {id: number; name: string;}) => {
-                                                        form.setValue('add.personnelid', selectedPersonnel)
+                                                    onSelectResult={(selectedPersonnel: {
+                                                        id: number;
+                                                        name: string;
+                                                    }) => {
+                                                        form.setValue(
+                                                            "add.personnelid",
+                                                            selectedPersonnel
+                                                        );
                                                     }}
-                                                    selected={form.getValues('add.personnelid')??{id: 0, name: ""}}
-                                                    initialList={initialListSALN}
+                                                    selected={
+                                                        form.getValues(
+                                                            "add.personnelid"
+                                                        ) ?? { id: 0, name: "" }
+                                                    }
+                                                    initialList={
+                                                        initialListSALN
+                                                    }
                                                 />
                                                 <FormMessage />
                                             </FormItem>

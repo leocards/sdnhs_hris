@@ -1,29 +1,28 @@
 import Modal, { ModalProps } from "@/Components/Modal";
-import { SALNType } from "./Reports";
 import { Margin, usePDF } from "react-to-pdf";
-import PDFSALN from "./PDFSALN";
 import { useReactToPrint } from "react-to-print";
 import { Button } from "@/Components/ui/button";
 import { Printer, X } from "lucide-react";
-import { IPCRType } from "./Reports";
-import PDFIPCR from "./PDFIPCR";
+import PDFEmployee from "./PDFEmployee";
+import { ListType } from "./ListOfEmployees";
+import { useState } from "react";
+import { Input } from "@/Components/ui/input";
 
 type Props = {
-    ipcr: Array<IPCRType>;
-    principal: {name: string; position: string};
-    hr: {name: string};
-    year: string;
+    list: ListType
 } & ModalProps;
 
-const PrintIPCR: React.FC<Props> = ({ ipcr, show, principal, hr, onClose, year }) => {
+const PrintEmployee: React.FC<Props> = ({ show, list, onClose, }) => {
+    const [sy, setSy] = useState("")
+
     const download_pdf = usePDF({
         method: "open",
-        filename: "SALN.pdf",
+        filename: "MASTER LIST OF EMPLOYEES.pdf",
         page: {
             format: "A4",
             margin: Margin.MEDIUM,
             orientation: "portrait",
-        },
+        }
     });
 
     const handlePrint = useReactToPrint({
@@ -33,15 +32,24 @@ const PrintIPCR: React.FC<Props> = ({ ipcr, show, principal, hr, onClose, year }
     return (
         <Modal show={show} onClose={() => onClose(false)} maxWidth="fit">
             <div className="p-6">
-                <div className="flex justify-between">
-                    <Button
-                        variant={"ghost"}
-                        onClick={() => handlePrint()}
-                        className="gap-2"
-                    >
-                        <Printer className="size-4" />
-                        <span>Print</span>
-                    </Button>
+                <div className="flex justify-between mb-10">
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant={"ghost"}
+                            onClick={() => handlePrint()}
+                            className="gap-2"
+                        >
+                            <Printer className="size-4" />
+                            <span>Print</span>
+                        </Button>
+                        <div className="flex gap-2 items-center">
+                            <div>S.Y.</div>
+                            <Input value={sy} className="w-20 h-9 border-black" onInput={(event) => {
+                                let value = event.target as HTMLInputElement
+                                setSy(value.value)
+                            }} />
+                        </div>
+                    </div>
                     <Button
                         variant={"ghost"}
                         size="icon"
@@ -65,12 +73,13 @@ const PrintIPCR: React.FC<Props> = ({ ipcr, show, principal, hr, onClose, year }
                         }
                     `}
                 </style>
-                <div className=" overflow-y-auto rounded-scrollbar overflow-x-hidden">
-                    <PDFIPCR ipcr={ipcr} ref={download_pdf.targetRef}  principal={principal} hr={hr} year={year} />
+
+                <div className="overflow-y-auto rounded-scrollbar overflow-x-hidden">
+                    <PDFEmployee summary={list} ref={download_pdf.targetRef} sy={sy} />
                 </div>
             </div>
         </Modal>
     );
 };
 
-export default PrintIPCR;
+export default PrintEmployee;

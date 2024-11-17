@@ -1,22 +1,24 @@
 import { Fragment, useMemo, useState } from "react";
 import { Button } from "@/Components/ui/button";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
+import PrintEmployee from "./PrintEmployee";
 
-type ListType = {
+export type ListType = {
     jhs: Array<any>;
     shs: Array<any>;
     accounting: Array<any>;
     principal: Array<any>;
 };
 
-type FilteredListType = {
+export type FilteredListType = {
     male: { [key in keyof any]: number };
     female: { [key in keyof any]: number };
 };
 
 const ListOfEmployees = ({ list }: { list: ListType }) => {
     const [showList, setShowList] = useState(true);
+    const [print, setPrint] = useState(false)
     const filteredList: FilteredListType = useMemo(() => {
         const categories = ["jhs", "shs", "accounting", "principal"] as const;
         const result: FilteredListType = {
@@ -45,13 +47,12 @@ const ListOfEmployees = ({ list }: { list: ListType }) => {
 
     return (
         <div className="mt-10">
-            <div className="flex justify-between items-center mb-5">
-                <div className="flex items-center gap-3">
+            <div className={cn("flex justify-between items-center mb-2 rounded-md", showList ? "bg-amber-300" : "hover:bg-secondary transition duration-150")}>
+                <div className="flex items-center gap-4 grow p-2 py-3" onClick={() => setShowList(!showList)} role="button">
                     <Button
                         className="size-6"
                         size="icon"
                         variant="ghost"
-                        onClick={() => setShowList(!showList)}
                     >
                         <ChevronDown
                             className={cn(
@@ -64,11 +65,20 @@ const ListOfEmployees = ({ list }: { list: ListType }) => {
                         List of Employees
                     </div>
                 </div>
-                <Button className="h-8 hidden">Print</Button>
             </div>
 
             {showList && (
                 <div>
+                    <div className="flex justify-end mb-4">
+                        <Button
+                            className="h-8 gap-2"
+                            variant="ghost"
+                            onClick={() => setPrint(true)}
+                        >
+                            <Printer className="size-4" strokeWidth={2.3} />
+                            <span className="sm:block hidden">Print</span>
+                        </Button>
+                    </div>
                     <div className="border mb-4 divide-y rounded-md [&>div>div:nth-child(4)]:text-red-500">
                         <div className="divide-x grid grid-cols-[1fr,repeat(3,5rem)] text-center [&>div]:p-1.5 font-semibold">
                             <div></div>
@@ -76,7 +86,9 @@ const ListOfEmployees = ({ list }: { list: ListType }) => {
                             <div>FEMALE</div>
                             <div>TOTAL</div>
                         </div>
-                        {(["jhs", "shs", "accounting", "principal"] as const).map((category) => {
+                        {(
+                            ["jhs", "shs", "accounting", "principal"] as const
+                        ).map((category) => {
                             return (
                                 <div
                                     key={category}
@@ -205,6 +217,8 @@ const ListOfEmployees = ({ list }: { list: ListType }) => {
                     </div>
                 </div>
             )}
+
+            <PrintEmployee show={print} onClose={setPrint} list={list} />
         </div>
     );
 };

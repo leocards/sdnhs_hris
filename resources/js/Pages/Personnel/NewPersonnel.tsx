@@ -110,7 +110,7 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
             form.setValue("userRole", role);
             form.setValue("position", position);
             form.setValue("dateHired", new Date(date_hired));
-            form.setValue("currentCredits", leave_credits);
+            // form.setValue("currentCredits", leave_credits);
         }
     }, [user]);
 

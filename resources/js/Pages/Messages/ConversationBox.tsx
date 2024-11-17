@@ -1,6 +1,7 @@
 import { useMessage } from "@/hooks/MessageProvider";
 import { cn } from "@/lib/utils";
 import { User } from "@/types";
+import { MessagesSquare } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 
 type Props = {
@@ -59,7 +60,7 @@ const ConversationBox: React.FC<Props> = ({ auth }) => {
     }, [searchConversation]);
 
     return (
-        <div className="flex flex-col-reverse overflow-y-auto py-2">
+        <div className="flex flex-col-reverse overflow-y-auto py-2 relative">
             <div
                 ref={convoContainerRef}
                 className={cn(
@@ -92,6 +93,13 @@ const ConversationBox: React.FC<Props> = ({ auth }) => {
                                 }}
                             />
                         ))
+                    )}
+
+                    {(!loadingConversation && conversation.length === 0) && (
+                        <div className="absolute top-1/2 -translate-x-1/2 left-1/2 -translate-y-1/2">
+                            <div><MessagesSquare className="size-14 mx-auto mb-3 text-foreground/35" /></div>
+                            Start your first conversation
+                        </div>
                     )}
                 </div>
             </div>

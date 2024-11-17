@@ -10,12 +10,14 @@ import { formatISO } from "date-fns";
 import SearchConversation from "./SearchConversation";
 import { useState } from "react";
 import DeleteConversationConfirmation from "./DeleteConversationConfirmation";
+import PrintMessage from "./PrintMessage";
 
 export default function ChatBox({ auth }: { auth: User }) {
-    const { user, setUser, conversation, setConversation, setMessageList, setMessage } =
+    const { user, setUser, setConversation, setMessageList, setMessage } =
         useMessage();
     const [searchConversation, setSearchConversation] = useState(false)
     const [deleteConversation, setDeleteConversation] = useState(false)
+    const [exportMesage, setExportMessage] = useState(false)
 
     return (
         <div
@@ -28,7 +30,7 @@ export default function ChatBox({ auth }: { auth: User }) {
         >
             {user ? (
                 <>
-                    <ChatBoxHeader onSearchConvo={() => setSearchConversation(true)} onDeleteConversation={() => setDeleteConversation(true)}/>
+                    <ChatBoxHeader onSearchConvo={() => setSearchConversation(true)} onDeleteConversation={() => setDeleteConversation(true)} onExport={() => setExportMessage(true)}/>
                     <ConversationBox auth={auth} />
                     <div className="border-t p -2 overflow-hidden flex items-end gap-3">
                         <MessageBoxInput
@@ -52,7 +54,6 @@ export default function ChatBox({ auth }: { auth: User }) {
                                         )
                                         .then((response) => {
                                             let res = response.data;
-                                            let convo = [...conversation];
 
                                             // if the conversation is new, append user at the beginning of the list
                                             if (res.isNew) {
@@ -100,6 +101,7 @@ export default function ChatBox({ auth }: { auth: User }) {
 
             <SearchConversation show={searchConversation} onClose={setSearchConversation} />
             <DeleteConversationConfirmation show={deleteConversation} onClose={setDeleteConversation} />
+            <PrintMessage show={exportMesage} onClose={setExportMessage} />
         </div>
     );
 }

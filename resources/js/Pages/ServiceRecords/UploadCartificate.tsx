@@ -57,15 +57,13 @@ const SCHEMA = z.object({
     datefrom: z.date({required_error: requiredError("from")}),
     dateto: z.date().optional()
 }).refine((dates) => {
-    if(dates.dateto) {
-        if (dates.dateto) {
-            dates.datefrom.setHours(0, 0, 0, 0);
-            dates.dateto.setHours(0, 0, 0, 0);
+    if (dates.dateto) {
+        dates.datefrom.setHours(0, 0, 0, 0);
+        dates.dateto.setHours(0, 0, 0, 0);
 
-            return !(dates.dateto.getTime() === dates.datefrom.getTime());
-        }
-        return true;
+        return (dates.dateto.getTime() !== dates.datefrom.getTime());
     }
+    return true;
 },{
     message: "Days rendered 'to' must not the same.",
     path: ['dateto']
@@ -92,7 +90,6 @@ export default function UploadCertificate({
     const onFormSubmit = (form: IFormCertificate) => {
         setData(form);
         setIsSubmit(true);
-        console.log(form)
     };
 
     useEffect(() => {

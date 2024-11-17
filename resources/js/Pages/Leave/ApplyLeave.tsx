@@ -6,15 +6,13 @@ import { useForm as reactForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/Components/ui/form";
 import LeaveFormI from "./Partials/LeaveFormI";
-import { DateRange } from "react-day-picker";
 import { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import DetailsOfApplication from "./Partials/DetailsOfApplication";
 import { countWeekdaysInRange, initialValues, LEAVEFORMSCHEMA } from "./types";
-import DetailsOfActionOnApplication from "./Partials/DetailsOfActionOnApplication";
 import { router, useForm } from "@inertiajs/react";
 import { useToast } from "@/Components/ui/use-toast";
-import { differenceInDays, eachDayOfInterval } from "date-fns";
+import { eachDayOfInterval } from "date-fns";
 import Processing from "@/Components/Processing";
 import { cn } from "@/lib/utils";
 import { Input } from "@/Components/ui/input";
@@ -30,7 +28,8 @@ const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: st
     const { toast } = useToast();
     const [isFormConfirm, setIsFormConfirm] = useState<boolean>(false);
     const { setData, post, processing, reset } = useForm<IFormLeave>();
-    const watchInclusiveDates = form.watch("inclusiveDates");
+    const watchInclusiveDatesFrom = form.watch("inclusiveDates.from");
+    const watchInclusiveDatesTo = form.watch("inclusiveDates.to");
 
     const onFormSubmit = (form: IFormLeave) => {
         setData(form);
@@ -38,9 +37,10 @@ const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: st
     };
 
     useEffect(() => {
-        if (watchInclusiveDates) {
+        if (watchInclusiveDatesFrom && watchInclusiveDatesTo) {
             const leavetype = form.getValues("leavetype.type");
-            const { from, to } = watchInclusiveDates;
+            const from = watchInclusiveDatesFrom;
+            const to = watchInclusiveDatesTo;
             if(leavetype === "Maternity Leave" && from){
                 // get the 105 days of leave for maternity
                 const dateTo = new Date(from).setDate(new Date(from).getDate() + 104)
@@ -60,11 +60,13 @@ const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: st
                     shouldValidate: true
                 });
                 form.setValue("inclusiveDates.dates", dates.dates);
-            } else form.setValue("numDaysApplied", "1", {
+            }
+        } else if(watchInclusiveDatesFrom)
+            form.setValue("numDaysApplied", "1", {
                 shouldValidate: true
             });
-        }
-    }, [watchInclusiveDates]);
+        console.log(watchInclusiveDatesFrom)
+    }, [watchInclusiveDatesFrom, watchInclusiveDatesTo]);
 
     // Set value for other fields
     useEffect(() => {

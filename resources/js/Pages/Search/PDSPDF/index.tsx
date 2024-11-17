@@ -86,7 +86,7 @@ const PersonalDataSheetPDF = React.forwardRef<HTMLDivElement, Props>(
                                         mother: {
                                             surname: mother?.surname??'', firstname: mother?.first_name??'', middlename: mother?.middle_name??'',
                                         },
-                                        children: children.map((child) => ({ name: child.full_name, birthday: child.birthday }))
+                                        children: children.map((child) => ({ name: child.full_name, birthdate: child.birthdate }))
                                     }}
 
                                     education={{
@@ -164,7 +164,7 @@ const PersonalDataSheetPDF = React.forwardRef<HTMLDivElement, Props>(
                                         mother: {
                                             surname: mother?.surname??'', firstname: mother?.first_name??'', middlename: mother?.middle_name??'',
                                         },
-                                        children: children.map((child) => ({ name: child.full_name, birthday: child.birthday }))
+                                        children: children.map((child) => ({ name: child.full_name, birthdate: child.birthdate }))
                                     }}
 
                                     education={{

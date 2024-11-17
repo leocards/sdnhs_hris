@@ -58,7 +58,7 @@ export default function Notification({ auth, notifications }: Props) {
                 },
             })
         );
-        
+
         if(!notif.viewed)
             setUnreadNotifications(-1)
     };

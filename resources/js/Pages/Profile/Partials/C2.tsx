@@ -21,7 +21,7 @@ const C2 = forwardRef<HTMLDivElement, C2Props>(({ user, activeTab, pds_c, data }
     const [processing, setProcessing] = useState(false);
 
     return (
-        <div className="flex overflow-x-hidden gap-2">
+        <div className="flex overflow-hidden gap-2 relative">
             <div className="w-full shrink-0">
                 <div className="w-full border-b mb-6">
                     <Tabs
@@ -74,7 +74,7 @@ const C2 = forwardRef<HTMLDivElement, C2Props>(({ user, activeTab, pds_c, data }
                 <Processing is_processing={processing} />
             </div>
             {data && (
-                <div className="w-[calc(900px-20pt)]">
+                <div className="w-[calc(900px-20pt)] absolute top-0 -right-[120%]">
                     <PDSPDFIsDownloadProvider initialValue={true}>
                         <Pages ref={ref} pageNumber={2}>
                             <C2pdf civilservice={data.civilservice} workexperience={data.workexperience}/>

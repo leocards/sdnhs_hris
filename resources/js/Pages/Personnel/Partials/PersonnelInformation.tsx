@@ -56,7 +56,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
             </div>
 
             <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3 mt-3">
-                <FormField
+                {/* <FormField
                     control={form.control}
                     name="currentCredits"
                     disabled={userRole === "HOD"}
@@ -74,7 +74,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormMessage />
                         </FormItem>
                     )}
-                />
+                /> */}
                 <FormField
                     control={form.control}
                     name="personnelId"

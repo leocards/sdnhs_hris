@@ -14,7 +14,7 @@ export type FamilyBackgroundType = {
     mother: {
         surname: string; firstname: string; middlename: string;
     };
-    children: Array<{name: string; birthday: string}>
+    children: Array<{name: string; birthdate: string}>
 }
 
 type Props = {
@@ -204,7 +204,7 @@ const FamilyBackground: React.FC<Props> = ({ fb }) => {
                                     <div className={cn('font-bold', checkIfDownLoad('-mt-3'))}>{child.name}</div>
                                 </div>
                                 <div className="text-[7pt] w-[7.5rem] flex items-center justify-center">
-                                    <div className={cn('font-bold', checkIfDownLoad('-mt-3'))}>{child.birthday}</div>
+                                    <div className={cn('font-bold', checkIfDownLoad('-mt-3'))}>{child.birthdate}</div>
                                 </div>
                             </div>
                         ))}

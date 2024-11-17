@@ -36,11 +36,18 @@ class DashboardController extends Controller
                 ],
                 "leave" => Leave::where('user_id', Auth::id())->where('principal_status', 'Approved')->where('hr_status', 'Approved')
                     ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
-                "leaveApplications" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
-                    ->where('hr_status', 'Approved')
-                    ->where('principal_status', 'Approved')
-                    ->groupBy('leave_type')
-                    ->get()
+                "leaveApplications" => collect([
+                    "approved" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
+                        ->where('hr_status', 'Approved')
+                        ->where('principal_status', 'Approved')
+                        ->groupBy('leave_type')
+                        ->get(),
+                    "rejected" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
+                        ->where('hr_status', 'Rejected')
+                        ->where('principal_status', 'Rejected')
+                        ->groupBy('leave_type')
+                        ->get()
+                ])
             ]);
         }
 
@@ -65,7 +72,7 @@ class DashboardController extends Controller
             ],
             "leave" => Leave::where('user_id', Auth::id())->where('principal_status', 'Approved')->where('hr_status', 'Approved')
                 ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
-            "leaveApplications" => []
+            "leaveApplications" => collect([])
         ]);
     }
 

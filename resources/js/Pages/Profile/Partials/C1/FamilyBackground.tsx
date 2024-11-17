@@ -413,7 +413,7 @@ export const CalendarInput: React.FC<{
     placeholder?: string;
     align?: "center" | "end" | "start";
     formatDate?: string;
-    disabledCalendar?: Matcher | Matcher[]
+    disabledCalendar?: Matcher | Matcher[];
 }> = ({
     form,
     name,
@@ -426,9 +426,77 @@ export const CalendarInput: React.FC<{
     placeholder,
     align,
     formatDate,
-    disabledCalendar
+    disabledCalendar,
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+    // Function to format the input as mm/dd/yyyy
+    const formatAsDate = (value: string): string => {
+        const digitsOnly = value.replace(/\D/g, ""); // Remove non-numeric characters
+        let formatted = digitsOnly;
+
+        if (digitsOnly.length > 2) {
+            formatted = `${digitsOnly.slice(0, 2)}/${digitsOnly.slice(2)}`;
+        }
+        if (digitsOnly.length > 4) {
+            formatted = `${digitsOnly.slice(0, 2)}/${digitsOnly.slice(
+                2,
+                4
+            )}/${digitsOnly.slice(4, 8)}`;
+        }
+
+        return formatted;
+    };
+
+    // Function to check if input is a valid date
+    const isValidDate = (input: string | Date): boolean => {
+        if(typeof input == "string") {
+            const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
+            if (!dateRegex.test(input)) return false;
+
+            const [month, day, year] = input.split("/").map(Number);
+            const date = new Date(year, month - 1, day);
+            return (
+                date.getFullYear() === year &&
+                date.getMonth() === month - 1 &&
+                date.getDate() === day
+            );
+        } else {
+            return (input instanceof Date)
+        }
+    };
+
+    // Function to check if input is a word
+    const isPresentWord = (input: string): boolean => {
+        return input.toLowerCase() == "present";
+    };
+
+    // Input change handler
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if(asInput) {
+            const rawValue = event.target.value;
+            let formattedValue = rawValue;
+
+            // Format as date if the input contains numbers
+            if (/\d/.test(rawValue)) {
+                formattedValue = formatAsDate(rawValue);
+            }
+
+            form.setValue(name, formattedValue);
+
+            // Validation logic
+            if (isPresentWord(rawValue)) {
+                form.clearErrors(name)
+            } else if (isValidDate(formattedValue)) {
+                form.clearErrors(name)
+            } else {
+                form.setError(name, {
+                    type: "custom",
+                    message:
+                        'Invalid input. Please enter a valid date or "present".',
+                });
+            }
+        }
+    };
 
     return (
         <FormField
@@ -436,9 +504,11 @@ export const CalendarInput: React.FC<{
             name={name}
             render={({ field }) => (
                 <FormItem>
-                    {withLabel && <FormLabel className={cn(isRequired && "required")}>
-                        {label}
-                    </FormLabel>}
+                    {withLabel && (
+                        <FormLabel className={cn(isRequired && "required")}>
+                            {label}
+                        </FormLabel>
+                    )}
                     <div className="flex relative">
                         {asInput && (
                             <FormControl>
@@ -447,10 +517,14 @@ export const CalendarInput: React.FC<{
                                     {...field}
                                     value={
                                         isValidDate(field.value)
-                                            ? format(field.value, formatDate??"LLLL dd, y")
+                                            ? format(
+                                                  field.value,
+                                                  formatDate ?? "LLLL dd, y"
+                                              )
                                             : field.value
                                     }
-                                    placeholder={placeholder??"mm/dd/yyyy"}
+                                    placeholder={placeholder ?? "mm/dd/yyyy"}
+                                    onInput={handleInputChange}
                                 />
                             </FormControl>
                         )}
@@ -492,19 +566,26 @@ export const CalendarInput: React.FC<{
                                                     {isValidDate(field.value)
                                                         ? format(
                                                               field.value,
-                                                              formatDate??"LLLL dd, y"
+                                                              formatDate ??
+                                                                  "LLLL dd, y"
                                                           )
                                                         : field.value}
                                                 </span>
                                             ) : (
-                                                <span>{placeholder??'mm/dd/yyyy'}</span>
+                                                <span>
+                                                    {placeholder ??
+                                                        "mm/dd/yyyy"}
+                                                </span>
                                             )}
                                             <CalendarIcon className="ml-auto size-5 opacity-50" />
                                         </Button>
                                     </FormControl>
                                 )}
                             </PopoverTrigger>
-                            <PopoverContent className="w-auto p-0" align={align??"end"}>
+                            <PopoverContent
+                                className="w-auto p-0"
+                                align={align ?? "end"}
+                            >
                                 <Calendar
                                     mode="single"
                                     selected={field.value}

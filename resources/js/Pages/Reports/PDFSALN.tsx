@@ -1,8 +1,9 @@
-import React, { ForwardedRef, forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import Deped from "@/assets/DepEd.png";
 import SDNHSLogo from "@/assets/sdnhs-logo.png";
 import { cn } from "@/lib/utils";
-import { IPCR, IPCRType, SALN, SALNType } from "./Reports";
+import { HrType, PrincipalType, SALNType } from "./Reports";
+import { format } from "date-fns";
 
 function groupItems(items: Array<SALNType>) {
     const firstGroupSize = 28;
@@ -32,8 +33,9 @@ function groupItems(items: Array<SALNType>) {
 
 type Props = {
     saln: Array<SALNType>;
-    principal: {name: string; position: string};
-    hr: {name: string};
+    principal: PrincipalType;
+    hr: HrType;
+    year: string
 }
 
 const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
@@ -77,7 +79,7 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
                     <div className="leading-4">
                         Statement of Assets, Liabilities and Network
                     </div>
-                    <div className="leading-4">Calendar Year {/* year */}</div>
+                    <div className="leading-4">Calendar Year {props.year}</div>
                 </div>
                 <div>
                     <img src={SDNHSLogo} className="w-20 shrink-0" />
@@ -235,7 +237,7 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
                         <div className="mt-4">
                             <div className="font-bold uppercase">
-                                {/* hr */}Lorem ipsum dolor
+                                {props.hr.name}
                             </div>
                             <div className="leading-4">School HR</div>
                         </div>
@@ -243,19 +245,19 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
                         <div className="mt-5 leading-5">
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Position: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{props.hr.position}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Email Address: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{props.hr.email}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Contact No.: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{props.hr.phone_number}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Date: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{format(new Date(), 'MMMM d, y')}</div>
                             </div>
                         </div>
                     </div>
@@ -264,29 +266,29 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
                         <div className="mt-4">
                             <div className="font-bold uppercase">
-                                {/* principal */}Lorem ipsum dolor
+                                {props.principal.name}
                             </div>
                             <div className="leading-4">
-                                {/* principal position */}Pricipal IV
+                                {props.principal.position}
                             </div>
                         </div>
 
                         <div className="mt-5 leading-5">
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Position: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{props.principal.position}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Email Address: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{props.principal.email}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Contact No.: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{props.principal.phone_number}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Date: </div>
-                                <div className="border-b border-black"></div>
+                                <div className="border-b border-black pl-1">{format(new Date(), 'MMMM d, y')}</div>
                             </div>
                         </div>
                     </div>

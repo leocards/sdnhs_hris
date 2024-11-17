@@ -9,35 +9,14 @@ import { format } from "date-fns";
 import { MessageCircle, Undo2 } from "lucide-react";
 import useWindowSize from "@/hooks/useWindowResize";
 import { useEffect, useState } from "react";
-import { pdfjs } from "react-pdf";
-import type { PDFDocumentProxy } from "pdfjs-dist";
 import { cn } from "@/lib/utils";
-import { Document, Page } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
-import pdsPDF from "@/pds.pdf";
+import { Page } from "react-pdf";
 import EmployeeDetails from "./EmployeeDetails";
 import AttendanceDetails from "./AttendanceDetails";
 import Certificates from "./Certificates";
 import PersonalDataSheets from "./PersonalDataSheets";
 
 type PagesType = { prev: number; current: number; next: number };
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.min.mjs",
-    import.meta.url
-).toString();
-
-const options = {
-    cMapUrl: "/cmaps/",
-    standardFontDataUrl: "/standard_fonts/",
-};
-
-const initialPages = {
-    prev: 0,
-    current: 1,
-    next: 0,
-};
 
 export default function SearchedEmployee({
     auth,
@@ -49,18 +28,18 @@ export default function SearchedEmployee({
         open && open === "certificate" ? "certificates" : "details"
     );
     const { width } = useWindowSize();
-    const [pdsData, setPdsData] = useState([])
+    const [pdsData, setPdsData] = useState([]);
 
     useEffect(() => {
-        if(pdsData.length === 0)
+        if (pdsData.length === 0)
             window.axios
-                .get(route('general-search.pds', [user.id]))
+                .get(route("general-search.pds", [user.id]))
                 .then((response) => {
-                    setPdsData(response.data)
+                    setPdsData(response.data);
                 })
                 .catch((error) => {
-                    console.log(error)
-                })
+                    console.log(error);
+                });
     }, []);
 
     return (
@@ -103,7 +82,15 @@ export default function SearchedEmployee({
                     </div>
                 </div>
 
-                <Button className="gap-3 ml-auto" variant="ghost">
+                <Button
+                    className="gap-3 ml-auto"
+                    variant="ghost"
+                    onClick={() =>
+                        router.get(route("messages", { _query: {
+                            user: user.id
+                        } }))
+                    }
+                >
                     <MessageCircle className="size-4" />
                     <span>Message</span>
                 </Button>
@@ -125,18 +112,22 @@ export default function SearchedEmployee({
             </div>
 
             <div className="mt-5">
-                {activeTab === "details" && <EmployeeDetails user={{
-                    birthDate: user.date_of_birth,
-                    sex: user.sex,
-                    address: user.address,
-                    email: user.email,
-                    phoneNumber: user.phone_number,
-                    staffId: user.personnel_id,
-                    dateHired: user.date_hired,
-                    department: user.department,
-                    credits: user.leave_credits,
-                    leave: leave.toString(),
-                }} />}
+                {activeTab === "details" && (
+                    <EmployeeDetails
+                        user={{
+                            birthDate: user.date_of_birth,
+                            sex: user.sex,
+                            address: user.address,
+                            email: user.email,
+                            phoneNumber: user.phone_number,
+                            staffId: user.personnel_id,
+                            dateHired: user.date_hired,
+                            department: user.department,
+                            credits: user.leave_credits,
+                            leave: leave.toString(),
+                        }}
+                    />
+                )}
 
                 {activeTab === "attendance" && (
                     <AttendanceDetails userId={user.id} />
@@ -148,7 +139,9 @@ export default function SearchedEmployee({
 
                 {activeTab === "PDS" && (
                     <div className={cn("mx-auto w-fit")}>
-                        <PersonalDataSheets data={{ ...auth.user, ...pdsData}} />
+                        <PersonalDataSheets
+                            data={{ ...auth.user, ...pdsData }}
+                        />
                     </div>
                 )}
             </div>

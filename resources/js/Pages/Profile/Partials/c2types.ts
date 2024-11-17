@@ -31,13 +31,20 @@ const defaultCS = {
         dateofvalidity: null
     },
 }
+const caseInsensitiveLiteral = (expected: string) =>
+    z.string().refine((val) => val.toLowerCase() === expected.toLowerCase(), {
+      message: `Input must be "${expected}" (case-insensitive).`,
+    });
 
 const WORKEXPERIENCESCHEMA = z.object({
     we: z.array(z.object({
         weid: z.number().optional().nullable().default(null),
         inclusivedates: z.object({
             from: z.date({required_error: requiredError('"from"'), invalid_type_error: requiredError('"from"')}),
-            to: z.date({required_error: requiredError('"to"'), invalid_type_error: requiredError('"to"')})
+            to: z.date({required_error: requiredError('"to"'), invalid_type_error: requiredError('"to"')}).or(caseInsensitiveLiteral('Present'))
+        }).refine(data => !data.to || data.to > data.from, {
+            message: "'To' date must be after the 'from' date",
+            path: ["to"]
         }),
         positiontitle: z.string().min(1, requiredError('position title')).default(""),
         department: z.string().min(1, requiredError('department/agency/office/company')).default(""),
@@ -54,8 +61,8 @@ type IFormWE = z.infer<typeof WORKEXPERIENCESCHEMA>
 const defaultWE = {
     weid: null,
     inclusivedates: {
-        from: null,
-        to: null
+        from: undefined,
+        to: undefined
     },
     positiontitle: "",
     department: "",

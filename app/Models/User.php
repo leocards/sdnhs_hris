@@ -119,7 +119,8 @@ class User extends Authenticatable
     public function scopeSearchByLastAndFirstName($query, $lname, $fname)
     {
         return $query->where(DB::raw("LOWER(last_name)"), 'LIKE', "%{$lname}%")
-            ->where(DB::raw("LOWER(first_name)"), 'LIKE', "%{$fname}%");
+            ->where(DB::raw("LOWER(first_name)"), 'LIKE', "%{$fname}%")
+            ->whereNot('role', 'HR');
     }
 
     public function leaveApplications()

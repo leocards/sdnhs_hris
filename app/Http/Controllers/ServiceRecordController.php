@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotificationEvent;
 use App\Http\Requests\ServiceRecordRequest;
 use App\Mail\ProfileUpdate;
 use App\Models\Notifications;
@@ -51,7 +52,11 @@ class ServiceRecordController extends Controller
             $to = $request->dateto ? Carbon::parse($request->dateto) : null;
             $credits = $to ? ($from->diffInDays($to) + 1) : 1;
 
-            User::whereId(Auth::id())->update(['leave_credits' => (Auth::user()->leave_credits + $credits)]);
+            $user = User::find(Auth::id());
+
+            if ($user->leave_credits === 30) {
+                throw new Exception('You have already reached the credit limit.');
+            }
 
             ServiceRecord::create([
                 'user_id' => Auth::id(),
@@ -65,31 +70,35 @@ class ServiceRecordController extends Controller
             ]);
 
             $emails_to_send = collect([]);
+            $notifications_to_send = collect([]);
 
             // if the notifier is not the HR or Principal
             // send notification to HR or Principal
             if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
                 $receivers = User::whereIn('role', ['HR'])->get(['id', 'email', 'enable_email_notification']);
                 foreach ($receivers as $value) {
-                    Notifications::create([
+                    $notif = Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
                         'message' => " has uploaded a certificate.",
                         'type' => 'certificate',
                         'go_to_link' => route('general-search.view', [Auth::id()])
                     ]);
+
+                    $notifications_to_send->push($notif);
                 }
                 $emails_to_send->push(...$receivers);
             } else {
                 $receivers = User::whereIn('role', ['HR'])->where('id', '!=', Auth::id())->get(['id', 'email', 'enable_email_notification']);
                 foreach ($receivers as $value) {
-                    Notifications::create([
+                    $notif = Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
-                        'message' => " has uploaded \"".$request->certificateName."\" certificate.",
+                        'message' => " has uploaded \"" . $request->certificateName . "\" certificate.",
                         'type' => 'certificate',
                         'go_to_link' => route('general-search.view', [Auth::id()])
                     ]);
+                    $notifications_to_send->push($notif);
                 }
                 $emails_to_send->push(...$receivers);
             }
@@ -99,16 +108,23 @@ class ServiceRecordController extends Controller
             $userSender = User::find(Auth::id());
 
             $emails_to_send->each(function ($emails) use ($request, $userSender) {
-                if($emails['enable_email_notification'])
+                if ($emails['enable_email_notification'])
                     Mail::to($emails['email'])
-                    ->queue(
-                        new ProfileUpdate(
-                            "recently uploaded a service certificate: " . $request->certificateName,
-                            ["name" => $userSender->name(),
-                            "position" => $userSender->position],
-                            Auth::user()->email
-                        )
-                    );
+                        ->queue(
+                            new ProfileUpdate(
+                                "recently uploaded a service certificate: " . $request->certificateName,
+                                [
+                                    "name" => $userSender->name(),
+                                    "position" => $userSender->position
+                                ],
+                                Auth::user()->email
+                            )
+                        );
+            });
+
+            $notifications_to_send->each(function ($notifs) {
+                $notifs->load(['sender']);
+                broadcast(new SendNotificationEvent($notifs, $notifs->user_id));
             });
 
             return back()->with('success', 'Certificate uploaded successfully.');
@@ -118,6 +134,60 @@ class ServiceRecordController extends Controller
             if (isset($path)) {
                 Storage::delete($path);
             }
+
+            return back()->withErrors($th->getMessage());
+        }
+    }
+
+    public function userCertificates(User $user)
+    {
+        return response()->json(
+            $user->certificates()->where('approved', 'pending')->get()
+        );
+    }
+
+    public function respondCertificate(Request $request, ServiceRecord $certificate)
+    {
+        DB::beginTransaction();
+        try {
+
+            if($request->respond === "pending")
+                throw new Exception("Certificate is neighter rejected or apporved.");
+
+            if ($request->respond === "approved") {
+                $user = $certificate->user;
+
+                if ($user->leave_credits < 30) {
+                    $certificate->approved = $request->respond;
+                    $certificate->save();
+
+                    $credit = $user->leave_credits + $certificate->credits;
+
+                    $user->update(['leave_credits' => $credit >= 30 ? 30 : $credit]);
+                } else
+                    throw new Exception('The personnel\'s credit score has reached the credit limit.');
+            } else {
+                $certificate->approved = $request->respond;
+                $certificate->save();
+            }
+
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $certificate->user_id,
+                'from_user_id' => Auth::id(),
+                'message' => ': Your certificate has been '.$request->respond.' by the HR.',
+                'type' => 'response',
+                'go_to_link' => route('service-records').'?certificateId='.$certificate->id
+            ]);
+
+            DB::commit();
+
+            $notificationResponse->load(['sender']);
+            broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
+
+            return back()->with('success', 'Certificate has been '.$request->respond.'.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
 
             return back()->withErrors($th->getMessage());
         }
@@ -137,7 +207,6 @@ class ServiceRecordController extends Controller
                 $user->save();
 
                 $sr->delete();
-
             });
 
             return back()->with('success', 'Deleted successfully.');

@@ -103,6 +103,7 @@ export default function WorkExperience({ form }: { form: any }) {
                             />
                             <CalendarInput
                                 form={form}
+                                placeholder="mm/dd/yyyy or present"
                                 label={
                                     <div className="mb-1.5">
                                         <span className="text-xs text-foreground/60">

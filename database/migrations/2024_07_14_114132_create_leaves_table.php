@@ -15,13 +15,13 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->date('date_of_filing_from');
-            $table->date('date_of_filing_to');
+            $table->date('date_of_filing_to')->nullable();
             $table->string('salary');
             $table->string('leave_type');
             $table->string('leave_type_others', 500)->nullable();
             $table->string('num_days_applied');
             $table->date('inclusive_date_from');
-            $table->date('inclusive_date_to');
+            $table->date('inclusive_date_to')->nullable();
             $table->boolean('is_not_requested')->nullable();
             $table->boolean('is_requested')->nullable();
             $table->enum('principal_status', ['Rejected', 'Approved', 'Pending'])->default('Pending');

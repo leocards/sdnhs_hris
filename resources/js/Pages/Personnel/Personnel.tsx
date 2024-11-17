@@ -20,9 +20,9 @@ import {
     MessageCircle,
     PenLine,
     ReceiptText,
-    Trash2,
     Upload,
     UserRoundPlus,
+    FolderKanban,
 } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { PersonnelListProps } from "./types";
@@ -34,9 +34,8 @@ import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import DataList from "@/Components/DataList";
 import DeletePersonnelModel from "./DeletePersonnelModel";
 import { useMessage } from "@/hooks/MessageProvider";
-import { useToast } from "@/Components/ui/use-toast";
-import Processing from "@/Components/Processing";
 import ViewSalnPersonnel from "./ViewSalnPersonnel";
+import ConfirmServiceCertificate from "./ConfirmServiceCertificate";
 
 interface PersonnelProps extends PageProps {
     pageData: PaginateData;
@@ -81,6 +80,7 @@ function Personnel({
         usePageList();
     const { activeUsers } = useMessage();
     const [viewSaln, setViewSaln] = useState(false)
+    const [showCertificates, setShowCertificates] = useState(false)
 
 
     const navigateTo = (nav: string) => {
@@ -129,6 +129,9 @@ function Personnel({
             // open the modal for viewing SALN
             setViewSaln(true)
             setSelectedPersonnel(id)
+        } else if(action === "certificate") {
+            setSelectedPersonnel(id)
+            setShowCertificates(true)
         }
     };
 
@@ -170,28 +173,28 @@ function Personnel({
                 />
             </div>
 
-            <div className="my-7 grid gap-3 [@media(min-width:428px)]:gap-8 [@media(min-width:428px)]:grid-cols-2 [@media(min-width:1280px)]:!grid-cols-4">
-                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1">
-                    <div className="font-medium">Junior HS personnel</div>
-                    <div className="md:text-xl text-lg font-semibold">
+            <div className="my-7 grid gap-3 [@media(min-width:428px)]:gap-5 [@media(min-width:428px)]:grid-cols-2 [@media(min-width:1280px)]:!grid-cols-4">
+                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-rose-600 bg-rose-100 dark:bg-rose-800/50 p-2">
+                    <div className="font-medium text-rose-700 dark:text-rose-400">Junior HS personnel</div>
+                    <div className="md:text-xl text-lg font-semibold text-rose-700 dark:text-rose-400">
                         {statistics.jhs} Personnel
                     </div>
                 </div>
-                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1">
-                    <div className="font-medium">Senior HS personnel</div>
-                    <div className="md:text-xl text-lg font-semibold">
+                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-teal-600 bg-teal-100 dark:bg-teal-800/50 p-2">
+                    <div className="font-medium text-teal-700 dark:text-teal-400">Senior HS personnel</div>
+                    <div className="md:text-xl text-lg font-semibold text-teal-700 dark:text-teal-400">
                         {statistics.shs} Personnel
                     </div>
                 </div>
-                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1">
-                    <div className="font-medium">Accounting personnel</div>
-                    <div className="md:text-xl text-lg font-semibold">
+                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-indigo-600 bg-indigo-100 dark:bg-indigo-800/50 p-2">
+                    <div className="font-medium text-indigo-700 dark:text-indigo-400">Accounting personnel</div>
+                    <div className="md:text-xl text-lg font-semibold text-indigo-700 dark:text-indigo-400">
                         {statistics.accounting} Personnel
                     </div>
                 </div>
-                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1">
-                    <div className="font-medium">Administrator</div>
-                    <div className="md:text-xl text-lg font-semibold">
+                <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-purple-600 bg-purple-100 dark:bg-purple-800/50 p-2">
+                    <div className="font-medium text-purple-700 dark:text-purple-400">Administrator</div>
+                    <div className="md:text-xl text-lg font-semibold text-purple-700 dark:text-purple-400">
                         {statistics.admin} Administrator/s
                     </div>
                 </div>
@@ -324,6 +327,8 @@ function Personnel({
                 salnList={selectedPersonnel?.statement_of_assest_liabilities}
                 user={auth.user}
             />
+
+            <ConfirmServiceCertificate show={showCertificates} onClose={setShowCertificates} user={selectedPersonnel} />
         </Authenticated>
     );
 }
@@ -368,7 +373,7 @@ const PersonnelRow: React.FC<
                             <MenubarTrigger className="h-full cursor-pointer p-0 flex grow justify-center before:!bg-zinc-200">
                                 <EllipsisVertical className="size-5" />
                             </MenubarTrigger>
-                            <MenubarContent className="w-52" align="end">
+                            <MenubarContent className="w-64" align="end">
                                 <MenubarItem
                                     className="px-4 gap-5"
                                     onClick={() =>
@@ -404,6 +409,19 @@ const PersonnelRow: React.FC<
                                 </MenubarItem>
                                 {auth === "HR" && (
                                     <Fragment>
+                                        <MenubarItem
+                                            className="px-4 gap-5"
+                                            onClick={() =>
+                                                onClick &&
+                                                onClick("certificate", user)
+                                            }
+                                        >
+                                            <FolderKanban
+                                                className="size-5"
+                                                strokeWidth={1.8}
+                                            />
+                                            <div>Service certificate</div>
+                                        </MenubarItem>
                                         <MenubarItem
                                             className="px-4 gap-5"
                                             onClick={() =>

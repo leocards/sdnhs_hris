@@ -1,5 +1,5 @@
 import Modal, { ModalProps } from "@/Components/Modal";
-import { SALNType } from "./Reports";
+import { HrType, PrincipalType, SALNType } from "./Reports";
 import { Margin, usePDF } from "react-to-pdf";
 import PDFSALN from "./PDFSALN";
 import { useReactToPrint } from "react-to-print";
@@ -8,11 +8,12 @@ import { Printer, X } from "lucide-react";
 
 type Props = {
     saln: Array<SALNType>;
-    principal: {name: string; position: string};
-    hr: {name: string};
+    principal: PrincipalType;
+    hr: HrType;
+    year: string
 } & ModalProps;
 
-const PrintSALN: React.FC<Props> = ({ saln, show, principal, hr, onClose }) => {
+const PrintSALN: React.FC<Props> = ({ saln, show, principal, hr, year, onClose }) => {
     const download_pdf = usePDF({
         method: "open",
         filename: "SALN.pdf",
@@ -50,7 +51,7 @@ const PrintSALN: React.FC<Props> = ({ saln, show, principal, hr, onClose }) => {
                     `}
                 </style>
                 <div className="max-h-[36.5rem] overflow-y-auto rounded-scrollbar overflow-x-hidden">
-                    <PDFSALN ref={download_pdf.targetRef} saln={saln}  principal={principal} hr={hr} />
+                    <PDFSALN ref={download_pdf.targetRef} saln={saln}  principal={principal} hr={hr} year={year} />
                 </div>
             </div>
         </Modal>

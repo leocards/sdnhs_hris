@@ -25,7 +25,7 @@ const PersonnelList = () => {
     const [search, setSearch] = useState<string>("");
     const searchRef = useRef<HTMLInputElement | null>(null);
     const debounceSearch = useDebounce<string>(search, search ? 700 : 0);
-    const [intialList, setInitialList] = useState<any>()
+    const [intialList, setInitialList] = useState<any>();
 
     const onSearch = (event: ChangeEvent<HTMLInputElement>) => {
         const input = event.target.value.replace(/\s+/g, " ");
@@ -96,11 +96,11 @@ const PersonnelList = () => {
 
     return (
         <div className="mt-4">
-            <div className="border rounded-md h-[28rem] md:mt-8 py-3 grid grid-cols-1 pb-0 grid-rows-[auto,1fr]">
-                <div className="border-b h-12 px-3 pb-2 font-medium flex items-center">
-                    <div>Personnel's Remaining Leave</div>
+            <div className="border rounded-md h-[28rem] md:mt-8 grid grid-cols-1 overflow-hidden grid-rows-[auto,1fr]">
+                <div className="border-b min-h-12 px-3 font-medium flex items-center bg-amber-600 dark:bg-amber-800/50 py-2">
+                    <div className="text-amber-50">Personnel's Remaining Leave</div>
 
-                    <div className="flex my-6 mt-5 relative w-64 h-fit ml-auto">
+                    <div className="flex relative w-64 h-fit ml-auto">
                         <Input
                             className="w-full px-10"
                             value={search}

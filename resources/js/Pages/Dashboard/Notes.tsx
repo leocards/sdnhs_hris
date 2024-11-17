@@ -47,7 +47,7 @@ const Notes = () => {
     }, [refreshNotes]);
 
     return (
-        <div className="border rounded-md w-full md:w-[25rem] lg:w-[20rem] xl:w-[28rem] grid grid-rows-[auto,1fr] shrink-0">
+        <div className="border rounded-md w-full md:w-[25rem] lg:w-[20rem] xl:w-[28rem] grid grid-rows-[auto,1fr] shrink-0 overflow-hidden shadow">
             <div className="border-b flex items-center h-14">
                 <div className="font-medium ml-3">Notes</div>
                 <div

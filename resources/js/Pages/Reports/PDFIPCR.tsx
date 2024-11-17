@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { IPCR, IPCRType } from "./Reports";
+import { IPCRType } from "./Reports";
 import Deped from "@/assets/DepEd.png";
 import SDNHSLogo from "@/assets/sdnhs-logo.png";
 import { equivalent } from "./ListOfIPCR";
@@ -9,6 +9,7 @@ type Props = {
     ipcr: Array<IPCRType>;
     principal: {name: string; position: string};
     hr: {name: string};
+    year: string
 };
 
 type IPCRTYPES = {
@@ -44,7 +45,7 @@ function groupItems(items: Array<IPCRType>) {
     return groups;
 }
 
-const PDFIPCR = forwardRef<HTMLDivElement, Props>(({ ipcr, principal, hr }, ref) => {
+const PDFIPCR = forwardRef<HTMLDivElement, Props>(({ ipcr, principal, hr, year }, ref) => {
     let IPCRList = groupItems([...ipcr]);
 
     const getSALNLength = (): string => {
@@ -80,7 +81,7 @@ const PDFIPCR = forwardRef<HTMLDivElement, Props>(({ ipcr, principal, hr }, ref)
                     <div className="font-bold leading-5 pt-5">
                         LIST OF TEACHERS WITH THEIR IPCR RATING
                     </div>
-                    <div className="leading-5">S.Y. {/* year */}</div>
+                    <div className="leading-5">S.Y. {year}</div>
                 </div>
                 <div>
                     <img src={SDNHSLogo} className="w-20 shrink-0" />
@@ -103,7 +104,7 @@ const PDFIPCR = forwardRef<HTMLDivElement, Props>(({ ipcr, principal, hr }, ref)
                                 </div>
                                 <div>
                                     <div>
-                                        Performance Rating <br /> (SY 2022-2023)
+                                        Performance Rating <br /> (SY {year})
                                     </div>
                                 </div>
                                 <div>

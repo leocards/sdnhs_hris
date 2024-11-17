@@ -15,10 +15,24 @@ use Inertia\Inertia;
 
 class MessageController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->query('user') ?
+            User::where('id', $request->query('user'))
+                ->first(['id', 'first_name', 'last_name', 'middle_name', 'avatar'])
+            : null;
+
+        if($user) {
+            $user['messageId'] = Message::where('sender_id', $user['id'])
+                ->orWhere('receiver_id', Auth::id())
+                ->orWhere('sender_id', Auth::id())
+                ->where('receiver_id', $user['id'])
+                ->value('id');
+        }
+
         return Inertia::render('Messages/Messages', [
-            'unreadmessages' => $this->countUnreadMessages()
+            'unreadmessages' => $this->countUnreadMessages(),
+            'user_open_message' => $user
         ]);
     }
 

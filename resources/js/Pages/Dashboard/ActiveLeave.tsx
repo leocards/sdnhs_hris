@@ -42,7 +42,7 @@ const ActiveLeave: React.FC<Props> = ({ leave }) => {
     );
 
     return (
-        <div className="border rounded-md grow">
+        <div className="border rounded-md grow shadow">
             {leave.length === 0 && (
                 <div className="flex flex-col h-full items-center justify-center">
                     <CalendarDays className="size-12 text-gray-400" />

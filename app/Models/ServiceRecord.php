@@ -19,5 +19,11 @@ class ServiceRecord extends Model
         'date_from',
         'date_to',
         'credits',
+        'approved'
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

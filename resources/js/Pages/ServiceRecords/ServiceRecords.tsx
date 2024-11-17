@@ -17,6 +17,7 @@ import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import DataList from "@/Components/DataList";
 import PaginationButton from "@/Components/PaginationButton";
 import ServiceRecordDeleteConfirmation from "./ServiceRecordDeleteConfirmation";
+import { cn } from "@/lib/utils";
 
 export default function index({
     auth,
@@ -42,6 +43,7 @@ type CertificateRowData = {
     credits: number;
     venue: string;
     organizer: string;
+    approved: "approved" | "rejected" | "pending"
 };
 
 function ServiceRecords({
@@ -111,10 +113,11 @@ function ServiceRecords({
             </div>
 
             <div className="divide-y min-h-[22rem]">
-                <div className="grid grid-cols-[repeat(3,1fr),3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
+                <div className="grid grid-cols-[repeat(4,1fr),3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Name</div>
                     <div className="">Date modified</div>
                     <div className="">File type</div>
+                    <div className="">Status</div>
                     <div className=""></div>
                 </div>
 
@@ -160,10 +163,15 @@ const CertificateRow: React.FC<{
     onDelete: CallableFunction;
 }> = ({ data, onView, onDelete }) => {
     const type = data.file_path.split(".")[1];
+    const color_status = {
+        "approved": "text-green-600",
+        "rejected": "text-red-600",
+        "pending": "text-amber-600",
+    }[data.approved]
 
     return (
         <div className="hover:bg-secondary transition-colors">
-            <div className="grid grid-cols-[repeat(3,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
+            <div className="grid grid-cols-[repeat(4,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm font-mediu">
                 <div className="">
                     <div className="line-clamp-1">{data.file_name}</div>
                 </div>
@@ -174,6 +182,9 @@ const CertificateRow: React.FC<{
                 </div>
                 <div className="uppercase text-xs">
                     {["png", "jpg", "jpeg"].includes(type) ? "image" : type}
+                </div>
+                <div className="">
+                    <div className={cn("line-clamp-1 capitalize", color_status)}>{data.approved}</div>
                 </div>
                 <div className="">
                     <Menubar className="p-0 border-none group size-8 bg-transparent">

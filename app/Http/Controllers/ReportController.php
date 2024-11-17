@@ -28,35 +28,66 @@ class ReportController extends Controller
 
     public function index(Request $request)
     {
+        $ipcr_years = PerformanceRating::select('sy')->groupBy('sy')->orderBy('sy', 'DESC')->pluck('sy');
+        $saln_years = Saln::select('year')->groupBy('year')->orderBy('year', 'DESC')->pluck('year');
         return Inertia::render('Reports/Reports', [
             "list" => collect([
                 "jhs" => DB::table('users')
                     ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))
                     ->where('department', 'Junior High School')
+                    ->whereNot('role', 'HR')
                     ->get(),
                 "shs" => DB::table('users')
                     ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))
                     ->where('department', 'Senior High School')
+                    ->whereNot('role', 'HR')
                     ->get(),
                 "accounting" => DB::table('users')
                     ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))
                     ->where('department', 'Accounting')
+                    ->whereNot('role', 'HR')
                     ->get(),
                 "principal" => User::where('role', 'HOD')->get('sex')
             ]),
+            "ipcr_years" => $ipcr_years,
+            "saln_years" => $saln_years,
             "ipcr" => PerformanceRating::with(['user:id,first_name,last_name,middle_name,position,personnel_id'])
                 ->join('users', 'performance_ratings.user_id', '=', 'users.id')
-                ->whereYear('performance_ratings.created_at', $request->query('ipcr') ?? $this->date->format("Y"))
+                ->where('performance_ratings.sy', $ipcr_years->first())
                 ->orderBy('users.last_name')
                 ->select('performance_ratings.*')
                 ->get(),
             "saln" => Saln::with(['user' => function ($query) {
-                $query->select(['id','first_name','last_name','middle_name','position','personnel_id'])->with(['pdsPersonalInformation:id,user_id,tin']);
-            }])
-                ->whereYear('created_at', $request->query('saln') ?? $this->date->format("Y"))->get(),
-            "principal" => User::where('role', 'HOD')->first(['first_name', 'last_name', 'middle_name', 'position']),
-            "hr" => Auth::user()->role == "HR" ? ["name" => Auth::user()->name] : User::where('role', 'HR')->first(['first_name', 'last_name', 'middle_name', 'position']),
+                    $query->select(['id','first_name','last_name','middle_name','position','personnel_id'])->with(['pdsPersonalInformation:id,user_id,tin']);
+                }])
+                ->where('year', $saln_years->first())->get(),
+            "principal" => User::where('role', 'HOD')->first(['first_name', 'last_name', 'middle_name', 'position', 'email', 'phone_number']),
+            "hr" => Auth::user()->role == "HR" ? ["name" => Auth::user()->name, "position" => Auth::user()->position, "email" => Auth::user()->email, "phone_number" => Auth::user()->phone_number] : User::where('role', 'HR')->first(['first_name', 'last_name', 'middle_name', 'position', 'email', 'phone_number']),
         ]);
+    }
+
+    public function filterIPCRByYear($year = null)
+    {
+        return response()->json(
+            PerformanceRating::with(['user:id,first_name,last_name,middle_name,position,personnel_id'])
+                ->join('users', 'performance_ratings.user_id', '=', 'users.id')
+                ->where('performance_ratings.sy', $year)
+                ->orderBy('users.last_name')
+                ->select('performance_ratings.*')
+                ->get()
+        );
+    }
+
+    public function filterSALNByYear($year = null)
+    {
+        return response()->json(
+            Saln::with(['user' => function ($query) {
+                    $query->select(['id','first_name','last_name','middle_name','position','personnel_id'])
+                    ->with(['pdsPersonalInformation:id,user_id,tin']);
+                }])
+                ->where('year', $year)
+                ->get()
+        );
     }
 
     public function getIPCRUnlisted()
@@ -65,6 +96,8 @@ class ReportController extends Controller
             User::whereDoesntHave('performanceRatings', function ($query) {
                $query->whereYear('created_at', $this->date->format('Y'));
             })
+            ->whereNot('role', 'HR')
+            ->whereNot('role', 'HOD')
             ->with('performanceRatings:id')
             ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
@@ -94,11 +127,6 @@ class ReportController extends Controller
             ->with('performanceRatings:id')
             ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
-    }
-
-    public function searchSALN()
-    {
-
     }
 
     public function upload_ipcr(Request $request)
@@ -134,15 +162,17 @@ class ReportController extends Controller
 
                             $user = User::whereIn(DB::raw('first_name'), $searchName)
                                 ->whereIn(DB::raw('last_name'), $searchName)
+                                ->whereNot('role', 'HR')
                                 ->first(['id']);
 
                             // validate if user exist and check if it has already been added otherwise add the rating.
                             if ($user){
-                                $existIPCR = PerformanceRating::where('user_id', $user->id)->whereYear('created_at', $this->date->format("Y"))->exists();
+                                $existIPCR = PerformanceRating::where('user_id', $user->id)->where('sy', $request->sy)->exists();
                                 if(!$existIPCR)
                                     PerformanceRating::create([
                                         'user_id' => $user->id,
-                                        'rating' => $value[3]
+                                        'rating' => $value[3],
+                                        'sy' => $request->sy
                                     ]);
                             }
                         } else {
@@ -194,7 +224,7 @@ class ReportController extends Controller
                             $user = User::searchByLastAndFirstName($searchLName, $searchFName)->first('id');
 
                             // validate if user exist and check if it has already been added otherwise add the rating.
-                            if ($user){
+                            if ($user) {
                                 $existIPCR = Saln::where('user_id', $user->id)->whereYear('created_at', $this->date->format("Y"))->exists();
                                 if(!$existIPCR)
                                     Saln::create([
@@ -202,7 +232,7 @@ class ReportController extends Controller
                                         "networth" => $value[6],
                                         "spouse" => $value[7],
                                         "joint" => $value[8] === "/" ? true : false,
-                                        'rating' => $value[3]
+                                        "year" => $request->year
                                     ]);
                             }
                         } else {
@@ -238,9 +268,9 @@ class ReportController extends Controller
         $request->validate([
             "add.personnelid.name" => [
                 'required',
-                function ($attribute, $value, $fail) use ($user) {
+                function ($attribute, $value, $fail) use ($user, $request) {
                     if (PerformanceRating::where('user_id', $user->id)
-                        ->whereYear('created_at', $this->date->format("Y"))
+                        ->where('sy', $request->sy)
                         ->exists()
                     ) {
                         $fail('The personnel already exists.');
@@ -255,7 +285,8 @@ class ReportController extends Controller
 
             PerformanceRating::create([
                 'user_id' => $user->id,
-                'rating' => $request->add['rating']
+                'rating' => $request->add['rating'],
+                'sy' => $request->sy
             ]);
 
             DB::commit();
@@ -279,9 +310,9 @@ class ReportController extends Controller
         $request->validate([
             "add.personnelid.name" => [
                 'required',
-                function ($attribute, $value, $fail) use ($user) {
+                function ($attribute, $value, $fail) use ($user, $request) {
                     if (Saln::where('user_id', $user->id)
-                        ->whereYear('created_at', $this->date->format("Y"))
+                        ->where('year', $request->year)
                         ->exists()
                     ) {
                         $fail('The personnel already exists.');
@@ -290,6 +321,7 @@ class ReportController extends Controller
             ],
             "add.networth" => ['required'],
             "add.isjoint" => ['boolean'],
+            "year" => ["required", "digits:4"]
         ]);
 
         DB::beginTransaction();
@@ -299,7 +331,8 @@ class ReportController extends Controller
                 "user_id" => $user->id,
                 "networth" => $request->add['networth'],
                 "spouse" => $request->add['spouse'],
-                "joint" => $request->add['isjoint']
+                "joint" => $request->add['isjoint'],
+                "year" => $request->year
             ]);
 
             DB::commit();

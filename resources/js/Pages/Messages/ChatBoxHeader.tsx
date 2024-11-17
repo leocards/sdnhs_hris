@@ -14,9 +14,10 @@ import { useMessage } from "@/hooks/MessageProvider";
 type Props = {
     onSearchConvo: () => void;
     onDeleteConversation: CallableFunction;
+    onExport: () => void
 }
 
-const ChatBoxHeader: React.FC<Props> = ({ onSearchConvo, onDeleteConversation }) => {
+const ChatBoxHeader: React.FC<Props> = ({ onSearchConvo, onDeleteConversation, onExport }) => {
     const { user, activeUsers } = useMessage()
     const isActive = !!(activeUsers.find((au) => au.id === user?.id))
 
@@ -44,7 +45,7 @@ const ChatBoxHeader: React.FC<Props> = ({ onSearchConvo, onDeleteConversation })
                         <MenubarItem className="transition duration-200" onClick={onSearchConvo}>
                             Search
                         </MenubarItem>
-                        <MenubarItem className="transition duration-200">
+                        <MenubarItem className="transition duration-200" onClick={onExport}>
                             Export chat
                         </MenubarItem>
                         <MenubarItem className="text-destructive hover:!bg-destructive/10 dark:hover:!bg-destructive/50 hover:!text-destructive dark:!text-red-500 transition duration-200" onClick={() => onDeleteConversation()}>

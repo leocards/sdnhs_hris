@@ -61,7 +61,7 @@ class DatabaseSeeder extends Seeder
             'phone_number' => '09485729385',
             'personnel_id' => 'SDNH-3578',
             'department' => 'Junior High School',
-            'role' => 'HR',
+            'role' => 'Teaching',
             'position' => 'Teacher I',
             'leave_credits' => 0,
             'password' => Hash::make('12345678'),

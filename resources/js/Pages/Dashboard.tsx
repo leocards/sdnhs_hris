@@ -25,10 +25,16 @@ interface DashboardProps extends PageProps {
         inclusive_date_from: string;
         inclusive_date_to: string;
     }>;
-    leaveApplications: Array<{
-        leave_type: string;
-        total: number;
-    }>;
+    leaveApplications: {
+        approved: Array<{
+            leave_type: string;
+            total: number;
+        }>
+        rejected: Array<{
+            leave_type: string;
+            total: number;
+        }>
+    }
     pageData: PaginateData;
 }
 
@@ -88,11 +94,11 @@ function Dashboard({
         >
             <Head title="Dashboard" />
 
-            <div className="mt-10 grid gap-8 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                 {["HR", "HOD"].includes(auth.user.role) ? (
-                    <div className="border-t pt-4 space-y-1.5">
-                        <div className="font-medium">Total personnel</div>
-                        <div className="text-xl font-semibold">
+                    <div className="border-t border-teal-600 bg-teal-100 dark:bg-teal-800/50 pt-4 space-y-1.5 p-2">
+                        <div className="font-medium text-teal-700 dark:text-teal-400">Total personnel</div>
+                        <div className="text-xl font-semibold text-teal-700 dark:text-teal-400">
                             {totalEmployee?.total} Personnel
                         </div>
                         {totalEmployee?.recent && totalEmployee?.recent > 0 ? (
@@ -107,9 +113,9 @@ function Dashboard({
                         )}
                     </div>
                 ) : (
-                    <div className="border-t pt-4 space-y-1.5">
-                        <div className="font-medium">Credits remaining</div>
-                        <div className="text-xl font-semibold">
+                    <div className="border-t border-teal-600 bg-teal-100 dark:bg-teal-800/50 pt-4 space-y-1.5 p-2">
+                        <div className="font-medium text-teal-700 dark:text-teal-400">Credits remaining</div>
+                        <div className="text-xl font-semibold text-teal-700 dark:text-teal-400">
                             {auth.user.leave_credits ?? 0} Credit/s
                         </div>
                         {totalEmployee?.recent && totalEmployee?.recent > 0 ? (
@@ -131,9 +137,9 @@ function Dashboard({
                         )}
                     </div>
                 )}
-                <div className="border-t pt-4 space-y-1.5">
-                    <div className="font-medium">Approved leave</div>
-                    <div className="text-xl font-semibold">
+                <div className="border-t border-blue-600 bg-blue-100 dark:bg-blue-800/50 pt-4 space-y-1.5 p-2">
+                    <div className="font-medium text-blue-700 dark:text-blue-400">Approved leave</div>
+                    <div className="text-xl font-semibold text-blue-700 dark:text-blue-400">
                         {approved.total} Approved
                     </div>
                     {approved.recent > 0 && (
@@ -145,9 +151,9 @@ function Dashboard({
                         </div>
                     )}
                 </div>
-                <div className="border-t pt-4 space-y-1.5">
-                    <div className="font-medium">Pending leave</div>
-                    <div className="text-xl font-semibold">
+                <div className="border-t border-purple-600 bg-purple-100 dark:bg-purple-800/50 pt-4 space-y-1.5 p-2">
+                    <div className="font-medium text-purple-700 dark:text-purple-400">Pending leave</div>
+                    <div className="text-xl font-semibold text-purple-700 dark:text-purple-400">
                         {pending.total} Pending
                     </div>
                     {pending.recent > 0 && (
@@ -159,9 +165,9 @@ function Dashboard({
                         </div>
                     )}
                 </div>
-                <div className="border-t pt-4 space-y-1.5">
-                    <div className="font-medium">Rejected leave</div>
-                    <div className="text-xl font-semibold">
+                <div className="border-t border-yellow-600 bg-yellow-100 dark:bg-yellow-800/50 pt-4 space-y-1.5 p-2">
+                    <div className="font-medium text-yellow-700 dark:text-yellow-400">Rejected leave</div>
+                    <div className="text-xl font-semibold text-yellow-700 dark:text-yellow-400">
                         {reject.total} Rejected
                     </div>
                     {reject.recent > 0 && (

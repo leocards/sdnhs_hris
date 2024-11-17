@@ -35,11 +35,8 @@ const C1 = forwardRef<HTMLDivElement, C1Props>(
                 [data?.educationalBackground]
             );
 
-        useEffect(() => {
-            console.log(data);
-        }, [data]);
         return (
-            <div className="flex overflow-x-hidden gap-2">
+            <div className="flex overflow-hidden gap-2 px-1 relative">
                 <div className="w-full shrink-0">
                     <div className="w-full border-b mb-6">
                         <Tabs
@@ -100,7 +97,7 @@ const C1 = forwardRef<HTMLDivElement, C1Props>(
                     <Processing is_processing={processing} />
                 </div>
                 {data && (
-                    <div className="w-[calc(900px-20pt)]">
+                    <div className="w-[calc(900px-20pt)] absolute top-0 -right-[120%]">
                         <PDSPDFIsDownloadProvider initialValue={true}>
                             <Pages ref={ref} pageNumber={1}>
                                 <Header />

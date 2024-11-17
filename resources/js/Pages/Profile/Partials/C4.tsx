@@ -237,7 +237,7 @@ const C4 = forwardRef<HTMLDivElement, C4Props>(({ user, data }, ref) => {
     }, [pds_questions]);
 
     return (
-        <div className="flex overflow-x-hidden gap-2">
+        <div className="flex overflow-hidden gap-2 relative">
             <div className="w-full shrink-0">
                 <Form {...form}>
                     <form
@@ -266,7 +266,7 @@ const C4 = forwardRef<HTMLDivElement, C4Props>(({ user, data }, ref) => {
             </div>
 
             {data && (
-                <div className="w-[calc(900px-20pt)]">
+                <div className="w-[calc(900px-20pt)] absolute top-0 -right-[120%]">
                     <PDSPDFIsDownloadProvider initialValue={true}>
                         <Pages ref={ref} pageNumber={4}>
                             <C4pdf

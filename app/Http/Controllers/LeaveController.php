@@ -93,6 +93,9 @@ class LeaveController extends Controller
 
     public function apply_for_leave()
     {
+        if(Auth::user()->role == "HR")
+            return abort(401);
+
         return Inertia::render('Leave/ApplyLeave', [
             "salary" => PDSWorkExperience::where('user_id', Auth::id())
                 ->where(function ($query) {
@@ -189,7 +192,7 @@ class LeaveController extends Controller
                     broadcast(new SendNotificationEvent($notification, $value['id']));
                 }
             } else {
-                $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
+                $receivers = User::whereIn('role', ['HR'/* , 'HOD' */])->where('id', '!=', Auth::id())->get('id');
                 foreach ($receivers as $value) {
                     $notification = Notifications::create([
                         'user_id' => $value['id'],
@@ -273,7 +276,6 @@ class LeaveController extends Controller
                         $user->save();
                     }
                 }
-
             } else {
                 if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Rejected";

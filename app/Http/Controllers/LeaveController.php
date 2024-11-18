@@ -139,6 +139,7 @@ class LeaveController extends Controller
                 'inclusive_date_to' => array_key_exists('to', $request->inclusiveDates) ? Carbon::parse($request->inclusiveDates['to'])->format('Y-m-d') : null,
                 'is_not_requested' => $request->commutation['notRequested'] ?? null,
                 'is_requested' => $request->commutation['requested'] ?? null,
+                'principal_status' => Auth::user()->role == "HOD" ? "Approved" : "Pending"
             ]);
 
             $checkedFields = [
@@ -203,7 +204,7 @@ class LeaveController extends Controller
                     broadcast(new SendNotificationEvent($notification, $value['id']));
                 }
             } else {
-                $receivers = User::whereIn('role', ['HR'/* , 'HOD' */])->where('id', '!=', Auth::id())->get('id');
+                $receivers = User::whereIn('role', ['HR'])->where('id', '!=', Auth::id())->get('id');
                 foreach ($receivers as $value) {
                     $notification = Notifications::create([
                         'user_id' => $value['id'],

@@ -196,7 +196,7 @@ class PersonnelController extends Controller
             $user->role = $request->userRole;
             $user->position = $request->position;
             $user->leave_credits = $request->currentCredits;
-            $user->date_hired = Carbon::parse($request->date_hired)->format('Y-m-d');
+            $user->date_hired = Carbon::parse($request->dateHired)->format('Y-m-d');
             $user->password = Hash::make($request->password);
 
             $user->save();

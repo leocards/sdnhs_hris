@@ -123,7 +123,7 @@ class LeaveController extends Controller
                 }
             else {
                 if(Carbon::parse(Auth::user()->date_hired)->greaterThan(Carbon::now()->subMonths(3))) {
-                    throw new Exception("You are yet allowed to use this type of leave.", 1);
+                    throw new Exception("You are not yet allowed to use this type of leave.", 1);
                 }
             }
 

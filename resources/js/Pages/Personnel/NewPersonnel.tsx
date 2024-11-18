@@ -50,6 +50,7 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
     const onFormSubmit = (formData: IFormNewPersonnel) => {
         setIsSubmit(true);
         setData(formData);
+        console.log(formData)
     };
 
     useEffect(() => {

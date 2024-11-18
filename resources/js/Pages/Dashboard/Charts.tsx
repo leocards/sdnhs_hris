@@ -25,7 +25,7 @@ const Charts: React.FC<Props> = ({ chartData }) => {
             {windowSize.width > 600 ? (
                 <ChartContainer
                     config={chartConfig}
-                    className="h-[300px] w-full min-[1150px]:w-[28rem] [@media(min-width:1290px)]:w-[45rem]"
+                    className="h-[300px] w-full [@media(min-width:1290px)]:w-[45rem]"
                 >
                     <BarChart className="" accessibilityLayer data={chartData}>
                         <CartesianGrid vertical={false} />

@@ -218,11 +218,11 @@ const LeavePDFDetailsOfActionOnApplication = (
                         </div>
                     </div>
 
-                    <div className="flex">
+                    <div className="flex px-2 gap-3">
                         <div className="mt-4 mb-2 w-[60%] mx-auto">
                             <div
                                 className={cn(
-                                    "h-4 text-center font-bold uppercase"
+                                    "h-4 text-center font-bold uppercase border-b border-black"
                                 )}
                             >
                                 <div
@@ -245,7 +245,7 @@ const LeavePDFDetailsOfActionOnApplication = (
                         <div className="mt-4 mb-2 w-[60%] mx-auto">
                             <div
                                 className={cn(
-                                    "h-4 text-center font-bold uppercase"
+                                    "h-4 text-center font-bold uppercase border-b border-black"
                                 )}
                             >
                                 <div

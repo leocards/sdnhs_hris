@@ -127,6 +127,7 @@ class ReportController extends Controller
             })->whereDoesntHave('performanceRatings', function ($query) use ($sy) {
                $query->where('sy', $sy);
             })
+            ->whereNot('role', 'HR')
             ->with('performanceRatings:id')
             ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
@@ -143,6 +144,7 @@ class ReportController extends Controller
             })->whereDoesntHave('saln', function ($query) use ($year) {
                $query->where('year', $year);
             })
+            ->whereNot('role', 'HR')
             ->with('performanceRatings:id')
             ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );

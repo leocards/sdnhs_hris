@@ -139,8 +139,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/', 'index')->name('reports');
             Route::get('/search-ipcr', 'searchIPCR')->name('reports.searchIPCR');
             Route::get('/search-saln', 'searchSALN')->name('reports.searchSALN');
-            Route::get('/ipcr-personnel-unlisted/{sy}', 'getIPCRUnlisted')->name('reports.unlistedIPCR');
-            Route::get('/saln-personnel-unlisted', 'getSALNUnlisted')->name('reports.unlistedSALN');
+            Route::get('/ipcr-personnel-unlisted/{sy?}', 'getIPCRUnlisted')->name('reports.unlistedIPCR');
+            Route::get('/saln-personnel-unlisted/{year?}', 'getSALNUnlisted')->name('reports.unlistedSALN');
             Route::get('/filter-ipcr/{year?}', 'filterIPCRByYear')->name('reports.filter.ipcr');
             Route::get('/filter-saln/{year?}', 'filterSALNByYear')->name('reports.filter.saln');
 

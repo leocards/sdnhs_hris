@@ -155,9 +155,9 @@ const PDFIPCR = forwardRef<HTMLDivElement, Props>(({ ipcr, principal, hr, year }
                 <div>
                     <div className="text-right">Certified Correct and Approved by:</div>
                     <div className="pt-10 w-72 ml-auto text-center">
-                        <div className="uppercase font-bold">{principal?.name||""}</div>
+                        <div className="uppercase font-bold">{principal?.name||"No principal added"}</div>
                         <hr className="border-black" />
-                        <div className="">{principal?.position||""}</div>
+                        <div className="">{principal?.position||"No principal added"}</div>
                     </div>
                 </div>
             </div>

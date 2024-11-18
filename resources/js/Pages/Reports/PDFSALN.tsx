@@ -33,8 +33,8 @@ function groupItems(items: Array<SALNType>) {
 
 type Props = {
     saln: Array<SALNType>;
-    principal: PrincipalType;
-    hr: HrType;
+    principal?: PrincipalType;
+    hr?: HrType;
     year: string
 }
 
@@ -223,11 +223,11 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 <div>
                     <div className="grid grid-cols-[18rem,4rem]">
                         <div>Total Number of Filers:</div>
-                        <div className="border-b border-black">{}</div>
+                        <div className="border-b border-black text-center">{saln.length}</div>
                     </div>
                     <div className="grid grid-cols-[18rem,4rem]">
                         <div>Total Number of Personnel Complete adffa:</div>
-                        <div className="border-b border-black">{}</div>
+                        <div className="border-b border-black text-center">{saln.length}</div>
                     </div>
                 </div>
 
@@ -237,7 +237,7 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
                         <div className="mt-4">
                             <div className="font-bold uppercase">
-                                {props.hr.name}
+                                {props.hr?.name}
                             </div>
                             <div className="leading-4">School HR</div>
                         </div>
@@ -245,15 +245,15 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
                         <div className="mt-5 leading-5">
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Position: </div>
-                                <div className="border-b border-black pl-1">{props.hr.position}</div>
+                                <div className="border-b border-black pl-1">{props.hr?.position}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Email Address: </div>
-                                <div className="border-b border-black pl-1">{props.hr.email}</div>
+                                <div className="border-b border-black pl-1">{props.hr?.email}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Contact No.: </div>
-                                <div className="border-b border-black pl-1">{props.hr.phone_number}</div>
+                                <div className="border-b border-black pl-1">{props.hr?.phone_number}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,20rem]">
                                 <div>Date: </div>
@@ -266,25 +266,25 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
 
                         <div className="mt-4">
                             <div className="font-bold uppercase">
-                                {props.principal.name}
+                                {props.principal?.name||"No principal added"}
                             </div>
                             <div className="leading-4">
-                                {props.principal.position}
+                                {props.principal?.position||"No principal added"}
                             </div>
                         </div>
 
                         <div className="mt-5 leading-5">
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Position: </div>
-                                <div className="border-b border-black pl-1">{props.principal.position}</div>
+                                <div className="border-b border-black pl-1">{props.principal?.position||"No principal added"}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Email Address: </div>
-                                <div className="border-b border-black pl-1">{props.principal.email}</div>
+                                <div className="border-b border-black pl-1">{props.principal?.email||"No principal added"}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Contact No.: </div>
-                                <div className="border-b border-black pl-1">{props.principal.phone_number}</div>
+                                <div className="border-b border-black pl-1">{props.principal?.phone_number||"No principal added"}</div>
                             </div>
                             <div className="grid grid-cols-[12rem,1fr]">
                                 <div>Date: </div>

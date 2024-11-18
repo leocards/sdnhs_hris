@@ -90,7 +90,7 @@ class ReportController extends Controller
         );
     }
 
-    public function getIPCRUnlisted($sy)
+    public function getIPCRUnlisted($sy = null)
     {
         return response()->json(
             User::whereDoesntHave('performanceRatings', function ($query) use ($sy) {

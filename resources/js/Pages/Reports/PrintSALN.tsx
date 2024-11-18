@@ -8,8 +8,8 @@ import { Printer, X } from "lucide-react";
 
 type Props = {
     saln: Array<SALNType>;
-    principal: PrincipalType;
-    hr: HrType;
+    principal?: PrincipalType;
+    hr?: HrType;
     year: string
 } & ModalProps;
 

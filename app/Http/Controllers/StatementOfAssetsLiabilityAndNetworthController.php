@@ -179,9 +179,10 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 $saln->year = $asof;
             } else {
                 Saln::create([
+                    "user_id" => Auth::id(),
                     "networth" => $networth,
-                    "spouse" => $request->spouse['firstname'] .' '. $request->spouse['middleinitial'] .'. '. $request->spouse['familyname'] .'/'. $request->spouse['office'] .'/'. $request->spouse['officeaddress'],
-                    "joint" => $request->isjoint,
+                    "spouse" => $request->spouse['familyname'] ? $request->spouse['firstname'] .' '. $request->spouse['middleinitial'] .'. '. $request->spouse['familyname'] .'/'. $request->spouse['office'] .'/'. $request->spouse['officeaddress'] : "",
+                    "joint" => $request->isjoint == "joint" ? true : false,
                     "year" => $asof
                 ]);
             }

@@ -191,7 +191,7 @@ const ListOfSALN = ({ saln, principal, hr, saln_years }: Props) => {
                                                     {list.user.position}
                                                 </div>
                                                 <div className="">
-                                                    &#8369; {list.networth}
+                                                    &#8369; {Number(list.networth).toLocaleString()}
                                                 </div>
                                                 <div className="">
                                                     {list.spouse}

@@ -146,6 +146,7 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                                         <FormControl>
                                             <NumberInput
                                                 {...field}
+                                                max={4}
                                                 className="form-input"
                                             />
                                         </FormControl>

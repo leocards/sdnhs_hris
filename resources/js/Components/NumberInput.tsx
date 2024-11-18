@@ -25,8 +25,7 @@ const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
         };
 
         const onValue = (value: any) => {
-            let val = value
-                    .replace(/[^0-9.]/g, "")
+            let val = value?.replace(/[^0-9.]/g, "")
                     .replace(/(\..*)\./g, "$1");
 
             if (isAmount) {

@@ -178,7 +178,7 @@ const ListOfSALN = ({ saln, principal, hr, saln_years }: Props) => {
                                                 <div
                                                     className=""
                                                     style={{ textAlign: "left" }}
-                                                >{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
+                                                >{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name?.toUpperCase()||""}`}</div>
 
                                                 <div className="">
                                                     {

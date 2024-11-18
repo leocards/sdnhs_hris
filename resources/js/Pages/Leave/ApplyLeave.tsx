@@ -65,7 +65,6 @@ const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: st
             form.setValue("numDaysApplied", "1", {
                 shouldValidate: true
             });
-        console.log(watchInclusiveDatesFrom)
     }, [watchInclusiveDatesFrom, watchInclusiveDatesTo]);
 
     // Set value for other fields

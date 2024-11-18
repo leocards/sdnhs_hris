@@ -23,6 +23,7 @@ import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigge
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import NumberInput from "@/Components/NumberInput";
 
 const UPLOADSCHEMA = z
     .object({
@@ -257,7 +258,7 @@ export default function UploadSALN(props: {
                                             <FormLabel className="required">
                                                 Calendar year
                                             </FormLabel>
-                                            <SelectOption onChange={field.onChange}>
+                                            <SelectOption onChange={field.onChange} initialValue={year}>
                                                 <SelectOptionTrigger>
                                                     <FormControl>
                                                     <Button
@@ -343,7 +344,8 @@ export default function UploadSALN(props: {
                                                     Net worth
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input
+                                                    <NumberInput
+                                                        isAmount
                                                         {...field}
                                                         className="form-input"
                                                     />

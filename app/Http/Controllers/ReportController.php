@@ -322,7 +322,7 @@ class ReportController extends Controller
 
     public function addSALNRow(Request $request)
     {
-        $user = User::where('personnel_id', $request->add['personnelid']['id'])->first();
+        $user = User::where('id', $request->add['personnelid']['id'])->first();
 
         if (!$user) {
             return back()->withErrors("Personnel does not exist");

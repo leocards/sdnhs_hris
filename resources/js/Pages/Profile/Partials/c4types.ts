@@ -53,7 +53,7 @@ const C4SCHEMA = z.object({
             choices: z.enum(['Yes', 'No'], { required_error: 'Please select Yes or No.', invalid_type_error: 'Please select Yes or No.' })
                 .nullable(),
             datefiled: z.date({required_error: requiredError('date filed'), invalid_type_error: requiredError('date filed')}).nullable().optional(),
-            statusofcase: z.string().optional()
+            statusofcase: z.string().optional().default("")
         }).superRefine((data, ctx) => {
             if (data.choices === null) {
                 ctx.addIssue({

@@ -140,7 +140,7 @@ export default function SearchedEmployee({
                 {activeTab === "PDS" && (
                     <div className={cn("mx-auto w-fit")}>
                         <PersonalDataSheets
-                            data={{ ...auth.user, ...pdsData }}
+                            data={{ ...user, ...pdsData }}
                         />
                     </div>
                 )}

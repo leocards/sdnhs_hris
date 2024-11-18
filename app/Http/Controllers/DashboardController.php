@@ -34,7 +34,9 @@ class DashboardController extends Controller
                     "recent" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
                     "total" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->count(),
                 ],
-                "leave" => Leave::where('user_id', Auth::id())
+                "leave" => Leave::when(Auth::user()->role != "HR", function ($query) {
+                        $query->where('user_id', Auth::id());
+                    })
                     ->when(Auth::user()->role !== "HOD", function ($query) {
                         $query->where('principal_status', 'Approved');
                     })

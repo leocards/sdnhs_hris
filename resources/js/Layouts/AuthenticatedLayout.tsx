@@ -624,7 +624,7 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                                 as="li"
                                 className="hover:bg-primary hover:text-primary-foreground"
                                 onClick={() =>
-                                    router.get(route("profile.edit"))
+                                    router.get(route(user.role != "HR" ? "profile.edit" : "profile.profile"))
                                 }
                             >
                                 <UserRound

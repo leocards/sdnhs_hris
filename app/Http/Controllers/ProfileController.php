@@ -92,7 +92,7 @@ class ProfileController extends Controller
             'role' => $request->userRole,
             'position' => $request->position,
             //'leave_credits' => $request->currentCredits,
-            'date_hired' => Carbon::parse($request->date_hired)->format('Y-m-d'),
+            'date_hired' => Carbon::parse($request->dateHired)->format('Y-m-d'),
         ]);
 
 

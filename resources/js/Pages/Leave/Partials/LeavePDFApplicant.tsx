@@ -33,7 +33,7 @@ const LeavePDFApplicant = ({
                     <div className={cn(isDownload && "print:mt-auto -mt-1.5")}>
                         1. Office/department
                     </div>
-                    <div className="mt-0.5 pl-3">{department}</div>
+                    <div className="mt-0.5 pl-3">{department??"N/A"}</div>
                 </div>
                 <div className="flex flex-col">
                     <div className="grid grid-cols-[3.5rem,1fr]">
@@ -93,7 +93,7 @@ const LeavePDFApplicant = ({
                 </div>
                 <div className="">
                     <div className={cn(isDownload && "-mt-1.5")}>5. Salary</div>
-                    <div className="pl-3">&#8369;   {salary}</div>
+                    <div className="pl-3">&#8369; {Number(salary).toLocaleString()}</div>
                 </div>
             </div>
         </>

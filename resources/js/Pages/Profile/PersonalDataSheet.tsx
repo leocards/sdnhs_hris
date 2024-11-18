@@ -36,7 +36,7 @@ export default function PersonalDataSheet({ user, isApprovedPds }: Props) {
 
     const download_pdf = usePDF({
         method: "save",
-        filename: "application-for-leave.pdf",
+        filename: "Personal Data Sheet.pdf",
         page: { format: "A4", margin: Margin.MEDIUM },
     });
 

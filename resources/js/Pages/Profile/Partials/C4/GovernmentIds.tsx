@@ -1,3 +1,4 @@
+import NumberInput from "@/Components/NumberInput";
 import {
     FormControl,
     FormField,
@@ -36,7 +37,7 @@ export default function GovernmentIds({ form }: { form: any }) {
                         <FormItem>
                             <FormLabel>ID/License/Passport No.: </FormLabel>
                             <FormControl>
-                                <Input {...field} className="form-input" />
+                                <NumberInput max={7} {...field} className="form-input" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

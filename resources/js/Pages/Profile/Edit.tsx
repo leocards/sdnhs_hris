@@ -85,12 +85,12 @@ export default function Edit({
             </div>
 
             <div className="mt-8 flex gap-3">
-                <Button
+                {auth.user.role != "HR" && (<Button
                     variant={(url !== "/profile/settings" && url !== "/profile/profile") ? "default" : "ghost"}
                     onClick={() => router.get(route("profile.edit"))}
                 >
                     <span>Personal Data Sheet</span>
-                </Button>
+                </Button>)}
                 <Button
                     variant={url.startsWith("/profile/profile") ? "default" : "ghost"}
                     onClick={() => router.get(route("profile.profile"))}
@@ -109,11 +109,11 @@ export default function Edit({
                 </Button>
             </div>
 
-            <div>
+            {auth.user.role != "HR" && (<div>
                 {(url !== "/profile/settings" && url !== "/profile/profile") && (
                     <PersonalDataSheet user={userinfo} isApprovedPds={!!(isApprovedPds?.pds_personal_information?.is_approved)} />
                 )}
-            </div>
+            </div>)}
             <div>
                 {url.startsWith("/profile/profile") && (
                     <div className="py-12">

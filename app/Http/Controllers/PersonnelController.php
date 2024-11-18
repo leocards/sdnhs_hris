@@ -160,8 +160,7 @@ class PersonnelController extends Controller
                 'department' => $request->userRole != "HOD" ? $request->department : null,
                 'role' => $request->userRole,
                 'position' => $request->position,
-                'leave_credits' => $credits,
-                'date_hired' => Carbon::parse($request->date_hired)->format('Y-m-d'),
+                'date_hired' => Carbon::parse($request->dateHired)->format('Y-m-d'),
                 'password' => Hash::make($request->password),
                 'avatar' => '/storage/assets/profile.png',
                 'enable_email_notification' => true
@@ -195,7 +194,6 @@ class PersonnelController extends Controller
             $user->department = $request->department;
             $user->role = $request->userRole;
             $user->position = $request->position;
-            $user->leave_credits = $request->currentCredits;
             $user->date_hired = Carbon::parse($request->dateHired)->format('Y-m-d');
             $user->password = Hash::make($request->password);
 

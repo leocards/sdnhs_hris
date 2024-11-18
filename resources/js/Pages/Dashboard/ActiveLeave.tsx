@@ -91,6 +91,11 @@ const ActiveLeave: React.FC<Props> = ({ leave }) => {
 };
 
 const ViewLeave: React.FC<{ leave: LeaveType, more: boolean }> = ({ leave, more }) => {
+    const leaveStatus = getTimeRemains({
+            from: new Date(leave?.inclusive_date_from ?? ""),
+            to: new Date(leave?.inclusive_date_to ?? ""),
+        })
+
     return (
         <div>
             <div className="h-14 p-1 px-3 border-b flex items-center">
@@ -107,13 +112,12 @@ const ViewLeave: React.FC<{ leave: LeaveType, more: boolean }> = ({ leave, more 
                     <Label className="text-lg leading-5 line-clamp-1">
                         {leave?.leave_type}
                     </Label>
-                    <div className="leading-4 text-xs text-foreground/60">
+                    {leaveStatus == "active" ? (
+                        <div className="text-green-600 text-xs capitalize">{leaveStatus}</div>
+                    ) : (<div className="leading-4 text-xs text-foreground/60">
                         Time remaining:{" "}
-                        {getTimeRemains({
-                            from: new Date(leave?.inclusive_date_from ?? ""),
-                            to: new Date(leave?.inclusive_date_to ?? ""),
-                        })}
-                    </div>
+                        {leaveStatus}
+                    </div>)}
                 </div>
 
                 <div className="shrink-0 ml-3">

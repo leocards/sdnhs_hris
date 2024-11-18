@@ -93,11 +93,11 @@ const C4 = forwardRef<HTMLDivElement, C4Props>(({ user, data }, ref) => {
                         null,
                         "choices"
                     ),
-                    datefiled: undefined,
+                    datefiled: null,
                     statusofcase: getQkuestionData(
                         pds_questions,
                         3,
-                        "",
+                        " ",
                         "case_status"
                     ),
                 },

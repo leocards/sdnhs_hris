@@ -26,7 +26,7 @@ const initialValue = {
     phoneNumber: "",
     personnelId: "",
     department: undefined,
-    currentCredits: 0,
+    // currentCredits: 0,
     password: "12345678",
     birthDate: null,
     dateHired: null,
@@ -39,18 +39,31 @@ type IFormNewPersonnel = z.infer<typeof NEWPERSONNELSCHEMA>;
 export default function NewPersonnel({ auth, user, userRoles }: PageProps & { user?: any, userRoles: Array<string> }) {
     const form = reactForm<IFormNewPersonnel>({
         resolver: zodResolver(NEWPERSONNELSCHEMA),
-        defaultValues: initialValue,
+        values: {
+            firstName: user?user.first_name:"",
+            lastName: user?user.last_name:"",
+            middleName: user?user.middle_name:"",
+            sex: user?user.sex:null,
+            birthDate: user ? new Date(user.date_of_birth) : null,
+            email: user? user.email : "",
+            address: user? user.address : "",
+            phoneNumber: user? user.phone_number : "",
+            personnelId: user? user.personnel_id : "",
+            department: user? user.role == "HOD" ? "N/A" : user.department : null,
+            password: "12345678",
+            dateHired: user? new Date(user.date_hired) : null,
+            position: user? user.position : null,
+            userRole: user ? user.role : null,
+        },
     });
-    const { data, setData, post, processing, reset } = useForm<IFormNewPersonnel>();
+    const { setData, post, processing, reset } = useForm<IFormNewPersonnel>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
-    const [withErrors, setWithErrors] = useState(false)
 
     const { toast } = useToast();
 
     const onFormSubmit = (formData: IFormNewPersonnel) => {
         setIsSubmit(true);
         setData(formData);
-        console.log(formData)
     };
 
     useEffect(() => {
@@ -63,8 +76,6 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
                         description: page.props.success?.toString(),
                     });
                     form.reset();
-                    reset();
-                    setWithErrors(false)
                 },
                 onError: (error) => {
                     for (const key in error) {
@@ -73,60 +84,14 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
                             message: error[key],
                         });
                     }
-                    setWithErrors(true)
                 },
                 onFinish: () => {
                     setIsSubmit(false);
+                    reset();
                 }
             });
         }
     }, [isSubmit]);
-
-    useEffect(() => {
-        if (user) {
-            const {
-                first_name,
-                last_name,
-                middle_name,
-                sex,
-                date_of_birth,
-                address,
-                email,
-                phone_number,
-                personnel_id,
-                department,
-                role,
-                position,
-                date_hired,
-            } = user;
-            console.log();
-            form.setValue("firstName", first_name);
-            form.setValue("lastName", last_name);
-            form.setValue("middleName", middle_name);
-            form.setValue("sex", sex);
-            form.setValue("birthDate", new Date(date_of_birth));
-            form.setValue("address", address);
-            form.setValue("email", email);
-            form.setValue("phoneNumber", phone_number);
-            form.setValue("personnelId", personnel_id);
-            form.setValue("department", department, { shouldTouch: true, shouldDirty: true, shouldValidate: true });
-            form.setValue("userRole", role);
-            form.setValue("position", position);
-            form.setValue("dateHired", new Date(date_hired));
-        }
-    }, [user]);
-
-    useEffect(() => {
-        if(data) {
-            Object.entries(data).forEach(([key, value]) => {
-                let previousValues: IFormNewPersonnel = form.getValues()
-
-                if(previousValues[key as keyof IFormNewPersonnel] != value) {
-                    form.setValue(key as keyof IFormNewPersonnel, value, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
-                }
-            });
-        }
-    }, [data, withErrors, form.formState.errors])
 
     return (
         <Authenticated

@@ -1,13 +1,9 @@
 import Modal from "@/Components/Modal";
-import useWindowSize from "@/hooks/useWindowResize";
 import { useEffect, useState } from "react";
-import { pdfjs } from "react-pdf";
 import { cn } from "@/lib/utils";
 import { Page } from "react-pdf";
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-import "react-pdf/dist/esm/Page/TextLayer.css";
 import { Button } from "@/Components/ui/button";
-import { Download, X } from "lucide-react";
+import { Download } from "lucide-react";
 import PersonalDataSheetPDF from "../Search/PDSPDF";
 import { Margin, usePDF } from "react-to-pdf";
 import Tabs from "@/Components/framer/Tabs";
@@ -23,25 +19,7 @@ type ViewPDSProps = {
 
 type PagesType = { prev: number; current: number; next: number };
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.min.mjs",
-    import.meta.url
-).toString();
-
-const options = {
-    cMapUrl: "/cmaps/",
-    standardFontDataUrl: "/standard_fonts/",
-};
-
-const initialPages = {
-    prev: 0,
-    current: 1,
-    next: 0,
-};
-
 export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
-    const { width } = useWindowSize();
-    const [size, setSize] = useState<number>(1024);
     const [data, setData] = useState<any>();
     const [activeTab, setActiveTab] = useState<"C1" | "C2" | "C3" | "C4">("C1");
     const [loading, setLoading] = useState(false);
@@ -50,52 +28,41 @@ export default function ViewPDS({ show, authId, onClose }: ViewPDSProps) {
 
     const download_pdf = usePDF({
         method: "save",
-        filename: "application-for-leave.pdf",
+        filename: "Personal Data Sheet.pdf",
         page: { format: "A4", margin: Margin.MEDIUM },
     });
 
     const setPdsApprove = () => {
-        setProcessing(true)
-        router.post(route('pds.approve', [data.personalInformation.id]), {
-            isApprove: true
-        }, {
-            onSuccess: () => {
-                toast({
-                    variant: "success",
-                    description: "PDS has been approved."
-                })
+        if(data.personalInformation) {
+            setProcessing(true)
+            router.post(route('pds.approve', [data.personalInformation.id]), {
+                isApprove: true
+            }, {
+                onSuccess: () => {
+                    toast({
+                        variant: "success",
+                        description: "PDS has been approved."
+                    })
 
-                onClose(false)
-            },
-            onError: (error) => {
-                toast({
-                    variant: "destructive",
-                    description: error[0]
-                })
-            },
-            onFinish: () => {
-                setProcessing(false)
-            }
-        })
-    }
-
-    useEffect(() => {
-        if (width >= 1125) {
-            setSize(1024);
-        } else if (width <= 1124 && width >= 1024) {
-            setSize(850);
-        } else if (width <= 1023 && width >= 866) {
-            setSize(800);
-        } else if (width <= 865 && width >= 668) {
-            setSize(600);
-        } else if (width <= 667 && width >= 562) {
-            setSize(500);
-        } else if (width <= 561 && width >= 466) {
-            setSize(400);
+                    onClose(false)
+                },
+                onError: (error) => {
+                    toast({
+                        variant: "destructive",
+                        description: error[0]
+                    })
+                },
+                onFinish: () => {
+                    setProcessing(false)
+                }
+            })
         } else {
-            setSize(350);
+            toast({
+                variant: "default",
+                description: "The personnel has no Personal Data Sheet uploaded or has not yet filled out the form."
+            })
         }
-    }, [width]);
+    }
 
     useEffect(() => {
         if (show) {

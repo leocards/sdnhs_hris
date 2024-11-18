@@ -121,7 +121,7 @@ class LeaveController extends Controller
                 if (Auth::user()->leave_credits < (int) $request->numDaysApplied) {
                     throw new Exception("You don't have enough leave credits.", 1);
                 }
-            else {
+            else if($request->leavetype['type'] == "Maternity Leave") {
                 if(Carbon::parse(Auth::user()->date_hired)->greaterThan(Carbon::now()->subMonths(3))) {
                     throw new Exception("You are not yet allowed to use this type of leave.", 1);
                 }

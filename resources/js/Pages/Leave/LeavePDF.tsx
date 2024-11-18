@@ -11,6 +11,20 @@ const LeavePDF = React.forwardRef<
 
     return (
         <div ref={ref} className="w-[790px] shrink-0 mx-auto text-[11px]">
+            <style>
+                    {`
+                        @media print {
+                            body {
+                                overflow: hidden;
+                                height: fit-content;
+                            }
+                        }
+
+                        @page {
+                            size: portrait;
+                        }
+                    `}
+                </style>
             <div className={cn("flex flex-col m-[40pt] mx-[30pt]", isDownload && "my-[20pt] dark:text-black")}>
                 <div className="flex p-2 mx-auto">
                     <img

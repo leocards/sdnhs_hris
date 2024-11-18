@@ -144,7 +144,7 @@ function Leave({
                 <h2 className="font-semibold text-xl leading-tight">Leave</h2>
             }
         >
-            {(auth.user.role !== "HOD" && auth.user.role !== "HR") && (
+            {(auth.user.role !== "HR") && (
                 <div className="mt-10 mb-7 flex items-center">
                     <Button
                         className="ml-auto"

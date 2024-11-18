@@ -239,7 +239,7 @@ const C1 = forwardRef<HTMLDivElement, C1Props>(
                                         },
                                         children: children.map((child) => ({
                                             name: child.full_name,
-                                            birthday: child.birthday,
+                                            birthdate: child.birthdate,
                                         })),
                                     }}
                                     education={{

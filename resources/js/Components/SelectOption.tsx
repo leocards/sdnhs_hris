@@ -34,11 +34,12 @@ const initialState: SelectOptionState = {
 type SelectOptionProps = {
     children: ReactNode;
     initialValue?: string;
+    rerenders?: boolean
 };
 
 const SelectOptionContext = createContext<SelectOptionState>(initialState);
 
-const SelectOptionProvider = ({ children, initialValue = "", ...props }: SelectOptionProps) => {
+const SelectOptionProvider = ({ children, initialValue = "", rerenders = false, ...props }: SelectOptionProps) => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [selected, setSelected] = useState<string>(initialValue);
     const [width, setWidth] = useState<number>(0);
@@ -59,8 +60,10 @@ const SelectOptionProvider = ({ children, initialValue = "", ...props }: SelectO
     };
 
     useEffect(() => {
-
-    }, [])
+        if(rerenders) {
+            setSelected(initialValue)
+        }
+    }, [initialValue])
 
     return (
         <SelectOptionContext.Provider value={value} {...props}>
@@ -84,8 +87,8 @@ const useSelectOption = () => {
     return context;
 };
 
-const SelectOptionRoot: React.FC<{ children: ReactNode; initialValue?: string; }> = ({ children, initialValue }) => {
-    return <SelectOptionProvider initialValue={initialValue}>{children}</SelectOptionProvider>;
+const SelectOptionRoot: React.FC<{ children: ReactNode; initialValue?: string; rerenders?: boolean; }> = ({ children, initialValue, rerenders }) => {
+    return <SelectOptionProvider initialValue={initialValue} rerenders={rerenders}>{children}</SelectOptionProvider>;
 };
 
 const SelectOptionMain: React.FC<
@@ -107,10 +110,11 @@ const SelectOptionMain: React.FC<
 const SelectOption: React.FC<{
     children: ReactNode;
     initialValue?: string;
+    rerenders?: boolean;
     onChange: (value: string) => void;
-}> = ({ children, initialValue, onChange }) => {
+}> = ({ children, initialValue, rerenders, onChange }) => {
     return (
-        <SelectOptionRoot initialValue={initialValue}>
+        <SelectOptionRoot initialValue={initialValue} rerenders={rerenders}>
             <SelectOptionMain children={children} onChange={onChange} />
         </SelectOptionRoot>
     );

@@ -28,26 +28,27 @@ import {
 } from "@/Components/SelectOption";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 
-const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> = ({ form, user_roles }) => {
+const PersonnelInformation: React.FC<
+    FormProps & { user_roles: Array<string> }
+> = ({ form, user_roles }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
-    const [changeUserRole, setChangeUserRole] = useState("")
+    const [changeUserRole, setChangeUserRole] = useState(false);
 
     const userRole = form.watch("userRole");
     const department = form.watch("department");
 
     useEffect(() => {
-        if(changeUserRole) {
-            if (userRole === "HOD" && department !== "N/A") {
+        if (changeUserRole) {
+            if (userRole === "HOD") {
                 form.setValue("department", "N/A");
-                form.setValue("currentCredits", 0);
-            } else if(userRole !== "HOD" && !!department) {
-                form.setValue("department", undefined);
-                form.setValue("position", undefined);
-            } else {
-                form.setValue("position", undefined);
+                form.setValue("position", null);
+            } else if (userRole === "Teaching" || userRole === "Non-teaching") {
+                form.setValue("department", null);
+                form.setValue("position", null);
             }
+            setChangeUserRole(false);
         }
-    }, [changeUserRole])
+    }, [changeUserRole]);
 
     return (
         <>
@@ -123,7 +124,13 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                         >
                                             {field.value ? (
                                                 <span>
-                                                    {format(field.value, "PPP").replace(/\b(\d+)(st|nd|rd|th)\b/g, "$1")}
+                                                    {format(
+                                                        field.value,
+                                                        "PPP"
+                                                    ).replace(
+                                                        /\b(\d+)(st|nd|rd|th)\b/g,
+                                                        "$1"
+                                                    )}
                                                 </span>
                                             ) : (
                                                 <span>Pick a date</span>
@@ -158,10 +165,16 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 User role
                             </FormLabel>
-                            <SelectOption onChange={(role) => {
-                                field.onChange(role)
-                                setChangeUserRole(role)
-                            }} initialValue={field.value}>
+                            <SelectOption
+                                onChange={(role) => {
+                                    if(role !== field.value) {
+                                        field.onChange(role);
+                                        setChangeUserRole(true);
+                                    }
+                                }}
+                                initialValue={field.value}
+                                rerenders
+                            >
                                 <SelectOptionTrigger>
                                     <FormControl>
                                         <Button
@@ -182,8 +195,12 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                     </FormControl>
                                 </SelectOptionTrigger>
                                 <SelectOptionContent>
-                                    {!user_roles.includes('HR') && <SelectOptionItem value="HR" />}
-                                    {!user_roles.includes('HOD') && <SelectOptionItem value="HOD" />}
+                                    {!user_roles.includes("HR") && (
+                                        <SelectOptionItem value="HR" />
+                                    )}
+                                    {!user_roles.includes("HOD") && (
+                                        <SelectOptionItem value="HOD" />
+                                    )}
                                     <SelectOptionItem value="Teaching" />
                                     <SelectOptionItem value="Non-teaching" />
                                 </SelectOptionContent>
@@ -200,7 +217,11 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 Department
                             </FormLabel>
-                            <SelectOption onChange={field.onChange} initialValue={field.value}>
+                            <SelectOption
+                                onChange={field.onChange}
+                                initialValue={field.value}
+                                rerenders
+                            >
                                 <SelectOptionTrigger>
                                     <FormControl>
                                         <Button
@@ -210,7 +231,9 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}
-                                            disabled={userRole === "HOD" || !userRole}
+                                            disabled={
+                                                userRole === "HOD" || !userRole
+                                            }
                                         >
                                             <span>
                                                 {!field.value
@@ -227,7 +250,8 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                             <SelectOptionItem value="Junior High School" />
                                             <SelectOptionItem value="Senior High School" />
                                         </>
-                                    ) : userRole == "Non-teaching" || userRole == "HR" ? (
+                                    ) : userRole == "Non-teaching" ||
+                                      userRole == "HR" ? (
                                         <SelectOptionItem value="Accounting" />
                                     ) : (
                                         <SelectOptionItem value="N/A" />
@@ -246,7 +270,11 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 Position
                             </FormLabel>
-                            <SelectOption onChange={field.onChange} initialValue={field.value}>
+                            <SelectOption
+                                onChange={field.onChange}
+                                initialValue={field.value}
+                                rerenders
+                            >
                                 <SelectOptionTrigger>
                                     <FormControl>
                                         <Button
@@ -268,17 +296,29 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                                 </SelectOptionTrigger>
                                 <SelectOptionContent>
                                     <ScrollArea className="h-[14rem]">
-                                        {[...PERSONNELPOSITIONS].splice(
-                                            (userRole == "Teaching" ? 0 : (userRole == "Non-teaching" ? 7 : (userRole == "HOD" ? 10 : 13))),
-                                            (userRole == "Teaching" ? 7 : (userRole == "Non-teaching" ? 3 : (userRole == "HOD" ? 3 : 1)))
-                                        ).map(
-                                            (pos, index) => (
+                                        {[...PERSONNELPOSITIONS]
+                                            .splice(
+                                                userRole == "Teaching"
+                                                    ? 0
+                                                    : userRole == "Non-teaching"
+                                                    ? 7
+                                                    : userRole == "HOD"
+                                                    ? 10
+                                                    : 13,
+                                                userRole == "Teaching"
+                                                    ? 7
+                                                    : userRole == "Non-teaching"
+                                                    ? 3
+                                                    : userRole == "HOD"
+                                                    ? 3
+                                                    : 1
+                                            )
+                                            .map((pos, index) => (
                                                 <SelectOptionItem
                                                     key={index}
                                                     value={pos}
                                                 />
-                                            )
-                                        )}
+                                            ))}
                                     </ScrollArea>
                                 </SelectOptionContent>
                             </SelectOption>

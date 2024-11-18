@@ -24,9 +24,9 @@ export default function Question35to37({ form }: { form: any }) {
         }
         if (watch35b === "No") {
             form.clearErrors("q35.choiceb.datefiled");
-            form.setValue('q35.choiceb.datefiled', undefined, { shouldValidate: true, shouldDirty: true })
+            form.setValue('q35.choiceb.datefiled', null, { shouldValidate: true, shouldDirty: true })
             form.clearErrors("q35.choiceb.statusofcase");
-            form.setValue('q35.choiceb.statusofcase', "")
+            form.setValue('q35.choiceb.statusofcase', " ", { shouldValidate: true, shouldDirty: true })
         }
         if (watch36 === "No") {
             form.clearErrors("q36.details");

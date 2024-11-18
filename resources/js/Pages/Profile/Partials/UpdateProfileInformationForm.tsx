@@ -73,6 +73,25 @@ interface User {
 
 type UserProps = { auth: { user: User } };
 
+const getUser = (user: User): IFormProfile => {
+    return {
+        firstName: user.first_name,
+        lastName: user.last_name,
+        middleName: user.middle_name??"",
+        sex: user?.sex||"Male",
+        email: user.email,
+        address: user?.address||"",
+        phoneNumber: user.phone_number,
+        position: user.position,
+        personnelId: user.personnel_id||"",
+        department: user.department,
+        dateHired: (user.date_hired && new Date(user.date_hired))||null,
+        userRole: user.role||"Teaching",
+        currentCredits: user.leave_credits||0,
+        birthDate: new Date(user.date_of_birth)
+    }
+}
+
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
@@ -88,22 +107,7 @@ export default function UpdateProfileInformation({
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const form = reactForm<IFormProfile>({
         resolver: zodResolver(PROFILESCHEMA),
-        defaultValues: {
-            firstName: user.first_name,
-            lastName: user.last_name,
-            middleName: user.middle_name??"",
-            sex: user?.sex,
-            email: user.email,
-            address: user?.address,
-            phoneNumber: user.phone_number,
-            position: user.position,
-            personnelId: user.personnel_id,
-            department: user.department,
-            dateHired: user.date_hired && new Date(user.date_hired),
-            userRole: user.role,
-            currentCredits: user.leave_credits,
-            birthDate: new Date(user.date_of_birth)
-        },
+        defaultValues: getUser(user),
     });
     const {
         setData,
@@ -145,6 +149,18 @@ export default function UpdateProfileInformation({
             });
         }
     }, [isSubmit]);
+
+    useEffect(() => {
+        setTimeout(() => {
+            Object.entries(user).forEach(([key, value]) => {
+                let previousValues: IFormProfile = getUser(user)
+
+                if(previousValues[key as keyof IFormProfile] != value) {
+                    form.setValue(key as keyof IFormProfile, value, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+                }
+            });
+        }, 1000)
+    }, [])
 
     return (
         <section className={cn("", className)}>

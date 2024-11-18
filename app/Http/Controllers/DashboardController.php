@@ -34,7 +34,11 @@ class DashboardController extends Controller
                     "recent" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
                     "total" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->count(),
                 ],
-                "leave" => Leave::where('user_id', Auth::id())->where('principal_status', 'Approved')->where('hr_status', 'Approved')
+                "leave" => Leave::where('user_id', Auth::id())
+                    ->when(Auth::user()->role !== "HOD", function ($query) {
+                        $query->where('principal_status', 'Approved');
+                    })
+                    ->where('hr_status', 'Approved')
                     ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
                 "leaveApplications" => collect([
                     "approved" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
@@ -88,6 +92,7 @@ class DashboardController extends Controller
                     ->orWhere('middle_name', 'LIKE', "%{$search}%")
                     ->orWhere('last_name', 'LIKE', "%{$search}%");
             })
+            ->orderBy('last_name', 'ASC')
             ->select(['id', 'first_name', 'middle_name', 'last_name', 'avatar'])
             ->paginate(50);
 

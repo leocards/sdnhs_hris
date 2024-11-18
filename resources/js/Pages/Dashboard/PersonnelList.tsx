@@ -145,7 +145,7 @@ const PersonnelList = () => {
 type AccordionCardProps = {
     value: string;
     active: boolean;
-    user: { id: number; name: string; avatar: string, leave_applications: any[] };
+    user: { id: number; first_name: string; last_name: string; middle_name: string; avatar: string, leave_applications: any[] };
 };
 
 const AccordionCard: React.FC<AccordionCardProps> = ({ active, user, value }) => {
@@ -162,7 +162,7 @@ const AccordionCard: React.FC<AccordionCardProps> = ({ active, user, value }) =>
             <AccordionTrigger className="py-2 flex items-center px-3 hover:bg-secondary">
                 <div className="flex items-center gap-3">
                     <AvatarProfile className="size-8" active={active} />
-                    <div className="line-clamp-1">{user.name}</div>
+                    <div className="line-clamp-1">{`${user.last_name}, ${user.first_name} ${user.middle_name}`}</div>
                 </div>
             </AccordionTrigger>
             <AccordionContent className="border-t shadow-inner px-3">

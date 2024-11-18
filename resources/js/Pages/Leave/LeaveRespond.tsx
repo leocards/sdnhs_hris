@@ -41,7 +41,7 @@ const LeaveRespond: React.FC<{
             user,
             leave,
         },
-    } = usePage<PageProps & { user: {id: number, first_name: string, last_name: string}, leave: any }>();
+    } = usePage<PageProps & { user: {id: number, name: string }, leave: any }>();
 
     const [isSent, setIsSent] = useState<boolean>(false);
 
@@ -120,7 +120,7 @@ const LeaveRespond: React.FC<{
                 ) : status === "rejected" ? (
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
-                            <div className="mb-3.5">Dear {`${user.first_name} ${user.last_name}`}, </div>
+                            <div className="mb-3.5">Dear {`${user.name}`}, </div>
                             <div className="mb-5">We regret to inform you that your application for leave has been rejected.</div>
                             <FormField
                                 control={form.control}
@@ -170,7 +170,7 @@ const LeaveRespond: React.FC<{
                     </Form>
                 ) : (
                     <div>
-                        <div>Confirm Application for leave of <b>Lorem ipsum dolor est</b> ?</div>
+                        <div>Confirm Application for leave of <b>{user.name}</b> ?</div>
                         <div className="flex mt-6">
                                 <Button
                                     variant="ghost"

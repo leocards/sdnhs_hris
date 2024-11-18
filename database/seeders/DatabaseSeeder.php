@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
             'department' => 'Junior High School',
             'role' => 'Teaching',
             'position' => 'Teacher I',
-            'leave_credits' => 0,
+            'leave_credits' => 30,
             'password' => Hash::make('12345678'),
             'leave_rendered' => null,
             'date_hired' => '2024-07-10'
@@ -87,7 +87,7 @@ class DatabaseSeeder extends Seeder
             'department' => 'Senior High School',
             'role' => 'Teaching',
             'position' => 'Teacher II',
-            'leave_credits' => 2,
+            'leave_credits' => 30,
             'password' => Hash::make('12345678'),
             'leave_rendered' => null,
             'date_hired' => '2024-07-10'
@@ -111,7 +111,7 @@ class DatabaseSeeder extends Seeder
             'department' => 'Senior High School',
             'role' => 'Teaching',
             'position' => 'Teacher II',
-            'leave_credits' => 2,
+            'leave_credits' => 30,
             'password' => Hash::make('12345678'),
             'leave_rendered' => null,
             'date_hired' => '2024-07-10'
@@ -135,7 +135,7 @@ class DatabaseSeeder extends Seeder
             'department' => 'Senior High School',
             'role' => 'Teaching',
             'position' => 'Teacher II',
-            'leave_credits' => 0,
+            'leave_credits' => 30,
             'password' => Hash::make('12345678'),
             'leave_rendered' => null,
             'date_hired' => '2024-07-10'
@@ -159,7 +159,7 @@ class DatabaseSeeder extends Seeder
             'department' => 'Senior High School',
             'role' => 'Teaching',
             'position' => 'Teacher II',
-            'leave_credits' => 2,
+            'leave_credits' => 30,
             'password' => Hash::make('12345678'),
             'leave_rendered' => null,
             'date_hired' => '2024-07-10'
@@ -183,7 +183,7 @@ class DatabaseSeeder extends Seeder
             'department' => 'Junior High School',
             'role' => 'Teaching',
             'position' => 'Teacher II',
-            'leave_credits' => 2,
+            'leave_credits' => 30,
             'password' => Hash::make('12345678'),
             'leave_rendered' => null,
             'date_hired' => '2024-07-10'

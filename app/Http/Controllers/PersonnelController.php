@@ -144,6 +144,8 @@ class PersonnelController extends Controller
         DB::beginTransaction();
         try {
 
+            $credits = in_array($request->userRole, ['HOD', 'Non-teaching']) ? 45 : 30;
+
             User::create([
                 'first_name' => $request->firstName,
                 'last_name' => $request->lastName,
@@ -157,7 +159,7 @@ class PersonnelController extends Controller
                 'department' => $request->userRole != "HOD" ? $request->department : null,
                 'role' => $request->userRole,
                 'position' => $request->position,
-                'leave_credits' => $request->userRole != "HOD" ? $request->currentCredits : null,
+                'leave_credits' => $credits,
                 'date_hired' => Carbon::parse($request->date_hired)->format('Y-m-d'),
                 'password' => Hash::make($request->password),
                 'avatar' => '/storage/assets/profile.png',

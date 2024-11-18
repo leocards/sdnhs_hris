@@ -84,7 +84,7 @@ class LeaveController extends Controller
             $leave->load(['details_of_leave', 'details_of_action_leave', 'medical_certificate', 'user']);
 
         return Inertia::render('Leave/ApplicationForLeavePDF', [
-            "user" => $user?->only(['id', 'first_name', 'last_name']),
+            "user" => $user?->only(['id', 'first_name', 'last_name', 'middle_name', 'name']),
             "leave" => $leave,
             "hr" => User::where('role', 'HR')->first()->completeName(),
             "open" => session('open')
@@ -96,11 +96,17 @@ class LeaveController extends Controller
         if(Auth::user()->role == "HR")
             return abort(401);
 
+        $renderedLeaves = Leave::where('user_id', Auth::user())
+            ->where('hr_status', 'Approved')
+            ->where('principal_status', 'Approved')
+            ->get(['id', 'user_id', 'leave_type', 'num_days_applied']);
+
         return Inertia::render('Leave/ApplyLeave', [
             "salary" => PDSWorkExperience::where('user_id', Auth::id())
                 ->where(function ($query) {
                     $query->where('to', 'present');
-                })->first('monthly_salary')
+                })->first('monthly_salary'),
+            "applied" => $renderedLeaves
         ]);
     }
 
@@ -115,6 +121,11 @@ class LeaveController extends Controller
                 if (Auth::user()->leave_credits < (int) $request->numDaysApplied) {
                     throw new Exception("You don't have enough leave credits.", 1);
                 }
+            else {
+                if(Carbon::parse(Auth::user()->date_hired)->greaterThan(Carbon::now()->subMonths(3))) {
+                    throw new Exception("You are yet allowed to use this type of leave.", 1);
+                }
+            }
 
             $leave = Leave::create([
                 'user_id' => Auth::id(),

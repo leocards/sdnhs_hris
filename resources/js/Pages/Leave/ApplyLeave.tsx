@@ -9,7 +9,7 @@ import LeaveFormI from "./Partials/LeaveFormI";
 import { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import DetailsOfApplication from "./Partials/DetailsOfApplication";
-import { countWeekdaysInRange, initialValues, LEAVEFORMSCHEMA } from "./types";
+import { countWeekdaysInRange, initialValues, LEAVEFORMSCHEMA, LEAVETYPES } from "./types";
 import { router, useForm } from "@inertiajs/react";
 import { useToast } from "@/Components/ui/use-toast";
 import { eachDayOfInterval } from "date-fns";
@@ -18,8 +18,18 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/Components/ui/input";
 
 type IFormLeave = z.infer<typeof LEAVEFORMSCHEMA>;
+type APPLIEDLEAVESTYPE = {
+    id: number,
+    user_id: number,
+    leave_type: typeof LEAVETYPES[number],
+    num_days_applied: string|number,
+}
+type Props = {
+    salary: { monthly_salary: string | null },
+    applied: Array<APPLIEDLEAVESTYPE>
+}
 
-const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: string | null }}) => {
+const ApplyLeave = ({ auth, salary, applied }: PageProps & Props) => {
     const form = reactForm<IFormLeave>({
         resolver: zodResolver(LEAVEFORMSCHEMA),
         defaultValues: initialValues,

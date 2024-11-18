@@ -30,21 +30,24 @@ import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> = ({ form, user_roles }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
+    const [changeUserRole, setChangeUserRole] = useState("")
 
     const userRole = form.watch("userRole");
     const department = form.watch("department");
 
     useEffect(() => {
-        if (userRole === "HOD" && department !== "N/A") {
-            form.setValue("department", "N/A");
-            form.setValue("currentCredits", 0);
-        } else if(userRole !== "HOD" && !!department) {
-            form.setValue("department", undefined);
-            form.setValue("position", undefined);
-        } else {
-            form.setValue("position", undefined);
+        if(changeUserRole) {
+            if (userRole === "HOD" && department !== "N/A") {
+                form.setValue("department", "N/A");
+                form.setValue("currentCredits", 0);
+            } else if(userRole !== "HOD" && !!department) {
+                form.setValue("department", undefined);
+                form.setValue("position", undefined);
+            } else {
+                form.setValue("position", undefined);
+            }
         }
-    }, [userRole]);
+    }, [changeUserRole])
 
     return (
         <>
@@ -155,7 +158,10 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 User role
                             </FormLabel>
-                            <SelectOption onChange={field.onChange} initialValue={field.value}>
+                            <SelectOption onChange={(role) => {
+                                field.onChange(role)
+                                setChangeUserRole(role)
+                            }} initialValue={field.value}>
                                 <SelectOptionTrigger>
                                     <FormControl>
                                         <Button

@@ -97,7 +97,6 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
                 role,
                 position,
                 date_hired,
-                leave_credits,
             } = user;
             console.log();
             form.setValue("firstName", first_name);
@@ -109,18 +108,15 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
             form.setValue("email", email);
             form.setValue("phoneNumber", phone_number);
             form.setValue("personnelId", personnel_id);
-            form.setValue("department", department);
+            form.setValue("department", department, { shouldTouch: true, shouldDirty: true, shouldValidate: true });
             form.setValue("userRole", role);
             form.setValue("position", position);
             form.setValue("dateHired", new Date(date_hired));
-            // form.setValue("currentCredits", leave_credits);
         }
     }, [user]);
 
     useEffect(() => {
         if(data) {
-            console.log(data)
-
             Object.entries(data).forEach(([key, value]) => {
                 let previousValues: IFormNewPersonnel = form.getValues()
 
@@ -128,7 +124,6 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
                     form.setValue(key as keyof IFormNewPersonnel, value, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
                 }
             });
-
         }
     }, [data, withErrors, form.formState.errors])
 

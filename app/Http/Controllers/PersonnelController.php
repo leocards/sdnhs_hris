@@ -45,7 +45,8 @@ class PersonnelController extends Controller
     public function edit(User $user)
     {
         return Inertia::render('Personnel/NewPersonnel', [
-            "user" => $user
+            "user" => $user,
+            'userRoles' => User::where('role', 'HOD')->orWhere('role', 'HR')->pluck('role')
         ]);
     }
 

@@ -32,9 +32,8 @@ const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: st
     const watchInclusiveDatesTo = form.watch("inclusiveDates.to");
 
     const onFormSubmit = (formData: IFormLeave) => {
-        // setData(formData);
-        // setIsFormConfirm(true);
-        console.log(formData)
+        setData(formData);
+        setIsFormConfirm(true);
     };
 
     useEffect(() => {

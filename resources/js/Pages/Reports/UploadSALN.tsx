@@ -84,9 +84,10 @@ export default function UploadSALN(props: {
     show: boolean;
     isAdd?: boolean;
     isEdit?: any;
+    year?: string;
     onClose: CallableFunction;
 }) {
-    const { show, isAdd = false, onClose } = props;
+    const { show, isAdd = false, year, onClose } = props;
     const [isFormAdd, setIsFormAdd] = useState<boolean>(false);
     const [initialListSALN, setInitialListSALN] = useState<Array<any>>([]);
 
@@ -97,6 +98,8 @@ export default function UploadSALN(props: {
     const { setData, post, processing, reset } = useForm<IFormUpload>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const { toast } = useToast();
+
+    const watchYear = form.watch('year')
 
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
@@ -144,7 +147,7 @@ export default function UploadSALN(props: {
                 });
                 form.setValue("add.networth", "");
                 form.setValue("add.isjoint", false);
-                form.setValue("year", "");
+                form.setValue("year", year||"");
             }
         }
     }, [show]);
@@ -215,12 +218,13 @@ export default function UploadSALN(props: {
     }, [isSubmit]);
 
     useEffect(() => {
-        window.axios.get(route("reports.unlistedSALN")).then((response) => {
-            let data = response.data;
+        if(watchYear)
+            window.axios.get(route("reports.unlistedSALN", [watchYear??year])).then((response) => {
+                let data = response.data;
 
-            setInitialListSALN(data);
-        });
-    }, []);
+                setInitialListSALN(data);
+            });
+    }, [watchYear, year]);
 
     return (
         <Modal
@@ -324,6 +328,7 @@ export default function UploadSALN(props: {
                                                     initialList={
                                                         initialListSALN
                                                     }
+                                                    filter={watchYear??year}
                                                 />
                                                 <FormMessage />
                                             </FormItem>

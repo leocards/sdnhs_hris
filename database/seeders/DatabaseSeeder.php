@@ -38,7 +38,7 @@ class DatabaseSeeder extends Seeder
             'personnel_id' => 'SDNH-3578',
             'department' => 'Senior High School',
             'role' => 'HR',
-            'position' => 'HR',
+            'position' => 'Teacher II',
             'leave_credits' => 0,
             'password' => Hash::make('12345678'),
             'leave_rendered' => null,

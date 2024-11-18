@@ -48,7 +48,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
             $asof = Carbon::parse($request->asof)->format('Y');
             $exist = StatementOfAssetsLiabilityAndNetwork::whereYear('asof', $asof)
                 ->where('user_id', Auth::id())
-                ->exist();
+                ->exists();
 
             if ($exist)
                 throw new Exception('You have already submitted your SALN as of ' . Carbon::parse($request->asof)->format('m-d-Y'));

@@ -113,6 +113,8 @@ export default function UploadIPCR(props: {
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
     const { toast } = useToast();
 
+    const watchSY = form.watch('sy')
+
     const onFormSubmit = (formData: IFormUpload) => {
         setIsSubmit(true);
         setData(formData);
@@ -225,12 +227,12 @@ export default function UploadIPCR(props: {
     }, [isSubmit]);
 
     useEffect(() => {
-        window.axios.get(route("reports.unlistedIPCR")).then((response) => {
+        window.axios.get(route("reports.unlistedIPCR", [watchSY??year])).then((response) => {
             let data = response.data;
 
             setInitialListIPCR(data);
         });
-    }, []);
+    }, [watchSY]);
 
     return (
         <Modal
@@ -336,6 +338,7 @@ export default function UploadIPCR(props: {
                                                     initialList={
                                                         initialListIPCR
                                                     }
+                                                    filter={watchSY??year}
                                                 />
                                                 <FormMessage />
                                             </FormItem>

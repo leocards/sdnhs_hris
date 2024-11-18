@@ -41,14 +41,15 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
         resolver: zodResolver(NEWPERSONNELSCHEMA),
         defaultValues: initialValue,
     });
-    const { setData, post, processing, reset } = useForm<IFormNewPersonnel>();
+    const { data, setData, post, processing, reset } = useForm<IFormNewPersonnel>();
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
+    const [withErrors, setWithErrors] = useState(false)
 
     const { toast } = useToast();
 
-    const onFormSubmit = (formDate: IFormNewPersonnel) => {
+    const onFormSubmit = (formData: IFormNewPersonnel) => {
         setIsSubmit(true);
-        setData(formDate);
+        setData(formData);
     };
 
     useEffect(() => {
@@ -61,6 +62,8 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
                         description: page.props.success?.toString(),
                     });
                     form.reset();
+                    reset();
+                    setWithErrors(false)
                 },
                 onError: (error) => {
                     for (const key in error) {
@@ -69,10 +72,10 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
                             message: error[key],
                         });
                     }
+                    setWithErrors(true)
                 },
                 onFinish: () => {
                     setIsSubmit(false);
-                    reset();
                 }
             });
         }
@@ -113,6 +116,21 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
             // form.setValue("currentCredits", leave_credits);
         }
     }, [user]);
+
+    useEffect(() => {
+        if(data) {
+            console.log(data)
+
+            Object.entries(data).forEach(([key, value]) => {
+                let previousValues: IFormNewPersonnel = form.getValues()
+
+                if(previousValues[key as keyof IFormNewPersonnel] != value) {
+                    form.setValue(key as keyof IFormNewPersonnel, value, { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+                }
+            });
+
+        }
+    }, [data, withErrors, form.formState.errors])
 
     return (
         <Authenticated

@@ -10,6 +10,7 @@ import {
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
 import { X } from "lucide-react";
+import NumberInput from "@/Components/NumberInput";
 
 const Liabilities: React.FC<{ form: any }> = ({ form }) => {
     const { fields, append, remove } = useFieldArray({
@@ -39,7 +40,7 @@ const Liabilities: React.FC<{ form: any }> = ({ form }) => {
                             </Button>
                         )}
 
-                        <div className="grid grid-cols-[1fr,auto,auto] gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-[1fr,10rem,13rem] gap-4">
                             <FormField
                                 control={form.control}
                                 name={`liabilities.${index}.nature`}
@@ -81,7 +82,8 @@ const Liabilities: React.FC<{ form: any }> = ({ form }) => {
                                             Outstanding balance
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
+                                            <NumberInput
+                                                isAmount
                                                 {...field}
                                                 className="form-input"
                                             />

@@ -72,8 +72,8 @@ const AddSaln: React.FC<Props> = ({ auth, declarant, saln_user }) => {
     const watchHasRelative = form.watch('relativesingovernment.norelative')
 
     const onSubmitForm = (formData: IFORMSALN) => {
-        setData(formData)
-        setIsFormSubmit(true)
+        // setData(formData)
+        // setIsFormSubmit(true)
         console.log(formData)
     };
 

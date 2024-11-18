@@ -31,9 +31,10 @@ const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: st
     const watchInclusiveDatesFrom = form.watch("inclusiveDates.from");
     const watchInclusiveDatesTo = form.watch("inclusiveDates.to");
 
-    const onFormSubmit = (form: IFormLeave) => {
-        setData(form);
-        setIsFormConfirm(true);
+    const onFormSubmit = (formData: IFormLeave) => {
+        // setData(formData);
+        // setIsFormConfirm(true);
+        console.log(formData)
     };
 
     useEffect(() => {
@@ -77,7 +78,7 @@ const ApplyLeave = ({ auth, salary }: PageProps & { salary: { monthly_salary: st
         form.setValue("middleName", middle_name ?? "");
         form.setValue("department", department);
         form.setValue("position", position);
-        form.setValue("salary", salary.monthly_salary||"");
+        form.setValue("salary", salary?.monthly_salary||"");
         form.setValue("dateOfFiling.from", new Date());
     }, []);
 

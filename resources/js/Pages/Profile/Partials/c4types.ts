@@ -167,7 +167,7 @@ const C4SCHEMA = z.object({
     governmentids: z.object({
         c4id: z.number().optional().nullable().default(null),
         governmentissuedid: z.string().min(1, requiredError("government issued ID")),
-        licensepasswordid: z.string().min(1, requiredError("id/license/passwort no.")),
+        licensepasswordid: z.string().length(7, "Must have 7 digits.").min(1, requiredError("id/license/passport no.")),
         issued: z.string().min(1, requiredError("date/place of issuance"))
     })
 })

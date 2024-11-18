@@ -155,7 +155,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 User role
                             </FormLabel>
-                            <SelectOption onChange={field.onChange}>
+                            <SelectOption onChange={field.onChange} initialValue={field.value}>
                                 <SelectOptionTrigger>
                                     <FormControl>
                                         <Button
@@ -194,7 +194,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 Department
                             </FormLabel>
-                            <SelectOption onChange={field.onChange}>
+                            <SelectOption onChange={field.onChange} initialValue={field.value}>
                                 <SelectOptionTrigger>
                                     <FormControl>
                                         <Button
@@ -240,7 +240,7 @@ const PersonnelInformation: React.FC<FormProps & { user_roles: Array<string> }> 
                             <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
                                 Position
                             </FormLabel>
-                            <SelectOption onChange={field.onChange}>
+                            <SelectOption onChange={field.onChange} initialValue={field.value}>
                                 <SelectOptionTrigger>
                                     <FormControl>
                                         <Button

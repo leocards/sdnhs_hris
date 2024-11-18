@@ -33,7 +33,7 @@ const PersonalProperties: React.FC<{ form: any }> = ({ form }) => {
                             <X className="size-4" />
                         </Button>}
 
-                        <div className="grid grid-cols-[1fr,auto,auto] gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-[1fr,10rem,13rem] gap-4">
                             <FormField
                                 control={form.control}
                                 name={`assets.personal.${index}.description`}
@@ -73,7 +73,8 @@ const PersonalProperties: React.FC<{ form: any }> = ({ form }) => {
                                     <FormItem>
                                         <FormLabel>Acquisition cost/amount</FormLabel>
                                         <FormControl>
-                                            <Input
+                                            <NumberInput
+                                                isAmount
                                                 {...field}
                                                 className="form-input"
                                             />

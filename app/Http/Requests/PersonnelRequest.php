@@ -8,6 +8,7 @@ use Illuminate\Validation\Rule;
 
 class PersonnelRequest extends FormRequest
 {
+    protected $snakeAttributes = false;
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -35,9 +36,9 @@ class PersonnelRequest extends FormRequest
             'email' => ['required', 'email', 'string', 'lowercase', 'max:255', $userId ? Rule::unique(User::class)->ignore($userId) : Rule::unique(User::class)],
             'phoneNumber' => ['required', 'string', 'size:11'],
             'personnelId' => ['required', Rule::unique('users', 'personnel_id')->ignore($userId)],
-            'userRole' => ['required'],
+            'userRole' => ['required', 'in:Teaching,Non-teaching,HR,HOD'],
             'dateHired' => ['required', 'date'],
-            'position' => ['required'],
+            'position' => ['required', 'string'],
             'password' => ['required', 'min:8'],
         ];
 

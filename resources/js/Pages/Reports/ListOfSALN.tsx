@@ -240,6 +240,7 @@ const ListOfSALN = ({ saln, principal, hr, saln_years }: Props) => {
                     }}
                     isAdd={showUpload.add}
                     isEdit={isEdit}
+                    year={filter}
                 />
             </div>
 

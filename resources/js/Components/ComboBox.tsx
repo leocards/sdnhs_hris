@@ -24,10 +24,12 @@ const ComboBox = ({
     onSelectResult,
     selected,
     initialList,
+    filter
 }: {
     label?: string;
     selected?: {id: number; name: string;}
     disabled?: boolean;
+    filter?: string;
     routeSearch: string;
     onSelectResult: CallableFunction;
     initialList: Array<any>;
@@ -60,6 +62,7 @@ const ComboBox = ({
                     route(routeSearch, {
                         _query: {
                             search: debounceSearch,
+                            filter
                         },
                     })
                 )

@@ -32,7 +32,7 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                         >
                             <X className="size-4" />
                         </Button>}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
                                 name={`assets.real.${index}.description`}
@@ -99,7 +99,7 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                             />
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
                                 name={`assets.real.${index}.assessedvalue`}
@@ -136,7 +136,7 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                             />
                         </div>
 
-                        <div className="grid grid-cols-3 gap-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                             <FormField
                                 control={form.control}
                                 name={`assets.real.${index}.acquisition.year`}
@@ -176,7 +176,8 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                                     <FormItem>
                                         <FormLabel>Acquisition cost</FormLabel>
                                         <FormControl>
-                                            <Input
+                                            <NumberInput
+                                                isAmount
                                                 {...field}
                                                 className="form-input"
                                             />

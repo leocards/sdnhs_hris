@@ -90,11 +90,11 @@ class ReportController extends Controller
         );
     }
 
-    public function getIPCRUnlisted()
+    public function getIPCRUnlisted($sy)
     {
         return response()->json(
-            User::whereDoesntHave('performanceRatings', function ($query) {
-               $query->whereYear('created_at', $this->date->format('Y'));
+            User::whereDoesntHave('performanceRatings', function ($query) use ($sy) {
+               $query->where('sy', $sy);
             })
             ->whereNot('role', 'HR')
             ->whereNot('role', 'HOD')
@@ -103,13 +103,15 @@ class ReportController extends Controller
         );
     }
 
-    public function getSALNUnlisted()
+    public function getSALNUnlisted($year)
     {
         return response()->json(
-            User::whereDoesntHave('saln', function ($query) {
-               $query->whereYear('created_at', $this->date->format('Y'));
+            User::whereDoesntHave('saln', function ($query) use ($year) {
+               $query->where('year', $year);
             })
             ->with('saln:id')
+            ->whereNot('role', 'HR')
+            ->whereNot('role', 'HOD')
             ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
     }
@@ -117,12 +119,29 @@ class ReportController extends Controller
     public function searchIPCR(Request $request)
     {
         $search = $request->search;
+        $sy = $request->filter;
 
         return response()->json(
             User::when($search, function ($query) use ($search) {
                 $query->searchByFullName($search);
-            })->whereDoesntHave('performanceRatings', function ($query) {
-               $query->whereYear('created_at', $this->date->format('Y'));
+            })->whereDoesntHave('performanceRatings', function ($query) use ($sy) {
+               $query->where('sy', $sy);
+            })
+            ->with('performanceRatings:id')
+            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+        );
+    }
+
+    public function searchSALN(Request $request)
+    {
+        $search = $request->search;
+        $year = $request->year;
+
+        return response()->json(
+            User::when($search, function ($query) use ($search) {
+                $query->searchByFullName($search);
+            })->whereDoesntHave('saln', function ($query) use ($year) {
+               $query->where('year', $year);
             })
             ->with('performanceRatings:id')
             ->get(['id', 'first_name', 'middle_name', 'last_name'])

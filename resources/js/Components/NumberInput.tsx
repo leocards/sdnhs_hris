@@ -1,32 +1,45 @@
-import { forwardRef } from "react";
+import { forwardRef, useEffect, useRef } from "react";
 import { Input, InputProps } from "./ui/input";
 
 interface NumberInputProps extends InputProps {
     isAmount?: boolean | null;
 }
 
-const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(({ isAmount, ...props}, ref) => {
-        const handleInput = (e: React.FormEvent<HTMLInputElement>) => {
-            const { value } = e.currentTarget;
-            e.currentTarget.value = value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
+    ({ isAmount, ...props }, ref) => {
+        const inputRef = useRef<HTMLInputElement | null>(null);
+
+        const onValue = (value: any) => {
+            if (isAmount) {
+                let val = value
+                    .replace(/[^0-9.]/g, "")
+                    .replace(/(\..*)\./g, "$1");
+                return val ? Number(val).toLocaleString() : "";
+            } else {
+                return value;
+            }
         };
 
-        const onBlur = (e: React.FormEvent<HTMLInputElement>) => {
-            if(isAmount) {
-                const { value } = e.currentTarget;
-                e.currentTarget.value = (value && Number(value).toLocaleString())??"";
-            }
-        }
+        useEffect(() => {
+            if (isAmount) {
+                let value = props.value;
+                value = Number(value).toLocaleString();
 
-        const onFocus = (e: React.FormEvent<HTMLInputElement>) => {
-            if(isAmount) {
-                const { value } = e.currentTarget;
-                e.currentTarget.value = value.split(',').join('')??"";
+                if (inputRef.current) inputRef.current.value = value;
             }
-        }
+        }, [props.value]);
 
-        return <Input {...props} ref={ref} onInput={handleInput} onBlur={onBlur} onFocus={onFocus}/>;
+        return (
+            <Input
+                {...props}
+                ref={(ref) => {
+                    ref = ref;
+                    inputRef.current = ref;
+                }}
+                value={onValue(props.value)}
+            />
+        );
     }
 );
 
-export default NumberInput
+export default NumberInput;

@@ -116,6 +116,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                             <FormControl>
                                 <NumberInput
                                     {...field}
+                                    max={4}
                                     className="form-input"
                                 />
                             </FormControl>

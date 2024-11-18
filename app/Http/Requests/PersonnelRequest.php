@@ -34,7 +34,7 @@ class PersonnelRequest extends FormRequest
             'address' => ['required', 'max:1000'],
             'email' => ['required', 'email', 'string', 'lowercase', 'max:255', $userId ? Rule::unique(User::class)->ignore($userId) : Rule::unique(User::class)],
             'phoneNumber' => ['required', 'string', 'size:11'],
-            'personnelId' => ['required', $userId ? Rule::unique('users', 'personnel_id')->ignore($userId) : Rule::unique(User::class)],
+            'personnelId' => ['required', Rule::unique('users', 'personnel_id')->ignore($userId)],
             'userRole' => ['required', 'in:Teaching,Non-teaching,HR,HOD'],
             'dateHired' => ['required', 'date'],
             'position' => ['required', 'string'],

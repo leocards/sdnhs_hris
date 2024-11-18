@@ -160,6 +160,7 @@ class PersonnelController extends Controller
                 'department' => $request->userRole != "HOD" ? $request->department : null,
                 'role' => $request->userRole,
                 'position' => $request->position,
+                'leave_credits' => $credits,
                 'date_hired' => Carbon::parse($request->dateHired)->format('Y-m-d'),
                 'password' => Hash::make($request->password),
                 'avatar' => '/storage/assets/profile.png',

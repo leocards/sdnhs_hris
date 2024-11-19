@@ -7,6 +7,10 @@ import Notes from "./Dashboard/Notes";
 import ActiveLeave from "./Dashboard/ActiveLeave";
 import PersonnelList from "./Dashboard/PersonnelList";
 import PageListProvider from "@/hooks/pageListProvider";
+import NewSchoolYear from "./Dashboard/NewSchoolYear";
+import { useState } from "react";
+import { Button } from "@/Components/ui/button";
+import { PencilLine, Plus } from "lucide-react";
 
 type Statistics = {
     recent: number;
@@ -24,6 +28,10 @@ interface DashboardProps extends PageProps {
         leave_type: string;
         inclusive_date_from: string;
         inclusive_date_to: string;
+        user: {
+            id: number
+            name: string
+        }
     }>;
     leaveApplications: {
         approved: Array<{
@@ -36,31 +44,16 @@ interface DashboardProps extends PageProps {
         }>
     }
     pageData: PaginateData;
+    sy: string
 }
 
-export default function Index({
-    auth,
-    pageData,
-    totalEmployee,
-    approved,
-    pending,
-    reject,
-    leave,
-    leaveApplications,
-}: DashboardProps) {
+export default function Index(props: DashboardProps) {
     return (
-        <PageListProvider initialValue={pageData}>
+        <PageListProvider initialValue={props.pageData}>
             <Head title="Dashboard" />
 
             <Dashboard
-                auth={auth}
-                pageData={pageData}
-                totalEmployee={totalEmployee}
-                approved={approved}
-                pending={pending}
-                reject={reject}
-                leave={leave}
-                leaveApplications={leaveApplications}
+                {...props}
             />
         </PageListProvider>
     );
@@ -74,7 +67,10 @@ function Dashboard({
     reject,
     leave,
     leaveApplications,
+    sy
 }: DashboardProps) {
+    const [newSY, setNewSY] = useState(false)
+
     return (
         <AuthenticatedLayout
             userAuth={auth.user}
@@ -94,7 +90,21 @@ function Dashboard({
         >
             <Head title="Dashboard" />
 
-            <div className="mt-10 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-5 flex gap-3 items-center">
+                {auth.user.role == "HR" && (<div>
+                    <Button size={"icon"} className="size-7" variant={"outline"} onClick={() => setNewSY(true)}>
+                        {!sy && <Plus className="size-4" />}
+                        {sy && <PencilLine className="size-4" />}
+                    </Button>
+                </div>)}
+                {auth.user.role == "HR" && !sy ? (
+                    <div>Please set your school year</div>
+                ) : sy && (<div className="rounded-md text-lg font-semibold bg- yellow-500 py-2 text-yellow-700">
+                    Welcome to school year <span className="text-xl">2023-2024</span>
+                </div>)}
+            </div>
+
+            <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                 {["HR", "HOD"].includes(auth.user.role) ? (
                     <div className="border-t border-teal-600 bg-teal-100 dark:bg-teal-800/50 pt-4 space-y-1.5 p-2">
                         <div className="font-medium text-teal-700 dark:text-teal-400">Total personnel</div>
@@ -195,6 +205,8 @@ function Dashboard({
                     <PersonnelList />
                 </>
             )}
+
+            <NewSchoolYear show={newSY} onClose={setNewSY} currentSY="" />
         </AuthenticatedLayout>
     );
 }

@@ -279,13 +279,60 @@ class LeaveController extends Controller
                     ]);
                 }
 
-                if($user->role != "Non-teaching" || $user->role != "HOD") {
-                    $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
-                    $user->save();
-                } else {
-                    if($leave->leave_type != "Mandatory/Forced Leave" || $leave->leave_type != "Special Privilege Leave") {
-                        $user->leave_credits = ($user->leave_credits - ((int) $leave->num_days_applied));
-                        $user->save();
+                if($user->role != "HOD") {
+                    if(Auth::user()->role == "HOD") {
+                        if($leave->leave_type != "Mandatory/Forced Leave" || $leave->leave_type != "Special Privilege Leave") {
+                            // get the pending certificates
+                            $pending_cetificates = $user->certificates()->where('status', 'pending')->get();
+
+                            // deduct user leave credit
+                            $user_remaining_credit = $user->leave_credits - ((int) $leave->num_days_applied);
+
+                            // apply the credits of pending certificates
+                            if($pending_cetificates->count() > 0) {
+                                $creditLimit = in_array($user->role, ['HOD', 'Non-teaching']) ? 45 : 30;
+                                $credit = 0;
+
+                                foreach ($pending_cetificates as $cetificate) {
+                                    // get the user credit with added credit from certificate
+                                    $newCredit = ($user_remaining_credit + $cetificate->remaining_credits);
+                                    //get the remainig credit
+                                    $remaining_credit_after_add = $newCredit - $creditLimit;
+                                    // get the added credit
+                                    $addedCredit = ($remaining_credit_after_add >= 0) ? $cetificate->remaining_credits - $remaining_credit_after_add : 0;
+
+                                    if($remaining_credit_after_add > 0) {
+                                        // the user credit limit is full, store the remaining credit of certificate
+                                        $cetificate->remaining_credits = $remaining_credit_after_add;
+                                        $cetificate->save();
+                                    } else if($remaining_credit_after_add === 0) {
+                                        // if there is no more remaining credit, means that the user credit limit has reached
+                                        // and the cretificate remaining credit is all used
+                                        // set certificate status as added
+                                        $cetificate->status = "added";
+                                        $cetificate->remaining_credits = null;
+                                        $cetificate->save();
+                                    } else {
+                                        $cetificate->status = "added";
+                                        $cetificate->remaining_credits = null;
+                                        $cetificate->save();
+                                    }
+
+                                    $credit = $credit + $addedCredit;
+
+                                    if($remaining_credit_after_add >= 0) {
+                                        break;
+                                    }
+                                }
+
+                                // update the user's credit
+                                $user->leave_credits = $user_remaining_credit + $credit;
+                            } else {
+                                $user->leave_credits = $user_remaining_credit;
+                            }
+
+                            $user->save();
+                        }
                     }
                 }
             } else {

@@ -10,10 +10,11 @@ import { Input } from "@/Components/ui/input";
 
 type Props = {
     list: ListType
+    sy: string
 } & ModalProps;
 
-const PrintEmployee: React.FC<Props> = ({ show, list, onClose, }) => {
-    const [sy, setSy] = useState("")
+const PrintEmployee: React.FC<Props> = ({ show, list, sy, onClose, }) => {
+    const [schoolYear, setSy] = useState(sy)
 
     const download_pdf = usePDF({
         method: "open",
@@ -44,7 +45,7 @@ const PrintEmployee: React.FC<Props> = ({ show, list, onClose, }) => {
                         </Button>
                         <div className="flex gap-2 items-center">
                             <div>S.Y.</div>
-                            <Input value={sy} className="w-20 h-9 border-black" onInput={(event) => {
+                            <Input value={schoolYear} className="w-28 h-9 border-black" onInput={(event) => {
                                 let value = event.target as HTMLInputElement
                                 setSy(value.value)
                             }} />
@@ -75,7 +76,7 @@ const PrintEmployee: React.FC<Props> = ({ show, list, onClose, }) => {
                 </style>
 
                 <div className="overflow-y-auto rounded-scrollbar overflow-x-hidden">
-                    <PDFEmployee summary={list} ref={download_pdf.targetRef} sy={sy} />
+                    <PDFEmployee summary={list} ref={download_pdf.targetRef} sy={schoolYear} />
                 </div>
             </div>
         </Modal>

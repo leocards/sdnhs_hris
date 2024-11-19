@@ -57,6 +57,7 @@ export default function Reports({
     hr,
     ipcr_years,
     saln_years,
+    sy,
 }: PageProps & {
     ipcr: Array<IPCRType>;
     saln: Array<SALNType>;
@@ -70,6 +71,7 @@ export default function Reports({
     hr: HrType;
     ipcr_years: Array<string>;
     saln_years: Array<number>;
+    sy: string;
 }) {
     return (
         <Authenticated
@@ -80,7 +82,7 @@ export default function Reports({
         >
             <Head title="Reports" />
 
-            <ListOfEmployees list={list} />
+            <ListOfEmployees list={list} sy={sy} />
 
             <ListOfIPCR
                 ipcr={ipcr}

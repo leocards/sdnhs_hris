@@ -52,11 +52,15 @@ class ServiceRecordController extends Controller
             $to = $request->dateto ? Carbon::parse($request->dateto) : null;
             $credits = $to ? ($from->diffInDays($to) + 1) : 1;
 
-            $user = User::find(Auth::id());
+            // $user = User::find(Auth::id());
 
-            if ($user->leave_credits === 30) {
-                throw new Exception('You have already reached the credit limit.');
-            }
+            // if($user->role == "Non-teaching" || $user->role == "HOD") {
+            //     if ($user->leave_credits === 45) {
+            //         throw new Exception('You have already reached the credit limit.');
+            //     }
+            // } else if ($user->leave_credits === 30) {
+            //     throw new Exception('You have already reached the credit limit.');
+            // }
 
             ServiceRecord::create([
                 'user_id' => Auth::id(),
@@ -156,18 +160,29 @@ class ServiceRecordController extends Controller
 
             if ($request->respond === "approved") {
                 $user = $certificate->user;
+                $credit_limit = $user->role == "Teaching" ? 30 : 45;
 
-                if ($user->leave_credits < 30) {
-                    $certificate->approved = $request->respond;
-                    $certificate->save();
+                // add the credit
+                $credit = $user->leave_credits + $certificate->credits;
+                // approve the certificate
+                $certificate->approved = "approved";
+                // get the remaining credit from the certificate
+                $remaining_certificate_credit = $credit - $credit_limit;
 
-                    $credit = $user->leave_credits + $certificate->credits;
+                if($remaining_certificate_credit > 0) {
+                    // store the reamining credit
+                    $certificate->remaining_credits = $remaining_certificate_credit;
+                } else {
+                    $certificate->status = "added";
+                }
 
-                    $user->update(['leave_credits' => $credit >= 30 ? 30 : $credit]);
-                } else
-                    throw new Exception('The personnel\'s credit score has reached the credit limit.');
+                $certificate->save();
+
+                $user->update(['leave_credits' => $credit >= $credit_limit ? $credit_limit : $credit]);
+                
             } else {
-                $certificate->approved = $request->respond;
+                $certificate->approved = "rejected";
+                $certificate->status = "rejected";
                 $certificate->save();
             }
 

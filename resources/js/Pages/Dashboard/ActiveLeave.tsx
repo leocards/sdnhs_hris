@@ -5,7 +5,6 @@ import { Label } from "@/Components/ui/label";
 import { getRemainingTime } from "../Dashboard/type";
 import { Button } from "@/Components/ui/button";
 import { CalendarDays, ChevronLeft } from "lucide-react";
-import { format } from "date-fns";
 import { formatDateRange } from "../types";
 
 type LeaveType = {
@@ -13,11 +12,16 @@ type LeaveType = {
     leave_type: string;
     inclusive_date_from: string;
     inclusive_date_to: string;
+    user: {
+        id: number;
+        name: string;
+    };
 };
 
 type Props = {
     leave: Array<LeaveType>;
 };
+// ring
 
 const getTimeRemains = ({ from, to }: { from: Date; to?: Date }) => {
     let { days, hours, minutes, seconds } = getRemainingTime(from);
@@ -52,19 +56,29 @@ const ActiveLeave: React.FC<Props> = ({ leave }) => {
                 </div>
             )}
 
-            {(!selectedLeave && leave.length > 1) && <div className="ring-1 h-full p-3">
-                {leave.map((leave) => (
-                    <div
-                        className="border h-fit rounded-md p-2 px-3 flex items-center hover:shadow-md transition duration-150"
-                        onClick={() => setSelectedLeave(leave)}
-                        role="button"
-                    >
-                        <div>
-                            <div className="font-medium">
-                                {leave.leave_type}
+            {!selectedLeave && leave.length > 1 && (
+                <div className="h-full p-3 space-y-1">
+                    {leave.map((leave, index) => (
+                        <div
+                            className="border h-fit rounded-md p-2 px-3 flex items-center hover:shadow-md transition duration-150 shadow-sm"
+                            onClick={() => setSelectedLeave(leave)}
+                            role="button"
+                            key={index}
+                        >
+                            <div>
+                                <div className="font-medium">
+                                    {leave.leave_type}
+                                </div>
+
+                                <div className="text-sm">
+                                    {leave.user?.name}
+                                </div>
                             </div>
-                            <div className="text-foreground/60 text-sm">
-                                Time remaining:{" "}
+                            <div className="text-sm ml-auto text-right">
+                                {formatDateRange({
+                                    from: leave?.inclusive_date_from ?? "",
+                                    to: leave?.inclusive_date_to ?? "",
+                                })}
                                 {getTimeRemains({
                                     from: new Date(
                                         leave?.inclusive_date_from ?? ""
@@ -72,29 +86,56 @@ const ActiveLeave: React.FC<Props> = ({ leave }) => {
                                     to: new Date(
                                         leave?.inclusive_date_to ?? ""
                                     ),
-                                })}
+                                }) == "active" ? (
+                                    <div className="text-green-600 text-xs capitalize">
+                                        {getTimeRemains({
+                                            from: new Date(
+                                                leave?.inclusive_date_from ?? ""
+                                            ),
+                                            to: new Date(
+                                                leave?.inclusive_date_to ?? ""
+                                            ),
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="leading-4 text-xs text-foreground/60">
+                                        Time remaining:{" "}
+                                        {getTimeRemains({
+                                            from: new Date(
+                                                leave?.inclusive_date_from ?? ""
+                                            ),
+                                            to: new Date(
+                                                leave?.inclusive_date_to ?? ""
+                                            ),
+                                        })}
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        <div className="text-sm ml-auto">
-                            {formatDateRange({
-                                from: leave?.inclusive_date_from ?? "",
-                                to: leave?.inclusive_date_to ?? "",
-                            })}
-                        </div>
-                    </div>
-                ))}
-            </div>}
+                    ))}
+                </div>
+            )}
 
-            {selectedLeave && <ViewLeave leave={selectedLeave} more={leave.length > 1} />}
+            {selectedLeave && (
+                <ViewLeave
+                    leave={selectedLeave}
+                    more={leave.length > 1}
+                    onBack={() => setSelectedLeave(null)}
+                />
+            )}
         </div>
     );
 };
 
-const ViewLeave: React.FC<{ leave: LeaveType, more: boolean }> = ({ leave, more }) => {
+const ViewLeave: React.FC<{
+    leave: LeaveType;
+    more: boolean;
+    onBack?: () => void;
+}> = ({ leave, more, onBack }) => {
     const leaveStatus = getTimeRemains({
-            from: new Date(leave?.inclusive_date_from ?? ""),
-            to: new Date(leave?.inclusive_date_to ?? ""),
-        })
+        from: new Date(leave?.inclusive_date_from ?? ""),
+        to: new Date(leave?.inclusive_date_to ?? ""),
+    });
 
     return (
         <div>
@@ -104,6 +145,7 @@ const ViewLeave: React.FC<{ leave: LeaveType, more: boolean }> = ({ leave, more 
                         variant={"outline"}
                         size={"icon"}
                         className="size-8 mr-4 shrink-0"
+                        onClick={onBack}
                     >
                         <ChevronLeft className="size-5" />
                     </Button>
@@ -112,19 +154,24 @@ const ViewLeave: React.FC<{ leave: LeaveType, more: boolean }> = ({ leave, more 
                     <Label className="text-lg leading-5 line-clamp-1">
                         {leave?.leave_type}
                     </Label>
-                    {leaveStatus == "active" ? (
-                        <div className="text-green-600 text-xs capitalize">{leaveStatus}</div>
-                    ) : (<div className="leading-4 text-xs text-foreground/60">
-                        Time remaining:{" "}
-                        {leaveStatus}
-                    </div>)}
+
+                    <div className="text-sm">{leave.user?.name}</div>
                 </div>
 
-                <div className="shrink-0 ml-3">
+                <div className="shrink-0 ml-3 text-right">
                     {formatDateRange({
                         from: leave?.inclusive_date_from ?? "",
                         to: leave?.inclusive_date_to ?? "",
                     })}
+                    {leaveStatus == "active" ? (
+                        <div className="text-green-600 text-xs capitalize">
+                            {leaveStatus}
+                        </div>
+                    ) : (
+                        <div className="leading-4 text-xs text-foreground/60">
+                            Time remaining: {leaveStatus}
+                        </div>
+                    )}
                 </div>
             </div>
 

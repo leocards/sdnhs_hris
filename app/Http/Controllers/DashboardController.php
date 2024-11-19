@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leave;
+use App\Models\SchoolYear;
 use App\Models\ServiceRecord;
 use App\Models\User;
 use Carbon\Carbon;
@@ -34,14 +35,12 @@ class DashboardController extends Controller
                     "recent" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
                     "total" => Leave::where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->count(),
                 ],
-                "leave" => Leave::when(Auth::user()->role != "HR", function ($query) {
+                "leave" => Leave::with('user')
+                    ->when(Auth::user()->role == "HOD", function ($query) {
                         $query->where('user_id', Auth::id());
                     })
-                    ->when(Auth::user()->role !== "HOD", function ($query) {
-                        $query->where('principal_status', 'Approved');
-                    })
                     ->where('hr_status', 'Approved')
-                    ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
+                    ->get(['id', 'user_id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
                 "leaveApplications" => collect([
                     "approved" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
                         ->where('hr_status', 'Approved')
@@ -53,15 +52,16 @@ class DashboardController extends Controller
                         ->where('principal_status', 'Rejected')
                         ->groupBy('leave_type')
                         ->get()
-                ])
+                ]),
+                "sy" => SchoolYear::latest()->first()?->value('sy')
             ]);
         }
 
         return Inertia::render("Dashboard", [
             "totalEmployee" => [
-                "recent" => ServiceRecord::where('user_id', Auth::id())->whereDate('created_at', '>=', Carbon::now()->subDays(7))->sum('credits'),
+                "recent" => ServiceRecord::where('user_id', Auth::id())->where('status', 'added')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->sum('credits'),
                 "recent_deduction" => ServiceRecord::where('user_id', Auth::id())->whereDate('deleted_at', '>=', Carbon::now()->subDays(7))
-                    ->whereNotNull('deleted_at')->withTrashed()->sum('credits'),
+                    ->whereNotNull('deleted_at')/* ->withTrashed() */->sum('credits'),
                 "total" => 0
             ],
             "approved" => [
@@ -76,9 +76,13 @@ class DashboardController extends Controller
                 "recent" => Leave::where('user_id', Auth::id())->where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
                 "total" => Leave::where('user_id', Auth::id())->where('principal_status', 'Rejected')->where('hr_status', 'Rejected')->count(),
             ],
-            "leave" => Leave::where('user_id', Auth::id())->where('principal_status', 'Approved')->where('hr_status', 'Approved')
+            "leave" => Leave::with('user:id,first_name,last_name,middle_name')
+                ->where('user_id', Auth::id())
+                ->where('principal_status', 'Approved')
+                ->where('hr_status', 'Approved')
                 ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
-            "leaveApplications" => collect([])
+            "leaveApplications" => collect([]),
+            "sy" => SchoolYear::latest()->first()?->value('sy')
         ]);
     }
 
@@ -99,5 +103,20 @@ class DashboardController extends Controller
             ->paginate(50);
 
         return response()->json($list);
+    }
+
+    public function newSchoolYear(Request $request)
+    {
+        try {
+
+            SchoolYear::create([
+                'sy' => $request->sy
+            ]);
+
+            return back()->with('success', 'success');
+
+        } catch (\Throwable $th) {
+            return back()->withErrors($th->getMessage());
+        }
     }
 }

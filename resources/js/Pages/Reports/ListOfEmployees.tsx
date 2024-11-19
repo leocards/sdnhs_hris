@@ -16,7 +16,7 @@ export type FilteredListType = {
     female: { [key in keyof any]: number };
 };
 
-const ListOfEmployees = ({ list }: { list: ListType }) => {
+const ListOfEmployees = ({ list, sy }: { list: ListType, sy: string }) => {
     const [showList, setShowList] = useState(true);
     const [print, setPrint] = useState(false)
     const filteredList: FilteredListType = useMemo(() => {
@@ -218,7 +218,7 @@ const ListOfEmployees = ({ list }: { list: ListType }) => {
                 </div>
             )}
 
-            <PrintEmployee show={print} onClose={setPrint} list={list} />
+            <PrintEmployee show={print} onClose={setPrint} list={list} sy={sy} />
         </div>
     );
 };

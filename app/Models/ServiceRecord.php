@@ -19,7 +19,9 @@ class ServiceRecord extends Model
         'date_from',
         'date_to',
         'credits',
-        'approved'
+        'approved',
+        'status',
+        'remaining_credits'
     ];
 
     public function user()

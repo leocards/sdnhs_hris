@@ -198,7 +198,7 @@ const PersonnelInformation: React.FC<
                                     {!user_roles.includes("HR") && (
                                         <SelectOptionItem value="HR" />
                                     )}
-                                    {user_roles.includes("HOD") && (
+                                    {!user_roles.includes("HOD") && (
                                         <SelectOptionItem value="HOD" />
                                     )}
                                     <SelectOptionItem value="Teaching" />

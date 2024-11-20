@@ -42,10 +42,10 @@ const ViewSalnPersonnel: React.FC<Props> = ({
     })
     const [saln, setSaln] = useState<SALNTYPE|null>(null)
 
-    const onApprove = (salnId: any) => {
+    const onApprove = (saln: SALNLISTTYPE) => {
+        setSelected(saln)
         setData({ isApprove: true })
         setIsApprovalSubmit(true)
-        setSelected(salnId)
     };
 
     useEffect(() => {
@@ -58,9 +58,17 @@ const ViewSalnPersonnel: React.FC<Props> = ({
                     });
                     setSelected(null)
                     setView(false)
+                    onClose(false)
+                },
+                onError: (error) => {
+                    if("0" in error) {
+                        toast({
+                            variant: "destructive",
+                            description: error[0],
+                        });
+                    }
                 },
                 onFinish: () => {
-                    onClose(false)
                     reset()
                     setIsApprovalSubmit(false)
                 }
@@ -108,7 +116,7 @@ const ViewSalnPersonnel: React.FC<Props> = ({
                                 <Button
                                     className="!bg-green-700 ml-3"
                                     onClick={() =>
-                                        selected && onApprove(selected.id)
+                                        selected && onApprove(selected)
                                     }
                                 >
                                     Approve

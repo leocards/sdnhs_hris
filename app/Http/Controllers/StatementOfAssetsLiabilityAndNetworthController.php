@@ -210,13 +210,13 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
 
             $networth = floatval($totalassets) - floatval($liabilities);
 
-            $spouse_name = $saln->spousesalnSpouse()->firstname .' '. $saln->spousesalnSpouse()->middleinitial .'. '. $saln->spousesalnSpouse()->familyname .'/'. $saln->spousesalnSpouse()->office .'/'. $saln->spousesalnSpouse()->officeaddress;
+            $spouse_name = $saln->salnSpouse->first_name .' '. $saln->salnSpouse->middle_name .'. '. $saln->salnSpouse->family_name .'/'. $saln->salnSpouse->office .'/'. $saln->salnSpouse->office_address;
 
-            if ($saln) {
+            if ($user_saln) {
                 $user_saln->networth = $networth;
                 $user_saln->spouse = $spouse_name;
                 $user_saln->joint = $saln->isjoint;
-                $user_saln->year = $saln->asof;
+                $user_saln->year = Carbon::parse($saln->asof)->format('Y');
                 $user_saln->save();
             } else {
                 Saln::create([
@@ -224,7 +224,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                     "networth" => $networth,
                     "spouse" => $spouse_name,
                     "joint" => $request->isjoint == "joint" ? true : false,
-                    "year" => $saln->asof
+                    "year" => Carbon::parse($saln->asof)->format('Y')
                 ]);
             }
 

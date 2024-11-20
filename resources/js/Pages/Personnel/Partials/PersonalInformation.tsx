@@ -102,7 +102,7 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                    Sex
+                                    Gender
                                 </FormLabel>
                                 <SelectOption onChange={field.onChange}>
                                     <SelectOptionTrigger>

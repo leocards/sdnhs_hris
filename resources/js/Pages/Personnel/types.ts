@@ -28,7 +28,7 @@ export const NEWPERSONNELSCHEMA = z.object({
     middleName: z.string().optional().default(""),
     lastName: z.string().min(1, requiredError("last name")).default(""),
     birthDate: z.date({ required_error: requiredError("birth date") }).nullable().default(null),
-    sex: z.enum(["Male", "Female"], { required_error: requiredError("sex"), invalid_type_error: requiredError("sex"), message: requiredError("sex") })
+    sex: z.enum(["Male", "Female"], { required_error: requiredError("gender"), invalid_type_error: requiredError("gender"), message: requiredError("gender") })
         .nullable()
         .refine((sex) => {
             if(sex == null) {

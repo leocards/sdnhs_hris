@@ -59,6 +59,7 @@ class PersonnelRequest extends FormRequest
     {
         return [
             'department.required' => 'The department field is required.',
+            'sex.required' => "The gender field is required."
         ];
     }
 }

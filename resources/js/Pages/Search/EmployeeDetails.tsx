@@ -65,7 +65,7 @@ const EmployeeDetails: React.FC<Props> = ({ user }) => {
                     <Label className="w-40 flex items-center">
                         Date hired <span className="ml-auto mr-3">:</span>{" "}
                     </Label>
-                    <div>{format(user.dateHired, 'PPP')}</div>
+                    <div>{format(user.dateHired, 'LLLL d, y')}</div>
                 </div>
                 <div className="flex items-center">
                     <Label className="w-40 flex items-center">

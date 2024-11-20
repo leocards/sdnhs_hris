@@ -29,6 +29,12 @@ const ListOfSALN = ({ saln, principal, hr, saln_years }: Props) => {
     const [loading, setLoading] = useState(false);
     const [salnList, setSalnList] = useState<Array<SALNType>>(saln);
 
+    const toNumber = (value: string): number | null => {
+        // Remove commas and validate if the result is numeric
+        const sanitizedValue = value.replace(/,/g, '');
+        return isNaN(Number(sanitizedValue)) ? null : Number(sanitizedValue);
+    };
+
     useEffect(() => {
         if(filter) {
             window.axios
@@ -191,7 +197,7 @@ const ListOfSALN = ({ saln, principal, hr, saln_years }: Props) => {
                                                     {list.user.position}
                                                 </div>
                                                 <div className="">
-                                                    &#8369; {Number(list.networth).toLocaleString()}
+                                                    &#8369; {Number(toNumber(list.networth)).toLocaleString()}
                                                 </div>
                                                 <div className="">
                                                     {list.spouse}

@@ -165,7 +165,7 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
                                     </div>
                                     <div className="text-center">{s.user.pds_personal_information?.tin}</div>
                                     <div className="text-center">{s.user.position}</div>
-                                    <div className="text-center">{s.networth}</div>
+                                    <div className="text-center">&#8369; {s.networth}</div>
                                     <div
                                         className={fitTextContent(
                                             s.spouse
@@ -223,11 +223,11 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
                 <div>
                     <div className="grid grid-cols-[18rem,4rem]">
                         <div>Total Number of Filers:</div>
-                        <div className="border-b border-black text-center">{saln.length}</div>
+                        <div className="border-b border-black text-center">{props.saln.length}</div>
                     </div>
                     <div className="grid grid-cols-[18rem,4rem]">
                         <div>Total Number of Personnel Complete adffa:</div>
-                        <div className="border-b border-black text-center">{saln.length}</div>
+                        <div className="border-b border-black text-center">{props.saln.length}</div>
                     </div>
                 </div>
 

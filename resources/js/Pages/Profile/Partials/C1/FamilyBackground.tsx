@@ -414,6 +414,7 @@ export const CalendarInput: React.FC<{
     align?: "center" | "end" | "start";
     formatDate?: string;
     disabledCalendar?: Matcher | Matcher[];
+    isString?: boolean
 }> = ({
     form,
     name,
@@ -427,6 +428,7 @@ export const CalendarInput: React.FC<{
     align,
     formatDate,
     disabledCalendar,
+    isString
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     // Function to format the input as mm/dd/yyyy
@@ -484,10 +486,12 @@ export const CalendarInput: React.FC<{
             form.setValue(name, formattedValue);
 
             // Validation logic
-            if (isPresentWord(rawValue)) {
+            if (isPresentWord(rawValue) && !isString) {
                 form.clearErrors(name)
             } else if (isValidDate(formattedValue)) {
                 form.clearErrors(name)
+            } else if(isString) {
+                
             } else {
                 form.setError(name, {
                     type: "custom",

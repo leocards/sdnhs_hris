@@ -103,7 +103,8 @@ const Liabilities: React.FC<{ form: any }> = ({ form }) => {
                         append({
                             nature: "",
                             nameofcreditors: "",
-                            outstandingbalances: ""
+                            outstandingbalances: "",
+                            liabilityid: null
                         })
                     }
                 >

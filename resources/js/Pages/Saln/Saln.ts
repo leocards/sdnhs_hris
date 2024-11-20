@@ -3,7 +3,7 @@ import { requiredError } from "../types";
 
 const SALNSCHEMA = z.object({
     spouse: z.object({
-        spouseid: z.number().optional().nullable(),
+        spouseid: z.number().optional().nullable().default(null),
         familyname: z.string(),
         firstname: z.string(),
         middleinitial: z.string(),
@@ -12,11 +12,11 @@ const SALNSCHEMA = z.object({
         officeaddress: z.string(),
         governmentissuedid: z.string(),
         idno: z.string(),
-        dateissued: z.string()
+        dateissued: z.date().nullable().default(null)
     }).partial(),
     children: z.array(
         z.object({
-            childid: z.number().optional().nullable(),
+            childid: z.number().optional().nullable().default(null),
             name: z.string(),
             dateofbirth: z.date().nullable(),
         }).partial()
@@ -24,7 +24,7 @@ const SALNSCHEMA = z.object({
     assets: z.object({
         real: z.array(
             z.object({
-                realid: z.number().optional().nullable(),
+                realid: z.number().optional().nullable().default(null),
                 description: z.string(),
                 kind: z.string(),
                 exactlocation: z.string(),
@@ -39,7 +39,7 @@ const SALNSCHEMA = z.object({
         ).optional(),
         personal: z.array(
             z.object({
-                personalid: z.number().optional().nullable(),
+                personalid: z.number().optional().nullable().default(null),
                 description: z.string(),
                 yearacquired: z.string(),
                 acquisitioncost: z.string(),
@@ -48,31 +48,31 @@ const SALNSCHEMA = z.object({
     }),
     liabilities: z.array(
         z.object({
-            liabilityid: z.number().optional().nullable(),
+            liabilityid: z.number().optional().nullable().default(null),
             nature: z.string(),
             nameofcreditors: z.string(),
             outstandingbalances: z.string(),
         }).partial()
     ),
     biandfc: z.object({
-        biandfcid: z.number().optional().nullable(),
+        biandfcid: z.number().optional().nullable().default(null),
         nobiandfc: z.boolean().optional(),
         bifc: z.array(
             z.object({
-                bifcid: z.number().optional().nullable(),
+                bifcid: z.number().optional().nullable().default(null),
                 name: z.string(),
                 address: z.string(),
                 nature: z.string(),
-                date: z.date().nullable(),
+                date: z.date().or(z.string()).nullable(),
             }).partial()
         ).optional()
     }),
     relativesingovernment: z.object({
-        relativesingovernmentid: z.number().optional().nullable(),
+        relativesingovernmentid: z.number().optional().nullable().default(null),
         norelative: z.boolean(),
         relatives: z.array(
             z.object({
-                relativeid: z.number().optional().nullable(),
+                relativeid: z.number().optional().nullable().default(null),
                 name: z.string(),
                 relationship: z.string(),
                 position: z.string(),

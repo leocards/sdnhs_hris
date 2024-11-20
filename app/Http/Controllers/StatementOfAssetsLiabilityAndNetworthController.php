@@ -48,6 +48,9 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
             $asof = Carbon::parse($request->asof)->format('Y');
             $exist = StatementOfAssetsLiabilityAndNetwork::whereYear('asof', $asof)
                 ->where('user_id', Auth::id())
+                ->when($idToUpdate, function ($query) use ($idToUpdate) {
+                    $query->whereNot('id', $idToUpdate);
+                })
                 ->exists();
 
             if ($exist)
@@ -60,12 +63,6 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 "date" => Carbon::parse($request->date)->format('Y-m-d'),
                 "isjoint" => $request->isjoint,
             ]);
-
-            $realassets = 0;
-
-            $personalassets = 0;
-
-            $liabilities = 0;
 
             if ($request->spouse['familyname'])
                 $saln->salnSpouse()->updateOrCreate(
@@ -95,7 +92,9 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
 
             if ($request->assets['real'][0]['description']) {
                 foreach ($request->assets['real'] as $value) {
-                    $saln->salnAssets()->updateOrCreate(['id' => $value['realid']], [
+                    $id = in_array($value['realid'], $value) ? $value['realid'] : null;
+
+                    $saln->salnAssets()->updateOrCreate(['id' => $id], [
                         'asset_type' => "real",
                         'description' => $value['description'],
                         'kind' => $value['kind'],
@@ -106,33 +105,31 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                         'mode' => $value['acquisition']['mode'],
                         'cost' => $value['acquisitioncost']
                     ]);
-
-                    $realassets = $realassets + floatval($value['acquisitioncost']);
                 }
             }
 
             if ($request->assets['personal'][0]['description']) {
                 foreach ($request->assets['personal'] as $value) {
-                    $saln->salnAssets()->updateOrCreate(['id' => $value['personalid']], [
+                    $id = in_array($value['personalid'], $value) ? $value['personalid'] : null;
+
+                    $saln->salnAssets()->updateOrCreate(['id' => $id], [
                         'asset_type' => "personal",
                         'description' => $value['description'],
                         'year' => $value['yearacquired'],
                         'cost' => $value['acquisitioncost']
                     ]);
-
-                    $personalassets = $personalassets + floatval($value['acquisitioncost']);
                 }
             }
 
             if ($request->liabilities[0]['nature']) {
                 foreach ($request->liabilities as $value) {
-                    $saln->salnLiability()->updateOrCreate(['id' => $value['liabilityid']], [
+                    $id = in_array($value['liabilityid'], $value) ? $value['liabilityid'] : null;
+
+                    $saln->salnLiability()->updateOrCreate(['id' => $id], [
                         'nature' => $value['nature'],
                         'creditors' => $value['nameofcreditors'],
                         'balances' => $value['outstandingbalances']
                     ]);
-
-                    $liabilities = $liabilities + floatval($value['outstandingbalances']);
                 }
             }
 
@@ -142,7 +139,9 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 $bifcs = $saln->salnBiFc()->updateOrCreate(['id' => $request->biandfc['biandfcid']], ['has_bi_fc' => $request->biandfc['nobiandfc']]);
 
                 foreach ($request->biandfc['bifc'] as $value) {
-                    $bifcs->bifc()->updateOrCreate(['id' => $value['bifcid']], [
+                    $id = in_array($value['bifcid'], $value) ? $value['bifcid'] : null;
+
+                    $bifcs->bifc()->updateOrCreate(['id' => $id], [
                         'name' => $value['name'],
                         'address' => $value['address'],
                         'nature' => $value['nature'],
@@ -157,34 +156,15 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 $bifcs = $saln->salnRelative()->updateOrCreate(['id' => $request->relativesingovernment['relativesingovernmentid']], ['has_relative' => $request->relativesingovernment['norelative']]);
 
                 foreach ($request->relativesingovernment['relatives'] as $value) {
-                    $bifcs->relatives()->updateOrCreate(['id' => $value['relativeid']], [
+                    $id = in_array($value['relativeid'], $value) ? $value['relativeid'] : null;
+
+                    $bifcs->relatives()->updateOrCreate(['id' => $id], [
                         'name' => $value['name'],
                         'relationship' => $value['relationship'],
                         'position' => $value['position'],
                         'agency_address' => $value['agencyandaddress'],
                     ]);
                 }
-            }
-
-            $saln = Saln::where('user_id', Auth::id())
-                ->where('year', $asof)
-                ->first();
-
-            $networth = ($realassets + $personalassets) - $liabilities;
-
-            if ($saln) {
-                $saln->networth = $networth;
-                $saln->spouse = $request->spouse['firstname'] .' '. $request->spouse['middleinitial'] .'. '. $request->spouse['familyname'] .'/'. $request->spouse['office'] .'/'. $request->spouse['officeaddress'];
-                $saln->joint = $request->isjoint;
-                $saln->year = $asof;
-            } else {
-                Saln::create([
-                    "user_id" => Auth::id(),
-                    "networth" => $networth,
-                    "spouse" => $request->spouse['familyname'] ? $request->spouse['firstname'] .' '. $request->spouse['middleinitial'] .'. '. $request->spouse['familyname'] .'/'. $request->spouse['office'] .'/'. $request->spouse['officeaddress'] : "",
-                    "joint" => $request->isjoint == "joint" ? true : false,
-                    "year" => $asof
-                ]);
             }
 
             DB::commit();
@@ -215,6 +195,39 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 'go_to_link' => route('saln')
             ]);
 
+            $totalassets = $saln->salnAssets()
+                ->get()
+                ->filter(fn($asset) => is_numeric($asset->cost))
+                ->sum('cost');
+            $liabilities = $saln->salnLiability()
+                ->get()
+                ->filter(fn($asset) => is_numeric($asset->cost))
+                ->sum('balances');
+
+            $user_saln = Saln::where('user_id', Auth::id())
+                ->where('year', $saln->asof)
+                ->first();
+
+            $networth = floatval($totalassets) - floatval($liabilities);
+
+            $spouse_name = $saln->spousesalnSpouse()->firstname .' '. $saln->spousesalnSpouse()->middleinitial .'. '. $saln->spousesalnSpouse()->familyname .'/'. $saln->spousesalnSpouse()->office .'/'. $saln->spousesalnSpouse()->officeaddress;
+
+            if ($saln) {
+                $user_saln->networth = $networth;
+                $user_saln->spouse = $spouse_name;
+                $user_saln->joint = $saln->isjoint;
+                $user_saln->year = $saln->asof;
+                $user_saln->save();
+            } else {
+                Saln::create([
+                    "user_id" => Auth::id(),
+                    "networth" => $networth,
+                    "spouse" => $spouse_name,
+                    "joint" => $request->isjoint == "joint" ? true : false,
+                    "year" => $saln->asof
+                ]);
+            }
+
             DB::commit();
 
             $notificationResponse->load(['sender']);
@@ -235,7 +248,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
         $assets = $saln->salnAssets->groupBy('asset_type');
 
         $realAssets = $assets->get('real', collect())->chunk(4);
-        $realPersonal = $assets->get('real', collect())->chunk(4);
+        $realPersonal = $assets->get('personal', collect())->chunk(4);
         $children = $saln->salnChildren->chunk(4);
         $liabilities = $saln->salnLiability->chunk(4);
         $salnbifc = $saln->salnBiFc;
@@ -295,8 +308,14 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
         return $data->count() > 0 ? $data[0] : null;
     }
 
-    function totals(Collection $data, string $attribute)
+    function totals(Collection $data, string $attribute, string $assetType = null)
     {
-        return $data->reduce(fn($carry, $item) => ($carry + $item[$attribute]), 0);
+        return $data->reduce(function ($carry, $item) use ($attribute) {
+            if(is_numeric($item[$attribute])) {
+                return $carry + $item[$attribute];
+            } else {
+                return $carry + 0;
+            }
+        }, 0);
     }
 }

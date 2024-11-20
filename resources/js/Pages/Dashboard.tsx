@@ -44,7 +44,11 @@ interface DashboardProps extends PageProps {
         }>
     }
     pageData: PaginateData;
-    sy: string
+    sy: {
+        start: string
+        end: string
+        resumption: string
+    }
 }
 
 export default function Index(props: DashboardProps) {
@@ -100,7 +104,7 @@ function Dashboard({
                 {auth.user.role == "HR" && !sy ? (
                     <div>Please set your school year</div>
                 ) : sy && (<div className="rounded-md text-lg font-semibold bg- yellow-500 py-2 text-yellow-700">
-                    Welcome to school year <span className="text-xl">2023-2024</span>
+                    Welcome to school year <span className="text-xl">{sy ? `${format(sy.start, 'y')}-${format(sy.end, 'y')}` : ""}</span>
                 </div>)}
             </div>
 
@@ -206,7 +210,7 @@ function Dashboard({
                 </>
             )}
 
-            <NewSchoolYear show={newSY} onClose={setNewSY} currentSY="" />
+            <NewSchoolYear show={newSY} onClose={setNewSY} currentSY={sy} />
         </AuthenticatedLayout>
     );
 }

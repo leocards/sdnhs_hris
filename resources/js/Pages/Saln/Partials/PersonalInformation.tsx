@@ -14,6 +14,7 @@ import { User } from "@/types";
 import React, { useMemo } from "react";
 import { DeclarantType } from "../AddSaln";
 import { RadioGroup, RadioGroupItem } from "@/Components/ui/radio-group";
+import NumberInput from "@/Components/NumberInput";
 
 type Props = {
     form: any;
@@ -251,6 +252,47 @@ const PersonalInformation: React.FC<Props> = ({ form, user, declarant }) => {
                                     <FormMessage />
                                 </FormItem>
                             )}
+                        />
+                    </div>
+
+                    <div className="grid sm:grid-cols-3 gap-2.5 sm:gap-4">
+                        <FormField
+                            control={form.control}
+                            name="spouse.governmentissuedid"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Government Issued Id</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            {...field}
+                                            className="form-input"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="spouse.idno"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>ID No</FormLabel>
+                                    <FormControl>
+                                        <NumberInput
+                                            {...field}
+                                            className="form-input"
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <CalendarInput
+                            form={form}
+                            name="spouse.dateissued"
+                            label="Date Issued"
+                            
                         />
                     </div>
                 </div>

@@ -87,6 +87,7 @@ class LeaveController extends Controller
             "user" => $user?->only(['id', 'first_name', 'last_name', 'middle_name', 'name']),
             "leave" => $leave,
             "hr" => User::where('role', 'HR')->first()->completeName(),
+            "principal" => User::where('role', 'HOD')->first(),
             "open" => session('open')
         ]);
     }
@@ -100,6 +101,18 @@ class LeaveController extends Controller
             ->where('hr_status', 'Approved')
             ->where('principal_status', 'Approved')
             ->get(['id', 'user_id', 'leave_type', 'num_days_applied']);
+
+        $usedLeaves = collect([]);
+
+        $renderedLeaves->each(function ($leave) {
+            if(Auth::user()->role == "Teaching") {
+
+            } else {
+                if(in_array($leave->leave_type, ['Vacation Leave', 'Sick Leave'])) {
+
+                }
+            }
+        });
 
         return Inertia::render('Leave/ApplyLeave', [
             "salary" => PDSWorkExperience::where('user_id', Auth::id())
@@ -125,6 +138,10 @@ class LeaveController extends Controller
                 if(Carbon::parse(Auth::user()->date_hired)->greaterThan(Carbon::now()->subMonths(3))) {
                     throw new Exception("You are not yet allowed to use this type of leave.", 1);
                 }
+            }
+
+            if(Auth::user()->role == "Teaching" && $request->leavetype['type'] == "Vacation Leave") {
+                throw new Exception("You are not allowed to use this type of leave.", 1);
             }
 
             $leave = Leave::create([
@@ -279,61 +296,24 @@ class LeaveController extends Controller
                     ]);
                 }
 
+                // if the application is not from HOD, the HOD and HR will validate the leave application
                 if($user->role != "HOD") {
+                    // if the person to validate is the HOD, deduct the credits
                     if(Auth::user()->role == "HOD") {
-                        if($leave->leave_type != "Mandatory/Forced Leave" || $leave->leave_type != "Special Privilege Leave") {
-                            // get the pending certificates
-                            $pending_cetificates = $user->certificates()->where('status', 'pending')->get();
-
-                            // deduct user leave credit
-                            $user_remaining_credit = $user->leave_credits - ((int) $leave->num_days_applied);
-
-                            // apply the credits of pending certificates
-                            if($pending_cetificates->count() > 0) {
-                                $creditLimit = in_array($user->role, ['HOD', 'Non-teaching']) ? 45 : 30;
-                                $credit = 0;
-
-                                foreach ($pending_cetificates as $cetificate) {
-                                    // get the user credit with added credit from certificate
-                                    $newCredit = ($user_remaining_credit + $cetificate->remaining_credits);
-                                    //get the remainig credit
-                                    $remaining_credit_after_add = $newCredit - $creditLimit;
-                                    // get the added credit
-                                    $addedCredit = ($remaining_credit_after_add >= 0) ? $cetificate->remaining_credits - $remaining_credit_after_add : 0;
-
-                                    if($remaining_credit_after_add > 0) {
-                                        // the user credit limit is full, store the remaining credit of certificate
-                                        $cetificate->remaining_credits = $remaining_credit_after_add;
-                                        $cetificate->save();
-                                    } else if($remaining_credit_after_add === 0) {
-                                        // if there is no more remaining credit, means that the user credit limit has reached
-                                        // and the cretificate remaining credit is all used
-                                        // set certificate status as added
-                                        $cetificate->status = "added";
-                                        $cetificate->remaining_credits = null;
-                                        $cetificate->save();
-                                    } else {
-                                        $cetificate->status = "added";
-                                        $cetificate->remaining_credits = null;
-                                        $cetificate->save();
-                                    }
-
-                                    $credit = $credit + $addedCredit;
-
-                                    if($remaining_credit_after_add >= 0) {
-                                        break;
-                                    }
-                                }
-
-                                // update the user's credit
-                                $user->leave_credits = $user_remaining_credit + $credit;
-                            } else {
-                                $user->leave_credits = $user_remaining_credit;
+                        if($leave->leave_type != "Mandatory/Forced Leave" && $leave->leave_type != "Special Privilege Leave") {
+                            $this->processCreditOnLeave($user, $leave);
+                        } else {
+                            // validate if the application is not from Teaching role
+                            if($user->role != "Teaching") {
+                                /* needs some validation to check the credits for Mandatory/Forced Leave and Special Privilege Leave to be applied */
+                                $this->processCreditOnLeave($user, $leave);
                             }
-
-                            $user->save();
                         }
+                    } else {
+
                     }
+                } else {
+
                 }
             } else {
                 if (Auth::user()->role === "HR") {
@@ -459,5 +439,58 @@ class LeaveController extends Controller
 
             return back()->withErrors($th->getMessage());
         }
+    }
+
+    function processCreditOnLeave(User $user, Leave $leave) {
+        // get the pending certificates
+        $pending_cetificates = $user->certificates()->where('status', 'pending')->get();
+
+        // deduct user leave credit
+        $user_remaining_credit = $user->leave_credits - ((int) $leave->num_days_applied);
+
+        // apply the credits of pending certificates
+        if($pending_cetificates->count() > 0) {
+            $creditLimit = in_array($user->role, ['HOD', 'Non-teaching']) ? 45 : 30;
+            $credit = 0;
+
+            foreach ($pending_cetificates as $cetificate) {
+                // get the user credit with added credit from certificate
+                $newCredit = ($user_remaining_credit + $cetificate->remaining_credits);
+                //get the remainig credit
+                $remaining_credit_after_add = $newCredit - $creditLimit;
+                // get the added credit
+                $addedCredit = ($remaining_credit_after_add >= 0) ? $cetificate->remaining_credits - $remaining_credit_after_add : 0;
+
+                if($remaining_credit_after_add > 0) {
+                    // the user credit limit is full, store the remaining credit of certificate
+                    $cetificate->remaining_credits = $remaining_credit_after_add;
+                    $cetificate->save();
+                } else if($remaining_credit_after_add === 0) {
+                    // if there is no more remaining credit, means that the user credit limit has reached
+                    // and the cretificate remaining credit is all used
+                    // set certificate status as added
+                    $cetificate->status = "added";
+                    $cetificate->remaining_credits = null;
+                    $cetificate->save();
+                } else {
+                    $cetificate->status = "added";
+                    $cetificate->remaining_credits = null;
+                    $cetificate->save();
+                }
+
+                $credit = $credit + $addedCredit;
+
+                if($remaining_credit_after_add >= 0) {
+                    break;
+                }
+            }
+
+            // update the user's credit
+            $user->leave_credits = $user_remaining_credit + $credit;
+        } else {
+            $user->leave_credits = $user_remaining_credit;
+        }
+
+        $user->save();
     }
 }

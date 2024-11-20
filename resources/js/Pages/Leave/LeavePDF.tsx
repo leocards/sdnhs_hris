@@ -3,11 +3,12 @@ import { cn } from "@/lib/utils";
 import LeavePDFApplicant from "./Partials/LeavePDFApplicant";
 import LeavePDFDetailsOfApplication from "./Partials/LeavePDFDetailsOfApplication";
 import LeavePDFDetailsOfActionOnApplication from "./Partials/LeavePDFDetailsOfActionOnApplication";
+import { Principal } from "./ApplicationForLeavePDF";
 
 const LeavePDF = React.forwardRef<
     HTMLDivElement,
-    { isDownload?: boolean; leave: any; hr: string }
->(({ isDownload, leave, hr }, ref) => {
+    { isDownload?: boolean; leave: any; hr: string; principal: Principal }
+>(({ isDownload, leave, hr, principal }, ref) => {
 
     return (
         <div ref={ref} className="w-[790px] shrink-0 mx-auto text-[11px]">
@@ -95,6 +96,7 @@ const LeavePDF = React.forwardRef<
                     <LeavePDFDetailsOfActionOnApplication
                         isDownload={isDownload}
                         hr={hr}
+                        principal={principal}
                         detailsOfActionOnApplication={{
                             as_of: leave?.details_of_action_leave?.as_of,
                             total_earned_sick: leave?.details_of_action_leave?.total_earned_sick,

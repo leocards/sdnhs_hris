@@ -144,9 +144,9 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                                     <FormItem>
                                         <FormLabel>Acquisition year</FormLabel>
                                         <FormControl>
-                                            <NumberInput
+                                            <Input
                                                 {...field}
-                                                max={4}
+                                                maxLength={4}
                                                 className="form-input"
                                             />
                                         </FormControl>
@@ -177,8 +177,7 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                                     <FormItem>
                                         <FormLabel>Acquisition cost</FormLabel>
                                         <FormControl>
-                                            <NumberInput
-                                                isAmount
+                                            <Input
                                                 {...field}
                                                 className="form-input"
                                             />
@@ -206,6 +205,7 @@ const RealProperties: React.FC<{ form: any }> = ({ form }) => {
                                 mode: "",
                             },
                             acquisitioncost: "",
+                            realid: null,
                         })
                     }
                 >

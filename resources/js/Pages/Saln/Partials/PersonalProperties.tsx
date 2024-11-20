@@ -74,8 +74,7 @@ const PersonalProperties: React.FC<{ form: any }> = ({ form }) => {
                                     <FormItem>
                                         <FormLabel>Acquisition cost/amount</FormLabel>
                                         <FormControl>
-                                            <NumberInput
-                                                isAmount
+                                            <Input
                                                 {...field}
                                                 className="form-input"
                                             />
@@ -103,6 +102,7 @@ const PersonalProperties: React.FC<{ form: any }> = ({ form }) => {
                                 mode: "",
                             },
                             acquisitioncost: "",
+                            personalid: null
                         })
                     }
                 >

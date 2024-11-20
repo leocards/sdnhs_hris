@@ -61,7 +61,7 @@ const Card: React.FC<{personal?: {
         >
             <div>{personal? personal.description : "N/A"}</div>
             <div>{personal? personal.year : "N/A"}</div>
-            <div>{personal? "P " + Number(personal.cost).toLocaleString() : "N/A"}</div>
+            <div>{personal? !isNaN(parseFloat(personal.cost)) ? "P " + Number(personal.cost).toLocaleString() : "N/A" : "N/A"}</div>
         </div>
     );
 }

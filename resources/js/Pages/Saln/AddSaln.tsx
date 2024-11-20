@@ -54,7 +54,7 @@ const AddSaln: React.FC<Props> = ({ auth, declarant, saln_user }) => {
             biandfc: {
                 biandfcid: saln_user?.saln_bi_fc.id||null,
                 nobiandfc: !!(saln_user?.saln_bi_fc.has_bi_fc),
-                bifc: getBiFc(saln_user?.saln_bi_fc.bifc),
+                bifc: getBiFc(saln_user?.saln_bi_fc.bifc)??"",
             },
             relativesingovernment: {
                 relativesingovernmentid: saln_user?.saln_relative.id||null,
@@ -112,6 +112,10 @@ const AddSaln: React.FC<Props> = ({ auth, declarant, saln_user }) => {
             })
         }
     }, [isFormSubmit])
+
+    useEffect(() => {
+        console.log(form.formState.errors)
+    },[form.formState.errors])
 
     return (
         <Authenticated

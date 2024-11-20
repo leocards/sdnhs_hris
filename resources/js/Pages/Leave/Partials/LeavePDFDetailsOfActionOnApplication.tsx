@@ -1,9 +1,11 @@
 import { cn } from "@/lib/utils";
 import { Square, SquareCheck } from "lucide-react";
+import { Principal } from "../ApplicationForLeavePDF";
 
 type LeavePDFDetailsOfActionOnApplicationProps = {
     isDownload?: boolean;
     hr: string;
+    principal: Principal
     detailsOfActionOnApplication: {
         as_of: string;
         total_earned_sick: string;
@@ -27,6 +29,7 @@ const LeavePDFDetailsOfActionOnApplication = (
     const {
         isDownload,
         hr,
+        principal,
         detailsOfActionOnApplication: {
             as_of,
             total_earned_sick,
@@ -309,11 +312,12 @@ const LeavePDFDetailsOfActionOnApplication = (
                         <div className="w-[80%] mx-auto mt-auto mb-2">
                             <div
                                 className={cn(
-                                    "h-4 text-center font-bold uppercase"
+                                    "h-fit text-center font-bold uppercase"
                                 )}
                             >
                                 <div className={cn(isDownload && "-mt-3")}>
-                                    {/* Lorem ipsum dolor est */}
+                                    <div>{principal.name}</div>
+                                    <div className="capitalize font-normal">{principal.position}</div>
                                     {/* Postion */}
                                 </div>
                             </div>

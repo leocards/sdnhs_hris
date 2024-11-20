@@ -135,7 +135,8 @@ const RelativeInGovernment: React.FC<{ form: any }> = ({
                                 name: "",
                                 relationship: "",
                                 position: "",
-                                agencyandaddress: ""
+                                agencyandaddress: "",
+                                relativeid: null
                             })
                         }
                     >

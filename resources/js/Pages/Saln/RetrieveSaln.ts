@@ -9,7 +9,7 @@ const getSpouse = (data: any) => {
         officeaddress: "",
         governmentissuedid: "",
         idno: "",
-        dateissued: ""
+        dateissued: null
     }
 
     if(data) {
@@ -20,9 +20,9 @@ const getSpouse = (data: any) => {
         spouse.position = data.position
         spouse.office = data.office
         spouse.officeaddress = data.office_address
-        spouse.governmentissuedid = data.government_id
-        spouse.idno = data.government_id_no
-        spouse.dateissued = data.date_issued
+        spouse.governmentissuedid = data.government_id||""
+        spouse.idno = data.government_id_no||""
+        spouse.dateissued = data.date_issued||""
     }
 
     return spouse
@@ -100,7 +100,7 @@ const getRealProperties = (data: Array<any>, type: "real" | "personal") => {
                 if(asset.asset_type === type){
                     if(type === "real") {
                         assets.push({
-                            realid: asset.id,
+                            realid: asset.id||null,
                             description: asset.description,
                             kind: asset.kind,
                             exactlocation: asset.location,
@@ -114,7 +114,7 @@ const getRealProperties = (data: Array<any>, type: "real" | "personal") => {
                         })
                     } else
                         assets.push({
-                            personalid: asset.id,
+                            personalid: asset.id||null,
                             description: asset.description,
                             yearacquired: asset.year,
                             acquisitioncost: asset.cost

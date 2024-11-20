@@ -108,7 +108,7 @@ const Card: React.FC<{real?: {
                             <div className="grow">{real?real.mode:"N/A"}</div>
                         </div>
                     </div>
-                    <div>{real? "P " + Number(real.cost).toLocaleString():"N/A"}</div>
+                    <div>{real? !isNaN(parseFloat(real.cost)) ? "P " + Number(real.cost).toLocaleString() : "N/A":"N/A"}</div>
                 </div>
     )
 }

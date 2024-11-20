@@ -114,6 +114,8 @@ const BusinessInterectFinancialConnections: React.FC<{ form: any }> = ({
                                     label="Date of acquisition of interest or connection"
                                     isRequired={false}
                                     formatDate="LLLL dd, y"
+                                    asInput
+                                    isString
                                 />
                             </div>
                         </div>
@@ -128,6 +130,7 @@ const BusinessInterectFinancialConnections: React.FC<{ form: any }> = ({
                                 address: "",
                                 nature: "",
                                 date: "",
+                                bifcid: null
                             })
                         }
                     >

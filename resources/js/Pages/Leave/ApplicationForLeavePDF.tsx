@@ -20,12 +20,18 @@ import UploadMedical from "./UploadMedical";
 import ViewMedical from "./ViewMedical";
 import { cn } from "@/lib/utils";
 
+export type Principal = {
+    name: string
+    position: string
+}
+
 const ApplicationForLeavePDF = ({
     auth,
     leave,
     hr,
     open,
-}: PageProps<{ leave: any; hr: string; open: any }>) => {
+    principal,
+}: PageProps<{ leave: any; hr: string; open: any, principal: Principal }>) => {
     const [showRespond, setShowRespond] = useState<boolean>(false);
     const [showViewResponse, setShowViewResponse] = useState<boolean>(false);
     const [showUploadMedical, setUploadMedical] = useState(false);
@@ -151,12 +157,13 @@ const ApplicationForLeavePDF = ({
 
             <div className="overflow-hidden overflow-x-auto h-auto py-2">
                 <div className="mx-auto border overflow-hidden w-[790px] flex gap-2">
-                    <LeavePDF ref={targetRef} leave={leave} hr={hr} />
+                    <LeavePDF ref={targetRef} leave={leave} hr={hr} principal={principal} />
                     <LeavePDF
                         ref={download_pdf.targetRef}
                         isDownload
                         leave={leave}
                         hr={hr}
+                        principal={principal}
                     />
                 </div>
             </div>

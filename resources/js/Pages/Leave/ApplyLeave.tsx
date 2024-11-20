@@ -86,7 +86,7 @@ const ApplyLeave = ({ auth, salary, applied }: PageProps & Props) => {
         form.setValue("middleName", middle_name ?? "");
         form.setValue("department", auth.user.role == "HOD" ? "N/A" : department);
         form.setValue("position", position);
-        form.setValue("salary", salary?.monthly_salary||"");
+        form.setValue("salary", salary ? salary.monthly_salary ? salary.monthly_salary.split(',').join('') :"" : "");
         form.setValue("dateOfFiling.from", new Date());
     }, []);
 

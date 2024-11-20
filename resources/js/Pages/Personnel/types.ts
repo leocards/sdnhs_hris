@@ -16,6 +16,8 @@ export const PERSONNELPOSITIONS = [
     "Principal I",
     "Principal II",
     "Principal III",
+    "Principal VI",
+    "Principal V",
     "HR"
 ] as const;
 

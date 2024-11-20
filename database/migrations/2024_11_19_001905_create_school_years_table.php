@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('school_years', function (Blueprint $table) {
             $table->id();
-            $table->string('sy');
-            // $table->date('from');
-            // $table->date('to');
+            $table->date('start');
+            $table->date('end');
+            $table->date('resumption');
             $table->timestamps();
         });
     }

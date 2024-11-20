@@ -4,6 +4,7 @@ import ListOfEmployees from "./ListOfEmployees";
 import ListOfSALN from "./ListOfSALN";
 import ListOfIPCR from "./ListOfIPCR";
 import { Head } from "@inertiajs/react";
+import { SYTYPE } from "../Dashboard";
 
 export type IPCRType = {
     id: number;
@@ -71,7 +72,7 @@ export default function Reports({
     hr: HrType;
     ipcr_years: Array<string>;
     saln_years: Array<number>;
-    sy: string;
+    sy: SYTYPE;
 }) {
     return (
         <Authenticated

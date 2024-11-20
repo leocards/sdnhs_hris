@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class SchoolYear extends Model
 {
     protected $fillable = [
-        'sy'
+        'start',
+        'end',
+        'resumption',
     ];
 }

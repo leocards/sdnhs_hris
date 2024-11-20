@@ -18,6 +18,12 @@ type Statistics = {
     total: number;
 };
 
+export type SYTYPE = {
+    start: string
+    end: string
+    resumption: string
+}
+
 interface DashboardProps extends PageProps {
     totalEmployee?: Statistics;
     approved: Statistics;
@@ -44,11 +50,7 @@ interface DashboardProps extends PageProps {
         }>
     }
     pageData: PaginateData;
-    sy: {
-        start: string
-        end: string
-        resumption: string
-    }
+    sy: SYTYPE
 }
 
 export default function Index(props: DashboardProps) {

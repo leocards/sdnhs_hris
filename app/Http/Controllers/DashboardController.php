@@ -7,6 +7,7 @@ use App\Models\SchoolYear;
 use App\Models\ServiceRecord;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -53,7 +54,7 @@ class DashboardController extends Controller
                         ->groupBy('leave_type')
                         ->get()
                 ]),
-                "sy" => SchoolYear::latest()->first()?->value('sy')
+                "sy" => SchoolYear::latest()->first()
             ]);
         }
 
@@ -82,7 +83,7 @@ class DashboardController extends Controller
                 ->where('hr_status', 'Approved')
                 ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
             "leaveApplications" => collect([]),
-            "sy" => SchoolYear::latest()->first()?->value('sy')
+            "sy" => SchoolYear::latest()->first()
         ]);
     }
 
@@ -109,14 +110,44 @@ class DashboardController extends Controller
     {
         try {
 
-            SchoolYear::create([
-                'sy' => $request->sy
-            ]);
+            DB::transaction(function () use ($request) {
+                $hasRecent = SchoolYear::latest()->first();
+
+                if($hasRecent && $this->is220BusinessDays($hasRecent->created_at)) {
+                    throw new Exception('The current school year has not ended yet.');
+                }
+
+                SchoolYear::create([
+                    'start' => Carbon::parse($request->start)->format('Y-m-d'),
+                    'end' => Carbon::parse($request->end)->format('Y-m-d'),
+                    'resumption' => Carbon::parse($request->resumption)->format('Y-m-d')
+                ]);
+
+                User::whereIn('role', ['Non-teaching', 'HOD'])->update(['leave_credits' => 45]);
+                User::where('role', 'Teaching')->update(['leave_credits' => 30]);
+            });
 
             return back()->with('success', 'success');
 
         } catch (\Throwable $th) {
             return back()->withErrors($th->getMessage());
         }
+    }
+
+    function is220BusinessDays($date)
+    {
+        // Calculate the target date 220 business days ago
+        $targetDate = Carbon::today();
+        $businessDays = 0;
+
+        while ($businessDays < 220) {
+            $targetDate->subDay();
+            if (!$targetDate->isWeekend()) {
+                $businessDays++;
+            }
+        }
+
+        // Compare the input date with the calculated target date
+        return Carbon::parse($date)->isSameDay($targetDate);
     }
 }

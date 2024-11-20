@@ -3,6 +3,7 @@ import { Button } from "@/Components/ui/button";
 import { ChevronDown, Printer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import PrintEmployee from "./PrintEmployee";
+import { SYTYPE } from "../Dashboard";
 
 export type ListType = {
     jhs: Array<any>;
@@ -16,7 +17,7 @@ export type FilteredListType = {
     female: { [key in keyof any]: number };
 };
 
-const ListOfEmployees = ({ list, sy }: { list: ListType, sy: string }) => {
+const ListOfEmployees = ({ list, sy }: { list: ListType, sy: SYTYPE }) => {
     const [showList, setShowList] = useState(true);
     const [print, setPrint] = useState(false)
     const filteredList: FilteredListType = useMemo(() => {

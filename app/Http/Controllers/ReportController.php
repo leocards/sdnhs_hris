@@ -32,7 +32,7 @@ class ReportController extends Controller
         $ipcr_years = PerformanceRating::select('sy')->groupBy('sy')->orderBy('sy', 'DESC')->pluck('sy');
         $saln_years = Saln::select('year')->groupBy('year')->orderBy('year', 'DESC')->pluck('year');
         return Inertia::render('Reports/Reports', [
-            "sy" => SchoolYear::latest()->first()?->value('sy'),
+            "sy" => SchoolYear::latest()->first(),
             "list" => collect([
                 "jhs" => DB::table('users')
                     ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))

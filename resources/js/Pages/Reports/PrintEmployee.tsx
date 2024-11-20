@@ -7,14 +7,16 @@ import PDFEmployee from "./PDFEmployee";
 import { ListType } from "./ListOfEmployees";
 import { useState } from "react";
 import { Input } from "@/Components/ui/input";
+import { SYTYPE } from "../Dashboard";
+import { format } from "date-fns";
 
 type Props = {
     list: ListType
-    sy: string
+    sy: SYTYPE
 } & ModalProps;
 
 const PrintEmployee: React.FC<Props> = ({ show, list, sy, onClose, }) => {
-    const [schoolYear, setSy] = useState(sy)
+    const [schoolYear, setSy] = useState(sy ? `${format(sy.start, 'y')}-${format(sy.end, 'y')}` : "")
 
     const download_pdf = usePDF({
         method: "open",

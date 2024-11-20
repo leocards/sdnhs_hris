@@ -246,9 +246,9 @@ class ReportController extends Controller
                             $searchFName = strtolower($value[2]);
                             $user = User::searchByLastAndFirstName($searchLName, $searchFName)->first('id');
 
-                            // validate if user exist and check if it has already been added otherwise add the rating.
+                            // validate if user exist and check if it has already been added otherwise add the saln.
                             if ($user) {
-                                $existIPCR = Saln::where('user_id', $user->id)->whereYear('created_at', $this->date->format("Y"))->exists();
+                                $existIPCR = Saln::where('user_id', $user->id)->where('year', $request->year)->exists();
                                 if(!$existIPCR)
                                     Saln::create([
                                         'user_id' => $user->id,

@@ -7,7 +7,6 @@ import { PageProps } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import { SearchIcon, X } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { SeniorHighList } from "../Reports/Reports";
 import useDebounce from "@/hooks/useDebounce";
 import DataList from "@/Components/DataList";
 

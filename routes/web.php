@@ -97,6 +97,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->middleware(['role:HR,HOD']);
     });
 
+    Route::get('tardiness', [PersonnelController::class, 'userTardiness'])->name('tardiness');
+
     Route::prefix('leave')->group(function () {
         Route::controller(LeaveController::class)->group(function () {
             Route::get('/', 'index')->name('leave');

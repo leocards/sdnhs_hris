@@ -14,6 +14,7 @@ import {
     X,
     ChevronDown,
     ReceiptText,
+    UserRoundCheck,
 } from "lucide-react";
 import {
     CloseButton,
@@ -358,6 +359,11 @@ const Navigation: React.FC<{
             icon: <FilePieChart className="size-5" />,
         },
         {
+            id: "tardiness",
+            label: "Tardiness",
+            icon: <UserRoundCheck className="size-5" />,
+        },
+        {
             id: "saln",
             label: "SALN",
             icon: <ReceiptText className="size-5" />,
@@ -381,7 +387,8 @@ const Navigation: React.FC<{
             "leave",
             "notification",
             "messages",
-            "saln"
+            "saln",
+            "tardiness",
         ],
         "Non-teaching": [
             "dashboard",
@@ -389,7 +396,8 @@ const Navigation: React.FC<{
             "leave",
             "notification",
             "messages",
-            "saln"
+            "saln",
+            "tardiness",
         ],
     }[user.role];
 

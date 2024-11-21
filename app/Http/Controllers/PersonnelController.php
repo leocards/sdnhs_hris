@@ -241,22 +241,21 @@ class PersonnelController extends Controller
                     'absent' => $value['absent']
                 ]);
 
-                // $receiver = User::where('id', $value['personnelId'])->first();
+                $receiver = User::where('id', $value['personnelId'])->first();
 
-                // $notificationResponse = Notifications::create([
-                //     'user_id' => $receiver->id,
-                //     'from_user_id' => Auth::id(),
-                //     'message' => ' has uploaded attendance.',
-                //     'type' => 'profile',
-                //     'go_to_link' => route('general-search.view', [$receiver->id]).'?view=attendance'
-                // ]);
+                $notificationResponse = Notifications::create([
+                    'user_id' => $receiver->id,
+                    'from_user_id' => Auth::id(),
+                    'message' => ' has uploaded attendance.',
+                    'type' => 'profile',
+                    'go_to_link' => route('tardiness')
+                ]);
 
-                // if($notificationResponse) {
-                //     $notificationResponse->load(['sender']);
-                //     broadcast(new SendNotificationEvent($notificationResponse, $receiver->id));
-                // }
+                if($notificationResponse) {
+                    $notificationResponse->load(['sender']);
+                    broadcast(new SendNotificationEvent($notificationResponse, $receiver->id));
+                }
             }
-
 
             DB::commit();
 
@@ -303,5 +302,15 @@ class PersonnelController extends Controller
         $tardiness->delete();
 
         return back()->with('success', 'Successfully deleted.');
+    }
+
+    public function userTardiness()
+    {
+
+        return Inertia::render('Tardiness/Tardiness', [
+            'pageData' => PersonnelTardiness::where('user_id', Auth::id())
+                ->latest()
+                ->paginate(50)
+        ]);
     }
 }

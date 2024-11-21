@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import PersonalInformation from "@/Pages/Personnel/Partials/PersonalInformation";
 import ContactInformation from "@/Pages/Personnel/Partials/ContactInformation";
 import PersonnelInformation from "@/Pages/Personnel/Partials/PersonnelInformation";
+import { User } from "@/types";
 
 export const PROFILESCHEMA = z.object({
     firstName: z.string().min(1, requiredError("first name")).default(""),
@@ -21,7 +22,7 @@ export const PROFILESCHEMA = z.object({
         .date({ required_error: requiredError("birth date") })
         .nullable()
         .default(null),
-    sex: z.enum(["Male", "Female"], { required_error: requiredError("sex") }),
+    sex: z.enum(["Male", "Female"], { required_error: requiredError("gender") }),
     email: z.string().min(1, requiredError("email")).email().default(""),
     address: z.string().min(1, requiredError("address")).default(""),
     phoneNumber: z
@@ -30,10 +31,11 @@ export const PROFILESCHEMA = z.object({
         .length(11, "Must be 11 characters long")
         .default(""),
     position: z.enum(PERSONNELPOSITIONS, {
-        required_error: requiredError("position"),
-    }),
+        message: requiredError("position"),
+        invalid_type_error: requiredError("position")
+    }).default("N/A"),
     personnelId: z.string().min(1, requiredError("personnel Id")).default(""),
-    department: z.string().min(1, requiredError("department")).default(""),
+    department: z.string().min(1, requiredError("department")).nullable().default(null),
     userRole: z.enum(ROLE, { required_error: requiredError("user role") }),
     dateHired: z
         .date({ required_error: requiredError("date hired") })
@@ -52,45 +54,15 @@ export const PROFILESCHEMA = z.object({
 
 type IFormProfile = z.infer<typeof PROFILESCHEMA>;
 
-interface User {
-    id: number;
-    first_name: string;
-    last_name: string;
-    middle_name: string;
-    department: string;
-    position: any;
-    leave_credits?: number;
-    email: string;
-    email_verified_at: string;
+interface UserType extends User {
     sex?: "Male" | "Female";
-    address?: string;
     phone_number: string;
     personnel_id?: string;
     date_hired?: Date | null;
     date_of_birth: Date;
-    role?: "HOD" | "Teaching" | "Non-teaching";
 }
 
-type UserProps = { auth: { user: User } };
-
-const getUser = (user: User): IFormProfile => {
-    return {
-        firstName: user.first_name,
-        lastName: user.last_name,
-        middleName: user.middle_name??"",
-        sex: user?.sex||"Male",
-        email: user.email,
-        address: user?.address||"",
-        phoneNumber: user.phone_number,
-        position: user.position,
-        personnelId: user.personnel_id||"",
-        department: user.department,
-        dateHired: (user.date_hired && new Date(user.date_hired))||null,
-        userRole: user.role||"Teaching",
-        currentCredits: user.leave_credits||0,
-        birthDate: new Date(user.date_of_birth)
-    }
-}
+type UserProps = { auth: { user: UserType } };
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -115,7 +87,7 @@ export default function UpdateProfileInformation({
             email: user.email,
             address: user?.address||"",
             phoneNumber: user.phone_number,
-            position: user.position,
+            position: user.role == "HR"?"N/A":user.position,
             personnelId: user.personnel_id||"",
             department: user.department,
             dateHired: (user.date_hired && new Date(user.date_hired))||null,
@@ -185,7 +157,7 @@ export default function UpdateProfileInformation({
 
                     <ContactInformation form={form} />
 
-                    <PersonnelInformation form={form} user_roles={userRoles} />
+                    <PersonnelInformation form={form} user_roles={userRoles} user={user} />
 
                     {mustVerifyEmail && user.email_verified_at === null && (
                         <div>

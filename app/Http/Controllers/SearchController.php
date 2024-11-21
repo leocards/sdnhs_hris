@@ -29,12 +29,13 @@ class SearchController extends Controller
         ]);
     }
 
-    public function view_searched(User $user)
+    public function view_searched(Request $request, User $user)
     {
+        $open = $request->query('view');
         return Inertia::render('Search/SearchedEmployee', [
             'user' => $user,
             'leave' => $user->getLeaveRendered(),
-            'open' => session('open'),
+            'open' => $open??session('open'),
         ]);
     }
 

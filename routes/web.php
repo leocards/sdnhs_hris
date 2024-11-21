@@ -12,8 +12,13 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\ServiceRecordController;
 use App\Http\Controllers\PersonnelController;
 use App\Http\Controllers\StatementOfAssetsLiabilityAndNetworthController;
+use App\Mail\AccountCreation;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\URL;
 use Inertia\Inertia;
@@ -190,7 +195,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/view/{saln}', 'jsonSalnView')->name('saln.json.view');
 
             Route::post('/save/{idToUpdate?}', 'store')->name('saln.save');
-            Route::post('/approve/{saln}', 'setApproveSaln')->name('saln.approve');
+            Route::post('/approve/{saln}', 'setApproveSaln')->middleware(['role:HR'])->name('saln.approve');
         });
     });
 });

@@ -17,7 +17,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        if (in_array(Auth::user()->role, ['HR', 'HOD', 'Principal'])) {
+        if (in_array(Auth::user()->role, ['HR'])) {
             return Inertia::render("Dashboard", [
                 "totalEmployee" => [
                     "recent" => User::whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),

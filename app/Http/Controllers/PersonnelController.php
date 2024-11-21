@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotificationEvent;
 use App\Http\Requests\PersonnelRequest;
+use App\Mail\AccountCreation;
+use App\Models\Notifications;
 use App\Models\PersonnelTardiness;
 use App\Models\User;
 use Carbon\Carbon;
@@ -12,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class PersonnelController extends Controller
@@ -147,7 +151,7 @@ class PersonnelController extends Controller
 
             $credits = in_array($request->userRole, ['HOD', 'Non-teaching']) ? 45 : 30;
 
-            User::create([
+            $user = User::create([
                 'first_name' => $request->firstName,
                 'last_name' => $request->lastName,
                 'middle_name' => $request->middleName,
@@ -168,6 +172,13 @@ class PersonnelController extends Controller
             ]);
 
             DB::commit();
+
+            Mail::to($user->email)
+                    ->queue(new AccountCreation(
+                        $user->name(),
+                        $user->email,
+                        "[Login here!](".route('login').")"
+                    ));
 
             return back()->with('success', 'New personnel has been added.');
         } catch (\Throwable $th) {
@@ -229,7 +240,24 @@ class PersonnelController extends Controller
                     'present' => $value['present'],
                     'absent' => $value['absent']
                 ]);
+
+                $receiver = User::where('id', $value['personnelId'])->first();
+
+                $notificationResponse = Notifications::create([
+                    'user_id' => $receiver->id,
+                    'from_user_id' => Auth::id(),
+                    'message' => ' has uploaded attendance.',
+                    'type' => 'profile',
+                    'go_to_link' => route('general-search.view', [$receiver->id]).'?view=attendance'
+                ]);
+
+                if($notificationResponse) {
+                    $notificationResponse->load(['sender']);
+                    broadcast(new SendNotificationEvent($notificationResponse, $receiver->id));
+                }
             }
+
+
             DB::commit();
 
             return back()->with('success', 'Attendance has been recorded.');

@@ -351,7 +351,7 @@ class LeaveController extends Controller
                 broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
             }
 
-            if($userSender->role != "HR" && $user->enable_email_notification)
+            if(($userSender->role != "HR" && $user->enable_email_notification) || ($user->role == "HOD" && $userSender->role == "HR" && $user->enable_email_notification))
                 Mail::to($user->email)
                     ->queue(new LeaveApproval(["name" => $userSender->name(), "position" => $userSender->position], $user->name(), $request->query('respond'), $request->message));
 

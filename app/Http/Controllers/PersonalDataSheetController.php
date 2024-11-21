@@ -129,6 +129,23 @@ class PersonalDataSheetController extends Controller
                 'zip_code' => $request->residentialaddress['zipcode'],
             ]);
 
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS personal information.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
+
             DB::commit();
 
             return back()->with('success', 'Saved successfully.');
@@ -199,6 +216,23 @@ class PersonalDataSheetController extends Controller
             if (!empty($request->deletedChild))
                 PDSFamilyBackground::whereIn('id', $request->deletedChild)->delete();
 
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS family background.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
+
             DB::commit();
 
             return back()->with('success', 'Saved successfully.');
@@ -243,6 +277,23 @@ class PersonalDataSheetController extends Controller
 
             createEducationalBackground('graduate', $request->graduatestudies);
 
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS educational background.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
+
             DB::commit();
 
             return back()->with('success', 'Saved successfully.');
@@ -277,6 +328,23 @@ class PersonalDataSheetController extends Controller
 
             if (!empty($deleted))
                 PDSCivilServiceEligibility::whereIn('id', $deleted)->delete();
+
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS civil service eligibility.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
 
             DB::commit();
 
@@ -316,6 +384,23 @@ class PersonalDataSheetController extends Controller
             if (!empty($deleted))
                 PDSWorkExperience::whereIn('id', $deleted)->delete();
 
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS work experience.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
+
             DB::commit();
 
             return back()->with('success', 'Saved successfully.');
@@ -350,6 +435,23 @@ class PersonalDataSheetController extends Controller
 
             if (!empty($deleted))
                 PDSVoluntaryWork::whereIn('id', $deleted)->delete();
+
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS voluntary work or involvement in civic / non-government / people / voluntary organization/s.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
 
             DB::commit();
 
@@ -386,6 +488,23 @@ class PersonalDataSheetController extends Controller
 
             if (!empty($deleted))
                 PDSLearningDevelopment::whereIn('id', $deleted)->delete();
+
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS learning and development (L&D) interventions/training programs attended.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
 
             DB::commit();
 
@@ -442,6 +561,23 @@ class PersonalDataSheetController extends Controller
 
             if (!empty($deleted))
                 PDSOtherInformation::whereIn('id', $deleted)->delete();
+
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS other information.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
 
             DB::commit();
 
@@ -504,6 +640,23 @@ class PersonalDataSheetController extends Controller
                 }
             }
 
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+            $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' updated '.$pronoun.' PDS C4.',
+                'type' => 'profile',
+                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
+
             DB::commit();
 
             return back()->with('success', 'Saved successfully.');
@@ -530,11 +683,10 @@ class PersonalDataSheetController extends Controller
                 'go_to_link' => route('profile.edit')
             ]);
 
-            DB::commit();
-
             $notificationResponse->load(['sender']);
             broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
 
+            DB::commit();
             return back()->with('success', "PDS has bee approved.");
         } catch (\Throwable $th) {
             DB::rollBack();

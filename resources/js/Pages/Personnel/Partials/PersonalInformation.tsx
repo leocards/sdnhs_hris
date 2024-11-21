@@ -117,7 +117,7 @@ const PersonalInformation: React.FC<FormProps> = ({ form }) => {
                                             >
                                                 <span>
                                                     {field.value ??
-                                                        "Select sex"}
+                                                        "Select gender"}
                                                 </span>
                                                 <ChevronDown className="size-4" />
                                             </Button>

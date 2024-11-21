@@ -150,12 +150,12 @@ const ViewSalnPersonnel: React.FC<Props> = ({
                             >
                                 <div>SALN As of {format(list.asof, "PP")}</div>
                             </div>
-                            <Button
+                            {/* <Button
                                 className="!bg-green-700 h-9 ml-auto absolute top-1.5 right-1.5"
                                 onClick={() => onApprove(list)}
                             >
                                 Approve
-                            </Button>
+                            </Button> */}
                         </div>
                     ))}
                 {view && (

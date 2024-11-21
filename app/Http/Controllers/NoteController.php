@@ -39,7 +39,7 @@ class NoteController extends Controller
                     "user_id" => Auth::id(),
                     "title" => $request->title,
                     "notes" => $request->notes,
-                    "reminder" => $request->reminder?Carbon::parse('2024-10-25T16:00:00.000Z')->format('Y-m-d H:i:s'):null,
+                    "reminder" => $request->reminder?Carbon::parse($request->reminder)->format('Y-m-d H:i:s'):null,
                 ]
             );
 

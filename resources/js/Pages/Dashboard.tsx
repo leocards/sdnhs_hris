@@ -111,7 +111,7 @@ function Dashboard({
             </div>
 
             <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-                {["HR", "HOD"].includes(auth.user.role) ? (
+                {["HR"].includes(auth.user.role) ? (
                     <div className="border-t border-teal-600 bg-teal-100 dark:bg-teal-800/50 pt-4 space-y-1.5 p-2">
                         <div className="font-medium text-teal-700 dark:text-teal-400">Total personnel</div>
                         <div className="text-xl font-semibold text-teal-700 dark:text-teal-400">

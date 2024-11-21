@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\SendNotificationEvent;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Notifications;
 use App\Models\PDSEducationalBackground;
 use App\Models\User;
 use Carbon\Carbon;
@@ -90,8 +92,7 @@ class ProfileController extends Controller
             'peronnel_id' => $request->personnelId,
             'department' => $request->department,
             'role' => $request->userRole,
-            'position' => $request->position,
-            //'leave_credits' => $request->currentCredits,
+            'position' => Auth::user()->role == "HR" ? null:$request->position,
             'date_hired' => Carbon::parse($request->dateHired)->format('Y-m-d'),
         ]);
 
@@ -101,6 +102,22 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+
+        $userSender = User::find(Auth::id());
+        $hr = User::where('role', 'HR')->first();
+        $pronoun = $userSender->sex == "Male" ? "his" : "her";
+
+        $notificationResponse = Notifications::create([
+            'user_id' => $hr->id,
+            'from_user_id' => Auth::id(),
+            'message' => ' updated '.$pronoun.' profile',
+            'type' => 'profile',
+            'go_to_link' => route('general-search.view', [$userSender->id])
+        ]);
+        if($notificationResponse) {
+            $notificationResponse->load(['sender']);
+            broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+        }
 
         return back()->with(['success' => "Profile updated successfully."]);
     }

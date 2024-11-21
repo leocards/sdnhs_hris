@@ -9,7 +9,7 @@ export interface User {
     address: string;
     leave_credits?: number | null;
     email: string;
-    role: string;
+    role: "HOD" | "Teaching" | "Non-teaching" | "HR";
     email_verified_at: string;
     avatar: string;
     enable_email_notification: boolean | null;

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\SendNotificationEvent;
+use App\Mail\LeaveApproval;
 use App\Models\Notifications;
 use App\Models\PerformanceRating;
 use App\Models\Saln;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class StatementOfAssetsLiabilityAndNetworthController extends Controller
@@ -167,6 +169,22 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 }
             }
 
+            $userSender = User::find(Auth::id());
+            $hr = User::where('role', 'HR')->first();
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $hr->id,
+                'from_user_id' => Auth::id(),
+                'message' => ' uploaded a SALN as of '.Carbon::parse($request->asof)->format('M d, Y'),
+                'type' => 'profile',
+                'go_to_link' => route('personnel')
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
+            }
+
             DB::commit();
 
             if ($idToUpdate)
@@ -190,7 +208,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $saln->user_id,
                 'from_user_id' => Auth::id(),
-                'message' => ': Your SALN has been approved by the HR.',
+                'message' => ': Your SALN has been approved by the '.Auth::user()->role == "HR" ? "HR" : "Prinicpal".'.',
                 'type' => 'response',
                 'go_to_link' => route('saln')
             ]);
@@ -228,10 +246,10 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 ]);
             }
 
-            DB::commit();
-
             $notificationResponse->load(['sender']);
-            broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
+            broadcast(new SendNotificationEvent($notificationResponse, $saln->user_id));
+
+            DB::commit();
 
             return back()->with('success', 'SALN has been approved.');
         } catch (\Throwable $th) {

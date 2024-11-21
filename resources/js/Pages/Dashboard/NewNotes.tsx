@@ -102,6 +102,8 @@ const NewNotes: React.FC<Props> = ({ show, note, onClose, onSuccess }) => {
                     shouldTouch: true,
                 }
             );
+        } else if(show && !note) {
+            form.reset()
         }
     }, [show]);
 

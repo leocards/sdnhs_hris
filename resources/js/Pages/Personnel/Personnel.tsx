@@ -138,6 +138,8 @@ function Personnel({
     const tabs = {
         HR: ["personnel", "personnel.tardiness"],
         HOD: ["personnel"],
+        "Non-teaching": [""],
+        "Teaching": [""],
     }[auth.user.role];
 
     useEffect(() => {
@@ -356,15 +358,15 @@ const PersonnelRow: React.FC<
                 </div>
                 <div className="shrink-0 [@media(max-width:642px)]:!hidden">
                     <div className="line-clamp-1 break-words">
-                        {user.role != "HOD" ? user.department : "-"}
+                        {(user.role != "HOD" && user.role != "HR") ? user.department : "-"}
                     </div>
                 </div>
                 <div className="[@media(max-width:642px)]:!hidden">
-                    <div className="line-clamp-1">{user.position}</div>
+                    <div className="line-clamp-1">{user.role != "HR" ? user.position : user.role}</div>
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        {user.role != "HOD" ? user.leave_credits : "-"}
+                        {(user.role != "HOD" && user.role != "HR") ? user.leave_credits : "-"}
                     </div>
                 </div>
                 <div className="">
@@ -383,7 +385,7 @@ const PersonnelRow: React.FC<
                                     <Eye className="size-5" strokeWidth={1.8} />
                                     <div>View details</div>
                                 </MenubarItem>
-                                <MenubarItem
+                                {auth === "HR" && (<MenubarItem
                                     className="px-4 gap-5"
                                     onClick={() =>
                                         onClick && onClick("saln", user)
@@ -394,7 +396,7 @@ const PersonnelRow: React.FC<
                                         strokeWidth={1.8}
                                     />
                                     <div>SALN</div>
-                                </MenubarItem>
+                                </MenubarItem>)}
                                 <MenubarItem
                                     className="px-4 gap-5"
                                     onClick={() =>

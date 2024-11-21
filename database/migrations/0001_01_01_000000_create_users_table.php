@@ -29,7 +29,7 @@ return new class extends Migration
             $table->string('personnel_id');
             $table->string('department')->nullable();
             $table->string('role');
-            $table->string('position');
+            $table->string('position')->nullable();
             $table->date('date_hired');
             $table->integer('leave_rendered')->nullable();
             $table->integer('leave_credits')->nullable();

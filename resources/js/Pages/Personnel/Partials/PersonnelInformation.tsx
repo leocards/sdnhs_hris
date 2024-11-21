@@ -27,15 +27,18 @@ import {
     SelectOptionTrigger,
 } from "@/Components/SelectOption";
 import { ScrollArea } from "@/Components/ui/scroll-area";
+import { User } from "@/types";
 
-const PersonnelInformation: React.FC<
-    FormProps & { user_roles: Array<string> }
-> = ({ form, user_roles }) => {
+type Props = FormProps & {
+    user_roles: Array<string>;
+    user?: User
+}
+
+const PersonnelInformation: React.FC<Props> = ({ form, user_roles, user }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     const [changeUserRole, setChangeUserRole] = useState(false);
 
     const userRole = form.watch("userRole");
-    const department = form.watch("department");
 
     useEffect(() => {
         if (changeUserRole) {
@@ -180,10 +183,11 @@ const PersonnelInformation: React.FC<
                                         <Button
                                             variant={"outline"}
                                             className={cn(
-                                                "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                "w-full pl-3 text-left justify-between disabled:!opacity-100 disabled:!cursor-not-allowed disabled:pointer-events-auto disabled:!text-foreground/40 font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}
+                                            disabled={!!(user)}
                                         >
                                             <span>
                                                 {!field.value
@@ -232,12 +236,12 @@ const PersonnelInformation: React.FC<
                                                     "text-muted-foreground"
                                             )}
                                             disabled={
-                                                userRole === "HOD" || !userRole
+                                                userRole === "HOD" || user?.role === "HR" || !userRole
                                             }
                                         >
                                             <span>
                                                 {!field.value
-                                                    ? "Select department"
+                                                    ? userRole === "HOD" || user?.role === "HR" ? "N/A":"Select department"
                                                     : field.value}
                                             </span>
                                             <ChevronDown className="size-4" />
@@ -250,8 +254,7 @@ const PersonnelInformation: React.FC<
                                             <SelectOptionItem value="Junior High School" />
                                             <SelectOptionItem value="Senior High School" />
                                         </>
-                                    ) : userRole == "Non-teaching" ||
-                                      userRole == "HR" ? (
+                                    ) : userRole == "Non-teaching" ? (
                                         <SelectOptionItem value="Accounting" />
                                     ) : (
                                         <SelectOptionItem value="N/A" />
@@ -284,10 +287,10 @@ const PersonnelInformation: React.FC<
                                                 !field.value &&
                                                     "text-muted-foreground"
                                             )}
-                                            disabled={!userRole}
+                                            disabled={!userRole || !!(user)}
                                         >
                                             <span>
-                                                {field.value ??
+                                                {field.value ? field.value : (user && user.role === "HR") ? "N/A" :
                                                     "Select position"}
                                             </span>
                                             <ChevronDown className="size-4" />
@@ -296,6 +299,9 @@ const PersonnelInformation: React.FC<
                                 </SelectOptionTrigger>
                                 <SelectOptionContent>
                                     <ScrollArea className="h-[14rem]">
+                                        {(user && user.role === "HR") && (
+                                            <SelectOptionItem value="HR" />
+                                        )}
                                         {[...PERSONNELPOSITIONS]
                                             .splice(
                                                 userRole == "Teaching"

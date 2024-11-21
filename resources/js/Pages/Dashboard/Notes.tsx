@@ -168,7 +168,10 @@ const Notes = () => {
 
             <NewNotes
                 show={showNewNote}
-                onClose={setShowNewNote}
+                onClose={() => {
+                    setShowNewNote(false)
+                    setSelectedNote(null)
+                }}
                 note={selectedNote}
                 onSuccess={(data, isUpdate) => {
                     if (!isUpdate) {

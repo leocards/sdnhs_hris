@@ -16,9 +16,10 @@ export const PERSONNELPOSITIONS = [
     "Principal I",
     "Principal II",
     "Principal III",
-    "Principal VI",
+    "Principal IV",
     "Principal V",
-    "HR"
+    "HR",
+    "N/A"
 ] as const;
 
 export const ROLE = ["HR", "HOD", "Teaching", "Non-teaching"] as const;

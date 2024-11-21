@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 class ProfileUpdateRequest extends FormRequest
@@ -15,6 +16,9 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $isHr = "profile.update" && Auth::user()->role == "HR";
+        $isPrincipal = "profile.update" && Auth::user()->role == "HOD";
+
         return [
             'firstName' => ['required'],
             'lastName' => ['required'],
@@ -25,11 +29,10 @@ class ProfileUpdateRequest extends FormRequest
             'email' => ['required', 'email', 'string', 'lowercase', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
             'phoneNumber' => ['required', 'string', 'size:11'],
             'personnelId' => ['required'],
-            'department' => ['required'],
+            'department' => [Rule::requiredIf(!$isHr&&!$isPrincipal)],
             'userRole' => ['required'],
             'dateHired' => ['required', 'date'],
-            'position' => ['required'],
-            //'password' => ['required', 'min:8'],
+            'position' => [Rule::requiredIf(!$isHr)],
         ];
     }
 }

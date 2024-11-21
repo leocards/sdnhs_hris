@@ -241,20 +241,20 @@ class PersonnelController extends Controller
                     'absent' => $value['absent']
                 ]);
 
-                $receiver = User::where('id', $value['personnelId'])->first();
+                // $receiver = User::where('id', $value['personnelId'])->first();
 
-                $notificationResponse = Notifications::create([
-                    'user_id' => $receiver->id,
-                    'from_user_id' => Auth::id(),
-                    'message' => ' has uploaded attendance.',
-                    'type' => 'profile',
-                    'go_to_link' => route('general-search.view', [$receiver->id]).'?view=attendance'
-                ]);
+                // $notificationResponse = Notifications::create([
+                //     'user_id' => $receiver->id,
+                //     'from_user_id' => Auth::id(),
+                //     'message' => ' has uploaded attendance.',
+                //     'type' => 'profile',
+                //     'go_to_link' => route('general-search.view', [$receiver->id]).'?view=attendance'
+                // ]);
 
-                if($notificationResponse) {
-                    $notificationResponse->load(['sender']);
-                    broadcast(new SendNotificationEvent($notificationResponse, $receiver->id));
-                }
+                // if($notificationResponse) {
+                //     $notificationResponse->load(['sender']);
+                //     broadcast(new SendNotificationEvent($notificationResponse, $receiver->id));
+                // }
             }
 
 

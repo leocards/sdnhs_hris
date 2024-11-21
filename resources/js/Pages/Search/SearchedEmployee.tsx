@@ -24,10 +24,14 @@ export default function SearchedEmployee({
     open,
     leave,
 }: PageProps & { user: any; open: any; leave: number }) {
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // Get the value of a specific query parameter
+    const paramValue = urlParams.get('view');
+
     const [activeTab, setActiveTab] = useState<string>(
-        open && open === "certificate" ? "certificates" : "details"
+        open && open === "certificate" ? "certificates" : paramValue ? paramValue : "details"
     );
-    const { width } = useWindowSize();
     const [pdsData, setPdsData] = useState([]);
 
     useEffect(() => {

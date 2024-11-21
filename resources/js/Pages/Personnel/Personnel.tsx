@@ -82,6 +82,7 @@ function Personnel({
     const [viewSaln, setViewSaln] = useState(false)
     const [showCertificates, setShowCertificates] = useState(false)
 
+    
 
     const navigateTo = (nav: string) => {
         router.get(route(nav));

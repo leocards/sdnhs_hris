@@ -208,7 +208,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $saln->user_id,
                 'from_user_id' => Auth::id(),
-                'message' => ': Your SALN has been approved by the '.Auth::user()->role == "HR" ? "HR" : "Prinicpal".'.',
+                'message' => ': Your SALN has been approved by the HR.',
                 'type' => 'response',
                 'go_to_link' => route('saln')
             ]);

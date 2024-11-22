@@ -131,6 +131,7 @@ class LeaveController extends Controller
         DB::beginTransaction();
         try {
             $sy = SchoolYear::latest()->first();
+            $sex = Auth::user()->role;
 
             if(!$sy) {
                 throw new Exception('There is no school year yet. You can\'t send an application.');
@@ -139,6 +140,15 @@ class LeaveController extends Controller
                 if($endOfClass->lessThanOrEqualTo(Carbon::now())) {
                     throw new Exception('School year has ended, you can\'t send an application');
                 }
+            }
+
+            if($sex == "Male") {
+                if($request->leavetype['type'] == "Maternity Leave" && $request->leavetype['type'] == "Special Leave Benefits for Women")
+                    throw new Exception("You are not yet allowed to use this type of leave");
+            }
+
+            if($sex == "Female" && $request->leavetype['type'] == "Paternity Leave") {
+                throw new Exception("You are not yet allowed to use this type of leave");
             }
 
             if($request->leavetype['type'] !== "Maternity Leave")

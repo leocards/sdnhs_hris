@@ -918,7 +918,7 @@ const Address: React.FC<ADDRESSTYPE> = ({ form, name }) => {
                                     >
                                         <span>
                                             {field.value === "" || !field.value
-                                                ? "Select blood type"
+                                                ? "Select province"
                                                 : field.value}
                                         </span>
                                         <ChevronDown className="size-4" />

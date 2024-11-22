@@ -320,11 +320,11 @@ class LeaveController extends Controller
                                 $this->processCreditOnLeave($user, $leave);
                             }
                         }
-                    } else {
-
                     }
                 } else {
-
+                    if(Auth::user()->role == "HR") {
+                        $this->processCreditOnLeave($user, $leave);
+                    }
                 }
             } else {
                 if (Auth::user()->role === "HR") {

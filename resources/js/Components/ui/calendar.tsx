@@ -86,7 +86,6 @@ function Calendar({
                     };
 
                     if(options.length != 12) {
-                        console.log(options)
                         options.sort((a: any, b: any) => b.props.value - a.props.value)
                     }
 

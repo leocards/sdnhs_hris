@@ -135,6 +135,14 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                     name="dateOfFiling.from"
                     placeholder="Pick a date"
                     formatDate="LLLL dd, y"
+                    disabledCalendar={(date) => {
+                        let toDay = date;
+                        let now = new Date();
+                        toDay.setHours(0, 0, 0, 0);
+                        now.setHours(0, 0, 0, 0);
+
+                        return toDay.getTime() < now.getTime()
+                    }}
                 />
                 <CalendarInput
                     label="DATE OF FILING TO"
@@ -143,6 +151,14 @@ const LeaveFormI: React.FC<FormProps> = ({ form }) => {
                     placeholder="Pick a date"
                     formatDate="LLLL dd, y"
                     isRequired={false}
+                    disabledCalendar={(date) => {
+                        let toDay = date;
+                        let now = new Date();
+                        toDay.setHours(0, 0, 0, 0);
+                        now.setHours(0, 0, 0, 0);
+
+                        return toDay.getTime() < now.getTime()
+                    }}
                 />
 
                 <FormField

@@ -16,7 +16,7 @@ import { Button } from "@/Components/ui/button";
 import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
-import { format, isWeekend } from "date-fns";
+import { format, isBefore, isWeekend, toDate } from "date-fns";
 import { CalendarIcon, ChevronDown } from "lucide-react";
 import { useEffect } from "react";
 import {
@@ -524,13 +524,17 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                             placeholder="Pick a date"
                             formatDate="LLLL dd, y"
                             disabledCalendar={(date) => {
+                                let toDay = date
+                                let now = new Date()
+                                toDay.setHours(0,0,0,0)
+                                now.setHours(0,0,0,0)
                                 if (
                                     form.getValues(
                                         "leavetype.type"
                                     ) !== "Maternity Leave"
-                                )
-                                    return isWeekend(date);
-                                else return false;
+                                ){
+                                    return isWeekend(date) || toDay.getTime() < now.getTime()
+                                }else return false
                             }}
                         />
 
@@ -541,13 +545,17 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                             placeholder="Pick a date"
                             formatDate="LLLL dd, y"
                             disabledCalendar={(date) => {
+                                let toDay = date
+                                let now = new Date()
+                                toDay.setHours(0,0,0,0)
+                                now.setHours(0,0,0,0)
                                 if (
                                     form.getValues(
                                         "leavetype.type"
                                     ) !== "Maternity Leave"
-                                )
-                                    return isWeekend(date);
-                                else return false;
+                                ){
+                                    return isWeekend(date) || toDay.getTime() < now.getTime()
+                                }else return false
                             }}
                             isRequired={false}
                         />

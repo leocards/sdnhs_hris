@@ -38,7 +38,7 @@ const FamilyBackground: React.FC<Props> = ({ fb }) => {
                                 <div className={cn('ml-0.5', checkIfDownLoad('-mt-1'))}>SPOUSE'S SURNAME</div>
                             </div>
                             <div className="border-black border-b-2 border-l-2 w-full h-[22px] flex justify-center items-center">
-                                <div className={cn('font-bold', checkIfDownLoad('-mt-3.5'))}>{fb?.spouse.surname}</div>
+                                <div className={cn('font-bold uppercase', checkIfDownLoad('-mt-3.5'))}>{fb?.spouse.surname}</div>
                             </div>
                         </div>
                         <div className="flex">
@@ -48,7 +48,7 @@ const FamilyBackground: React.FC<Props> = ({ fb }) => {
                             </div>
                             <div className="border-black border-b-2 border-l-2 w-full h-[22px] flex">
                                 <div className="grow flex justify-center items-center">
-                                    <div className={cn('font-bold', checkIfDownLoad('-mt-3.5'))}>{fb?.spouse.firstname}</div>
+                                    <div className={cn('font-bold uppercase', checkIfDownLoad('-mt-3.5'))}>{fb?.spouse.firstname}</div>
                                 </div>
                                 <div className="bg-[#eaeaea] text-[6pt] relative w-[8rem] border-l-2 border-black">
                                     <span className={cn("absolute top-0 left-px", checkIfDownLoad('-mt-1.5'))}>

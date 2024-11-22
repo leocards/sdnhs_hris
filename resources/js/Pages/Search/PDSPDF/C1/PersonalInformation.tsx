@@ -75,7 +75,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                     <div className="border-black border-b-2 border-l-2 w-full h-[24px]">
                         <div
                             className={cn(
-                                "font-bold pl-px",
+                                "font-bold pl-1 uppercase",
                                 checkIfDownLoad("-mt-2")
                             )}
                         >
@@ -94,7 +94,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                         <div className="grow">
                             <div
                                 className={cn(
-                                    "font-bold pl-px",
+                                    "font-bold pl-1 uppercase",
                                     checkIfDownLoad("-mt-2")
                                 )}
                             >
@@ -104,7 +104,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                         <div className="bg-[#eaeaea] text-[6pt] relative w-[13.3rem] border-l-2 border-black">
                             <span
                                 className={cn(
-                                    "absolute top-0 left-px",
+                                    "absolute top-0 left-1 uppercase",
                                     checkIfDownLoad("-mt-1")
                                 )}
                             >
@@ -123,7 +123,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                     <div className="border-black border-l-2 w-full h-[24px]">
                         <div
                             className={cn(
-                                "font-bold pl-px",
+                                "font-bold pl-1 uppercase",
                                 checkIfDownLoad("-mt-2")
                             )}
                         >
@@ -183,7 +183,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                         </div>
                         <div className="border-black border-l-2 w-full h-[24px] text-center">
                             <div
-                                className={cn("font-bold", checkIfDownLoad("-mt-2"))}
+                                className={cn("font-bold uppercase", checkIfDownLoad("-mt-2"))}
                             >
                                 {props.place_of_bith}
                             </div>
@@ -751,7 +751,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                             <div className="border-t border-x-0 border-black h-7 mt-0.5 flex items-center pl-1">
                                 <div
                                     className={cn(
-                                        "text-[8pt]",
+                                        "text-[8pt] uppercase",
                                         checkIfDownLoad("-mt-2")
                                     )}
                                 >
@@ -791,7 +791,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -812,7 +812,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -835,7 +835,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -856,7 +856,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -879,7 +879,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -900,7 +900,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -962,7 +962,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -983,7 +983,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -1006,7 +1006,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -1027,7 +1027,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -1050,7 +1050,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -1071,7 +1071,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt]",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >

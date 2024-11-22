@@ -311,18 +311,20 @@ class LeaveController extends Controller
                 if($user->role != "HOD") {
                     // if the person to validate is the HOD, deduct the credits
                     if(Auth::user()->role == "HOD") {
-                        if($leave->leave_type != "Mandatory/Forced Leave" && $leave->leave_type != "Special Privilege Leave") {
-                            $this->processCreditOnLeave($user, $leave);
-                        } else {
-                            // validate if the application is not from Teaching role
-                            if($user->role != "Teaching") {
-                                /* needs some validation to check the credits for Mandatory/Forced Leave and Special Privilege Leave to be applied */
+                        if($leave->leave_type != "Maternity Leave") {
+                            if($leave->leave_type != "Mandatory/Forced Leave" && $leave->leave_type != "Special Privilege Leave") {
                                 $this->processCreditOnLeave($user, $leave);
+                            } else {
+                                // validate if the application is not from Teaching role
+                                if($user->role != "Teaching") {
+                                    /* needs some validation to check the credits for Mandatory/Forced Leave and Special Privilege Leave to be applied */
+                                    $this->processCreditOnLeave($user, $leave);
+                                }
                             }
                         }
                     }
                 } else {
-                    if(Auth::user()->role == "HR") {
+                    if(Auth::user()->role == "HR" && $leave->leave_type != "Maternity Leave") {
                         $this->processCreditOnLeave($user, $leave);
                     }
                 }

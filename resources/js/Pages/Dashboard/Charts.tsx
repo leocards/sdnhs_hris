@@ -73,11 +73,13 @@ const Charts: React.FC<Props> = ({ chartData, appliedLeavesOfPersonnel, loading,
                     items={syList.map((sy) => ({
                         filter: sy?.sy,
                         onClick: (fil) => {
-                            onSelectSy(fil)
-                            setFilter(fil)
+                            if(fil != filter){
+                                onSelectSy(fil)
+                                setFilter(fil)
+                            }
                         },
                     }))}
-                    onClear={() => {}}
+                    withClear={false}
                     labelClass="sm:block hidden"
                     size="sm"
                     position="BOTTOMLEFT"

@@ -791,7 +791,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt] uppercase uppercase",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >
@@ -812,7 +812,7 @@ const PersonalInformation: React.FC<PersonalInfoProps> = ({ ...props }) => {
                                     <div className="h-4 flex items-center justify-center">
                                         <div
                                             className={cn(
-                                                "font-bold text-[7pt] uppercase uppercase",
+                                                "font-bold text-[7pt] uppercase",
                                                 checkIfDownLoad("-mt-2")
                                             )}
                                         >

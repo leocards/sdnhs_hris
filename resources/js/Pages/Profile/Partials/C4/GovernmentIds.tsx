@@ -23,7 +23,7 @@ export default function GovernmentIds({ form }: { form: any }) {
                         <FormItem>
                             <FormLabel>Government Issued ID: </FormLabel>
                             <FormControl>
-                                <Input {...field} className="form-input" />
+                                <Input {...field} className="form-input uppercase" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -37,7 +37,7 @@ export default function GovernmentIds({ form }: { form: any }) {
                         <FormItem>
                             <FormLabel>ID/License/Passport No.: </FormLabel>
                             <FormControl>
-                                <NumberInput max={7} {...field} className="form-input" />
+                                <NumberInput max={7} {...field} className="form-input uppercase" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -51,7 +51,7 @@ export default function GovernmentIds({ form }: { form: any }) {
                         <FormItem>
                             <FormLabel>Date/Place of Issuance: </FormLabel>
                             <FormControl>
-                                <Input {...field} className="form-input" />
+                                <Input {...field} className="form-input uppercase" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

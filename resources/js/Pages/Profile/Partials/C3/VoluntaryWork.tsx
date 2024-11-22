@@ -70,7 +70,7 @@ export default function VoluntaryWork({ form }: { form: any }) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -83,12 +83,14 @@ export default function VoluntaryWork({ form }: { form: any }) {
                                 label="From"
                                 name={`vw.${index}.inclusivedates.from`}
                                 isRequired={false}
+                                isUppercase
                             />
                             <CalendarInput
                                 form={form}
                                 label="To"
                                 name={`vw.${index}.inclusivedates.to`}
                                 isRequired={false}
+                                isUppercase
                             />
                             <FormField
                                 control={form.control}
@@ -99,7 +101,7 @@ export default function VoluntaryWork({ form }: { form: any }) {
                                         <FormControl>
                                             <NumberInput
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -120,7 +122,7 @@ export default function VoluntaryWork({ form }: { form: any }) {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />

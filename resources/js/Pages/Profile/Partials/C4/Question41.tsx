@@ -42,7 +42,7 @@ export default function Question41({ form }: { form: any }) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -59,7 +59,7 @@ export default function Question41({ form }: { form: any }) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -76,7 +76,7 @@ export default function Question41({ form }: { form: any }) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />

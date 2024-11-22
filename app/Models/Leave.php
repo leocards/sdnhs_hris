@@ -12,6 +12,7 @@ class Leave extends Model
 
     protected $fillable = [
         'user_id',
+        'sy',
         'date_of_filing_from',
         'date_of_filing_to',
         'salary',

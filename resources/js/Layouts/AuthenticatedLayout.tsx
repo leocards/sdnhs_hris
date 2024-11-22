@@ -252,7 +252,7 @@ export default function Authenticated({
     }, [newNotification]);
 
     return (
-        <div className="relative isolate flex min-h-svh w-full bg-background max-lg:flex-col lg:bg-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
+        <div className="relative isolate flex min-h-svh w-full bg-background amber-50 max-lg:flex-col lg:b g-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
             {width > 1023 && (
                 <Navigation
                     user={userAuth}
@@ -417,12 +417,12 @@ const Navigation: React.FC<{
     return (
         <div
             className={cn(
-                "lg:fixed inset-y-0 left-0 w-72 overflow-hidden max-lg:rounded-lg max-lg:ring-1 max-lg:ring-ring/5"
+                "lg:fixed inset-y-0 left-0 w-72 h-screen lg:p-2 overflow-hidden max-lg:rounded-lg max-lg:ring-1 max-lg:ring-ring/5"
             )}
         >
             <nav
                 className={cn(
-                    "h-screen w-72 max-lg:bg-background max-lg:dark:bg-zinc-900 grid grid-rows-[auto,auto,auto,1fr,auto] lg:grid-rows-[auto,auto,1fr,auto]",
+                    "h-full w-full rounded-lg max-lg: bg-amber-400 /60 [#d5c324] dark:bg-zinc-900 ring-1 ring-amber-500/90 dark:lg:ring-white/10 max-lg:dark:bg-zinc-900 grid grid-rows-[auto,auto,auto,1fr,auto] lg:grid-rows-[auto,auto,1fr,auto]",
                     "max-lg:h-[calc(100vh-1rem)]"
                 )}
             >
@@ -440,14 +440,14 @@ const Navigation: React.FC<{
                     <img
                         src={sdnhslogo}
                         alt="sdnhs logo"
-                        className="size-12"
+                        className="size-12 drop-shadow-md"
                     />
                     <div className="p-4 font-bold text-xl flex items-center gap-3">
                         SDNHS HRIS
                     </div>
                 </div>
 
-                <div className="p-4 pt-0 border-b">
+                <div className="p-4 pt-0 border-b border-amber-500/60 dark:border-border">
                     <Tabs
                         id="general-nav"
                         active={activeTab}

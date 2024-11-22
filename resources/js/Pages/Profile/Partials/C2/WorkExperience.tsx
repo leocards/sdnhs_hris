@@ -81,7 +81,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -100,6 +100,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                 }
                                 name={`we.${index}.inclusivedates.from`}
                                 isRequired={false}
+                                isUppercase
                             />
                             <CalendarInput
                                 form={form}
@@ -115,6 +116,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                 name={`we.${index}.inclusivedates.to`}
                                 isRequired={false}
                                 asInput
+                                isUppercase
                             />
 
                         </div>
@@ -136,7 +138,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -158,7 +160,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -178,7 +180,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                             <NumberInput
                                                 {...field}
                                                 isAmount={true}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -196,7 +198,7 @@ export default function WorkExperience({ form }: { form: any }) {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />

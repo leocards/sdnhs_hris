@@ -47,35 +47,38 @@ const ApplyLeave = ({ auth, salary, applied }: PageProps & Props) => {
     };
 
     useEffect(() => {
-        if (watchInclusiveDatesFrom && watchInclusiveDatesTo) {
+        if(watchInclusiveDatesFrom || watchInclusiveDatesTo) {
             const leavetype = form.getValues("leavetype.type");
-            const from = watchInclusiveDatesFrom;
-            const to = watchInclusiveDatesTo;
-            if(leavetype === "Maternity Leave" && from){
-                // get the 105 days of leave for maternity
-                const dateTo = new Date(from).setDate(new Date(from).getDate() + 104)
-                const dates = eachDayOfInterval({ start: from, end: dateTo })
+            if(leavetype === "Maternity Leave" && !watchInclusiveDatesTo) {
+                const dateTo = new Date(watchInclusiveDatesFrom).setDate(new Date(watchInclusiveDatesFrom).getDate() + 104)
+                const days = eachDayOfInterval({ start: watchInclusiveDatesFrom, end: dateTo })
 
-                form.setValue( "numDaysApplied", dates.length.toString(), {
+                form.setValue( "numDaysApplied", days.length.toString(), {
                     shouldValidate: true
                 });
                 form.setValue(
                     "inclusiveDates.dates",
-                    dates
+                    days
                 );
                 form.setValue("inclusiveDates.to", new Date(dateTo))
-            } else if (to) {
-                const dates = countWeekdaysInRange(from, to);
-                form.setValue("numDaysApplied", dates.count.toString(), {
+            } else if(leavetype === "Maternity Leave" && watchInclusiveDatesTo) {
+                const dates = form.getValues("inclusiveDates.dates");
+                const lastDate = dates[dates.length - 1]
+                if(lastDate.getTime() != new Date(watchInclusiveDatesTo).getTime())
+                    form.setValue("inclusiveDates.to", new Date(lastDate))
+            } else if(watchInclusiveDatesTo  && watchInclusiveDatesTo) {
+                const weeks = countWeekdaysInRange(new Date(watchInclusiveDatesFrom), new Date(watchInclusiveDatesTo));
+                form.setValue("numDaysApplied", weeks.count.toString(), {
                     shouldValidate: true
                 });
-                form.setValue("inclusiveDates.dates", dates.dates);
+                form.setValue("inclusiveDates.dates", weeks.dates);
+            } else {
+                form.setValue("numDaysApplied", "1", {
+                    shouldValidate: true
+                });
             }
-        } else if(watchInclusiveDatesFrom)
-            form.setValue("numDaysApplied", "1", {
-                shouldValidate: true
-            });
-    }, [watchInclusiveDatesFrom, watchInclusiveDatesTo]);
+        }
+    }, [watchInclusiveDatesFrom, watchInclusiveDatesTo])
 
     // Set value for other fields
     useEffect(() => {
@@ -113,6 +116,10 @@ const ApplyLeave = ({ auth, salary, applied }: PageProps & Props) => {
             });
         }
     }, [isFormConfirm]);
+
+    useEffect(() => {
+        console.log(form.formState.errors)
+    }, [form.formState.errors])
 
     return (
         <Authenticated

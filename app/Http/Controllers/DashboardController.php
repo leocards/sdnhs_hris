@@ -90,9 +90,10 @@ class DashboardController extends Controller
     public function personnelList(Request $request)
     {
         $search = $request->search;
+        $sy = SchoolYear::latest()->first();
 
-        $list = User::with(['leaveApplications' => function ($query) {
-                $query->select('leave_type')->whereYear('inclusive_date_from', Carbon::now()->format('Y'))->distinct('leave_type');
+        $list = User::with(['leaveApplications' => function ($query) use ($sy) {
+                $query->select(['user_id', 'leave_type'])->where('sy', $sy->sy)->distinct('leave_type');
             }])
             ->when($search, function ($query) use ($search) {
                 $query->where('first_name', 'LIKE', "%{$search}%")
@@ -100,7 +101,7 @@ class DashboardController extends Controller
                     ->orWhere('last_name', 'LIKE', "%{$search}%");
             })
             ->orderBy('last_name', 'ASC')
-            ->select(['id', 'first_name', 'middle_name', 'last_name', 'avatar'])
+            ->select(['id', 'first_name', 'middle_name', 'last_name', 'avatar', 'sex', 'role'])
             ->paginate(50);
 
         return response()->json($list);

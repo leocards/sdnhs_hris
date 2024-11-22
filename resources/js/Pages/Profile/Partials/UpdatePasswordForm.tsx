@@ -6,6 +6,7 @@ import { useForm } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 import { Input } from '@/Components/ui/input';
 import { Button } from '@/Components/ui/button';
+import Processing from '@/Components/Processing';
 
 export default function UpdatePasswordForm({ className = '' }: { className?: string }) {
     const passwordInput = useRef<HTMLInputElement>(null);
@@ -39,6 +40,8 @@ export default function UpdatePasswordForm({ className = '' }: { className?: str
 
     return (
         <section className={className}>
+            <Processing is_processing={processing} />
+
             <header>
                 <h2 className="text-lg font-medium text-secondary-foreground">Update Password</h2>
 

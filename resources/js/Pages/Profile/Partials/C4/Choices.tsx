@@ -29,7 +29,7 @@ export const ChoiceDetails: React.FC<{
                         <Input
                             {...field}
                             disabled={disabled}
-                            className="form-input max-w-80 min-w-32 w-full"
+                            className="form-input max-w-80 min-w-32 w-full uppercase"
                         />
                     </FormControl>
                     <FormMessage />

@@ -36,7 +36,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                                 Name of School (write in full)
                             </FormLabel>
                             <FormControl>
-                                <Input {...field} className="form-input" />
+                                <Input {...field} className="form-input uppercase" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -51,7 +51,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                                 Basic Education/Degree/Course (write in full)
                             </FormLabel>
                             <FormControl>
-                                <Input {...field} className="form-input" />
+                                <Input {...field} className="form-input uppercase" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -67,7 +67,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                             <FormControl>
                                 <Input
                                     {...field}
-                                    className="form-input"
+                                    className="form-input uppercase"
                                 />
                             </FormControl>
                             <FormMessage />
@@ -83,7 +83,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                             <FormControl>
                                 <Input
                                     {...field}
-                                    className="form-input"
+                                    className="form-input uppercase"
                                 />
                             </FormControl>
                             <FormMessage />
@@ -99,7 +99,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                         <FormItem>
                             <FormLabel>Highest level/Units earned</FormLabel>
                             <FormControl>
-                                <Input {...field} className="form-input" />
+                                <Input {...field} className="form-input uppercase" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -117,7 +117,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                                 <NumberInput
                                     {...field}
                                     max={4}
-                                    className="form-input"
+                                    className="form-input uppercase"
                                 />
                             </FormControl>
                             <FormMessage />
@@ -133,7 +133,7 @@ const EducationForm: React.FC<Props> = ({ form, educationLevel, index }) => {
                                 Scholarship/Academic honors received
                             </FormLabel>
                             <FormControl>
-                                <Input {...field} className="form-input" />
+                                <Input {...field} className="form-input uppercase" />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

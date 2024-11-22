@@ -1,3 +1,4 @@
+export type ROLES = "HOD" | "Teaching" | "Non-teaching" | "HR";
 export interface User {
     id: number;
     first_name: string;
@@ -9,7 +10,7 @@ export interface User {
     address: string;
     leave_credits?: number | null;
     email: string;
-    role: "HOD" | "Teaching" | "Non-teaching" | "HR";
+    role: ROLES;
     email_verified_at: string;
     avatar: string;
     enable_email_notification: boolean | null;

@@ -173,8 +173,8 @@ export const LEAVEFORMSCHEMA = z.object({
         }, {
             required_error: requiredError("inclusive dates")
         })
-        .refine(data => data.from > new Date(), {
-            message: "The 'from' date cannot be today or a past date",
+        .refine(data => data.from < new Date(), {
+            message: "The 'from' date cannot be a past date",
             path: ["from"]
         })
         .refine(data => !data.to || data.from.getTime() !== data.to.getTime(), {
@@ -204,7 +204,6 @@ export const LEAVEFORMSCHEMA = z.object({
         .optional()
 }).refine(({ leavetype, medicalForMaternity }) => {
     if(leavetype.type === "Maternity Leave") {
-        console.log(medicalForMaternity)
         if(!medicalForMaternity)
             return false
     }
@@ -269,5 +268,5 @@ export const initialValues = {
     leavetype: { others: '' },
     detailsOfLeave: defaultDetailsOfLeave,
     inclusiveDates: {from: undefined, to:undefined, dates: []},
-    numDaysApplied: '',
+    numDaysApplied: '0',
 }

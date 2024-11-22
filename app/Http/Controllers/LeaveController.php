@@ -12,6 +12,7 @@ use App\Models\Leave;
 use App\Models\Medical;
 use App\Models\Notifications;
 use App\Models\PDSWorkExperience;
+use App\Models\SchoolYear;
 use App\Models\ServiceRecord;
 use App\Models\User;
 use Carbon\Carbon;
@@ -129,6 +130,16 @@ class LeaveController extends Controller
 
         DB::beginTransaction();
         try {
+            $sy = SchoolYear::latest()->first();
+
+            if(!$sy) {
+                throw new Exception('There is no school year yet. You can\'t send an application.');
+            } else {
+                $endOfClass = Carbon::parse($sy->end);
+                if($endOfClass->lessThanOrEqualTo(Carbon::now())) {
+                    throw new Exception('School year has ended, you can\'t send an application');
+                }
+            }
 
             if($request->leavetype['type'] !== "Maternity Leave")
                 if (Auth::user()->leave_credits < (int) $request->numDaysApplied) {
@@ -146,6 +157,7 @@ class LeaveController extends Controller
 
             $leave = Leave::create([
                 'user_id' => Auth::id(),
+                'sy' => $sy->sy,
                 'date_of_filing_from' => Carbon::parse($request->dateOfFiling['from'])->format('Y-m-d'),
                 'date_of_filing_to' => array_key_exists('to', $request->dateOfFiling) ? Carbon::parse($request->dateOfFiling['to'])->format('Y-m-d') : null,
                 'salary' => $request->salary,
@@ -269,7 +281,6 @@ class LeaveController extends Controller
 
         DB::beginTransaction();
         try {
-
             $notificationResponse = null;
 
             if ($request->respond === "approved") {

@@ -98,7 +98,7 @@ const Informations: React.FC<{
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                             </FormItem>
                         )}

@@ -1,13 +1,10 @@
 import { PageProps } from "@/types";
-import DeleteUserForm from "./Partials/DeleteUserForm";
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm";
-import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 import { useTheme } from "@/hooks/themeProvider";
-import { Moon, Sun, Monitor, Volume2 } from "lucide-react";
+import { Moon, Sun, Monitor } from "lucide-react";
 import { Button } from "@/Components/ui/button";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { Slider } from "@/Components/ui/slider";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import messageNotification from "../../assets/sound/messageNotification.mp3";
 import newNotification from "../../assets/sound/newNotification.mp3";
@@ -24,9 +21,9 @@ export default function Settings({
     );
 
     const [enableEmailNotifications, setEnableEmailNotifications] = useState({
-        notification: { enabled: !!auth.user.enable_email_notification, loading: false },
-        message: { enabled: !!auth.user.enable_email_message_notification, loading: false },
-        note: { enabled: !!auth.user.enable_email_note_reminder, loading: false }
+        notification: { enabled: !!(auth.user.enable_email_notification), loading: false },
+        message: { enabled: !!(auth.user.enable_email_message_notification), loading: false },
+        note: { enabled: !!(auth.user.enable_email_note_reminder), loading: false }
     })
 
 

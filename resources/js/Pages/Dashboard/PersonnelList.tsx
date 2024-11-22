@@ -17,6 +17,7 @@ import {
 } from "@/Components/ui/accordion";
 import { Badge } from "@/Components/ui/badge";
 import { LEAVETYPES } from "../Leave/types";
+import { ROLES } from "@/types";
 
 const PersonnelList = () => {
     const { data, setList, setLoading, loading } =
@@ -145,13 +146,34 @@ const PersonnelList = () => {
 type AccordionCardProps = {
     value: string;
     active: boolean;
-    user: { id: number; first_name: string; last_name: string; middle_name: string; avatar: string, leave_applications: any[] };
+    user: { id: number; first_name: string; last_name: string; middle_name: string; avatar: string, leave_applications: any[], sex: "Male" | "Female", role: ROLES };
 };
 
 const AccordionCard: React.FC<AccordionCardProps> = ({ active, user, value }) => {
 
-    const availableLeaveApplications = LEAVETYPES.filter((lt) => {
+    let availableLeaveApplications = LEAVETYPES.filter((lt) => {
         return !user.leave_applications.some((la) => la.leave_type === lt) && lt !== "Others"
+    })
+
+    availableLeaveApplications = availableLeaveApplications.filter((lt) => {
+        if(user.role == "Teaching") {
+            if(lt != "Vacation Leave" && lt != "Special Privilege Leave" ) {
+                return lt
+            }
+        } else return lt
+    })
+
+    availableLeaveApplications = availableLeaveApplications.filter((lt) => {
+        if(user.sex === "Male") {
+            // if it is male remove list which are not for male !["Maternity Leave", "Special Leave Benefits for Women"].includes(lt)
+            if(lt != "Maternity Leave" && lt != "Special Leave Benefits for Women") {
+                return lt
+            }
+        } else {
+            if(lt != "Paternity Leave") {
+                return lt
+            }
+        }
     })
 
     if(!availableLeaveApplications.includes('Sick Leave'))

@@ -68,7 +68,7 @@ export default function CivilServiceEligibility({
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -86,7 +86,7 @@ export default function CivilServiceEligibility({
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -104,7 +104,7 @@ export default function CivilServiceEligibility({
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -117,6 +117,7 @@ export default function CivilServiceEligibility({
                                     label="Date of Examination/Conferment"
                                     name={`cs.${index}.dateofexaminationconferment`}
                                     isRequired={false}
+                                    isUppercase
                                 />
                             </div>
                         </div>
@@ -133,7 +134,7 @@ export default function CivilServiceEligibility({
                                             <FormControl>
                                                 <Input
                                                     {...field}
-                                                    className="form-input"
+                                                    className="form-input uppercase"
                                                 />
                                             </FormControl>
                                             <FormMessage />
@@ -145,6 +146,7 @@ export default function CivilServiceEligibility({
                                     label="Date of validity"
                                     name={`cs.${index}.license.dateofvalidity`}
                                     isRequired={false}
+                                    isUppercase
                                 />
                             </div>
                         </div>

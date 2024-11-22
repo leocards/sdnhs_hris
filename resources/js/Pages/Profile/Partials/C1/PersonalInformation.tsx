@@ -31,6 +31,49 @@ type PersonalInformationProps = {
     form: any;
 };
 
+type PROVINCE = {
+    code: string
+    name: string
+    regionCode: string
+    islandGroupCode: string
+}
+
+type CITYMUNICIPALITY = {
+    code: string
+    name: string
+    oldName: string
+    isCapital: boolean
+    isCity: boolean
+    isMunicipality: boolean
+    districtCode: string
+    provinceCode: string
+    regionCode: string
+    islandGroupCode: string
+}
+
+type BARANGAY = {
+    code: string
+    name: string
+    oldName: string
+    subMunicipalityCode: string
+    cityCode: string
+    municipalityCode: string
+    districtCode: string
+    provinceCode: string
+    regionCode: string
+    islandGroupCode: string
+}
+
+async function getApiAddress<T>(route: string, setData: (data: Array<T>) => void) {
+    try {
+        const response = await window.axios.get(route);
+
+        setData(response.data);
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
+
 const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
     const watchCitizenship = form.watch("citizenship.citizen");
 
@@ -96,7 +139,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     Surname
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -111,7 +154,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     First name
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -124,7 +167,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             <FormItem>
                                 <FormLabel className="">Middle name</FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -139,7 +182,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     Extension name (JR., SR)
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -162,7 +205,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     Place of birth
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -183,7 +226,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                             <Button
                                                 variant={"outline"}
                                                 className={cn(
-                                                    "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                    "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring uppercase",
                                                     !field.value &&
                                                         "text-muted-foreground"
                                                 )}
@@ -220,7 +263,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                         <RadioGroup
                                             onValueChange={field.onChange}
                                             defaultValue={field.value}
-                                            className="flex flex-col space-y-1"
+                                            className="flex flex-col space-y-1 uppercase"
                                         >
                                             <FormItem className="flex items-center space-x-3 space-y-0">
                                                 <FormControl>
@@ -282,7 +325,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -302,7 +345,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -319,7 +362,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                 </FormItem>
@@ -383,7 +426,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             <FormItem>
                                 <FormLabel className="">GSIS ID no.</FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -397,7 +440,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     Pag-ibig ID no.
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -411,7 +454,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     Philhealth no.
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -426,7 +469,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             <FormItem>
                                 <FormLabel className="">SSS no.</FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -438,7 +481,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             <FormItem>
                                 <FormLabel className="">TIN no.</FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -452,7 +495,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                     Agency employee no.
                                 </FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                             </FormItem>
                         )}
@@ -596,132 +639,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                     <FormLabel className="uppercase">
                         Residential Address
                     </FormLabel>
-                    <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3 mt-2">
-                        <FormField
-                            control={form.control}
-                            name={"residentialaddress.houselotblockno"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">
-                                        House/Block/Lot No.
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"residentialaddress.street"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">Street</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"residentialaddress.subdivision"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">
-                                        Subdivision/Village
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"residentialaddress.barangay"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="required">
-                                        Barangay
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"residentialaddress.citymunicipality"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="required">
-                                        City/Municipality
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"residentialaddress.province"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="required">
-                                        Province
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"residentialaddress.zipcode"}
-                            render={({ field }) => (
-                                <FormItem className="[@media(min-width:1156px)]:col-span-3 [@media(min-width:1156px)]:mx-auto">
-                                    <FormLabel className="required">
-                                        ZIP code
-                                    </FormLabel>
-                                    <FormControl>
-                                        <NumberInput
-                                            {...field}
-                                            className="form-input [@media(min-width:1156px)]:w-52"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                    <Address form={form} name="residentialaddress" />
                 </div>
 
                 <div className="">
@@ -746,139 +664,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             Same as residential
                         </label>
                     </div>
-                    <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3 mt-2">
-                        <FormField
-                            control={form.control}
-                            name={"permanentaddress.houselotblockno"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">
-                                        House/Block/Lot No.
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={watchIsSameResidential}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"permanentaddress.street"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">Street</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={watchIsSameResidential}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"permanentaddress.subdivision"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="">
-                                        Subdivision/Village
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={watchIsSameResidential}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"permanentaddress.barangay"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="required">
-                                        Barangay
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={watchIsSameResidential}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"permanentaddress.citymunicipality"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="required">
-                                        City/Municipality
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={watchIsSameResidential}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"permanentaddress.province"}
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="required">
-                                        Province
-                                    </FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            {...field}
-                                            disabled={watchIsSameResidential}
-                                            className="form-input"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name={"permanentaddress.zipcode"}
-                            render={({ field }) => (
-                                <FormItem className="[@media(min-width:1156px)]:col-span-3 [@media(min-width:1156px)]:mx-auto">
-                                    <FormLabel className="required">
-                                        ZIP code
-                                    </FormLabel>
-                                    <FormControl>
-                                        <NumberInput
-                                            {...field}
-                                            disabled={watchIsSameResidential}
-                                            className="form-input [@media(min-width:1156px)]:w-52"
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
+                    <Address form={form} name="permanentaddress" />
                 </div>
 
                 <div className="grid sm:grid-cols-3 gap-3">
@@ -889,7 +675,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             <FormItem>
                                 <FormLabel>Telephone no.</FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -906,7 +692,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                                 <FormControl>
                                     <NumberInput
                                         {...field}
-                                        className="form-input"
+                                        className="form-input uppercase"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -920,7 +706,7 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
                             <FormItem>
                                 <FormLabel>Email address (if any)</FormLabel>
                                 <FormControl>
-                                    <Input {...field} className="form-input" />
+                                    <Input {...field} className="form-input uppercase" />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -931,5 +717,250 @@ const PersonalInformation: React.FC<PersonalInformationProps> = ({ form }) => {
         </div>
     );
 };
+
+type ADDRESSTYPE = {
+    form: any
+    name: string
+}
+
+const Address: React.FC<ADDRESSTYPE> = ({ form, name }) => {
+    const [provinces, setProvinces] = useState<PROVINCE[]>([])
+    const [municipalityCity, setMunicipalityCity] = useState<CITYMUNICIPALITY[]>([])
+    const [barangays, setBarangay] = useState<BARANGAY[]>([])
+
+    const watchProvince = form.watch(name+".province")
+    const watchCityMunicipality = form.watch(name+".citymunicipality")
+
+    const onProvinceSelect = (provinceCode?: string) => {
+        getApiAddress<CITYMUNICIPALITY>("https://psgc.gitlab.io/api/provinces/"+provinceCode+"/cities-municipalities.json", setMunicipalityCity)
+        form.setValue(name+".citymunicipality", "")
+        form.setValue(name+".barangay", "")
+    }
+
+    const onCityMunicipalitySelect = (CMCode: string) => {
+        getApiAddress<BARANGAY>("https://psgc.gitlab.io/api/cities-municipalities/"+CMCode+"/barangays.json", setBarangay)
+        form.setValue(name+".barangay", "")
+    }
+
+    useEffect(() => {
+        getApiAddress<PROVINCE>("https://psgc.gitlab.io/api/provinces.json", setProvinces)
+    }, [])
+
+    return (
+        <div className="grid [@media(min-width:1156px)]:grid-cols-3 sm:grid-cols-2 gap-3 mt-2">
+            <FormField
+                control={form.control}
+                name={name+".houselotblockno"}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="">House/Block/Lot No.</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                className="form-input uppercase"
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name={name+".street"}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="">Street</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                className="form-input uppercase"
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name={name+".subdivision"}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="">Subdivision/Village</FormLabel>
+                        <FormControl>
+                            <Input
+                                {...field}
+                                className="form-input uppercase"
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name={name+".barangay"}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="required">Barangay</FormLabel>
+                        <SelectOption
+                            onChange={field.onChange}
+                            initialValue={field.value}
+                        >
+                            <SelectOptionTrigger>
+                                <FormControl>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full pl-3 text-left justify-between disabled:!opacity-100 disabled:pointer-events-auto disabled:hover:text-foreground/60 disabled:cursor-not-allowed font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                            !field.value &&
+                                                "text-muted-foreground",
+                                            "uppercase"
+                                        )}
+                                        disabled={!(watchCityMunicipality)}
+                                    >
+                                        <span>
+                                            {field.value === "" || !field.value
+                                                ? "Select barangay"
+                                                : field.value}
+                                        </span>
+                                        <ChevronDown className="size-4" />
+                                    </Button>
+                                </FormControl>
+                            </SelectOptionTrigger>
+                            <SelectOptionContent>
+                                <ScrollArea className="h-96">
+                                    {barangays.map((barangay, index) => (
+                                        <SelectOptionItem
+                                            value={barangay.name}
+                                            key={index}
+                                        />
+                                    ))}
+                                </ScrollArea>
+                            </SelectOptionContent>
+                        </SelectOption>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name={name+".citymunicipality"}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="required">
+                            City/Municipality
+                        </FormLabel>
+                        <SelectOption
+                            onChange={field.onChange}
+                            initialValue={field.value}
+                        >
+                            <SelectOptionTrigger>
+                                <FormControl>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                            !field.value &&
+                                                "text-muted-foreground",
+                                            "uppercase"
+                                        )}
+                                        disabled={!(watchProvince)}
+                                    >
+                                        <span>
+                                            {field.value === "" || !field.value
+                                                ? "Select Municipality/City"
+                                                : field.value}
+                                        </span>
+                                        <ChevronDown className="size-4" />
+                                    </Button>
+                                </FormControl>
+                            </SelectOptionTrigger>
+                            <SelectOptionContent>
+                                <ScrollArea className="h-96">
+                                    {municipalityCity.map((mc, index) => (
+                                        <SelectOptionItem
+                                            value={mc.name}
+                                            key={index}
+                                            onSelect={() => {
+                                                onCityMunicipalitySelect(
+                                                    mc.code,
+                                                );
+                                            }}
+                                        />
+                                    ))}
+                                </ScrollArea>
+                            </SelectOptionContent>
+                        </SelectOption>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name={name+".province"}
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel className="required">Province</FormLabel>
+                        <SelectOption
+                            onChange={field.onChange}
+                            initialValue={field.value}
+                        >
+                            <SelectOptionTrigger>
+                                <FormControl>
+                                    <Button
+                                        variant={"outline"}
+                                        className={cn(
+                                            "w-full pl-3 text-left justify-between font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                            !field.value &&
+                                                "text-muted-foreground",
+                                            "uppercase"
+                                        )}
+                                    >
+                                        <span>
+                                            {field.value === "" || !field.value
+                                                ? "Select blood type"
+                                                : field.value}
+                                        </span>
+                                        <ChevronDown className="size-4" />
+                                    </Button>
+                                </FormControl>
+                            </SelectOptionTrigger>
+                            <SelectOptionContent>
+                                <ScrollArea className="h-96">
+                                    {provinces.map((prov, index) => (
+                                        <SelectOptionItem
+                                            value={prov.name}
+                                            key={index}
+                                            onSelect={() => {
+                                                onProvinceSelect(prov.code);
+                                            }}
+                                        />
+                                    ))}
+                                </ScrollArea>
+                            </SelectOptionContent>
+                        </SelectOption>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+            <FormField
+                control={form.control}
+                name={name+".zipcode"}
+                render={({ field }) => (
+                    <FormItem className="[@media(min-width:1156px)]:col-span-3 [@media(min-width:1156px)]:mx-auto">
+                        <FormLabel className="required">ZIP code</FormLabel>
+                        <FormControl>
+                            <NumberInput
+                                {...field}
+                                className="form-input uppercase [@media(min-width:1156px)]:w-52"
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+        </div>
+    );
+}
 
 export default PersonalInformation;

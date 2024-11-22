@@ -69,8 +69,8 @@ export const Tabs = ({
                         <motion.button
                             key={i}
                             className={cn(
-                                "font-medium relative rounded-md flex items-center gap-3 p-2.5 text-secondary-foreground/60 cursor-pointer select-none transition-colors group",
-                                (hoveredTab === i || selectedTabIndex === i ? 'text-yellow-700 dark:text-yellow-500' : !withActive && 'text-secondary-foreground'),
+                                "font-medium relative rounded-md flex items-center gap-3 p-2.5 text-secondary-foreground/60 dark:text-white/50 yellow-300/50 cursor-pointer select-none transition-colors group",
+                                (hoveredTab === i || selectedTabIndex === i ? 'text-black dark:text-white/90 [#FCF3AB]' : !withActive && 'text-black/60'),
                                 "ignore",
                                 axis === "horizontal" && "justify-center",
                                 (expand?"w-full":""),
@@ -83,14 +83,14 @@ export const Tabs = ({
                                 navigate && navigate(item.id)
                             }}
                         >
-                            {item.icon}
+                            <span className="z-20">{item.icon}</span>
                             <span className="z-20 line-clamp-1">{item.label}</span>
                             {i === selectedTabIndex && withActive ? (
                                 <motion.div
                                     transition={transition}
                                     layoutId="underline"
                                     className={cn(
-                                        "absolute z-30 rounded-full bg-yellow-600 dark:bg-yellow-500/50 white/50",
+                                        "absolute z-30 rounded-full bg-black dark:bg-white/50 white/50",
                                         axis === "horizontal" ? "h-[3px] w-full -bottom-[7px]" : "h-[75%] w-1 -left-[15px]"
                                     )}
                                 />
@@ -98,7 +98,7 @@ export const Tabs = ({
                             <AnimatePresence>
                                 {i === hoveredTab ? (
                                     <motion.div
-                                        className={cn("absolute h-full bottom-0 left-0 right-0 top-0 z-10 rounded-md bg-yellow-700/10 dark:bg-white/5 dark:!shadow-highlight", tabWidth)}
+                                        className={cn("absolute h-full bottom-0 left-0 right-0 top-0 z-10 rounded-md bg-black/10 dark:bg-white/10 dark:!shadow-highlight", tabWidth)}
                                         initial={{
                                             opacity: 0
                                         }}

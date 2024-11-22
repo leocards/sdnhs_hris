@@ -54,7 +54,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -72,7 +72,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -90,7 +90,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -108,7 +108,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -129,7 +129,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -147,7 +147,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -165,7 +165,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -183,7 +183,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -211,7 +211,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                         <FormControl>
                                             <Input
                                                 {...field}
-                                                className="form-input"
+                                                className="form-input uppercase"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -222,6 +222,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                 form={form}
                                 name={`children.${index}.dateOfBirth`}
                                 isRequired={false}
+                                isUppercase
                             />
                             <Button
                                 type="button"
@@ -270,7 +271,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -288,7 +289,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -306,7 +307,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -324,7 +325,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -351,7 +352,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -369,7 +370,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -387,7 +388,7 @@ export default function FamilyBackground({ form }: FamilyBackgroundProps) {
                                     <FormControl>
                                         <Input
                                             {...field}
-                                            className="form-input"
+                                            className="form-input uppercase"
                                         />
                                     </FormControl>
                                     <FormMessage />
@@ -415,6 +416,7 @@ export const CalendarInput: React.FC<{
     formatDate?: string;
     disabledCalendar?: Matcher | Matcher[];
     isString?: boolean
+    isUppercase?: boolean
 }> = ({
     form,
     name,
@@ -428,7 +430,8 @@ export const CalendarInput: React.FC<{
     align,
     formatDate,
     disabledCalendar,
-    isString
+    isString,
+    isUppercase = false
 }) => {
     const [isCalendarOpen, setIsCalendarOpen] = useState<boolean>(false);
     // Function to format the input as mm/dd/yyyy
@@ -491,7 +494,7 @@ export const CalendarInput: React.FC<{
             } else if (isValidDate(formattedValue)) {
                 form.clearErrors(name)
             } else if(isString) {
-                
+
             } else {
                 form.setError(name, {
                     type: "custom",
@@ -517,7 +520,7 @@ export const CalendarInput: React.FC<{
                         {asInput && (
                             <FormControl>
                                 <Input
-                                    className="form-input pr-10"
+                                    className={cn("form-input pr-10", isUppercase && "uppercase")}
                                     {...field}
                                     value={
                                         isValidDate(field.value)
@@ -561,12 +564,13 @@ export const CalendarInput: React.FC<{
                                                 "w-full pl-3 text-left font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
                                                 !field.value &&
                                                     "text-muted-foreground",
-                                                className
+                                                className,
+                                                isUppercase && "!uppercase"
                                             )}
                                             disabled={disabled}
                                         >
                                             {field.value ? (
-                                                <span>
+                                                <span className={cn(isUppercase && "!uppercase")}>
                                                     {isValidDate(field.value)
                                                         ? format(
                                                               field.value,

@@ -69,6 +69,10 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
             form.resetField('detailsOfLeave.other', {
                 monetization: false, terminal: false
             })
+            form.setValue("inclusiveDates.from", undefined)
+            form.setValue("inclusiveDates.to", undefined)
+            form.setValue("inclusiveDates.dates", [])
+            form.setValue("numDaysApplied", '0')
         }
     }, [watchLeaveType])
 

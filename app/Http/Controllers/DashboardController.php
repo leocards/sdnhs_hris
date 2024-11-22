@@ -15,6 +15,14 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
+    protected $latestSy;
+
+    function __construct()
+    {
+        $this->latestSy = SchoolYear::latest()->first();
+
+    }
+
     public function index()
     {
         if (in_array(Auth::user()->role, ['HR'])) {
@@ -46,15 +54,29 @@ class DashboardController extends Controller
                     "approved" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
                         ->where('hr_status', 'Approved')
                         ->where('principal_status', 'Approved')
+                        ->where('sy', $this->latestSy->sy)
                         ->groupBy('leave_type')
                         ->get(),
                     "rejected" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
                         ->where('hr_status', 'Rejected')
                         ->where('principal_status', 'Rejected')
+                        ->where('sy', $this->latestSy->sy)
                         ->groupBy('leave_type')
                         ->get()
                 ]),
-                "sy" => SchoolYear::latest()->first()
+                "appliedLeavesOfPersonnel" => Leave::select('leave_type')
+                    ->whereIn('id', function ($query) {
+                        $query->selectRaw('MAX(id)')
+                            ->from('leaves')
+                            ->where('sy', $this->latestSy->sy)
+                            ->whereIn('principal_status', ['Approved', 'Rejected'])
+                            ->whereIn('hr_status', ['Approved', 'Rejected'])
+                            ->groupBy('leave_type');
+                    })
+                    ->latest('created_at')
+                    ->get(),
+                "sy" => SchoolYear::latest()->first(),
+                "syList" => SchoolYear::all()
             ]);
         }
 
@@ -85,6 +107,40 @@ class DashboardController extends Controller
             "leaveApplications" => collect([]),
             "sy" => SchoolYear::latest()->first()
         ]);
+    }
+
+    public function leaveApplicationsJson($sy) {
+        try {
+            return response()->json(collect([
+                "leaveApplications" => collect([
+                    "approved" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
+                        ->where('hr_status', 'Approved')
+                        ->where('principal_status', 'Approved')
+                        ->where('sy', $sy)
+                        ->groupBy('leave_type')
+                        ->get(),
+                    "rejected" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
+                        ->where('hr_status', 'Rejected')
+                        ->where('principal_status', 'Rejected')
+                        ->where('sy', $sy)
+                        ->groupBy('leave_type')
+                        ->get()
+                ]),
+                "appliedLeavesOfPersonnel" => Leave::select('leave_type')
+                    ->whereIn('id', function ($query) use ($sy) {
+                        $query->selectRaw('MAX(id)')
+                            ->from('leaves')
+                            ->where('sy', $sy)
+                            ->whereIn('principal_status', ['Approved', 'Rejected'])
+                            ->whereIn('hr_status', ['Approved', 'Rejected'])
+                            ->groupBy('leave_type');
+                    })
+                    ->latest('created_at')
+                    ->get()
+            ]));
+        } catch (\Throwable $th) {
+            return response()->json($th->getMessage());
+        }
     }
 
     public function personnelList(Request $request)

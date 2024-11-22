@@ -69,7 +69,7 @@ export const Tabs = ({
                         <motion.button
                             key={i}
                             className={cn(
-                                "font-medium relative rounded-md flex items-center gap-3 p-2.5 text-secondary-foreground/60 dark:text-white/50 yellow-300/50 cursor-pointer select-none transition-colors group",
+                                "font-medium relative rounded-md flex items-center gap-3 p-2.5 text-secondary-foreground/60 dark:text-white/50 cursor-pointer select-none transition-colors group",
                                 (hoveredTab === i || selectedTabIndex === i ? 'text-black dark:text-white/90 [#FCF3AB]' : !withActive && 'text-black/60'),
                                 "ignore",
                                 axis === "horizontal" && "justify-center",
@@ -83,7 +83,7 @@ export const Tabs = ({
                                 navigate && navigate(item.id)
                             }}
                         >
-                            <span className="z-20">{item.icon}</span>
+                            {item.icon}
                             <span className="z-20 line-clamp-1">{item.label}</span>
                             {i === selectedTabIndex && withActive ? (
                                 <motion.div

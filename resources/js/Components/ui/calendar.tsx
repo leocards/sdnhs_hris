@@ -19,13 +19,13 @@ function Calendar({
     classNames,
     showOutsideDays = true,
     fromYear = 1960,
-    toYear = 2040,
+    toYear = new Date().getFullYear() + 3,
     ...props
 }: CalendarProps) {
     return (
         <DayPicker
-            fromYear={1950}
-            toYear={2040}
+            fromYear={fromYear}
+            toYear={toYear}
             captionLayout="dropdown-buttons"
             showOutsideDays={showOutsideDays}
             className={cn("p-3", className)}
@@ -84,6 +84,12 @@ function Calendar({
                         } as React.ChangeEvent<HTMLSelectElement>;
                         onChange?.(changeEvent);
                     };
+
+                    if(options.length != 12) {
+                        console.log(options)
+                        options.sort((a: any, b: any) => b.props.value - a.props.value)
+                    }
+
                     return (
                         <Menubar className="p-0 h-8">
                             <MenubarMenu>

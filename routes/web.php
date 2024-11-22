@@ -58,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard/pannelList', [DashboardController::class, 'personnelList'])->name('dashboard.personnelList');
+    Route::get('/dashboard/applied-leaves/{sy}', [DashboardController::class, 'leaveApplicationsJson'])->name('dashboard.leave.applications');
     Route::post('/dashboard/new-school-year', [DashboardController::class, 'newSchoolYear'])
         ->middleware(['role:HR'])->name('dashboard.new.school_year');
 

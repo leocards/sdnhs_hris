@@ -288,7 +288,7 @@ export default function Authenticated({
             </header>
 
             <main className="flex flex-1 flex-col lg:pb-2 lg:min-w-0 lg:pl-72 lg:pr-2 lg:pt-2">
-                <div className="grow lg:rounded-lg bg-background lg:shadow-sm lg:ring-1 lg:ring-zinc-950/5 dark:bg-zinc-900 dark:lg:ring-white/10">
+                <div className="grow lg:rounded-lg bg-background lg:shadow-lg lg:ring-1 lg:ring-zinc-950/5 dark:bg-zinc-900 dark:lg:ring-white/10">
                     <div className="h-11 mb-2 mt-2 flex items-center max-lg:hidden px-4">
                         <HeaderNavigation user={userAuth} iconSizes="size-8" />
                     </div>

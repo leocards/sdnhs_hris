@@ -22,6 +22,7 @@ export type SYTYPE = {
     start: string
     end: string
     resumption: string
+    sy: string
 }
 
 interface DashboardProps extends PageProps {
@@ -50,7 +51,11 @@ interface DashboardProps extends PageProps {
         }>
     }
     pageData: PaginateData;
-    sy: SYTYPE
+    sy: SYTYPE;
+    appliedLeavesOfPersonnel: Array<{
+        leave_type: string
+    }>
+    syList: Array<{ sy: string }>
 }
 
 export default function Index(props: DashboardProps) {
@@ -73,9 +78,24 @@ function Dashboard({
     reject,
     leave,
     leaveApplications,
-    sy
+    sy,
+    appliedLeavesOfPersonnel,
+    syList,
 }: DashboardProps) {
     const [newSY, setNewSY] = useState(false)
+    const [applications, setApplications] = useState(leaveApplications)
+    const [appliedLeaves, setAppliedLeaves] = useState(appliedLeavesOfPersonnel)
+    const [loading, setLoading] = useState(false)
+
+    const getLeaveApplications = (sy: string) => {
+        setLoading(true)
+        window.axios.get(route('dashboard.leave.applications', [sy]))
+            .then((response) => {
+                const { leaveApplications, appliedLeavesOfPersonnel } = response.data
+                setApplications(leaveApplications)
+                setAppliedLeaves(appliedLeavesOfPersonnel)
+            }).finally(() => setLoading(false))
+    }
 
     return (
         <AuthenticatedLayout
@@ -206,7 +226,12 @@ function Dashboard({
             {auth.user.role == "HR" && (
                 <>
                     <LeaveApplicationsChart
-                        leaveApplications={leaveApplications}
+                        syList={syList}
+                        onSelectSy={getLeaveApplications}
+                        leaveApplications={applications}
+                        appliedLeavesOfPersonnel={appliedLeaves}
+                        loading={loading}
+                        sy={sy?.sy}
                     />
                     <PersonnelList />
                 </>

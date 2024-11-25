@@ -7,8 +7,8 @@ import C2pdf from "./C2";
 import { PDSPDFIsDownloadProvider, useIsDownloadChecker } from "./context";
 import C3pdf from "./C3";
 import C4pdf from "./C4";
-import { getFamilyData } from "@/Pages/Profile/Partials/C1/FamilyBackgroundForm";
-import { getEducationalData } from "@/Pages/Profile/Partials/C1/EducationalBackgroundForm";
+import { getFamilyData } from "@/Pages/PDS/Partials/C1/FamilyBackgroundForm";
+import { getEducationalData } from "@/Pages/PDS/Partials/C1/EducationalBackgroundForm";
 
 type Props = {
     data: any;

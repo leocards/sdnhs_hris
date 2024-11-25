@@ -39,4 +39,9 @@ class PDSPersonalInformation extends Model
         return $this->hasMany(Address::class, 'pds_pi_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
 }

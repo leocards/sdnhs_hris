@@ -109,6 +109,9 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
                     home="Personnel"
                     homeLink="personnel"
                     links={[{ link: "personnel.new", linkname: "New personnel" }]}
+                    _query={{
+                        personnel: "teaching"
+                    }}
                 />
             </div>
             <div className="mt-10">

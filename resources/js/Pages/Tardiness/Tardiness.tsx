@@ -1,9 +1,10 @@
+import Filter from "@/Components/buttons/FilterButton";
 import DataList from "@/Components/DataList";
 import PaginationButton from "@/Components/PaginationButton";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { PageProps, PaginateData } from "@/types";
+import { PageProps, PaginateData, SYTYPE } from "@/types";
 import { Head } from "@inertiajs/react";
 import { format } from "date-fns";
 
@@ -24,7 +25,7 @@ export default function Index(props: TardinessProps) {
 function Tardiness({
     auth
 }: TardinessProps) {
-    const { data, setList, clearList, setLoading, loading } = usePageList();
+    const { data, setList, setLoading, loading } = usePageList();
     const getPageData = (page?: number) => {
         setLoading(true);
         window.axios
@@ -55,7 +56,7 @@ function Tardiness({
                 <div className="grid grid-cols-[repeat(3,1fr)] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Days present</div>
                     <div className="">Days absent</div>
-                    <div className="">Date modified</div>
+                    <div className="">School year</div>
                 </div>
 
                 <DataList empty={data.length == 0} loading={loading}>
@@ -82,6 +83,7 @@ type Personnel = {
     present: string;
     absent: string;
     created_at: string;
+    sy: string;
 };
 
 type PersonnelRowProps = {
@@ -102,7 +104,7 @@ const PersonnelRow: React.FC<PersonnelRowProps> = ({
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        {format(new Date(personnel.created_at), "PP")}
+                        {personnel.sy}
                     </div>
                 </div>
             </div>

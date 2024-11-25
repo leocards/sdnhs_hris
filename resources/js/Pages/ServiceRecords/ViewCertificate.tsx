@@ -1,9 +1,14 @@
 import Modal from "@/Components/Modal";
 import { AspectRatio } from "@/Components/ui/aspect-ratio";
 import { Button } from "@/Components/ui/button";
+import { useToast } from "@/Components/ui/use-toast";
 import { cn } from "@/lib/utils";
+import { router } from "@inertiajs/react";
 import { format } from "date-fns";
+import { X } from "lucide-react";
 import { useEffect, useState } from "react";
+import RespondeServiceSertificate from "../Personnel/RespondeServiceSertificate";
+import Processing from "@/Components/Processing";
 
 type Certificate = {
     id: number;
@@ -15,24 +20,32 @@ type Certificate = {
     credits: number;
     venue: string;
     organizer: string;
-    approved: "approved" | "rejected" | "pending"
+    approved: "approved" | "rejected" | "pending";
+    remaining_credits: number;
 } | null;
 
 export default function ViewCertificate(props: {
+    user?: string;
+    isHR?: boolean;
     certificate: Certificate;
     show: boolean;
     onClose: CallableFunction;
 }) {
-    const { certificate, show, onClose } = props;
+    const { certificate, show, isHR, user, onClose } = props;
     const [serviceRecord, setServiceRecord] =
         useState<Certificate>(certificate);
     const type = serviceRecord?.file_path.split(".")[1];
     const color_status = {
-        "approved": "text-green-600",
-        "rejected": "text-red-600",
-        "pending": "text-amber-600",
-        null: ""
-    }[serviceRecord?.approved||"null"]
+        approved: "text-green-600",
+        rejected: "text-red-600",
+        pending: "text-amber-600",
+        null: "",
+    }[serviceRecord?.approved || "null"];
+    const [processing, setProcessing] = useState(false)
+    const [confirm, setConfirm] = useState(false)
+    const [action, setAction] = useState<"approve"|"reject"|null>(null)
+
+    const { toast } = useToast()
 
     const formatDateRange = (dateRange: {
         from: string;
@@ -62,6 +75,31 @@ export default function ViewCertificate(props: {
         }
     };
 
+    const onRespond = () => {
+        router.post(route('service-records.respond.certificate', [certificate?.id]), {
+            respond: {approve: "approved", reject: "rejected", pending: "pending"}[action??"pending"]
+        }, {
+            onSuccess: (page) => {
+                toast({
+                    variant: "success",
+                    description: page.props.success?.toString(),
+                });
+                onClose(false)
+            },
+            onError: (error) => {
+                if("0" in error) {
+                    toast({
+                        variant: "destructive",
+                        description: error[0],
+                    });
+                }
+            },
+            onFinish: () => {
+                setProcessing(false)
+            }
+        })
+    }
+
     useEffect(() => {
         if (show) {
             setServiceRecord(certificate);
@@ -71,7 +109,47 @@ export default function ViewCertificate(props: {
     return (
         <Modal show={show} onClose={() => onClose(false)}>
             <div className="p-6">
+                <div className="mb-4 flex items-center">
+                    {(isHR && serviceRecord?.approved !== "approved") && (
+                        <>
+                            <Button
+                                className="h-8 shadow-sm bg-red-600"
+                                onClick={() => {
+                                    setAction("reject")
+                                    setConfirm(true)
+                                }}
+                            >
+                                <span>Reject</span>
+                            </Button>
+                            <Button
+                                className="h-8 shadow-sm bg-green-600 ml-3"
+                                onClick={() => {
+                                    setAction("approve")
+                                    setConfirm(true)
+                                }}
+                            >
+                                <span>Approve</span>
+                            </Button>
+                        </>
+                    )}
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="ml-auto rounded-full"
+                        onClick={() => onClose(false)}
+                    >
+                        <X className="size-5" />
+                    </Button>
+                </div>
                 <div className="mb-5 space-y-1">
+                    {isHR && (
+                        <div>
+                            <span className="font-semibold">
+                                Personnel Name:
+                            </span>{" "}
+                            {user}
+                        </div>
+                    )}
                     <div>
                         <span className="font-semibold">Certificate Name:</span>{" "}
                         {serviceRecord?.file_name}
@@ -98,9 +176,19 @@ export default function ViewCertificate(props: {
                         {serviceRecord?.credits}
                     </div>
                     <div>
-                        <span className="font-semibold">Status:</span>{" "}
-                        <span className={cn("capitalize", color_status)}>{serviceRecord?.approved}</span>
+                        <span className="font-semibold">
+                            Remaining credits:
+                        </span>{" "}
+                        {serviceRecord?.remaining_credits}
                     </div>
+                    {isHR && (
+                        <div>
+                            <span className="font-semibold">Status:</span>{" "}
+                            <span className={cn("capitalize", color_status)}>
+                                {serviceRecord?.approved}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {type &&
@@ -122,17 +210,19 @@ export default function ViewCertificate(props: {
                             className="w-full h-[30rem]"
                         />
                     ))}
-
-                <div className="mt-6 flex">
-                    <Button
-                        variant="secondary"
-                        className="px-8 ml-auto"
-                        onClick={() => onClose(false)}
-                    >
-                        Close
-                    </Button>
-                </div>
             </div>
+
+            <Processing
+                    is_processing={processing}
+                />
+
+            <RespondeServiceSertificate action={action} show={confirm} onClose={() => {
+                setConfirm(false)
+                setTimeout(() => setAction(null), 300)
+            }} onConfirm={() => {
+                setConfirm(false)
+                onRespond()
+            }} />
         </Modal>
     );
 }

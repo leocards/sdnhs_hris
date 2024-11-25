@@ -49,5 +49,8 @@ class StatementOfAssetsLiabilityAndNetwork extends Model
         return $this->hasOne(SalnRelative::class, 'saln_id', 'id');
     }
 
-    
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

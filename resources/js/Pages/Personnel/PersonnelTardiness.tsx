@@ -10,7 +10,7 @@ import {
     MenubarTrigger,
 } from "@/Components/ui/menubar";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
-import { PageProps, PaginateData } from "@/types";
+import { PageProps, PaginateData, SYTYPE } from "@/types";
 import { router } from "@inertiajs/react";
 import {
     ChevronRight,
@@ -29,7 +29,8 @@ import { useMessage } from "@/hooks/MessageProvider";
 interface PersonnelTardinessProps extends PageProps {
     attendance: PaginateData;
     personnels: Array<any>;
-    years: Array<number>;
+    sy: SYTYPE
+    syList: Array<SYTYPE>
 }
 
 export type Personnel = {
@@ -46,21 +47,14 @@ export type Personnel = {
         middle_name: string;
         avatar: string;
     };
+    sy: string;
 };
 
-export default function Index({
-    auth,
-    attendance,
-    personnels,
-    years,
-}: PersonnelTardinessProps) {
+export default function Index(props: PersonnelTardinessProps) {
     return (
-        <PageListProvider initialValue={attendance}>
+        <PageListProvider initialValue={props.attendance}>
             <PersonnelTardiness
-                auth={auth}
-                attendance={attendance}
-                personnels={personnels}
-                years={years}
+                {...props}
             />
         </PageListProvider>
     );
@@ -70,19 +64,14 @@ function PersonnelTardiness({
     auth,
     attendance,
     personnels,
-    years,
+    sy,
+    syList
 }: PersonnelTardinessProps) {
     const [showAddAttendance, setShowAddAttendance] = useState<boolean>(false);
     const [selectedPersonnel, setSelectedPersonnel] = useState<Personnel>();
-    const { setList, data, pages, loading, setLoading } = usePageList();
+    const { setList, data, loading, setLoading } = usePageList();
     const { activeUsers } = useMessage()
-    const [filter, setFilter] = useState<string>(
-        years.length !== 0 ? getYear(new Date()).toString() : 'All'
-    );
-
-    const navigateTo = (nav: string) => {
-        router.get(route(nav));
-    };
+    const [filter, setFilter] = useState<string>(sy?.sy||"");
 
     const onEditPersonnel = (personnel: Personnel) => {
         setSelectedPersonnel(personnel);
@@ -95,7 +84,7 @@ function PersonnelTardiness({
             .get(
                 route("personnel.tardiness.json", {
                     _query: {
-                        year: filter,
+                        filter: filter,
                         page: page,
                     },
                 })
@@ -133,19 +122,7 @@ function PersonnelTardiness({
                 </h2>
             }
         >
-            <div className="divide-x flex mt-5 text-sm border-b-2 mb-7">
-                <Tabs
-                    id="personnel-tab"
-                    active="personnel.tardiness"
-                    navigate={navigateTo}
-                    tabs={[
-                        { id: "personnel", label: "Personnel" },
-                        { id: "personnel.tardiness", label: "Tardiness" },
-                    ]}
-                />
-            </div>
-
-            <div className="w-full flex items-center mb-7">
+            <div className="w-full flex items-center mb-7 mt-12">
                 <Filter
                     size="lg"
                     filter="Filter"
@@ -153,9 +130,8 @@ function PersonnelTardiness({
                     default="All"
                     active={filter}
                     items={[
-                        { filter: "All", onClick: setFilter },
-                        ...years.map((year) => ({
-                            filter: year.toString(),
+                        ...syList.map((year) => ({
+                            filter: year.sy,
                             onClick: setFilter,
                         })),
                     ]}
@@ -176,6 +152,8 @@ function PersonnelTardiness({
                     user={selectedPersonnel}
                     initialList={personnels}
                     exisiting={data}
+                    sy={sy?.sy}
+                    syList={syList}
                 />
             </div>
 
@@ -184,7 +162,7 @@ function PersonnelTardiness({
                     <div className="">Name</div>
                     <div className="">Days present</div>
                     <div className="">Days absent</div>
-                    <div className="">Date modified</div>
+                    <div className="">SY</div>
                     <div className=""></div>
                 </div>
 
@@ -245,7 +223,7 @@ const PersonnelRow: React.FC<PersonnelRowProps> = ({
                 </div>
                 <div className="">
                     <div className="line-clamp-1">
-                        {format(new Date(personnel.created_at), "PP")}
+                        {personnel.sy}
                     </div>
                 </div>
                 <div className="">

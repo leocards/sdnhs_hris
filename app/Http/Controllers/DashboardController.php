@@ -163,6 +163,11 @@ class DashboardController extends Controller
         return response()->json($list);
     }
 
+    public function getSY()
+    {
+        return response()->json(SchoolYear::latest()->first());
+    }
+
     public function newSchoolYear(Request $request)
     {
         try {

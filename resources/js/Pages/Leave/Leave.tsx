@@ -13,11 +13,11 @@ import {
 } from "@/Components/ui/menubar";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { cn } from "@/lib/utils";
-import { PageProps, PaginateData } from "@/types";
+import { PageProps, PaginateData, ROLES } from "@/types";
 import { Head, router, usePage } from "@inertiajs/react";
 import { format } from "date-fns";
 import { EllipsisVertical, Eye, Search, Trash2, Upload, X } from "lucide-react";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import UploadMedical from "./UploadMedical";
 import ViewMedical from "./ViewMedical";
 import useDebounce from "@/hooks/useDebounce";
@@ -25,9 +25,12 @@ import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import PaginationButton from "@/Components/PaginationButton";
 import DataList from "@/Components/DataList";
 import { useMessage } from "@/hooks/MessageProvider";
+import Tabs from "@/Components/framer/Tabs";
 
 export default function Index(props: PageProps & {
     pageData: PaginateData;
+    status: string;
+    isMyLeave: number;
 }) {
     return (
         <PageListProvider initialValue={props.pageData}>
@@ -40,12 +43,15 @@ export default function Index(props: PageProps & {
 
 function Leave({
     auth,
+    status,
     pageData,
+    isMyLeave,
 }: PageProps & {
     pageData: PaginateData;
+    status: string;
+    isMyLeave: number;
 }) {
     const [search, setSearch] = useState<string>("");
-    const [filter, setFilter] = useState<string>("All");
     const [sort, setSort] = useState<{ sort: string; order: string }>({
         sort: "Date created",
         order: "DESC",
@@ -106,10 +112,11 @@ function Leave({
             .get(
                 route("leave.json", {
                     _query: {
-                        filter: filter,
+                        filter: status,
                         sort: sort,
                         search: debounceSearch.trim(),
                         page: page,
+                        isMyLeave: isMyLeave
                     },
                 })
             )
@@ -121,9 +128,7 @@ function Leave({
     };
 
     useEffect(() => {
-        if (
-            filter != "All" ||
-            sort.sort != "Date created" ||
+        if (sort.sort != "Date created" ||
             sort.order !== "DESC" ||
             debounceSearch.trim() !== ""
         ) {
@@ -135,7 +140,17 @@ function Leave({
         return () => {
             clearList();
         };
-    }, [filter, sort, debounceSearch]);
+    }, [sort, debounceSearch]);
+
+    useEffect(() => {
+        let onFinishListener = router.on("finish", () => {
+            setLoading(false);
+        });
+
+        return () => {
+            onFinishListener();
+        };
+    }, [loading]);
 
     return (
         <Authenticated
@@ -144,16 +159,61 @@ function Leave({
                 <h2 className="font-semibold text-xl leading-tight">Leave</h2>
             }
         >
-            {(auth.user.role !== "HR") && (
-                <div className="mt-10 mb-7 flex items-center">
-                    <Button
-                        className="ml-auto"
-                        onClick={() => router.get(route("leave.apply"))}
-                    >
-                        Apply for leave
-                    </Button>
-                </div>
-            )}
+            <div className="divide-x flex items-center mt-5 text-sm border-b-2 mb-8">
+                <Tabs
+                    id="personnel-tab"
+                    active={status}
+                    navigate={(nav) => {
+                        let role = auth.user.role
+
+                        if(role == "HR") {
+                            router.get(route('myapprovals.leave', {
+                                _query: { status: nav }
+                            }))
+                        } else if(role == "HOD") {
+                            if(isMyLeave){
+                                router.get(route('leave', {
+                                    _query: { status: nav, myleave: isMyLeave }
+                                }))
+                            } else {
+                                router.get(route('myapprovals.leave', {
+                                    _query: { status: nav }
+                                }))
+                            }
+                        } else {
+                            router.get(route('leave', {
+                                _query: { status: nav }
+                            }))
+                        }
+                        setLoading(true)
+                    }}
+                    tabs={[
+                        { id: "pending", label: "Pending" },
+                        { id: "approved", label: "Approved" },
+                        { id: "rejected", label: "Rejected" },
+                    ]}
+                />
+                {auth.user.role !== "HR" && (
+                    <Fragment>
+                        {((auth.user.role == "HOD" && isMyLeave) || !(auth.user.role == "HOD")) && (
+                            <div className="flex items-center ml-auto">
+                                <Button
+                                    className="ml-auto"
+                                    onClick={() => {
+                                        if(auth.user.role == "HOD" && isMyLeave) {
+                                            router.get(route("leave.apply", {_query: { myleave: true }}))
+                                        } else {
+                                            router.get(route("leave.apply"))
+                                        }
+                                    }}
+                                >
+                                    Apply for leave
+                                </Button>
+                            </div>
+                        )}
+                    </Fragment>
+                )}
+            </div>
 
             <div
                 className={cn(
@@ -161,21 +221,7 @@ function Leave({
                     (auth.user.role === "HOD" || auth.user.role === "HR") && "mt-10"
                 )}
             >
-                <div>
-                    <Filter
-                        size="lg"
-                        filter="All"
-                        position="BOTTOMLEFT"
-                        active={filter}
-                        items={[
-                            { filter: "All", onClick: setFilter },
-                            { filter: "Pending", onClick: setFilter },
-                            { filter: "Approved", onClick: setFilter },
-                        ]}
-                        onClear={() => setFilter("All")}
-                    />
-                </div>
-                <div className="ml-3">
+                <div className="">
                     <Sort
                         size="lg"
                         sort={sort.sort}
@@ -237,8 +283,12 @@ function Leave({
             </div>
 
             <div className="divide-y min-h-[22rem]">
-                <div className="grid grid-cols-[repeat(5,1fr),3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
-                    <div className="">Name</div>
+                <div className={cn(
+                    "grid",
+                    (auth.user.role == "HR" || (auth.user.role == "HOD" && !isMyLeave)) ? "grid-cols-[repeat(5,1fr),3rem]" : "grid-cols-[repeat(4,1fr),3rem]",
+                    "py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60"
+                )}>
+                    {(auth.user.role == "HR" || (auth.user.role == "HOD" && !isMyLeave)) && <div className="">Name</div>}
                     <div className="">Type</div>
                     <div className="">Date</div>
                     <div className="">Principal status</div>
@@ -254,7 +304,9 @@ function Leave({
                     {data?.map((leave, index) => (
                         <LeaveRow
                             key={index}
+                            myleave={!!(isMyLeave)}
                             leave={leave}
+                            role={auth.user.role}
                             onMenuAction={onMenuAction}
                             active={!!(activeUsers.find(({ id }) => id === leave.user.id))}
                         />
@@ -273,6 +325,7 @@ function Leave({
                 show={showMedicalUpload}
                 onClose={setShowMedicalUpload}
             />
+
             <ViewMedical
                 data={selected}
                 show={viewMedical}
@@ -283,6 +336,8 @@ function Leave({
 }
 
 const LeaveRow: React.FC<{
+    role: ROLES
+    myleave: boolean
     leave: {
         id: number;
         leave_type: string;
@@ -305,6 +360,8 @@ const LeaveRow: React.FC<{
     active: boolean;
     onMenuAction: (action: string, route?: any) => void;
 }> = ({
+    role,
+    myleave,
     active,
     leave: {
         id,
@@ -324,15 +381,19 @@ const LeaveRow: React.FC<{
 
     return (
         <div className="hover:bg-secondary transition-colors">
-            <div className="grid grid-cols-[repeat(5,1fr),3rem] [&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm">
-                <div className="">
+            <div className={cn(
+                "grid",
+                (role == "HR" || (role == "HOD" && !myleave)) ? "grid-cols-[repeat(5,1fr),3rem]" : "grid-cols-[repeat(4,1fr),3rem]",
+                "[&>div]:py-3 [&>div]:flex [&>div]:items-center [&>div]:pr-3 [&>div:first-child]:pl-1 text-sm"
+            )}>
+                {(role == "HR" || (role == "HOD" && !myleave)) && (<div className="">
                     <div className="flex items-center gap-2">
                         <AvatarProfile src={user.avatar} className="size-8" active={active} />
                         <div className="line-clamp-1">
                             {user.first_name + " " + user.last_name}
                         </div>
                     </div>
-                </div>
+                </div>)}
                 <div className="">
                     <div className="line-clamp-1">{leave_type}</div>
                 </div>
@@ -360,12 +421,36 @@ const LeaveRow: React.FC<{
                             <MenubarContent className="w-52" align="end">
                                 <MenubarItem
                                     className="px-4 gap-5"
-                                    onClick={() =>
-                                        onMenuAction(
-                                            "View",
-                                            route("leave.view", [id, user.id])
-                                        )
-                                    }
+                                    onClick={() => {
+                                        if(role == "HR") {
+                                            onMenuAction(
+                                                "View",
+                                                route("myapprovals.leave.view", [id, user.id])
+                                            )
+                                        } else if(role == 'HOD') {
+                                            if(myleave) {
+                                                onMenuAction(
+                                                    "View",
+                                                    route("leave.view", {
+                                                        leave: id, user: user.id,
+                                                        _query: {
+                                                            myleave: true
+                                                        }
+                                                    })
+                                                )
+                                            } else {
+                                                onMenuAction(
+                                                    "View",
+                                                    route("myapprovals.leave.view", [id, user.id])
+                                                )
+                                            }
+                                        } else {
+                                            onMenuAction(
+                                                "View",
+                                                route("leave.view", [id, user.id])
+                                            )
+                                        }
+                                    }}
                                 >
                                     <Eye className="size-5" strokeWidth={1.8} />
                                     <div>View</div>

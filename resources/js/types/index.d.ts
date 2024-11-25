@@ -58,6 +58,13 @@ export type SALNTOTALTYPE = {
 }
 
 export type SALNTYPE = {
+    user: User
+    saln: {
+        id: number
+        asof: string
+        isApproved: number
+        isjoint: "joint"|"separate"|"none"
+    }
     spouse: {
         saln_id: number
         family_name: string
@@ -132,4 +139,27 @@ export type SALNTYPE = {
         }
         saln_totals: SALNTOTALTYPE
     }>
+}
+
+export interface PAGINATEDDATA<T> {
+    current_page: number,
+    data: Array<T>,
+    first_page_url: string,
+    from: number,
+    last_page: number,
+    last_page_url: string,
+    links: Array<{active: boolean; label: StaticRange; url: string|null}>,
+    next_page_url: string | null,
+    path: string,
+    per_page: number,
+    prev_page_url: string | null,
+    to: number,
+    total: number
+}
+
+export type SYTYPE = {
+    start: string
+    end: string
+    resumption: string
+    sy: string
 }

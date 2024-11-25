@@ -10,10 +10,12 @@ import { format } from "date-fns";
 import { Eye, PencilLine } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import ViewSaln from "./ViewSaln";
+import Tabs from "@/Components/framer/Tabs";
 
 type Props = {
     success: string;
-    saln: PaginateData
+    saln: PaginateData;
+    status: string;
 } & PageProps;
 
 const StatementOfAssetsLiabilityAndNetworth: React.FC<Props> = (props) => {
@@ -24,7 +26,7 @@ const StatementOfAssetsLiabilityAndNetworth: React.FC<Props> = (props) => {
     );
 };
 
-const Saln: React.FC<Props> = ({ auth, success, saln }) => {
+const Saln: React.FC<Props> = ({ auth, success, saln, status }) => {
     const [filter, setFilter] = useState("");
     const { data, setList } = usePageList();
     const [viewSaln, setViewSaln] = useState(false)
@@ -40,6 +42,7 @@ const Saln: React.FC<Props> = ({ auth, success, saln }) => {
         saln_liability_sum_balances: number;
         saln_assets_sum_cost: number;
     }|null>(null)
+    const [loading, setLoading] = useState(false)
 
     const { toast } = useToast();
 
@@ -63,22 +66,25 @@ const Saln: React.FC<Props> = ({ auth, success, saln }) => {
                 <h2 className="font-semibold text-xl leading-tight">SALN</h2>
             }
         >
-            <div className="mt-10 mb-7 flex items-center">
-                <Filter
-                    size="lg"
-                    filter="All"
-                    position="BOTTOMLEFT"
-                    active={filter}
-                    items={[
-                        { filter: "All", onClick: setFilter },
-                        { filter: "Pending", onClick: setFilter },
-                        { filter: "Approved", onClick: setFilter },
+            <div className="divide-x flex items-center mt-5 text-sm border-b-2 mb-10">
+                <Tabs
+                    id="personnel-tab"
+                    active={status}
+                    navigate={(nav) => {
+                        router.get(
+                            route("saln", {
+                                _query: { status: nav },
+                            })
+                        );
+                        setLoading(true);
+                    }}
+                    tabs={[
+                        { id: "pending", label: "Pending" },
+                        { id: "approved", label: "Approved" },
                     ]}
-                    onClear={() => setFilter("All")}
                 />
-
                 <Button
-                    className="ml-auto"
+                    className="ml-auto px-7"
                     onClick={() => router.get(route("saln.create"))}
                 >
                     Add SALN
@@ -94,7 +100,7 @@ const Saln: React.FC<Props> = ({ auth, success, saln }) => {
                     <div className=""></div>
                 </div>
 
-                <DataList empty={data.length === 0}>
+                <DataList empty={data.length === 0} loading={loading}>
                     {data.map((list, index) => (
                         <div
                             key={index}

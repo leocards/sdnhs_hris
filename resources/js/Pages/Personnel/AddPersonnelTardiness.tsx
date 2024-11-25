@@ -10,7 +10,6 @@ import {
     AttendanceHeader,
     ComboBox,
     Counter,
-    setDraftData,
 } from "./PeronnelAttendanceComponents";
 import {
     Form,
@@ -22,14 +21,19 @@ import {
 } from "@/Components/ui/form";
 import { Button } from "@/Components/ui/button";
 import NumberInput from "@/Components/NumberInput";
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { Personnel } from "./PersonnelTardiness";
 import { useToast } from "@/Components/ui/use-toast";
+import { SYTYPE } from "@/types";
+import { SelectOption, SelectOptionContent, SelectOptionItem, SelectOptionTrigger } from "@/Components/SelectOption";
+import { cn } from "@/lib/utils";
 
 type Props = {
     user?: Personnel;
     initialList: Array<any>;
     exisiting: any;
+    sy: string
+    syList: Array<SYTYPE>
 } & ModalProps;
 
 type IFormAttendance = z.infer<typeof ATTENDANCESCHEMA>;
@@ -38,13 +42,16 @@ const AddPersonnelTardiness: React.FC<Props> = ({
     user,
     initialList,
     show,
+    sy,
+    syList,
     exisiting,
     onClose,
 }) => {
     const form = reactForm<IFormAttendance>({
         resolver: zodResolver(ATTENDANCESCHEMA),
-        defaultValues: {
+        values: {
             attendances: [{ name: "", present: "", absent: "" }],
+            sy: sy??""
         },
     });
     const { fields, append, replace, remove } = useFieldArray({
@@ -134,6 +141,50 @@ const AddPersonnelTardiness: React.FC<Props> = ({
                 >
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onFormSubmit)}>
+                            <div className="mb-4 flex justify-end">
+                                <FormField
+                                    control={form.control}
+                                    name="sy"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <div className="flex items-center gap-4">
+                                                <FormLabel className="requried">SY</FormLabel>
+                                                <SelectOption
+                                                    onChange={field.onChange}
+                                                    initialValue={field.value}
+                                                >
+                                                    <SelectOptionTrigger>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant={"outline"}
+                                                                className={cn(
+                                                                    "w-40 pl-3 text-left justify-between disabled:!opacity-100 disabled:!cursor-not-allowed disabled:pointer-events-auto disabled:!text-foreground/40 font-normal before:!bg-transparent data-[state=open]:ring-2 ring-ring",
+                                                                    !field.value &&
+                                                                        "text-muted-foreground"
+                                                                )}
+                                                                disabled={!!(user)}
+                                                            >
+                                                                <span>
+                                                                    {!field.value
+                                                                        ? "Select SY"
+                                                                        : field.value}
+                                                                </span>
+                                                                <ChevronDown className="size-4" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </SelectOptionTrigger>
+                                                    <SelectOptionContent>
+                                                        {syList.map(({ sy }, index) => (
+                                                            <SelectOptionItem key={index} value={sy} />
+                                                        ))}
+                                                    </SelectOptionContent>
+                                                </SelectOption>
+                                            </div>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
                             <div className="px-1">
                                 {fields.map((field, index) => {
                                     return (

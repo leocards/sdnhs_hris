@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/sy', [DashboardController::class, 'getSY'])->name('dashboard.sy');
     Route::get('/dashboard/pannelList', [DashboardController::class, 'personnelList'])->name('dashboard.personnelList');
     Route::get('/dashboard/applied-leaves/{sy}', [DashboardController::class, 'leaveApplicationsJson'])->name('dashboard.leave.applications');
     Route::post('/dashboard/new-school-year', [DashboardController::class, 'newSchoolYear'])
@@ -82,7 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/tardiness', 'tardiness')->name('personnel.tardiness');
                 Route::get('/tardiness/json', 'tardinessJson')->name('personnel.tardiness.json');
                 Route::get('/tardiness/search-attendance', 'tardiness_search')->name('personnel.tardiness.att.search');
-                Route::get('/new-personnel', 'create')->name('personnel.new');
+                Route::get('/new-personnel/{role}', 'create')->name('personnel.new');
 
                 Route::post('/new-personnel', 'store')->name('personnel.new.store');
                 Route::post('/update-personnel/{user?}', 'update')->name('personnel.update');
@@ -98,6 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         })->middleware(['role:HR,HOD']);
     });
 
+    // tardiness on the personnel's page
     Route::get('tardiness', [PersonnelController::class, 'userTardiness'])->name('tardiness');
 
     Route::prefix('leave')->group(function () {
@@ -114,8 +116,64 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
+    Route::prefix('myapprovals')->group(function () {
+        Route::prefix('leave')->group(function () {
+            Route::controller(LeaveController::class)->group(function () {
+                Route::get('/', 'index')->name('myapprovals.leave');
+                Route::get('/json', 'indexJson')->name('myapprovals.leave.json');
+                Route::get('/view/{leave?}/{user?}', 'view')->name('myapprovals.leave.view');
+                Route::get('/apply-for-leave', 'apply_for_leave')->name('myapprovals.leave.apply');
+
+                Route::post('/respond/{user}/{leave}', 'application_for_leave_action')->middleware(['role:HOD,HR'])->name('myapprovals.leave.respond');
+            });
+        });
+
+        Route::prefix('pds')->group(function () {
+            Route::controller(PersonalDataSheetController::class)->group(function () {
+                Route::get('/', 'index')->name('myapprovals.pds');
+            });
+        });
+
+        Route::prefix('saln')->group(function () {
+            Route::controller(StatementOfAssetsLiabilityAndNetworthController::class)->group(function () {
+                Route::get('/', 'index')->name('myapprovals.saln');
+            });
+        });
+
+        Route::prefix('service-records')->group(function () {
+            Route::controller(ServiceRecordController::class)->group(function () {
+                Route::get('/', 'index')->name('myapprovals.service-records');
+            });
+        });
+    });
+
+    Route::prefix('myreports')->group(function () {
+        Route::controller(ReportController::class)->group(function () {
+            Route::get('/list-of-personnel', 'listOfPersonnel')->name('reports.personnel');
+            Route::get('/ipcr', 'listOfIPCR')->name('reports.ipcr');
+            Route::get('/saln', 'listOfSALN')->name('reports.saln');
+            Route::get('/search-ipcr', 'searchIPCR')->name('reports.searchIPCR');
+            Route::get('/search-saln', 'searchSALN')->name('reports.searchSALN');
+            Route::get('/ipcr-personnel-unlisted/{sy?}', 'getIPCRUnlisted')->name('reports.unlistedIPCR');
+            Route::get('/saln-personnel-unlisted/{year?}', 'getSALNUnlisted')->name('reports.unlistedSALN');
+            Route::get('/filter-ipcr/{year?}', 'filterIPCRByYear')->name('reports.filter.ipcr');
+            Route::get('/filter-saln/{year?}', 'filterSALNByYear')->name('reports.filter.saln');
+
+            Route::post('/excel-ipcr-upload', 'upload_ipcr')->name('reports.excel.ipcr.upload');
+            Route::post('/excel-saln-upload', 'upload_saln')->name('reports.excel.saln.upload');
+            Route::post('/add-ipcr', 'addIPCRRow')->name('reports.addIPCR');
+            Route::post('/add-saln', 'addSALNRow')->name('reports.addSALN');
+            Route::post('/update-ipcr/{ipcrId}', 'updateIPCRRow')->name('reports.updateIPCR');
+            Route::post('/update-saln/{salnId}', 'updateSALNRow')->name('reports.updateSALN');
+            Route::delete('/delete-ipcr/{ipcrId}', 'deleteIPCRRow')->name('reports.deleteIPCR');
+            Route::delete('/delete-saln/{salnId}', 'deleteSALNRow')->name('reports.deleteSALN');
+        });
+    });
+
     Route::prefix('pds')->group(function () {
         Route::controller(PersonalDataSheetController::class)->group(function () {
+            Route::get('/', 'index')->name('pds');
+
             Route::post('/pds-excel-upload/{user}', 'store_excel_pds')->name('pds.upload');
             Route::post('/pds-c1-upload', 'store_c1')->name('pds.c1.upload');
             Route::post('/pds-c1-pi-upload', 'store_pi')->name('pds.c1.pi.upload');
@@ -141,27 +199,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/upload', 'store')->name('service-records.post');
             Route::post('/delete/{sr}', 'delete')->name('service-records.delete');
             Route::post('/respond/certificate/{certificate}', 'respondCertificate')->name('service-records.respond.certificate');
-        });
-    });
-
-    Route::prefix('reports')->group(function () {
-        Route::controller(ReportController::class)->group(function () {
-            Route::get('/', 'index')->name('reports');
-            Route::get('/search-ipcr', 'searchIPCR')->name('reports.searchIPCR');
-            Route::get('/search-saln', 'searchSALN')->name('reports.searchSALN');
-            Route::get('/ipcr-personnel-unlisted/{sy?}', 'getIPCRUnlisted')->name('reports.unlistedIPCR');
-            Route::get('/saln-personnel-unlisted/{year?}', 'getSALNUnlisted')->name('reports.unlistedSALN');
-            Route::get('/filter-ipcr/{year?}', 'filterIPCRByYear')->name('reports.filter.ipcr');
-            Route::get('/filter-saln/{year?}', 'filterSALNByYear')->name('reports.filter.saln');
-
-            Route::post('/excel-ipcr-upload', 'upload_ipcr')->name('reports.excel.ipcr.upload');
-            Route::post('/excel-saln-upload', 'upload_saln')->name('reports.excel.saln.upload');
-            Route::post('/add-ipcr', 'addIPCRRow')->name('reports.addIPCR');
-            Route::post('/add-saln', 'addSALNRow')->name('reports.addSALN');
-            Route::post('/update-ipcr/{ipcrId}', 'updateIPCRRow')->name('reports.updateIPCR');
-            Route::post('/update-saln/{salnId}', 'updateSALNRow')->name('reports.updateSALN');
-            Route::delete('/delete-ipcr/{ipcrId}', 'deleteIPCRRow')->name('reports.deleteIPCR');
-            Route::delete('/delete-saln/{salnId}', 'deleteSALNRow')->name('reports.deleteSALN');
         });
     });
 

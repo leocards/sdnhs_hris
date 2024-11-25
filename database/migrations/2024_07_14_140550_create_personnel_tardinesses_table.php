@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('present');
             $table->string('absent');
+            $table->string('sy');
             $table->timestamps();
         });
     }

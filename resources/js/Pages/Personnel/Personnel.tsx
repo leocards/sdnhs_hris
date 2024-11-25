@@ -1,6 +1,5 @@
 import Filter from "@/Components/buttons/FilterButton";
 import Sort from "@/Components/buttons/SortButton";
-import Tabs from "@/Components/framer/Tabs";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import {
@@ -81,10 +80,8 @@ function Personnel({
     const { activeUsers } = useMessage();
     const [viewSaln, setViewSaln] = useState(false)
     const [showCertificates, setShowCertificates] = useState(false)
-
-    const navigateTo = (nav: string) => {
-        router.get(route(nav));
-    };
+    const queryParams = new URL(window.location.href).searchParams;
+    const personnel = queryParams.get("personnel");
 
     // retrieves the personnel data in paginated format
     const getPageData = (page?: number) => {
@@ -134,13 +131,6 @@ function Personnel({
         }
     };
 
-    const tabs = {
-        HR: ["personnel", "personnel.tardiness"],
-        HOD: ["personnel"],
-        "Non-teaching": [""],
-        "Teaching": [""],
-    }[auth.user.role];
-
     useEffect(() => {
         if (filter != "" || sort.sort != "Name" || sort.order != "ASC") {
             getPageData(1);
@@ -162,17 +152,6 @@ function Personnel({
                 </h2>
             }
         >
-            <div className="divide-x flex mt-5 text-sm border-b-2">
-                <Tabs
-                    id="personnel-tab"
-                    active="personnel"
-                    navigate={navigateTo}
-                    tabs={[
-                        { id: "personnel", label: "Personnel" },
-                        { id: "personnel.tardiness", label: "Tardiness" },
-                    ].filter(({ id }) => tabs?.includes(id))}
-                />
-            </div>
 
             <div className="my-7 grid gap-3 [@media(min-width:428px)]:gap-5 [@media(min-width:428px)]:grid-cols-2 [@media(min-width:1280px)]:!grid-cols-4">
                 <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-rose-600 bg-rose-100 dark:bg-rose-800/50 p-2">
@@ -201,8 +180,8 @@ function Personnel({
                 </div>
             </div>
 
-            <div className="w-full flex items-center mb-7">
-                <div>
+            <div className="w-full flex items-center mb-7 gap-3">
+                {personnel === "teaching" && (<div>
                     <Filter
                         size="lg"
                         filter="Filter"
@@ -217,14 +196,11 @@ function Personnel({
                                 filter: "Senior High School",
                                 onClick: setFilter,
                             },
-                            { filter: "Accounting", onClick: setFilter },
-                            { filter: "Teaching", onClick: setFilter },
-                            { filter: "Non-teaching", onClick: setFilter },
                         ]}
                         onClear={() => setFilter("")}
                     />
-                </div>
-                <div className="ml-3">
+                </div>)}
+                <div className="">
                     <Sort
                         size="lg"
                         sort={sort.sort}
@@ -246,14 +222,13 @@ function Personnel({
                             { sort: "Name" },
                             { sort: "Email" },
                             { sort: "Position" },
-                            { sort: "Department" },
                         ]}
                     />
                 </div>
                 {auth.user.role === "HR" && (
                     <Button
                         className="ml-auto gap-3"
-                        onClick={() => router.get(route("personnel.new"))}
+                        onClick={() => router.get(route("personnel.new", [personnel]))}
                     >
                         <UserRoundPlus className="size-5" />
                         <span className="sm:block hidden">New personnel</span>
@@ -321,14 +296,6 @@ function Personnel({
                 onClose={setShowDeletePersonnel}
             />
 
-            <ViewSalnPersonnel
-                show={viewSaln}
-                onClose={setViewSaln}
-                id={selectedPersonnel?.id}
-                salnList={selectedPersonnel?.statement_of_assest_liabilities}
-                user={auth.user}
-            />
-
             <ConfirmServiceCertificate show={showCertificates} onClose={setShowCertificates} user={selectedPersonnel} />
         </Authenticated>
     );
@@ -384,7 +351,7 @@ const PersonnelRow: React.FC<
                                     <Eye className="size-5" strokeWidth={1.8} />
                                     <div>View details</div>
                                 </MenubarItem>
-                                {auth === "HR" && (<MenubarItem
+                                {/* {auth === "HR" && (<MenubarItem
                                     className="px-4 gap-5"
                                     onClick={() =>
                                         onClick && onClick("saln", user)
@@ -395,7 +362,7 @@ const PersonnelRow: React.FC<
                                         strokeWidth={1.8}
                                     />
                                     <div>SALN</div>
-                                </MenubarItem>)}
+                                </MenubarItem>)} */}
                                 <MenubarItem
                                     className="px-4 gap-5"
                                     onClick={() =>
@@ -410,7 +377,7 @@ const PersonnelRow: React.FC<
                                 </MenubarItem>
                                 {auth === "HR" && (
                                     <Fragment>
-                                        <MenubarItem
+                                        {/* <MenubarItem
                                             className="px-4 gap-5"
                                             onClick={() =>
                                                 onClick &&
@@ -422,7 +389,7 @@ const PersonnelRow: React.FC<
                                                 strokeWidth={1.8}
                                             />
                                             <div>Service certificate</div>
-                                        </MenubarItem>
+                                        </MenubarItem> */}
                                         <MenubarItem
                                             className="px-4 gap-5"
                                             onClick={() =>

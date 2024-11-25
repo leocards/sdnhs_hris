@@ -13,20 +13,36 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 
 class ServiceRecordController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $status = $request->query('status')??"pending";
+
+        if($status != "pending" && $status != "approved" && $status != "rejected" )
+            abort(404);
+
+        if(Auth::user()->role == "HR") {
+
+            return Inertia::render('ServiceRecords/HrServiceRecord', [
+                'pageData' => ServiceRecord::with('user:id,first_name,last_name,middle_name,avatar')
+                    ->where('approved', $status)
+                    ->get(),
+                'status' => $status
+            ]);
+        }
+
         return Inertia::render('ServiceRecords/ServiceRecords', [
             'records' => ServiceRecord::where('user_id', Auth::id())
                 ->where('file_name', '!=', 'Medical certificate')
                 ->orderBy('created_at', 'desc')
-                ->paginate(50)
+                ->where('approved', $status)
+                ->paginate(50),
+            'status' => $status
         ]);
     }
 
@@ -179,7 +195,7 @@ class ServiceRecordController extends Controller
                 $certificate->save();
 
                 $user->update(['leave_credits' => $credit >= $credit_limit ? $credit_limit : $credit]);
-                
+
             } else {
                 $certificate->approved = "rejected";
                 $certificate->status = "rejected";

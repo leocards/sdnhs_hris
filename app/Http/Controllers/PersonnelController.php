@@ -7,6 +7,7 @@ use App\Http\Requests\PersonnelRequest;
 use App\Mail\AccountCreation;
 use App\Models\Notifications;
 use App\Models\PersonnelTardiness;
+use App\Models\SchoolYear;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -20,13 +21,22 @@ use Inertia\Inertia;
 
 class PersonnelController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $personnel = $request->query('personnel');
+
         return Inertia::render('Personnel/Personnel', [
             'pageData' => User::with(['statementOfAssestLiabilities' => function ($query) {
                 $query->select('id', 'user_id', 'isApproved', 'asof', 'isjoint')
                       ->whereNull('isApproved');
-            }])->whereNot('id', Auth::id())
+                }])
+                ->when($personnel, function ($query) use ($personnel) {
+                    $query->where('role', $personnel)
+                        ->when($personnel == "non-teaching", function ($query) {
+                            $query->orWhere('role', 'HOD');
+                        });
+                })
+                ->whereNot('id', Auth::id())
                 ->orderBy('last_name', 'ASC')
                 ->paginate(50),
             'statistics' => collect([
@@ -39,10 +49,11 @@ class PersonnelController extends Controller
         ]);
     }
 
-    public function create()
+    public function create($role)
     {
         return Inertia::render('Personnel/NewPersonnel', [
-            'userRoles' => User::where('role', 'HOD')->orWhere('role', 'HR')->pluck('role')
+            'userRoles' => User::where('role', 'HOD')->orWhere('role', 'HR')->pluck('role'),
+            'role' => $role
         ]);
     }
 
@@ -56,9 +67,11 @@ class PersonnelController extends Controller
 
     public function tardiness()
     {
+        $sy = SchoolYear::latest()->first();
+
         return Inertia::render('Personnel/PersonnelTardiness', [
             'attendance' => PersonnelTardiness::with(['users:id,first_name,last_name,middle_name,avatar,created_at'])
-                ->whereYear('created_at', Carbon::now()->format('Y'))
+                ->where('sy', $sy?->sy)
                 ->orderBy(
                     User::select('first_name')
                         ->whereColumn('personnel_tardinesses.user_id', 'users.id')
@@ -79,35 +92,29 @@ class PersonnelController extends Controller
                     ]);
                 }),
             'existing' => (PersonnelTardiness::with(['users:id,first_name,last_name,middle_name,avatar,created_at'])
-            ->whereYear('created_at', Carbon::now()->format('Y'))
+            ->where('sy', $sy?->sy)
             ->orderBy(
                 User::select('first_name')
                     ->whereColumn('personnel_tardinesses.user_id', 'users.id')
                     ->orderBy('last_name')
                     ->limit(1)
-            )->get())
+            )->get()),
+            'sy' => $sy,
+            'syList' => SchoolYear::latest()->get()
         ]);
     }
 
     public function tardinessJson(Request $request): JsonResponse
     {
-        $year = $request->query('year');
-        $month = $request->query('month');
+        $sy = SchoolYear::latest()->first();
+        $filter = $request->query('filter') ?? ($sy?$sy?->sy:null);
 
         return response()->json(
-            PersonnelTardiness::with('users')
-                ->when($year && ($year !== Carbon::now()->format('Y') && $year !== "All"), function ($query) use ($year, $month) {
-                    $query->whereYear('created_at', $year)
-                        ->when($month && $month !== "All", function ($query) use ($year, $month) {
-                            $query->whereMonth('created_at', $month);
-                        });
-                })
-                ->orderBy(
-                    User::select('first_name')
-                        ->whereColumn('personnel_tardinesses.user_id', 'users.id')
-                        ->orderBy('last_name')
-                        ->limit(1)
-                )
+            PersonnelTardiness::with(['users:id,first_name,last_name,middle_name,avatar,created_at'])
+                ->where('sy', $filter)
+                ->join('users', 'personnel_tardinesses.user_id', '=', 'users.id') // Join with the users table
+                ->orderBy('users.first_name') // Order by first name
+                ->orderBy('users.last_name')  // Then order by last name
                 ->paginate(50)
         );
     }
@@ -238,7 +245,8 @@ class PersonnelController extends Controller
                     'user_id' => $value['personnelId'],
                     'name' => $value['name'],
                     'present' => $value['present'],
-                    'absent' => $value['absent']
+                    'absent' => $value['absent'],
+                    'sy' => $request->sy
                 ]);
 
                 $receiver = User::where('id', $value['personnelId'])->first();
@@ -273,6 +281,7 @@ class PersonnelController extends Controller
 
         $tardiness->absent = $attendance[0]['absent'];
         $tardiness->present = $attendance[0]['present'];
+        $tardiness->sy = $request->sy;
         $tardiness->save();
 
         return back()->with("success", "Successfully updated.");
@@ -310,7 +319,9 @@ class PersonnelController extends Controller
         return Inertia::render('Tardiness/Tardiness', [
             'pageData' => PersonnelTardiness::where('user_id', Auth::id())
                 ->latest()
-                ->paginate(50)
+                ->paginate(50),
+            'sy' => SchoolYear::latest()->first(),
+            'syList' => SchoolYear::latest()->get(),
         ]);
     }
 }

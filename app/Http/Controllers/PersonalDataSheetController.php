@@ -27,10 +27,75 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class PersonalDataSheetController extends Controller
 {
+    public function index(Request $request)
+    {
+        if(Auth::user()->role == "HR") {
+            $status = $request->query('status')??"pending";
+
+            if($status !== "pending" && $status !== "approved") abort(404);
+
+            return Inertia::render('PDS/PersonalDataSheets', [
+                "pageData" => User::whereHas('pdsPersonalInformation', function ($query) use ($status) {
+                        $query->where('is_approved', $status === "pending" ? null : true);
+                    })
+                    ->with('pdsPersonalInformation:id,user_id,created_at')
+                    ->orderBy('last_name', 'asc')
+                    ->get(),
+                "status" => $status
+            ]);
+        }
+
+        $pds = User::find(Auth::id());
+        $pds_cs = $request->query('c');
+        $pds_cs_section = $request->query('section');
+
+        if(!$pds_cs || $pds_cs === "C1") {
+            if($pds_cs_section === "I" || !$pds_cs_section)
+                $pds->load(['pdsPersonalInformation']);
+            if($pds_cs_section === "II")
+                $pds->load(['pdsFamilyBackground']);
+            if($pds_cs_section === "III") {
+                $newPdsEducationalBackground = PDSEducationalBackground::where('user_id', Auth::id())->get()->map(function ($data) {
+                    return collect([
+                        'type' => $data->education_type,
+                        'ebid' => $data->id,
+                        'nameofschool' => $data->school??"",
+                        'basiceddegreecourse' => $data->course??"",
+                        'period' => collect([ 'from' => $data->from??"", 'to' => $data->to??"" ]),
+                        'highestlvl' => $data->highest_earned??"",
+                        'yeargraduated' => $data->year_graduated??"",
+                        'scholarshiphonor' => $data->honors??"",
+                    ]);
+                });
+
+                $pds->pds_educational_background = $newPdsEducationalBackground;
+            }
+        } else if($pds_cs === "C2") {
+            if($pds_cs_section === "IV" || !$pds_cs_section)
+                $pds->load(['pdsCivilServiceEligibility']);
+            if($pds_cs_section === "V")
+                $pds->load(['pdsWorkExperience']);
+        } else if($pds_cs === "C3") {
+            if($pds_cs_section === "VI" || !$pds_cs_section)
+                $pds->load(['pdsVoluntaryWork']);
+            if($pds_cs_section === "VII")
+                $pds->load(['pdsLearningDevelopment']);
+            if($pds_cs_section === "VIII")
+                $pds->load(['pdsOtherInformation']);
+        } else if($pds_cs === "C4") {
+            $pds->load(['pdsCs4', 'pdsReference', 'pdsGovernment']);
+        }
+
+        return Inertia::render('PDS/MyPersonalDataSheet', [
+            'userinfo' => $pds,
+        ]);
+    }
+
     public function store_excel_pds(Request $request, User $user)
     {
         $request->validate([

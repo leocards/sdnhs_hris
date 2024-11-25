@@ -120,4 +120,5 @@ const ATTENDANCEOBJECTSCHEMA = z.object({
 
 export const ATTENDANCESCHEMA = z.object({
     attendances: z.array(ATTENDANCEOBJECTSCHEMA),
+    sy: z.string().min(1, "The SY field is required."),
 });

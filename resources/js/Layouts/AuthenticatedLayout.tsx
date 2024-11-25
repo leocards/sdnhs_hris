@@ -1,4 +1,10 @@
-import { useState, PropsWithChildren, ReactNode, useEffect } from "react";
+import {
+    useState,
+    PropsWithChildren,
+    ReactNode,
+    useEffect,
+    Fragment,
+} from "react";
 import {
     ChevronUp,
     Home,
@@ -15,6 +21,11 @@ import {
     ChevronDown,
     ReceiptText,
     UserRoundCheck,
+    PanelLeft,
+    PanelLeftClose,
+    Plus,
+    Pencil,
+    SquarePen,
 } from "lucide-react";
 import {
     CloseButton,
@@ -24,7 +35,7 @@ import {
 } from "@headlessui/react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Tabs from "@/Components/framer/Tabs";
-import { User } from "@/types";
+import { ROLES, SYTYPE, User } from "@/types";
 import { cn } from "@/lib/utils";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import { router, usePage } from "@inertiajs/react";
@@ -46,6 +57,16 @@ import {
     useNotification,
 } from "@/hooks/NotificationProvider";
 import sdnhslogo from "@/assets/sdnhs-logo.png";
+import SideNavigation from "@/Components/SideNavigation";
+import { SidebarProvider, useSidebar } from "@/Components/ui/sidebar";
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarTrigger,
+} from "@/Components/ui/menubar";
+import NewSchoolYear from "@/Pages/Dashboard/NewSchoolYear";
 
 export default function Authenticated({
     userAuth,
@@ -57,8 +78,6 @@ export default function Authenticated({
         props: { auth, message },
         url,
     } = usePage<any>();
-    const [openNavigation, setOpenNavigation] = useState<boolean>(false);
-    const { width } = useWindowSize();
     const { toast } = useToast();
     const {
         user,
@@ -243,253 +262,102 @@ export default function Authenticated({
                 sound.play().catch(() => {});
 
                 // increment unread notification count when user not in notificatin page or not in the current tab
-                setUnreadNotifications(1)
+                setUnreadNotifications(1);
             }
 
             // setNotifications([newNotification]);
-            console.log(newNotification)
+            console.log(newNotification);
         }
     }, [newNotification]);
 
     return (
-        <div className="relative isolate flex min-h-svh w-full bg-background amber-50 max-lg:flex-col lg:b g-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
-            {width > 1023 && (
-                <Navigation
-                    user={userAuth}
-                    openNavigation={openNavigation}
-                    setOpenNavigation={setOpenNavigation}
-                />
-            )}
+        <SidebarProvider>
+            <SideNavigation role={auth.user.role} />
 
-            <NavigationModal show={openNavigation} onClose={setOpenNavigation}>
-                <Navigation
-                    user={userAuth}
-                    openNavigation={openNavigation}
-                    setOpenNavigation={setOpenNavigation}
-                />
-            </NavigationModal>
-
-            <header className="flex items-center px-4 lg:hidden sticky top-0 bg-background dark:bg-zinc-900 z-50">
-                <div className="py-2.5">
-                    <span className="relative">
-                        <Button
-                            aria-label="Open navigation"
-                            size="icon"
-                            variant="ghost"
-                            onClick={() => setOpenNavigation(true)}
-                        >
-                            <Menu className="size-5" />
-                        </Button>
-                    </span>
-                </div>
-                <div className="min-w-0 flex-1">
-                    <HeaderNavigation user={userAuth} />
-                </div>
-            </header>
-
-            <main className="flex flex-1 flex-col lg:pb-2 lg:min-w-0 lg:pl-72 lg:pr-2 lg:pt-2">
-                <div className="grow lg:rounded-lg bg-background lg:shadow-lg lg:ring-1 lg:ring-zinc-950/5 dark:bg-zinc-900 dark:lg:ring-white/10">
-                    <div className="h-11 mb-2 mt-2 flex items-center max-lg:hidden px-4">
-                        <HeaderNavigation user={userAuth} iconSizes="size-8" />
+            <div className="relative isolate flex min-h-svh w-full bg-background amber-50 max-lg:flex-col lg:b g-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
+                <header className="flex items-center px-4 lg:hidden sticky top-0 bg-background dark:bg-zinc-900 z-50">
+                    <div className="py-2.5">
+                        <span className="relative">
+                            <ToggleSideBarButton />
+                        </span>
                     </div>
-                    <div className="p-5 lg:p-8 lg:pt-0 h-auto">
-                        <div
-                            className={cn(
-                                "mx-auto max-w-6xl",
-                                isLoading &&
-                                    "flex flex-col h-[calc(100vh-7.5rem)]"
-                            )}
-                        >
-                            <Loading>
-                                <header className="text-secondary-foreground">
-                                    {header}
-                                </header>
-                                {children}
-                            </Loading>
+
+                    <div className="min-w-0 flex-1">
+                        <HeaderNavigation user={userAuth} />
+                    </div>
+                </header>
+
+                <main className="flex flex-1 flex-col">
+                    <div className="grow bg-background lg:ring-zinc-950/5 dark:bg-zinc-900 dark:lg:ring-white/10">
+                        <div className="h-11 mb-2 mt-2 flex items-center max-lg:hidden px-4 mb-5">
+                            <ToggleSideBarButton />
+
+                            <SchoolYearButton role={userAuth.role} />
+
+                            <HeaderNavigation
+                                user={userAuth}
+                                iconSizes="size-8"
+                            />
+                        </div>
+                        <div className="p-5 lg:p-8 lg:pt-0 h-auto">
+                            <div
+                                className={cn(
+                                    "mx-auto max-w-6xl",
+                                    isLoading &&
+                                        "flex flex-col h-[calc(100vh-7.5rem)]"
+                                )}
+                            >
+                                <Loading>
+                                    <header className="text-secondary-foreground">
+                                        {header}
+                                    </header>
+                                    {children}
+                                </Loading>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </main>
+                </main>
 
-            {createPortal(<Toaster />, document.body)}
+                {createPortal(<Toaster />, document.body)}
 
-            {showScrollUp && (
-                <div className="fixed z-[100] bottom-4 right-5">
-                    <Button size="icon" variant="outline" onClick={scrollToTop} className="shadow-md">
-                        <ChevronUp className="size-6" />
-                    </Button>
-                </div>
-            )}
-        </div>
+                {showScrollUp && (
+                    <div className="fixed z-[100] bottom-4 right-5">
+                        <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={scrollToTop}
+                            className="shadow-md"
+                        >
+                            <ChevronUp className="size-6" />
+                        </Button>
+                    </div>
+                )}
+            </div>
+        </SidebarProvider>
     );
 }
 
-const Navigation: React.FC<{
-    user: User;
-    openNavigation: boolean;
-    setOpenNavigation: (state: boolean) => void;
-}> = ({ user, openNavigation, setOpenNavigation }) => {
-    const { width } = useWindowSize();
-    const [activeTab] = useState(window.location.pathname.split("/")[1]);
-    const [openPopover, setOpenPopover] = useState<boolean>(false);
-    const navigationTabs = [
-        {
-            id: "dashboard",
-            label: "Dashboard",
-            icon: <Home className="size-5" />,
-        },
-        {
-            id: "personnel",
-            label: "Personnel",
-            icon: <UsersRound className="size-5" />,
-        },
-        {
-            id: "service-records",
-            label: "Service records",
-            icon: <FolderKanban className="size-5" />,
-        },
-        {
-            id: "leave",
-            label: "Leave",
-            icon: <ClipboardPaste className="size-5" />,
-        },
-        {
-            id: "reports",
-            label: "Reports",
-            icon: <FilePieChart className="size-5" />,
-        },
-        {
-            id: "tardiness",
-            label: "Tardiness",
-            icon: <UserRoundCheck className="size-5" />,
-        },
-        {
-            id: "saln",
-            label: "SALN",
-            icon: <ReceiptText className="size-5" />,
-        },
-    ];
-
-    const roles = {
-        HR: [
-            "dashboard",
-            "personnel",
-            "leave",
-            "reports",
-            "general-search",
-            "notification",
-            "messages",
-        ],
-        HOD: ["dashboard", "personnel", "leave", "notification", "messages"],
-        Teaching: [
-            "dashboard",
-            "service-records",
-            "leave",
-            "notification",
-            "messages",
-            "saln",
-            "tardiness",
-        ],
-        "Non-teaching": [
-            "dashboard",
-            "service-records",
-            "leave",
-            "notification",
-            "messages",
-            "saln",
-            "tardiness",
-        ],
-    }[user.role];
-
-    const navigateToTab = (nav: string) => {
-        if (width <= 1023) {
-            setOpenNavigation(false);
-        }
-        router.get(route(nav));
-    };
-
-    useEffect(() => {
-        if (width > 1023) {
-            setOpenNavigation(false);
-        }
-    }, [width]);
+const ToggleSideBarButton = () => {
+    const {
+        state,
+        open,
+        setOpen,
+        openMobile,
+        setOpenMobile,
+        isMobile,
+        toggleSidebar,
+    } = useSidebar();
 
     return (
-        <div
-            className={cn(
-                "lg:fixed inset-y-0 left-0 w-72 h-screen lg:p-2 overflow-hidden max-lg:rounded-lg max-lg:ring-1 max-lg:ring-ring/5"
-            )}
+        <Button
+            className="size-9 shadow-sm"
+            size={"icon"}
+            variant={"outline"}
+            onClick={toggleSidebar}
         >
-            <nav
-                className={cn(
-                    "h-full w-full rounded-lg max-lg: bg-amber-400 /60 [#d5c324] dark:bg-zinc-900 ring-1 ring-amber-500/90 dark:lg:ring-white/10 max-lg:dark:bg-zinc-900 grid grid-rows-[auto,auto,auto,1fr,auto] lg:grid-rows-[auto,auto,1fr,auto]",
-                    "max-lg:h-[calc(100vh-1rem)]"
-                )}
-            >
-                <div className="p-2 h-fit max-lg:block hidden">
-                    <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={() => setOpenNavigation(false)}
-                    >
-                        <X className="size-5" />
-                    </Button>
-                </div>
-
-                <div className="flex items-center px-4 max-lg:h-fit">
-                    <img
-                        src={sdnhslogo}
-                        alt="sdnhs logo"
-                        className="size-12 drop-shadow-md"
-                    />
-                    <div className="p-4 font-bold text-xl flex items-center gap-3">
-                        SDNHS HRIS
-                    </div>
-                </div>
-
-                <div className="p-4 pt-0 border-b border-amber-500/60 dark:border-border">
-                    <Tabs
-                        id="general-nav"
-                        active={activeTab}
-                        axis={"vertical"}
-                        navigate={navigateToTab}
-                        isAutoUpdate
-                        tabs={[
-                            {
-                                id: "general-search",
-                                label: "Search",
-                                icon: <Search className="size-5" />,
-                            },
-                            // {
-                            //     id: "notification",
-                            //     label: "Notification",
-                            //     icon: <Bell className="size-5" />,
-                            // },
-                            // {
-                            //     id: "messages",
-                            //     label: "Messages",
-                            //     icon: <MessageCircle className="size-5" />,
-                            // },
-                        ].filter(({ id }) => roles?.includes(id))}
-                    />
-                </div>
-
-                <Scrollbars>
-                    <div className="p-4 space-y-2">
-                        <Tabs
-                            id="navigation"
-                            active={activeTab}
-                            axis={"vertical"}
-                            navigate={navigateToTab}
-                            isAutoUpdate
-                            tabs={navigationTabs.filter(({ id }) =>
-                                roles?.includes(id)
-                            )}
-                        />
-                    </div>
-                </Scrollbars>
-            </nav>
-        </div>
+            {state == "expanded" && <PanelLeftClose className="size-4" />}
+            {state == "collapsed" && <PanelLeft className="size-4" />}
+        </Button>
     );
 };
 
@@ -632,7 +500,7 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                                 as="li"
                                 className="hover:bg-primary hover:text-primary-foreground"
                                 onClick={() =>
-                                    router.get(route(user.role != "HR" ? "profile.edit" : "profile.profile"))
+                                    router.get(route("profile.profile"))
                                 }
                             >
                                 <UserRound
@@ -668,5 +536,92 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                 </Popover>
             </div>
         </nav>
+    );
+};
+
+const SchoolYearButton = (props: { role: ROLES }) => {
+    const [sy, setSY] = useState<SYTYPE | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [isEdit, setIsEdit] = useState<boolean>(false);
+    const [showSchoolYear, setShowSchoolYear] = useState<boolean>(false);
+
+    useEffect(() => {
+        setLoading(true);
+        window.axios
+            .get(route("dashboard.sy"))
+            .then((response) => {
+                setSY(response.data);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+
+    return (
+        <>
+            {props.role == "HR" ? (
+                <Fragment>
+                    <Menubar className="p-0 overflow-hidden h-9 ml-3 shadow-sm">
+                        <MenubarMenu>
+                            <MenubarTrigger
+                                className="h-full items-center text-sm cursor-pointer disabled:pointer-events-none"
+                                disabled={loading}
+                            >
+                                {loading ? (
+                                    <div className="flex items-center gap-2">
+                                        <span className="loading loading-spinner loading-xs"></span>
+                                        <div>Loading...</div>
+                                    </div>
+                                ) : (
+                                    <span>SY {sy?.sy}</span>
+                                )}
+                            </MenubarTrigger>
+                            <MenubarContent className="text-sm">
+                                <MenubarItem
+                                    className="cursor-pointer gap-3"
+                                    onClick={() => {
+                                        setShowSchoolYear(true);
+                                    }}
+                                >
+                                    <Plus className="size-4" />
+                                    <span>New School Year</span>
+                                </MenubarItem>
+                                <MenubarItem
+                                    className="cursor-pointer gap-3"
+                                    onClick={() => {
+                                        setIsEdit(true);
+                                        setShowSchoolYear(true);
+                                    }}
+                                >
+                                    <SquarePen className="size-4" />
+                                    <span>Edit School Year</span>
+                                </MenubarItem>
+                            </MenubarContent>
+                        </MenubarMenu>
+                    </Menubar>
+
+                    <NewSchoolYear
+                        currentSy={sy}
+                        isEdit={isEdit}
+                        show={showSchoolYear}
+                        onClose={() => {
+                            setIsEdit(false);
+                            setShowSchoolYear(false);
+                        }}
+                    />
+                </Fragment>
+            ) : (
+                <div className="h-9 px-2 border border-border shadow-sm ml-3 rounded-md flex items-center overflow-hidden text-sm font-medium">
+                    {loading ? (
+                        <div className="flex items-center gap-2">
+                            <span className="loading loading-spinner loading-xs"></span>
+                            <div>Loading...</div>
+                        </div>
+                    ) : (
+                        <span>SY {sy?.sy}</span>
+                    )}
+                </div>
+            )}
+        </>
     );
 };

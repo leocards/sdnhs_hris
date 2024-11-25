@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import { PageProps, PaginateData } from "@/types";
+import { PageProps, PaginateData, SYTYPE } from "@/types";
 import { format } from "date-fns";
 import LeaveApplicationsChart from "./Dashboard/LeaveApplicationsChart";
 import Notes from "./Dashboard/Notes";
@@ -17,13 +17,6 @@ type Statistics = {
     recent_deduction?: number;
     total: number;
 };
-
-export type SYTYPE = {
-    start: string
-    end: string
-    resumption: string
-    sy: string
-}
 
 interface DashboardProps extends PageProps {
     totalEmployee?: Statistics;
@@ -102,21 +95,14 @@ function Dashboard({
             userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">
-                    Good{" "}
-                    {parseInt(format(new Date(), "kk")) >= 17
-                        ? "evening"
-                        : format(new Date(), "bbbb") === "a.m."
-                        ? "morning"
-                        : format(new Date(), "bbbb") === "p.m."
-                        ? "afternoon"
-                        : format(new Date(), "bbbb")}
-                    , {auth.user.first_name + " " + auth.user.last_name}
+                    Welcome, {auth.user.first_name + " " + auth.user.last_name}
+                    <div className="text-sm font-medium">{format(new Date(), 'LLLL d, y')}</div>
                 </h2>
             }
         >
             <Head title="Dashboard" />
 
-            <div className="mt-5 flex gap-3 items-center">
+            {/* <div className="mt-5 flex gap-3 items-center">
                 {auth.user.role == "HR" && (<div>
                     <Button size={"icon"} className="size-7" variant={"outline"} onClick={() => setNewSY(true)}>
                         {!sy && <Plus className="size-4" />}
@@ -128,7 +114,7 @@ function Dashboard({
                 ) : sy && (<div className="rounded-md text-lg font-semibold bg- yellow-500 py-2 text-yellow-700">
                     Welcome to school year <span className="text-xl">{sy ? `${format(sy.start, 'y')}-${format(sy.end, 'y')}` : ""}</span>
                 </div>)}
-            </div>
+            </div> */}
 
             <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                 {["HR"].includes(auth.user.role) ? (
@@ -217,7 +203,7 @@ function Dashboard({
                 </div>
             </div>
 
-            <div className="min-h-96 mt-12 flex max-md:flex-col gap-4">
+            <div className="min-h-96 mt-12 flex max-lg:flex-col gap-4">
                 <ActiveLeave leave={leave} />
 
                 <Notes />
@@ -237,7 +223,6 @@ function Dashboard({
                 </>
             )}
 
-            <NewSchoolYear show={newSY} onClose={setNewSY} currentSY={sy} />
         </AuthenticatedLayout>
     );
 }

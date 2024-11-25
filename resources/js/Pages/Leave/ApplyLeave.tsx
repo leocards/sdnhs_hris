@@ -26,10 +26,11 @@ type APPLIEDLEAVESTYPE = {
 }
 type Props = {
     salary: { monthly_salary: string | null },
-    applied: Array<APPLIEDLEAVESTYPE>
+    applied: Array<APPLIEDLEAVESTYPE>,
+    isMyLeave: number
 }
 
-const ApplyLeave = ({ auth, salary, applied }: PageProps & Props) => {
+const ApplyLeave = ({ auth, salary, applied, isMyLeave }: PageProps & Props) => {
     const form = reactForm<IFormLeave>({
         resolver: zodResolver(LEAVEFORMSCHEMA),
         defaultValues: initialValues,
@@ -133,10 +134,17 @@ const ApplyLeave = ({ auth, salary, applied }: PageProps & Props) => {
             <div className="mt-3">
                 <Breadcrumbs
                     home="Leave"
-                    homeLink="leave"
+                    homeLink={
+                        (["HR","HOD"].includes(auth.user.role)) ? auth.user.role == "HOD" && !isMyLeave ? (
+                            "myapprovals.leave"
+                        ) : ("leave") : ("leave")
+                    }
                     links={[
                         { link: "leave.apply", linkname: "Apply for leave" },
                     ]}
+                    _query={isMyLeave ? {
+                        myleave: isMyLeave
+                    }: undefined}
                 />
             </div>
 

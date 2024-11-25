@@ -123,7 +123,7 @@ export default function PersonnelDetails({
                     </div>
                 </div>
 
-                <div className="flex flex-row items-center mt-10">
+                {/* <div className="flex flex-row items-center mt-10">
                     <Button
                         variant="secondary"
                         className="h-9 w-full"
@@ -136,7 +136,7 @@ export default function PersonnelDetails({
                     >
                         <span>View PDS</span>
                     </Button>
-                </div>
+                </div> */}
 
                 <Button
                         className="rounded-full absolute top-1.5 right-1.5"

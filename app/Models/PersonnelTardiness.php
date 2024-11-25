@@ -14,6 +14,7 @@ class PersonnelTardiness extends Model
         "name",
         "present",
         "absent",
+        "sy",
     ];
 
     public function users()

@@ -116,12 +116,14 @@ type BreadcrumbsProps = {
 	home?: React.ReactNode | string;
 	homeLink?: string;
 	links?: LinksType[];
+    _query?: Record<string, unknown>
 };
 
 export function Breadcrumbs({
 	home = "Home",
 	homeLink = "/",
 	links,
+    _query,
 }: BreadcrumbsProps) {
 	const { width } = useWindowSize();
 
@@ -148,7 +150,7 @@ export function Breadcrumbs({
 			<BreadcrumbList>
 				<BreadcrumbItem className="max-[467px]:hidden">
 					<BreadcrumbLink asChild>
-						<Link href={route(homeLink)}>{home}</Link>
+						<Link href={route(homeLink, { _query })}>{home}</Link>
 					</BreadcrumbLink>
 				</BreadcrumbItem>
 				<BreadcrumbSeparator className="max-[467px]:hidden" />

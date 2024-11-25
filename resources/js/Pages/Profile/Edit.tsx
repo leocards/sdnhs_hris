@@ -5,34 +5,14 @@ import { AvatarProfile } from "@/Components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Camera } from "lucide-react";
 import { Button } from "@/Components/ui/button";
-import PersonalDataSheet from "./PersonalDataSheet";
+import PersonalDataSheet from "../PDS/Partials/PersonalDataSheet";
 import Settings from "./Settings";
 import { useState } from "react";
 import UploadAvatar from "./UploadAvatar";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm";
 
-export type UserInfoType = User &
-    UserInfo & {
-        pds_educational_background: Array<any>;
-        pds_family_background: Array<any>;
-        pds_personal_information: any;
-        pds_civil_service_eligibility: any;
-        pds_work_experience: any;
-        pds_voluntary_work: any;
-        pds_learning_development: any;
-        pds_other_information: any;
-        pds_cs4: any;
-        pds_government: any;
-        pds_reference: any;
-        birth_place: string;
-        civil_status: string;
-        height: string;
-        weight: string;
-    };
-
 export default function Edit({
     auth,
-    userinfo,
     mustVerifyEmail,
     status,
     userRoles,
@@ -40,7 +20,6 @@ export default function Edit({
 }: PageProps<{
     mustVerifyEmail: boolean;
     status?: string;
-    userinfo: UserInfoType;
     userRoles: string[];
     isApprovedPds: any;
 }>) {
@@ -85,12 +64,6 @@ export default function Edit({
             </div>
 
             <div className="mt-8 flex gap-3">
-                {auth.user.role != "HR" && (<Button
-                    variant={(url !== "/profile/settings" && url !== "/profile/profile") ? "default" : "ghost"}
-                    onClick={() => router.get(route("profile.edit"))}
-                >
-                    <span>Personal Data Sheet</span>
-                </Button>)}
                 <Button
                     variant={url.startsWith("/profile/profile") ? "default" : "ghost"}
                     onClick={() => router.get(route("profile.profile"))}
@@ -109,11 +82,6 @@ export default function Edit({
                 </Button>
             </div>
 
-            {auth.user.role != "HR" && (<div>
-                {(url !== "/profile/settings" && url !== "/profile/profile") && (
-                    <PersonalDataSheet user={userinfo} isApprovedPds={!!(isApprovedPds?.pds_personal_information?.is_approved)} />
-                )}
-            </div>)}
             <div>
                 {url.startsWith("/profile/profile") && (
                     <div className="py-12">

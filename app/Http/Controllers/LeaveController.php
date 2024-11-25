@@ -27,27 +27,115 @@ use Inertia\Inertia;
 
 class LeaveController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+
+        $status = $request->query('status')??"pending";
+        $myLeave = $request->query('myleave')??false;
+
+        if($status != "pending" && $status != "approved" && $status != "rejected") abort(404);
+
+        if(Auth::user()->role == "HR" || Auth::user()->role == "HOD") {
+            return Inertia::render('Leave/Leave', [
+                "pageData" => Leave::with(['user:id,first_name,last_name,avatar'])
+                    ->when(Auth::user()->role == "HR", function ($query) use ($status) {
+                        return $query->where('hr_status', $status);
+                    })
+                    ->when(Auth::user()->role == "HOD" && !$myLeave, function ($query) use ($status) {
+                        return $query->where('principal_status', $status)
+                            ->whereNot('user_id', Auth::id())
+                            ->where('hr_status', 'Approved');
+                    })
+                    ->when(Auth::user()->role == "HOD" && $myLeave, function ($query) use ($status) {
+                        return $query->where('hr_status', $status)
+                            ->where('user_id', Auth::id());
+                    })
+                    ->with('medical_certificate')
+                    ->orderBy('created_at', 'desc')
+                    ->paginate(50),
+                "status" => $status,
+                "isMyLeave" => $myLeave ? true : false
+            ]);
+        }
+
         return Inertia::render('Leave/Leave', [
             "pageData" => Leave::with(['user:id,first_name,last_name,avatar'])
-                ->when(!in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']), function ($query) {
-                    return $query->where('user_id', Auth::id());
-                })
                 ->with('medical_certificate')
+                ->where('user_id', Auth::id())
+                ->where('hr_status', $status)
+                ->where('principal_status', $status)
                 ->orderBy('created_at', 'desc')
                 ->paginate(50),
+            "status" => $status,
+            "isMyLeave" => false
         ]);
     }
 
     public function indexJson(Request $request)
     {
+        $sortOrder = $request->query('sort')['order'];
+        $sortBy = $request->query('sort')['sort'];
+        $filter = $request->query('filter');
+        $isMyLeave = $request->query('myleave');
+        $search = $request->query('search');
+
+        $role = Auth::user()->role;
+
+        if($role == "HR" || $role == "HOD") {
+            return response()->json(
+                Leave::with(['user:id,first_name,last_name'])
+                    ->with('medical_certificate')
+                    // if the request is from HOD and from own leave
+                    ->when($role == "HOD" && $isMyLeave, function ($query) use ($filter) {
+                        $query->where('hr_status', $filter)
+                            ->where('user_id', Auth::id());
+                    })
+                    // if the request is from HOD and from leave needs to approve
+                    ->when($role == "HOD" && !$isMyLeave, function ($query) use ($filter) {
+                        $query->where('principal_status', $filter)
+                            ->whereNot('user_id', Auth::id())
+                            ->where('hr_status', 'Approved');
+                    })
+                    // if the request is from HR
+                    ->when($role == "HR", function ($query) use ($filter) {
+                        $query->where('hr_status', $filter);
+                    })
+                    // if the request if not from hr and hod
+                    ->when(!in_array($role, ['HR', 'HOD']), function ($query) {
+                        return $query->where('user_id', Auth::id());
+                    })
+                    ->when($request->query('sort')['sort'], function ($query) use ($sortOrder, $sortBy, $role, $isMyLeave) {
+                        if ($sortBy == "Date created") {
+                            $query->orderBy('created_at', $sortOrder);
+                        }
+                        if ($sortBy == "Leave type") {
+                            $query->orderBy('leave_type', $sortOrder);
+                        }
+                        if ($role == "HR" || ($role == "HOD" && $isMyLeave))
+                            if ($sortBy == "Name") {
+                                $query->join('users', 'users.id', '=', 'leaves.user_id')
+                                    ->orderBy('users.first_name', $sortOrder)
+                                    ->select('leaves.*');
+                            }
+                    })
+                    ->when($request->query('search'), function ($query) use ($search, $role, $isMyLeave) {
+                        $query->join('users', 'users.id', '=', 'leaves.user_id')
+                            ->where('leaves.leave_type', 'LIKE', '%' . $search . '%')
+                            ->when($role == "HR" || ($role == "HOD" && $isMyLeave), function ($query) use ($search) {
+                                $query->orWhere('users.first_name', 'LIKE', '%' . $search . '%');
+                            })
+                            ->select('leaves.*');
+                    })
+                    ->paginate(50)
+            );
+        }
+
         return response()->json(
             Leave::with(['user:id,first_name,last_name'])
                 ->with('medical_certificate')
-                ->when($request->query('filter') && $request->query('filter') != "All", function ($query) use ($request) {
-                    return $query->where('hr_status', $request->query('filter'))
-                        ->orWhere('principal_status', $request->query('filter'));
+                ->when($request->query('filter') && $request->query('filter') != "All", function ($query) use ($filter) {
+                    return $query->where('hr_status', $filter)
+                        ->orWhere('principal_status', $filter);
                 })
                 ->when(!in_array(Auth::user()->role, ['HR', 'HOD', 'Principal']), function ($query) {
                     return $query->where('user_id', Auth::id());
@@ -79,7 +167,7 @@ class LeaveController extends Controller
         );
     }
 
-    public function view(Leave $leave = null, User $user = null)
+    public function view(Request $request, Leave $leave = null, User $user = null)
     {
         if ($leave)
             $leave->load(['details_of_leave', 'details_of_action_leave', 'medical_certificate', 'user']);
@@ -89,14 +177,17 @@ class LeaveController extends Controller
             "leave" => $leave,
             "hr" => User::where('role', 'HR')->first()->completeName(),
             "principal" => User::where('role', 'HOD')->first(),
-            "open" => session('open')
+            "open" => session('open'),
+            "isMyLeave" => $request->query('myleave')
         ]);
     }
 
-    public function apply_for_leave()
+    public function apply_for_leave(Request $request)
     {
         if(Auth::user()->role == "HR")
             return abort(401);
+
+        $myleaves = $request->query('myleave');
 
         $renderedLeaves = Leave::where('user_id', Auth::user())
             ->where('hr_status', 'Approved')
@@ -120,7 +211,8 @@ class LeaveController extends Controller
                 ->where(function ($query) {
                     $query->where('to', 'present');
                 })->first('monthly_salary'),
-            "applied" => $renderedLeaves
+            "applied" => $renderedLeaves,
+            "isMyLeave" => $myleaves
         ]);
     }
 

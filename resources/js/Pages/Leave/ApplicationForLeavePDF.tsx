@@ -23,6 +23,7 @@ import { cn } from "@/lib/utils";
 export type Principal = {
     name: string
     position: string
+    isMyLeave: number
 }
 
 const ApplicationForLeavePDF = ({
@@ -31,7 +32,8 @@ const ApplicationForLeavePDF = ({
     hr,
     open,
     principal,
-}: PageProps<{ leave: any; hr: string; open: any, principal: Principal }>) => {
+    isMyLeave
+}: PageProps<{ leave: any; hr: string; open: any, principal: Principal, isMyLeave: number }>) => {
     const [showRespond, setShowRespond] = useState<boolean>(false);
     const [showViewResponse, setShowViewResponse] = useState<boolean>(false);
     const [showUploadMedical, setUploadMedical] = useState(false);
@@ -70,8 +72,15 @@ const ApplicationForLeavePDF = ({
             <div className="mt-3 mb-10">
                 <Breadcrumbs
                     home="Leave"
-                    homeLink="leave"
+                    homeLink={
+                        (["HR","HOD"].includes(auth.user.role)) ? (
+                            "myapprovals.leave"
+                        ) : ("leave")
+                    }
                     links={[{ link: "", linkname: "View" }]}
+                    _query={isMyLeave ? {
+                        myleave: isMyLeave
+                    }: undefined}
                 />
             </div>
 

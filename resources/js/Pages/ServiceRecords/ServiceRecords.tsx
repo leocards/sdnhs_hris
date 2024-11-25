@@ -18,16 +18,16 @@ import DataList from "@/Components/DataList";
 import PaginationButton from "@/Components/PaginationButton";
 import ServiceRecordDeleteConfirmation from "./ServiceRecordDeleteConfirmation";
 import { cn } from "@/lib/utils";
+import Tabs from "@/Components/framer/Tabs";
+import { router } from "@inertiajs/react";
 
-export default function index({
-    auth,
-    records,
-}: PageProps & {
+export default function index(props: PageProps & {
     records: PaginateData;
+    status: string;
 }) {
     return (
-        <PageListProvider initialValue={records}>
-            <ServiceRecords auth={auth} records={records} />
+        <PageListProvider initialValue={props.records}>
+            <ServiceRecords {...props} />
         </PageListProvider>
     );
 }
@@ -44,13 +44,16 @@ type CertificateRowData = {
     venue: string;
     organizer: string;
     approved: "approved" | "rejected" | "pending"
+    remaining_credits: number
 };
 
 function ServiceRecords({
     auth,
     records,
+    status,
 }: PageProps & {
     records: PaginateData;
+    status: string;
 }) {
     const { setList, data, loading, setLoading } = usePageList();
     const [isUploadCertificate, setIsUploadCertificate] =
@@ -102,7 +105,24 @@ function ServiceRecords({
                 </h2>
             }
         >
-            <div className="mt-10 mb-8 flex">
+            <div className="divide-x flex items-center mt-5 text-sm border-b-2 mb-10">
+                <Tabs
+                    id="personnel-tab"
+                    active={status}
+                    navigate={(nav) => {
+                        router.get(
+                            route("service-records", {
+                                _query: { status: nav },
+                            })
+                        );
+                        setLoading(true);
+                    }}
+                    tabs={[
+                        { id: "pending", label: "Pending" },
+                        { id: "approved", label: "Approved" },
+                        { id: "rejected", label: "Rejected" },
+                    ]}
+                />
                 <Button
                     className="gap-3 ml-auto"
                     onClick={() => setIsUploadCertificate(true)}

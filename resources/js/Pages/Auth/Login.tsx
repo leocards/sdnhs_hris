@@ -212,7 +212,7 @@ export default function Login({ status }: { status?: string | expired }) {
                         />
 
                         <Button
-                            className="w-full sm:h-12 !mt-8 !bg-yellow-950"
+                            className="w-full sm:h-12 !mt-8"
                             disabled={processing}
                         >
                             {processing ? (
@@ -229,7 +229,7 @@ export default function Login({ status }: { status?: string | expired }) {
                     <Link
                         href={route("password.request")}
                         className={cn(
-                            "underline text-sm hover:text-yellow-600 rounded-md focus:outline-none",
+                            "underline text-sm hover:text-primary rounded-md focus:outline-none",
                             processing && "pointer-events-none"
                         )}
                     >

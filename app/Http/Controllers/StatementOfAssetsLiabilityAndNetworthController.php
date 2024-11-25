@@ -20,14 +20,35 @@ use Inertia\Inertia;
 
 class StatementOfAssetsLiabilityAndNetworthController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $status = $request->query('status')??"pending";
+
+        if($status != "pending" && $status != "approved")
+            abort(404);
+
+        if (Auth::user()->role === "HR") {
+            return Inertia::render('Saln/SALNPage', [
+                'saln' => StatementOfAssetsLiabilityAndNetwork::with('user:id,first_name,last_name,middle_name,avatar')
+                    ->withSum('salnLiability', 'balances')
+                    ->withSum('salnAssets', 'cost')
+                    ->when(Auth::user()->role == "HR", function ($query) use ($status) {
+                        $query->where('isApproved', $status === "pending" ? null : true);
+                    })
+                    ->latest()
+                    ->get(['id', 'user_id', 'asof']),
+                'status' => $status
+            ]);
+        }
+
         return Inertia::render('Saln/StatementOfAssetsLiabilityAndNetworth', [
             'saln' => StatementOfAssetsLiabilityAndNetwork::withSum('salnLiability', 'balances')
                 ->withSum('salnAssets', 'cost')
                 ->where('user_id', Auth::id())
+                ->where('isApproved', $status === "pending" ? null : true)
                 ->latest()
-                ->paginate(50)
+                ->paginate(50),
+            'status' => $status
         ]);
     }
 
@@ -175,12 +196,12 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' uploaded a SALN as of '.Carbon::parse($request->asof)->format('M d, Y'),
+                'message' => ' uploaded a SALN as of ' . Carbon::parse($request->asof)->format('M d, Y'),
                 'type' => 'profile',
                 'go_to_link' => route('personnel')
             ]);
 
-            if($notificationResponse) {
+            if ($notificationResponse) {
                 $notificationResponse->load(['sender']);
                 broadcast(new SendNotificationEvent($notificationResponse, $hr->id));
             }
@@ -228,7 +249,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
 
             $networth = floatval($totalassets) - floatval($liabilities);
 
-            $spouse_name = $saln->salnSpouse->first_name .' '. $saln->salnSpouse->middle_name .'. '. $saln->salnSpouse->family_name .'/'. $saln->salnSpouse->office .'/'. $saln->salnSpouse->office_address;
+            $spouse_name = $saln->salnSpouse?->first_name . ' ' . $saln->salnSpouse?->middle_name . '. ' . $saln->salnSpouse?->family_name . '/' . $saln->salnSpouse?->office . '/' . $saln->salnSpouse?->office_address;
 
             if ($user_saln) {
                 $user_saln->networth = $networth;
@@ -284,10 +305,10 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
             $liability = $this->getValue($liabilities->splice(0, 1));
 
             $saln_totals = collect([
-                'personal' => $this->totals($personal, 'cost'),
-                'real' => $this->totals($real, 'cost'),
-                'liability' => $this->totals($liability, 'balances'),
-                'networth' => ($this->totals($personal, 'cost') + $this->totals($real, 'cost')) - $this->totals($liability, 'balances')
+                'personal' => !$personal ? 0 : $this->totals($personal, 'cost'),
+                'real' => !$real ? 0 : $this->totals($real, 'cost'),
+                'liability' => !$liability ? 0 : $this->totals($liability, 'balances'),
+                'networth' => ((!$personal ? 0 : $this->totals($personal, 'cost')) + (!$real ? 0 : $this->totals($real, 'cost'))) - (!$liability ? 0 : $this->totals($liability, 'balances'))
             ]);
 
             $salnPages->push([
@@ -318,7 +339,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
             }
         }
 
-        return response()->json(["spouse" => $spouse, "declarant" => $declarant->pdsGovernment, "pages" => $salnPages]);
+        return response()->json(["user" => $saln->user, "saln" => $saln, "spouse" => $spouse, "declarant" => $declarant->pdsGovernment, "pages" => $salnPages]);
     }
 
     function getValue($data)
@@ -329,7 +350,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
     function totals(Collection $data, string $attribute, string $assetType = null)
     {
         return $data->reduce(function ($carry, $item) use ($attribute) {
-            if(is_numeric($item[$attribute])) {
+            if (is_numeric($item[$attribute])) {
                 return $carry + $item[$attribute];
             } else {
                 return $carry + 0;

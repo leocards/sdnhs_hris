@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'height' => '5.2',
             'weight' => '59',
             'address' => 'Panabo city',
-            'email' => 'banaag.nieljohn@gmail.com',
+            'email' => 'sdnhs.lopez.floramie@gmail.com',
             'phone_number' => '09485729385',
             'personnel_id' => 'SDNH-3578',
             'department' => null,

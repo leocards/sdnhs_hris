@@ -316,8 +316,8 @@ const LeavePDFDetailsOfActionOnApplication = (
                                 )}
                             >
                                 <div className={cn(isDownload && "-mt-3")}>
-                                    <div>{principal.name}</div>
-                                    <div className="capitalize font-normal">{principal.position}</div>
+                                    <div>{principal?.name}</div>
+                                    <div className="capitalize font-normal">{principal?.position}</div>
                                     {/* Postion */}
                                 </div>
                             </div>

@@ -598,8 +598,7 @@ const SchoolYearButton = (props: { role: ROLES }) => {
                 <div className="h-9 px-2 border border-border shadow-sm ml-3 rounded-md flex items-center overflow-hidden text-sm font-medium">
                     {!sy ? (
                         <div className="flex items-center gap-2">
-                            <span className="loading loading-spinner loading-xs"></span>
-                            <div>Loading...</div>
+                            Click to add SY
                         </div>
                     ) : (
                         <span>SY {sy?.sy}</span>

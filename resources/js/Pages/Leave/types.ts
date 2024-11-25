@@ -173,9 +173,17 @@ export const LEAVEFORMSCHEMA = z.object({
         }, {
             required_error: requiredError("inclusive dates")
         })
-        .refine(data => data.from < new Date(), {
-            message: "The 'from' date cannot be a past date",
-            path: ["from"]
+        .refine((dates) => {
+            // return error if the given dates are past of current dates
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            dates.from.setHours(0, 0, 0, 0);
+
+            return dates.from >= today;
+        },
+        {
+            message: "Date of filing from cannot be past dates.",
+            path: ['from']
         })
         .refine(data => !data.to || data.from.getTime() !== data.to.getTime(), {
             message: "'From' and 'to' dates should not be the same",

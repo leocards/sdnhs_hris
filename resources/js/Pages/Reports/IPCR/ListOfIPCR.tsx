@@ -145,7 +145,7 @@ const ListOfIPCR = ({ ipcr, principal, hr, ipcr_years, sy }: Props) => {
                                                     <div className="">
                                                         {++index}
                                                     </div>
-                                                    <div className="">{`${list.user.last_name.toUpperCase()}, ${list.user.first_name.toUpperCase()} ${list.user.middle_name.toUpperCase()}`}</div>
+                                                    <div className="">{`${list.user?.last_name.toUpperCase()}, ${list.user?.first_name.toUpperCase()} ${list.user?.middle_name.toUpperCase()}`}</div>
                                                     <div className="">
                                                         {list.user.position}
                                                     </div>

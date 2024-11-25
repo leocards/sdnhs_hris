@@ -259,7 +259,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 $user_saln->save();
             } else {
                 Saln::create([
-                    "user_id" => Auth::id(),
+                    "user_id" => $saln->user->id,
                     "networth" => $networth,
                     "spouse" => $spouse_name,
                     "joint" => $request->isjoint == "joint" ? true : false,

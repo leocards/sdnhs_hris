@@ -83,7 +83,7 @@ const SALNSCHEMA = z.object({
     asof: z.date({ required_error: requiredError('as of') }),
     date: z.date({ required_error: requiredError('date') }).default(new Date()),
     isjoint: z.enum(['joint', 'separate', 'none']),
-}).superRefine(({ biandfc, relativesingovernment }, ctx) => {
+}).superRefine(({ biandfc, relativesingovernment, isjoint, spouse }, ctx) => {
     if(!biandfc.nobiandfc) {
         if(biandfc.bifc?.length??0 > 0) {
             biandfc.bifc?.forEach((bifc, index) => {
@@ -152,6 +152,32 @@ const SALNSCHEMA = z.object({
                 }
             })
         }
+    }
+
+    if(isjoint != "none") {
+        // Define required spouse fields
+        const requiredSpouseFields: (keyof typeof spouse)[] = [
+            "familyname",
+            "firstname",
+            "middleinitial",
+            "position",
+            "office",
+            "officeaddress",
+            "governmentissuedid",
+            "idno",
+            "dateissued"
+        ];
+
+        // Iterate through required fields and validate
+        requiredSpouseFields.forEach((field) => {
+            if (!spouse[field]) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    path: ["spouse", field],
+                    message: `This field is required when "joint" or "separate" filing.`
+                });
+            }
+        });
     }
 })
 

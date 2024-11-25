@@ -18,7 +18,7 @@ const MyPersonalDataSheet: React.FC<Props> = ({ auth, userinfo, isApprovedPds })
                 </h2>
             }
         >
-            <PersonalDataSheet user={userinfo} isApprovedPds={!!(isApprovedPds?.pds_personal_information?.is_approved)} />
+            <PersonalDataSheet user={userinfo} isApprovedPds={!(isApprovedPds?.pds_personal_information?.is_approved)} />
         </Authenticated>
     );
 };

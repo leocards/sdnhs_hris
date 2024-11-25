@@ -151,6 +151,7 @@ class DashboardController extends Controller
         $list = User::with(['leaveApplications' => function ($query) use ($sy) {
                 $query->select(['user_id', 'leave_type'])->where('sy', $sy->sy)->distinct('leave_type');
             }])
+            ->whereNot('role', 'HR')
             ->when($search, function ($query) use ($search) {
                 $query->where('first_name', 'LIKE', "%{$search}%")
                     ->orWhere('middle_name', 'LIKE', "%{$search}%")

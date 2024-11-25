@@ -65,7 +65,7 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
     };
 
     return (
-        <Sidebar className={cn(state == "expanded" && "bg-white")} collapsible="icon" variant={isMobile ? "floating" : state !== "expanded" ? "floating" : "sidebar"}>
+        <Sidebar className={cn(state == "expanded" && "bg-background")} collapsible="icon" variant={isMobile ? "floating" : state !== "expanded" ? "floating" : "sidebar"}>
             {isMobile && <ToggleSideBarButton className="absolute -right-[3.215rem] top-2.5" />}
 
             <SidebarHeader className="mb-5">

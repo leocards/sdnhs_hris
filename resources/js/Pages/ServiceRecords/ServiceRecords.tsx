@@ -24,6 +24,7 @@ import { router } from "@inertiajs/react";
 export default function index(props: PageProps & {
     records: PaginateData;
     status: string;
+    open: string;
 }) {
     return (
         <PageListProvider initialValue={props.records}>
@@ -51,9 +52,11 @@ function ServiceRecords({
     auth,
     records,
     status,
+    open
 }: PageProps & {
     records: PaginateData;
     status: string;
+    open: string;
 }) {
     const { setList, data, loading, setLoading } = usePageList();
     const [isUploadCertificate, setIsUploadCertificate] =
@@ -93,8 +96,13 @@ function ServiceRecords({
     useEffect(() => {
         if (records) {
             setList(records);
+
+            if(open) {
+                let certificate = records.data.find(({id}) => (id.toString()) == open)
+                setSelectedCertificate(certificate)
+            }
         }
-    }, [records]);
+    }, [records, open]);
 
     return (
         <Authenticated

@@ -225,6 +225,9 @@ class LeaveController extends Controller
             $sy = SchoolYear::latest()->first();
             $sex = Auth::user()->role;
 
+            // $hasRecentLeave = Leave::where('user_id', Auth::id())
+            //     ->where('')
+
             if(!$sy) {
                 throw new Exception('There is no school year yet. You can\'t send an application.');
             } else {
@@ -327,7 +330,7 @@ class LeaveController extends Controller
                         'from_user_id' => Auth::id(),
                         'message' => " has submitted an Application for leave.",
                         'type' => 'leave',
-                        'go_to_link' => route('leave.view', [$leave->id, Auth::id()])
+                        'go_to_link' => route('myapprovals.leave.view', [$leave->id, Auth::id()])
                     ]);
 
                     $notification->load(['sender']);
@@ -342,7 +345,7 @@ class LeaveController extends Controller
                         'from_user_id' => Auth::id(),
                         'message' => " has submitted an Application for leave.",
                         'type' => 'leave',
-                        'go_to_link' => route('leave.view', [$leave->id, Auth::id()])
+                        'go_to_link' => route('myapprovals.leave.view', [$leave->id, Auth::id()])
                     ]);
 
                     $notification->load(['sender']);

@@ -21,11 +21,12 @@ type SALNTYPE = {
 type Prop = {
     status: string;
     saln: Array<SALNTYPE>;
+    open: string
 } & PageProps;
 
-const SALNPage: React.FC<Prop> = ({ auth, saln, status }) => {
+const SALNPage: React.FC<Prop> = ({ auth, saln, status, open }) => {
     const [loading, setLoading] = useState(false);
-    const [selectedSaln, setSelectedSaln] = useState<number | null>(null);
+    const [selectedSaln, setSelectedSaln] = useState<number | null>(open?parseInt(open):null);
     const [showSaln, setShowSaln] = useState(false);
 
     useEffect(() => {

@@ -23,6 +23,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
     public function index(Request $request)
     {
         $status = $request->query('status')??"pending";
+        $open = $request->query('open');
 
         if($status != "pending" && $status != "approved")
             abort(404);
@@ -37,7 +38,8 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                     })
                     ->latest()
                     ->get(['id', 'user_id', 'asof']),
-                'status' => $status
+                'status' => $status,
+                "open"=>$open
             ]);
         }
 
@@ -48,7 +50,8 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 ->where('isApproved', $status === "pending" ? null : true)
                 ->latest()
                 ->paginate(50),
-            'status' => $status
+            'status' => $status,
+            "open"=>$open
         ]);
     }
 
@@ -198,7 +201,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 'from_user_id' => Auth::id(),
                 'message' => ' uploaded a SALN as of ' . Carbon::parse($request->asof)->format('M d, Y'),
                 'type' => 'profile',
-                'go_to_link' => route('personnel')
+                'go_to_link' => route('myapprovals.saln').'?open='.Auth::id()
             ]);
 
             if ($notificationResponse) {
@@ -231,7 +234,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 'from_user_id' => Auth::id(),
                 'message' => ': Your SALN has been approved by the HR.',
                 'type' => 'response',
-                'go_to_link' => route('saln')
+                'go_to_link' => route('saln').'?open='.$saln->id
             ]);
 
             $totalassets = $saln->salnAssets()

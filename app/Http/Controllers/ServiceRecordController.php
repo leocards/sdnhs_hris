@@ -22,6 +22,7 @@ class ServiceRecordController extends Controller
     public function index(Request $request)
     {
         $status = $request->query('status')??"pending";
+        $open = $request->query('open');
 
         if($status != "pending" && $status != "approved" && $status != "rejected" )
             abort(404);
@@ -32,7 +33,8 @@ class ServiceRecordController extends Controller
                 'pageData' => ServiceRecord::with('user:id,first_name,last_name,middle_name,avatar')
                     ->where('approved', $status)
                     ->get(),
-                'status' => $status
+                'status' => $status,
+                "open"=>$open
             ]);
         }
 
@@ -42,7 +44,8 @@ class ServiceRecordController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->where('approved', $status)
                 ->paginate(50),
-            'status' => $status
+            'status' => $status,
+            "open"=>$open
         ]);
     }
 
@@ -78,7 +81,7 @@ class ServiceRecordController extends Controller
             //     throw new Exception('You have already reached the credit limit.');
             // }
 
-            ServiceRecord::create([
+            $certificate = ServiceRecord::create([
                 'user_id' => Auth::id(),
                 'file_name' => $request->certificateName,
                 'venue' => $request->venue,
@@ -102,7 +105,7 @@ class ServiceRecordController extends Controller
                         'from_user_id' => Auth::id(),
                         'message' => " has uploaded a certificate.",
                         'type' => 'certificate',
-                        'go_to_link' => route('general-search.view', [Auth::id()])
+                        'go_to_link' => route('myapprovals.service-records').'?open='.$certificate->id
                     ]);
 
                     $notifications_to_send->push($notif);
@@ -116,7 +119,7 @@ class ServiceRecordController extends Controller
                         'from_user_id' => Auth::id(),
                         'message' => " has uploaded \"" . $request->certificateName . "\" certificate.",
                         'type' => 'certificate',
-                        'go_to_link' => route('general-search.view', [Auth::id()])
+                        'go_to_link' => route('myapprovals.service-records').'?open='.$certificate->id
                     ]);
                     $notifications_to_send->push($notif);
                 }
@@ -208,7 +211,7 @@ class ServiceRecordController extends Controller
                 'from_user_id' => Auth::id(),
                 'message' => ': Your certificate has been '.$request->respond.' by the HR.',
                 'type' => 'response',
-                'go_to_link' => route('service-records').'?certificateId='.$certificate->id
+                'go_to_link' => route('service-records').'?open='.$certificate->id
             ]);
 
             DB::commit();

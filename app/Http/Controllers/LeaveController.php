@@ -386,6 +386,7 @@ class LeaveController extends Controller
             $notificationResponse = null;
 
             if ($request->respond === "approved") {
+                // notifications
                 if (Auth::user()->role === "HR") {
                     $leave->hr_status = "Approved";
 
@@ -425,8 +426,8 @@ class LeaveController extends Controller
                             }
                         }
                     }
-                } else {
-                    if(Auth::user()->role == "HR" && $leave->leave_type != "Maternity Leave") {
+                } else {/*  && $leave->leave_type != "Maternity Leave" */
+                    if(Auth::user()->role == "HR") {
                         $this->processCreditOnLeave($user, $leave);
                     }
                 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\SchoolYear;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -34,6 +35,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            'sy' => fn () => SchoolYear::latest()->first(),
             'success' => fn () => $request->session()->get('success'),
             'message' => fn () => $request->session()->get('message'),
         ];

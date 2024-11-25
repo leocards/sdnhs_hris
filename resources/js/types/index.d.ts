@@ -48,6 +48,7 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     auth: {
         user: User;
     };
+    sy: SYTYPE
 };
 
 export type SALNTOTALTYPE = {
@@ -158,6 +159,7 @@ export interface PAGINATEDDATA<T> {
 }
 
 export type SYTYPE = {
+    id: number
     start: string
     end: string
     resumption: string

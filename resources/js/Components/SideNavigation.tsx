@@ -1,11 +1,8 @@
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
-    SidebarGroup,
     SidebarHeader,
     SidebarMenu,
-    SidebarMenuBadge,
     SidebarMenuButton,
     SidebarMenuItem,
     SidebarMenuSub,
@@ -25,7 +22,6 @@ import {
     FolderKanban,
     Home,
     ListCheck,
-    PlusCircle,
     ReceiptText,
     Search,
     UserCheck,
@@ -40,8 +36,9 @@ import {
 } from "./ui/collapsible";
 import { Fragment, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
-import { ROLES, User } from "@/types";
+import { ROLES } from "@/types";
 import { cn } from "@/lib/utils";
+import { ToggleSideBarButton } from "@/Layouts/AuthenticatedLayout";
 
 type Props = {
     role: ROLES;
@@ -49,16 +46,12 @@ type Props = {
 
 const SideNavigation: React.FC<Props> = ({ role }) => {
     const [activeTab] = useState(window.location.pathname.split("/")[1]);
-    const { url, props } = usePage();
+    const { url } = usePage();
     const queryParams = new URL(window.location.href).searchParams;
     const personnel = queryParams.get("personnel");
 
     const {
         state,
-        open,
-        setOpen,
-        openMobile,
-        setOpenMobile,
         isMobile,
         toggleSidebar,
     } = useSidebar();
@@ -73,6 +66,8 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
 
     return (
         <Sidebar className={cn(state == "expanded" && "bg-white")} collapsible="icon" variant={isMobile ? "floating" : state !== "expanded" ? "floating" : "sidebar"}>
+            {isMobile && <ToggleSideBarButton className="absolute -right-[3.215rem] top-2.5" />}
+
             <SidebarHeader className="mb-5">
                 <SidebarMenu>
                     <SidebarMenuItem className={cn("flex items-center font-bold text-lg", state == "expanded" && "px-3")}>

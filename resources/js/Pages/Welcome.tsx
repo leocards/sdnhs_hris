@@ -13,7 +13,7 @@ export default function Welcome({ status }: { status?: string | expired }) {
             <div className="absolute hidden top-0 left-0 pointer-events-none -z-[1] w-screen h-screen object-cover bg-no-repeat [background-image:url(/storage/assets/background.png)] [background-size:cover]"></div>
 
             <div className="grid [@media(min-width:985px)]:grid-cols-5 min-h-screen">
-                <div className="col-span-3 [@media(max-width:985px)]:hidden flex items-center p-8 bg-primary yellow-700 [#C74375]">
+                <div className="col-span-3 [@media(max-width:985px)]:hidden flex items-center p-8 bg-primary">
                     <div className="[@media(min-width:1030px)]:flex items-center mx-auto">
                         <img
                             src="/storage/assets/sdnhs-logo.png"
@@ -32,7 +32,7 @@ export default function Welcome({ status }: { status?: string | expired }) {
                         </div>
                     </div>
                 </div>
-                <div className="col-span-2 flex items-center justify-center px-4 [@media(max-width:985px)]:bg-yellow-700">
+                <div className="col-span-2 flex items-center justify-center px-4 [@media(max-width:985px)]:bg-primary">
                     <Login status={status} />
                 </div>
             </div>

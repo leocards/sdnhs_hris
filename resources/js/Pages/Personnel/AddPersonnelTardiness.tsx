@@ -98,6 +98,7 @@ const AddPersonnelTardiness: React.FC<Props> = ({
                     present: user.present,
                     absent: user.absent,
                 });
+                form.setValue('sy', user.sy);
             }
         }
     }, [show]);

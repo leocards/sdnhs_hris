@@ -35,7 +35,7 @@ import {
 } from "@headlessui/react";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import Tabs from "@/Components/framer/Tabs";
-import { ROLES, SYTYPE, User } from "@/types";
+import { PageProps, ROLES, SYTYPE, User } from "@/types";
 import { cn } from "@/lib/utils";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import { router, usePage } from "@inertiajs/react";
@@ -276,10 +276,11 @@ export default function Authenticated({
 
             <div className="relative isolate flex min-h-svh w-full bg-background amber-50 max-lg:flex-col lg:b g-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
                 <header className="flex items-center px-4 lg:hidden sticky top-0 bg-background dark:bg-zinc-900 z-50">
-                    <div className="py-2.5">
+                    <div className="py-2.5 flex items-center">
                         <span className="relative">
                             <ToggleSideBarButton />
                         </span>
+                            <SchoolYearButton role={userAuth.role} />
                     </div>
 
                     <div className="min-w-0 flex-1">
@@ -289,7 +290,7 @@ export default function Authenticated({
 
                 <main className="flex flex-1 flex-col">
                     <div className="grow bg-background lg:ring-zinc-950/5 dark:bg-zinc-900 dark:lg:ring-white/10">
-                        <div className="h-11 mb-2 mt-2 flex items-center max-lg:hidden px-4 mb-5">
+                        <div className="h-11 mt-2 flex items-center max-lg:hidden px-4 mb-5">
                             <ToggleSideBarButton />
 
                             <SchoolYearButton role={userAuth.role} />
@@ -337,20 +338,15 @@ export default function Authenticated({
     );
 }
 
-const ToggleSideBarButton = () => {
+export const ToggleSideBarButton = (props: { className?: string }) => {
     const {
         state,
-        open,
-        setOpen,
-        openMobile,
-        setOpenMobile,
-        isMobile,
         toggleSidebar,
     } = useSidebar();
 
     return (
         <Button
-            className="size-9 shadow-sm"
+            className={cn("size-9 shadow-sm", props.className)}
             size={"icon"}
             variant={"outline"}
             onClick={toggleSidebar}
@@ -540,22 +536,9 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
 };
 
 const SchoolYearButton = (props: { role: ROLES }) => {
-    const [sy, setSY] = useState<SYTYPE | null>(null);
-    const [loading, setLoading] = useState(false);
+    const { props: { sy } } = usePage<PageProps>()
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [showSchoolYear, setShowSchoolYear] = useState<boolean>(false);
-
-    useEffect(() => {
-        setLoading(true);
-        window.axios
-            .get(route("dashboard.sy"))
-            .then((response) => {
-                setSY(response.data);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, []);
 
     return (
         <>
@@ -565,9 +548,8 @@ const SchoolYearButton = (props: { role: ROLES }) => {
                         <MenubarMenu>
                             <MenubarTrigger
                                 className="h-full items-center text-sm cursor-pointer disabled:pointer-events-none"
-                                disabled={loading}
                             >
-                                {loading ? (
+                                {!sy ? (
                                     <div className="flex items-center gap-2">
                                         <span className="loading loading-spinner loading-xs"></span>
                                         <div>Loading...</div>
@@ -612,7 +594,7 @@ const SchoolYearButton = (props: { role: ROLES }) => {
                 </Fragment>
             ) : (
                 <div className="h-9 px-2 border border-border shadow-sm ml-3 rounded-md flex items-center overflow-hidden text-sm font-medium">
-                    {loading ? (
+                    {!sy ? (
                         <div className="flex items-center gap-2">
                             <span className="loading loading-spinner loading-xs"></span>
                             <div>Loading...</div>

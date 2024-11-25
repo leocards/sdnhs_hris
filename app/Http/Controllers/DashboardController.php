@@ -54,13 +54,13 @@ class DashboardController extends Controller
                     "approved" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
                         ->where('hr_status', 'Approved')
                         ->where('principal_status', 'Approved')
-                        ->where('sy', $this->latestSy->sy)
+                        ->where('sy', $this->latestSy?->sy)
                         ->groupBy('leave_type')
                         ->get(),
                     "rejected" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))
                         ->where('hr_status', 'Rejected')
                         ->where('principal_status', 'Rejected')
-                        ->where('sy', $this->latestSy->sy)
+                        ->where('sy', $this->latestSy?->sy)
                         ->groupBy('leave_type')
                         ->get()
                 ]),
@@ -68,7 +68,7 @@ class DashboardController extends Controller
                     ->whereIn('id', function ($query) {
                         $query->selectRaw('MAX(id)')
                             ->from('leaves')
-                            ->where('sy', $this->latestSy->sy)
+                            ->where('sy', $this->latestSy?->sy)
                             ->whereIn('principal_status', ['Approved', 'Rejected'])
                             ->whereIn('hr_status', ['Approved', 'Rejected'])
                             ->groupBy('leave_type');

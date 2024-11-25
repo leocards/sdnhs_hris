@@ -50,7 +50,7 @@ const LeavePDFApplicant = ({
                                 >
                                     (Last)
                                 </div>
-                                <div className={cn(last.length >= 19 && "text-[9px]")}>{last},</div>
+                                <div className={cn(last?.length >= 19 && "text-[9px]")}>{last},</div>
                             </div>
                             <div className="text-center space-y-0.5">
                                 <div
@@ -61,7 +61,7 @@ const LeavePDFApplicant = ({
                                 >
                                     (First)
                                 </div>
-                                <div className={cn(first.length >= 19 && "text-[9px]")}>{first}</div>
+                                <div className={cn(first?.length >= 19 && "text-[9px]")}>{first}</div>
                             </div>
                             <div className="text-center space-y-0.5">
                                 <div
@@ -72,7 +72,7 @@ const LeavePDFApplicant = ({
                                 >
                                     (Middle)
                                 </div>
-                                <div className={cn(middle.length >= 19 && "text-[9px]")}>{middle}</div>
+                                <div className={cn(middle?.length >= 19 && "text-[9px]")}>{middle}</div>
                             </div>
                         </div>
                     </div>

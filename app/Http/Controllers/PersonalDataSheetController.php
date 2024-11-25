@@ -745,7 +745,7 @@ class PersonalDataSheetController extends Controller
                 'from_user_id' => Auth::id(),
                 'message' => ': Your personal data sheet has been approved by the HR.',
                 'type' => 'response',
-                'go_to_link' => route('profile.edit')
+                'go_to_link' => route('pds')
             ]);
 
             $notificationResponse->load(['sender']);

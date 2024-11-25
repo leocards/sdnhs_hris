@@ -551,8 +551,7 @@ const SchoolYearButton = (props: { role: ROLES }) => {
                             >
                                 {!sy ? (
                                     <div className="flex items-center gap-2">
-                                        <span className="loading loading-spinner loading-xs"></span>
-                                        <div>Loading...</div>
+                                        Click to add SY
                                     </div>
                                 ) : (
                                     <span>SY {sy?.sy}</span>
@@ -571,9 +570,12 @@ const SchoolYearButton = (props: { role: ROLES }) => {
                                 <MenubarItem
                                     className="cursor-pointer gap-3"
                                     onClick={() => {
-                                        setIsEdit(true);
-                                        setShowSchoolYear(true);
+                                        if(sy) {
+                                            setIsEdit(true);
+                                            setShowSchoolYear(true);
+                                        }
                                     }}
+                                    disabled={!sy}
                                 >
                                     <SquarePen className="size-4" />
                                     <span>Edit School Year</span>

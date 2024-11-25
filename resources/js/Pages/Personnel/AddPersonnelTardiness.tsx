@@ -120,7 +120,6 @@ const AddPersonnelTardiness: React.FC<Props> = ({
                     onClose(false);
                 },
                 onError: (error) => {
-                    console.log(error);
                     toast({
                         variant: "destructive",
                         description: error[0],

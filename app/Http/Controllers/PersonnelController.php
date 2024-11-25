@@ -240,6 +240,9 @@ class PersonnelController extends Controller
     {
         DB::beginTransaction();
         try {
+            if(!$request->sy)
+                throw new Exception('Please add school year first.');
+
             foreach ($request->attendances as $value) {
                 PersonnelTardiness::create([
                     'user_id' => $value['personnelId'],

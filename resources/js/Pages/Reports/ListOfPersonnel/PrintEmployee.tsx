@@ -7,8 +7,8 @@ import PDFEmployee from "./PDFEmployee";
 import { ListType } from "./ListOfEmployees";
 import { useState } from "react";
 import { Input } from "@/Components/ui/input";
-import { SYTYPE } from "../../Dashboard";
 import { format } from "date-fns";
+import { SYTYPE } from "@/types";
 
 type Props = {
     list: ListType

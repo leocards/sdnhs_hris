@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { IPCRType } from "../Reports";
+import { IPCRType } from "./Index";
 import Deped from "@/assets/DepEd.png";
 import SDNHSLogo from "@/assets/sdnhs-logo.png";
 import { equivalent } from "./ListOfIPCR";

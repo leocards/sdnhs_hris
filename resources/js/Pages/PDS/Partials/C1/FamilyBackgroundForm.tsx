@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/Components/ui/button";
 import { useForm } from "@inertiajs/react";
 import { FAMILYBACKGROUNDSCHEMA, IFormFB } from "../c1types";
-import { UserInfoType } from "../../../Profile/Edit";
+import { UserInfoType } from "../PersonalDataSheet";
 import { useEffect, useState } from "react";
 import { useToast } from "@/Components/ui/use-toast";
 import FamilyBackground from "./FamilyBackground";

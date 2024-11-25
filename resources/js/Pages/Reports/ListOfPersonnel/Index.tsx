@@ -1,5 +1,4 @@
-import { SYTYPE } from "@/Pages/Dashboard";
-import { PageProps } from "@/types";
+import { PageProps, SYTYPE } from "@/types";
 import { Head } from "@inertiajs/react";
 import React from "react";
 import ListOfEmployees from "./ListOfEmployees";

@@ -2,12 +2,12 @@ import { Form } from "@/Components/ui/form";
 import { useForm as reactForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/Components/ui/button";
-import { UserInfoType } from "../../../Profile/Edit";
 import { useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/Components/ui/use-toast";
 import OtherInformation from "./OtherInformation";
 import { IFormOI, OTHERINFORMATIONSCHEMA } from "../c3types";
+import { UserInfoType } from "../PersonalDataSheet";
 
 type WorkExperienceFormProps = {
     user: UserInfoType;

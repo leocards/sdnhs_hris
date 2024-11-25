@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/Components/ui/button";
 import { CIVILSERVICEELIGIBILITYSCHEMA, IFormCS } from "../c2types";
 import CivilServiceEligibility from "./CivilServiceEligibility";
-import { UserInfoType } from "../../../Profile/Edit";
+import { UserInfoType } from "../PersonalDataSheet";
 import { useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/Components/ui/use-toast";

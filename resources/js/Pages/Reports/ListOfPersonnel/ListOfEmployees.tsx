@@ -1,9 +1,8 @@
 import { Fragment, useMemo, useState } from "react";
 import { Button } from "@/Components/ui/button";
-import { ChevronDown, Printer } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Printer } from "lucide-react";
 import PrintEmployee from "./PrintEmployee";
-import { SYTYPE } from "../../Dashboard";
+import { SYTYPE } from "@/types";
 
 export type ListType = {
     jhs: Array<any>;

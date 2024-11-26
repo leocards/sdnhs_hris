@@ -265,7 +265,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                     "user_id" => $saln->user->id,
                     "networth" => $networth,
                     "spouse" => $spouse_name,
-                    "joint" => $request->isjoint == "joint" ? true : false,
+                    "joint" => $request->isjoint != "none" ? true : false,
                     "year" => Carbon::parse($saln->asof)->format('Y')
                 ]);
             }

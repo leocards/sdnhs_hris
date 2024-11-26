@@ -26,7 +26,7 @@ export default function Edit({
     const name = auth.user.first_name + " " + auth.user.last_name;
     const [uploadAvatar, setUploadAvatar] = useState<boolean>(false);
 
-    const { url } = usePage();
+    const { url } = usePage<PageProps>();
 
     return (
         <AuthenticatedLayout

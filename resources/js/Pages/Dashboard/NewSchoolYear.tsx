@@ -65,7 +65,7 @@ const SCHOOLYEARSCHEMA = z
 type IFormSY = z.infer<typeof SCHOOLYEARSCHEMA>;
 
 type Props = {
-    currentSy: SYTYPE | null;
+    currentSy?: SYTYPE;
     isEdit: boolean;
 } & ModalProps;
 

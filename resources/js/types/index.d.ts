@@ -48,7 +48,7 @@ export type PageProps<T extends Record<string, unknown> = Record<string, unknown
     auth: {
         user: User;
     };
-    sy: SYTYPE
+    sy?: SYTYPE
 };
 
 export type SALNTOTALTYPE = {

@@ -62,9 +62,15 @@ class LeaveController extends Controller
             "pageData" => Leave::with(['user:id,first_name,last_name,avatar'])
                 ->with('medical_certificate')
                 ->where('user_id', Auth::id())
-                ->where('hr_status', $status)
-                ->where('principal_status', $status)
-                ->orderBy('created_at', 'desc')
+                ->when($status == 'pending', function ($query) {
+                    $query->where('hr_status', "pending")
+                        ->orWhere('principal_status', "pending");
+                })
+                ->when($status != 'pending', function ($query) use ($status) {
+                    $query->where('hr_status', $status)
+                        ->orWhere('principal_status', $status);
+                })
+                ->orderBy('updated_at', 'desc')
                 ->paginate(50),
             "status" => $status,
             "isMyLeave" => false

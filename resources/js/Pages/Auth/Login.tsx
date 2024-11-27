@@ -1,5 +1,5 @@
-import { useEffect, FormEventHandler, useRef, useState } from "react";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useForm } from "@inertiajs/react";
 import { z } from "zod";
 import { useForm as reactForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -32,7 +32,7 @@ type IFormLogin = z.infer<typeof LOGINSCHEMA>;
 
 type expired = { expired: string };
 
-export default function Login({ status }: { status?: string | expired }) {
+export default function Login({ status, onForgotPass }: { status?: string | expired; onForgotPass?: (bol: boolean) => void }) {
     const form = reactForm<IFormLogin>({
         resolver: zodResolver(LOGINSCHEMA),
         defaultValues: {
@@ -232,69 +232,12 @@ export default function Login({ status }: { status?: string | expired }) {
                             "underline text-sm hover:text-primary rounded-md focus:outline-none",
                             processing && "pointer-events-none"
                         )}
+                        onClick={() => onForgotPass && onForgotPass(true)}
                     >
                         Forgot your password?
                     </Link>
                 </div>
             </div>
-
-            {/* <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
-
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full p-2 px-3"
-                        autoComplete="username"
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full p-2 px-3"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="block mt-4">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) => setData('remember', e.target.checked)}
-                        />
-                        <span className="ms-2 text-sm text-gray-600">Remember me</span>
-                    </label>
-                </div>
-
-                <div className="flex items-center justify-end mt-4">
-                    <Link
-                        href={route('password.request')}
-                        className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                    >
-                        Forgot your password?
-                    </Link>
-
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form> */}
         </div>
     );
 }

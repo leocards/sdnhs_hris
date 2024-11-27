@@ -144,7 +144,7 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
                                                 size="lg"
                                                 className="cursor-pointer select-none"
                                                 isActive={
-                                                    personnel === "teaching"
+                                                    personnel === "teaching" || url.startsWith('/personnel/new-personnel/teaching')
                                                 }
                                             >
                                                 <UserRound className="!size-[1.15rem]" />
@@ -162,7 +162,7 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
                                                 size="lg"
                                                 className="cursor-pointer select-none"
                                                 isActive={
-                                                    personnel === "non-teaching"
+                                                    personnel === "non-teaching" || url.startsWith('/personnel/new-personnel/non-teaching')
                                                 }
                                             >
                                                 <UserRound className="!size-[1.15rem]" />
@@ -399,9 +399,7 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
                                         onClick={() => navigateToTab("leave")}
                                         tooltip="Leave"
                                         size={"md"}
-                                        isActive={url.startsWith(
-                                            "/leave"
-                                        )}
+                                        isActive={url.startsWith("/leave")}
                                     >
                                         <ClipboardPaste className={cn(state == "expanded" ? "!size-5" : "stroke-[2.7px]")} />
                                         <span className="text-nowrap overflow-x-hidden">Leave</span>

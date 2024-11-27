@@ -6,7 +6,6 @@ import {
     FormMessage,
     FormProps,
 } from "@/Components/ui/form";
-import NumberInput from "@/Components/NumberInput";
 import { PERSONNELPOSITIONS } from "../types";
 import { Input } from "@/Components/ui/input";
 import {
@@ -63,25 +62,6 @@ const PersonnelInformation: React.FC<Props> = ({ form, user_roles, user }) => {
             </div>
 
             <div className="grid [@media(max-width:536px)]:grid-cols-1 grid-cols-3 w-full gap-3 mt-3">
-                {/* <FormField
-                    control={form.control}
-                    name="currentCredits"
-                    disabled={userRole === "HOD"}
-                    render={({ field }) => (
-                        <FormItem className="grow">
-                            <FormLabel className="after:content-['*'] after:ml-0.5 after:text-red-500">
-                                Current credits
-                            </FormLabel>
-                            <FormControl>
-                                <NumberInput
-                                    {...field}
-                                    className="h-10 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm"
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                /> */}
                 <FormField
                     control={form.control}
                     name="personnelId"

@@ -229,7 +229,7 @@ class LeaveController extends Controller
         DB::beginTransaction();
         try {
             $sy = SchoolYear::latest()->first();
-            $sex = Auth::user()->role;
+            $sex = Auth::user()->sex;
 
             // $hasRecentLeave = Leave::where('user_id', Auth::id())
             //     ->where('')

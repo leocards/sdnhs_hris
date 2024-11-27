@@ -59,7 +59,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		const bg = {
 			default: "before:bg-white/20",
 			destructive: "before:bg-white/20",
-			secondary: "before:bg-primary/5",
+			secondary: "before:bg-gray-600/5 before:dark:bg-",
 			ghost: "before:bg-accent",
 			outline: "before:bg-accent",
 			link: "",

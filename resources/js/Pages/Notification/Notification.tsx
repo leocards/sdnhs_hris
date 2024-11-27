@@ -178,7 +178,7 @@ export default function Notification({ auth, notifications }: Props) {
                 <div className="mt-5 space-y-1">
                     <DataList empty={data.data.length === 0} loading={loading}>
                         {data.data.map((notif, index) => (
-                            <div className="relative group" key={index}>
+                            <div className="relative group max-w-2xl" key={index}>
                                 <div
                                     className={cn(
                                         "notification",
@@ -198,7 +198,7 @@ export default function Notification({ auth, notifications }: Props) {
                                                 notif.viewed
                                                     ? "font-normal"
                                                     : "font-medium",
-                                                "text-sm"
+                                                "text-sm pr-20"
                                             )}
                                         >
                                             <span
@@ -227,7 +227,7 @@ export default function Notification({ auth, notifications }: Props) {
                                 </div>
                                 <Menubar className="p-0 h-fit border-none ml-auto rounded-full absolute top-1/2 -translate-y-1/2 right-7 shadow">
                                     <MenubarMenu>
-                                        <MenubarTrigger className="size-10 p-0 justify-center !cursor-pointer data-[state=open]:flex data-[state=close]:hidden group-hover:flex hidden">
+                                        <MenubarTrigger className="size-10 p-0 bg-background justify-center !cursor-pointer data-[state=open]:flex data-[state=close]:hidden group-hover:flex hidden">
                                             <Ellipsis className="size-5" />
                                         </MenubarTrigger>
                                         <MenubarContent align="end">

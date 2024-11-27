@@ -7,24 +7,12 @@ import {
 } from "react";
 import {
     ChevronUp,
-    Home,
     LogOut,
-    Search,
     Settings,
     UserRound,
-    UsersRound,
-    ClipboardPaste,
-    FilePieChart,
-    FolderKanban,
-    Menu,
-    X,
     ChevronDown,
-    ReceiptText,
-    UserRoundCheck,
     PanelLeft,
-    PanelLeftClose,
     Plus,
-    Pencil,
     SquarePen,
 } from "lucide-react";
 import {
@@ -33,9 +21,7 @@ import {
     PopoverButton,
     PopoverPanel,
 } from "@headlessui/react";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import Tabs from "@/Components/framer/Tabs";
-import { PageProps, ROLES, SYTYPE, User } from "@/types";
+import { PageProps, ROLES,  User } from "@/types";
 import { cn } from "@/lib/utils";
 import { AvatarProfile } from "@/Components/ui/avatar";
 import { router, usePage } from "@inertiajs/react";
@@ -44,9 +30,6 @@ import { useToast } from "@/Components/ui/use-toast";
 import { createPortal } from "react-dom";
 import { Button } from "@/Components/ui/button";
 import { useDebouncedFunction } from "@/hooks/useDebounce";
-import useWindowSize from "@/hooks/useWindowResize";
-import NavigationModal from "@/Components/NavigationModal";
-import isPageLoading from "@/Components/page-loading/Index";
 import Loading from "@/Components/page-loading/Loading";
 import { MESSAGELISTTYPE, useMessage } from "@/hooks/MessageProvider";
 import messageNotification from "../assets/sound/messageNotification.mp3";
@@ -56,7 +39,6 @@ import {
     NOTIFICATIONTYPE,
     useNotification,
 } from "@/hooks/NotificationProvider";
-import sdnhslogo from "@/assets/sdnhs-logo.png";
 import SideNavigation from "@/Components/SideNavigation";
 import { SidebarProvider, useSidebar } from "@/Components/ui/sidebar";
 import {
@@ -73,7 +55,6 @@ export default function Authenticated({
     header,
     children,
 }: PropsWithChildren<{ userAuth: User; header?: ReactNode }>) {
-    const isLoading = isPageLoading();
     const {
         props: { auth, message },
         url,
@@ -107,6 +88,7 @@ export default function Authenticated({
         setShowScrollUp(false);
     };
 
+    // scroll to top of the page
     const onScroll = useDebouncedFunction(() => {
         if (document.body.scrollTop >= 769) {
             setShowScrollUp(true);
@@ -115,6 +97,7 @@ export default function Authenticated({
         }
     }, 500);
 
+    // add the onScroll method to the lsitener
     useEffect(() => {
         document.body.addEventListener("scroll", onScroll);
 
@@ -123,6 +106,7 @@ export default function Authenticated({
         };
     }, []);
 
+    // dispalys meesage toaster
     useEffect(() => {
         if (message) {
             toast({
@@ -132,6 +116,7 @@ export default function Authenticated({
     }, [message]);
 
     useEffect(() => {
+        // get the messages list and add it to the message list
         if (messageList.length === 0) {
             window.axios
                 .get(route("messages.list"))
@@ -162,6 +147,7 @@ export default function Authenticated({
         setIsAuthNotification(!!auth.user);
     }, []);
 
+    // when new message arrives make sound notification, and add new message on the list
     useEffect(() => {
         if (newMessage) {
             if (!document.hasFocus() || !url.startsWith("/messages")) {
@@ -246,6 +232,7 @@ export default function Authenticated({
         }
     }, [newMessage]);
 
+    // when new notification arrives make sound notification
     useEffect(() => {
         if (newNotification) {
             toast({
@@ -291,6 +278,22 @@ export default function Authenticated({
                         {children}
                     </Loading>
                 </div>
+
+                {createPortal(<Toaster />, document.body)}
+
+                {showScrollUp && (
+                    <div className="fixed z-[100] bottom-4 right-5">
+                        <Button
+                            size="icon"
+                            variant="outline"
+                            onClick={scrollToTop}
+                            className="shadow-md"
+                        >
+                            <ChevronUp className="size-6" />
+                        </Button>
+                    </div>
+                )}
+
             </main>
         </SidebarProvider>
     );

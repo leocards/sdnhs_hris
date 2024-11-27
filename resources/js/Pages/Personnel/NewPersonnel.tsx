@@ -2,7 +2,7 @@ import { Form } from "@/Components/ui/form";
 import Authenticated from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Head, router, useForm } from "@inertiajs/react";
+import { Head, useForm } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { useForm as reactForm } from "react-hook-form";
 import { z } from "zod";
@@ -16,27 +16,14 @@ import { NEWPERSONNELSCHEMA } from "./types";
 import { useToast } from "@/Components/ui/use-toast";
 import Processing from "@/Components/Processing";
 
-const initialValue = {
-    firstName: "",
-    lastName: "",
-    middleName: "",
-    sex: undefined,
-    email: "",
-    address: "",
-    phoneNumber: "",
-    personnelId: "",
-    department: undefined,
-    // currentCredits: 0,
-    password: "12345678",
-    birthDate: null,
-    dateHired: null,
-    position: undefined,
-    userRole: undefined,
-};
+const defaultRole = {
+    teaching: "Teaching",
+    "non-teaching": "Non-teaching",
+} as const
 
 type IFormNewPersonnel = z.infer<typeof NEWPERSONNELSCHEMA>;
 
-export default function NewPersonnel({ auth, user, userRoles }: PageProps & { user?: any, userRoles: Array<string> }) {
+export default function NewPersonnel({ auth, user, userRoles, role }: PageProps & { user?: any, userRoles: Array<string>, role: "teaching"|"non-teaching" }) {
     const form = reactForm<IFormNewPersonnel>({
         resolver: zodResolver(NEWPERSONNELSCHEMA),
         values: {
@@ -53,7 +40,7 @@ export default function NewPersonnel({ auth, user, userRoles }: PageProps & { us
             password: "12345678",
             dateHired: user? new Date(user.date_hired) : null,
             position: user? user.position : null,
-            userRole: user ? user.role : null,
+            userRole: user ? user.role : role? defaultRole[role] : null,
         },
     });
     const { setData, post, processing, reset } = useForm<IFormNewPersonnel>();

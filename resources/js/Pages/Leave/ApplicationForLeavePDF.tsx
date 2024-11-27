@@ -95,7 +95,10 @@ const ApplicationForLeavePDF = ({
                 </div>
                 <div className="ml-auto flex gap-2">
                     <Button
-                        onClick={() => setShowMedical(true)}
+                        onClick={() => {
+                            if((leave?.leave_type === "Sick Leave" || leave?.leave_type === "Maternity Leave"))
+                                setShowMedical(true)
+                        }}
                         className="gap-2"
                         variant="ghost"
                         disabled={(leave?.leave_type !== "Sick Leave" && leave?.leave_type !== "Maternity Leave")}

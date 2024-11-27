@@ -19,7 +19,7 @@ import { format } from "date-fns";
 import { EllipsisVertical, Eye, Search, Trash2, Upload, X } from "lucide-react";
 import { ChangeEvent, Fragment, useEffect, useRef, useState } from "react";
 import UploadMedical from "./UploadMedical";
-import ViewMedical from "./ViewMedical";
+import ViewMedical, { MedicalType } from "./ViewMedical";
 import useDebounce from "@/hooks/useDebounce";
 import PageListProvider, { usePageList } from "@/hooks/pageListProvider";
 import PaginationButton from "@/Components/PaginationButton";
@@ -60,11 +60,11 @@ function Leave({
     const [viewMedical, setViewMedical] = useState<boolean>(false);
     const [selected, setSelected] = useState<{
         leave_id?: number | null;
-        medical: string;
+        medical: MedicalType | null;
         user: { id: number | null; first_name: string; last_name: string };
     }>({
         leave_id: null,
-        medical: "",
+        medical: null,
         user: { id: null, first_name: "", last_name: "" },
     });
     const { setList, data, clearList } = usePageList();

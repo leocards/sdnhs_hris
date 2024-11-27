@@ -14,6 +14,7 @@ import { z } from "zod";
 import { Button } from "@/Components/ui/button";
 import { useForm } from "@inertiajs/react";
 import { useToast } from "@/Components/ui/use-toast";
+import { MedicalType } from "./ViewMedical";
 
 const allowedMimeTypes = [
     "application/pdf",
@@ -39,7 +40,7 @@ type IFormMedical = z.infer<typeof UPLOADMEDICALSCHEMA>;
 
 type Data = {
     leave_id?: number | null;
-    medical: string;
+    medical: MedicalType|null;
     user: { id: number | null; };
 };
 

@@ -2,15 +2,17 @@ import Modal from "@/Components/Modal";
 import { AspectRatio } from "@/Components/ui/aspect-ratio";
 import { Button } from "@/Components/ui/button";
 
+export type MedicalType = {
+    id: number
+    file_path: string
+    file_name: string
+    leave_id: number
+    updated_at: string
+}
+
 type Data = {
     leave_id?: number | null;
-    medical: {
-        id: number
-        file_path: string
-        file_name: string
-        leave_id: number
-        updated_at: string
-    };
+    medical: MedicalType|null;
     user: { id: number | null; first_name: string; last_name: string };
 };
 

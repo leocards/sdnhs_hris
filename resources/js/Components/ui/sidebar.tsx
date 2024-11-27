@@ -535,14 +535,14 @@ const sidebarMenuButtonVariants = cva(
     transition-[width,height,padding] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2
     active:text-sidebar-primary-foreground disabled:pointer-events-none disabled:opacity-50
     group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50
-    data-[active=true]:bg-sidebar data-[active=true]:font-medium data-[active=true]:text-sidebar-primary-foreground
+    data-[active=true]:bg-sidebar dark:data-[active=true]:bg-sidebar/50 data-[active=true]:font-medium data-[active=true]:text-sidebar-primary-foreground
     data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:!size-8
     group-data-[collapsible=icon]:!p-2 [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0`,
     {
         variants: {
             variant: {
                 default:
-                    "hover:bg-sidebar hover:text-sidebar-primary-foreground",
+                    "hover:bg-sidebar dark:hover:bg-sidebar/50 hover:text-sidebar-primary-foreground",
                 outline:
                     "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
             },
@@ -757,11 +757,11 @@ const SidebarMenuSubButton = React.forwardRef<
             data-active={isActive}
             className={cn(
                 `flex h-7 min-w-0 -translate-x-px items-center gap-2 overflow-hidden rounded-md px-2
-                text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar hover:text-sidebar-primary-foreground
+                text-sidebar-foreground outline-none ring-sidebar-ring hover:bg-sidebar dark:hover:bg-sidebar/50 hover:text-sidebar-primary-foreground
                 focus-visible:ring-2 active:bg-sidebar active:text-sidebar-primary-foreground disabled:pointer-events-none
                 disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate
                 [[data-active=true]&>svg]:text-sidebar-primary-foreground [&>svg]:size-4 [&>svg]:shrink-0 [&>svg]:text-sidebar-foreground [&>svg]:hover:text-sidebar-primary-foreground`,
-                "data-[active=true]:bg-sidebar data-[active=true]:text-sidebar-primary-foreground",
+                "data-[active=true]:bg-sidebar dark:data-[active=true]:bg-sidebar/50 data-[active=true]:text-sidebar-primary-foreground",
                 size === "sm" && "text-xs",
                 size === "md" && "text-sm",
                 size === "lg" && "text-base !h-9",

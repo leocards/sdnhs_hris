@@ -161,7 +161,7 @@ export default function Notification({ auth, notifications }: Props) {
         >
             <Head title="Notification" />
 
-            <div className="mx-auto max-w-2xl mt-10">
+            <div className="mx-auto max-w-2xl w-full mt-10">
                 <div>
                     <Tabs
                         id="notifications"

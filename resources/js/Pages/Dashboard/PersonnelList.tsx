@@ -98,7 +98,7 @@ const PersonnelList = () => {
     return (
         <div className="mt-4">
             <div className="border rounded-md h-[28rem] md:mt-8 grid grid-cols-1 overflow-hidden grid-rows-[auto,1fr]">
-                <div className="border-b min-h-12 px-3 font-medium flex items-center bg-primary dark:bg-amber-800/50 py-2">
+                <div className="border-b min-h-12 px-3 font-medium flex items-center bg-primary dark:bg-white/20 py-2">
                     <div className="text-primary-foreground">Personnel's Remaining Type of Leave</div>
 
                     <div className="flex relative w-64 h-fit ml-auto">

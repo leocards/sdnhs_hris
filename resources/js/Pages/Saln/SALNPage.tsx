@@ -67,7 +67,7 @@ const SALNPage: React.FC<Prop> = ({ auth, saln, status, open }) => {
                 />
             </div>
 
-            <div className="divide-y max-w-3xl mx-auto mt-10 min-h-[22rem]">
+            <div className="divide-y mx-auto mt-10 min-h-[22rem] max-w-3xl w-full">
                 <div className="grid grid-cols-[1fr,12rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Name</div>
                     <div className="text-center">As of</div>

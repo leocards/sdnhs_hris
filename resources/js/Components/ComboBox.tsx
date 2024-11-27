@@ -112,7 +112,7 @@ const ComboBox = ({
                 <PopoverTrigger
                     ref={popoverWidthRef}
                     disabled={disabled}
-                    className="w-full border rounded-md form-input px-3 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="w-full border rounded-md form-input px-3 flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed dark:border-zinc-700 dark:bg-zinc-800"
                 >
                     <div className="line-clamp-1 text-left">
                         {selected?.name||label}

@@ -159,7 +159,7 @@ function Leave({
                 <h2 className="font-semibold text-xl leading-tight">Leave</h2>
             }
         >
-            <div className="divide-x flex items-center mt-5 text-sm border-b-2 mb-8">
+            <div className="divide-x flex items-center mt-5 text-sm border-b-2">
                 <Tabs
                     id="personnel-tab"
                     active={status}
@@ -218,7 +218,7 @@ function Leave({
             <div
                 className={cn(
                     "w-full flex items-center mb-7",
-                    (auth.user.role === "HOD" || auth.user.role === "HR") && "mt-10"
+                    "mt-7"
                 )}
             >
                 <div className="">

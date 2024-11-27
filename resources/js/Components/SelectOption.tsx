@@ -190,7 +190,7 @@ const SelectOptionTrigger: React.FC<{ children: ReactNode }> = ({
     return (
         <PopoverTrigger
             asChild
-            className="hover:!bg-transparent aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
+            className="hover:!bg-transparent dark:hover:!bg-zinc-800 aria-[invalid=true]:border-destructive aria-[invalid=true]:ring-destructive shadow-sm dark:border-zinc-700 dark:bg-zinc-800"
             ref={ref}
         >
             {children}

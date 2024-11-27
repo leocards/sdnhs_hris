@@ -29,20 +29,20 @@ export const formatDateRange = (dateRange: {
 }): string => {
     const { from, to } = dateRange;
 
-    const fromFormatted = format(from, "MMMM d, yyyy");
+    const fromFormatted = format(from, "MMM d, yyyy");
 
     if (!to) {
         // Single date
         return fromFormatted;
     } else if (format(from, "yyyy") === format(to, "yyyy")) {
-        if (format(from, "MMMM") === format(to, "MMMM")) {
+        if (format(from, "MMM") === format(to, "MMM")) {
             // Same month and year
-            return `${format(from, "MMMM d")} - ${format(to, "d, yyyy")}`;
+            return `${format(from, "MMM d")} - ${format(to, "d, yyyy")}`;
         } else {
             // Same year, different month
-            return `${format(from, "MMMM d")} - ${format(
+            return `${format(from, "MMM d")} - ${format(
                 to,
-                "MMMM d, yyyy"
+                "MMM d, yyyy"
             )}`;
         }
     } else {

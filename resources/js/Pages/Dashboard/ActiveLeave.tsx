@@ -155,7 +155,7 @@ const ViewLeave: React.FC<{
                         {leave?.leave_type}
                     </Label>
 
-                    <div className="text-sm">{leave.user?.name}</div>
+                    <div className="text-sm line-clamp-1">{leave.user?.name}</div>
                 </div>
 
                 <div className="shrink-0 ml-3 text-right">

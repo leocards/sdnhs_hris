@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Separator } from "@/Components/ui/separator";
-import { Sheet, SheetContent } from "@/Components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetTitle } from "@/Components/ui/sheet";
 import { Skeleton } from "@/Components/ui/skeleton";
 import {
     Tooltip,
@@ -206,6 +206,8 @@ const Sidebar = React.forwardRef<
                     onOpenChange={setOpenMobile}
                     {...props}
                 >
+                    <SheetTitle />
+                    <SheetDescription />
                     <SheetContent
                         data-sidebar="sidebar"
                         data-mobile="true"

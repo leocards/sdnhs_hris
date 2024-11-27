@@ -63,7 +63,7 @@ const PersonalDataSheets: React.FC<Props> = ({ auth, pageData, status, view }) =
                 />
             </div>
 
-            <div className="divide-y max-w-3xl mx-auto mt-10 min-h-[22rem]">
+            <div className="divide-y max-w-3xl w-full mx-auto mt-10 min-h-[22rem]">
                 <div className="grid grid-cols-[1fr,12rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Name</div>
                     <div className="text-center">Date modified</div>

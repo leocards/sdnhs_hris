@@ -34,12 +34,11 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from "./ui/collapsible";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { ROLES } from "@/types";
 import { cn } from "@/lib/utils";
 import { ToggleSideBarButton } from "@/Layouts/AuthenticatedLayout";
-import useWindowSize from "@/hooks/useWindowResize";
 
 type Props = {
     role: ROLES;
@@ -50,7 +49,6 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
     const { url } = usePage();
     const queryParams = new URL(window.location.href).searchParams;
     const personnel = queryParams.get("personnel");
-    const width = useWindowSize()
 
     const {
         state,
@@ -58,25 +56,19 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
         toggleSidebar,
     } = useSidebar();
 
-    const sidebarVariant = useMemo(() => {
-        if(url.startsWith("/myreports/saln")) {
-
-        }
-    }, [width, state])
-
     const navigateToTab = (nav: string, _query?: Record<string, unknown>) => {
         router.get(
             route(nav, {
                 _query,
             })
-        );
+        )
     };
 
     return (
         <Sidebar className={cn(state == "expanded" && "bg-background")} collapsible="icon" variant={isMobile ? "floating" : state !== "expanded" ? "floating" : "sidebar"}>
-            {isMobile && <ToggleSideBarButton className="absolute -right-[3.215rem] top-2.5" />}
+            {isMobile && <ToggleSideBarButton className="absolute -right-[3.215rem] top-1.5" />}
 
-            <SidebarHeader className="mb-5">
+            <SidebarHeader className="mb-5" >
                 <SidebarMenu>
                     <SidebarMenuItem className={cn("flex items-center font-bold text-lg", state == "expanded" && "px-3")}>
                         <div className={cn("size-11 shrink-0", state == "collapsed" && "size-8")}>

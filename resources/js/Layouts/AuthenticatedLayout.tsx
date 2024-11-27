@@ -274,73 +274,30 @@ export default function Authenticated({
         <SidebarProvider>
             <SideNavigation role={auth.user.role} />
 
-            <div className="relative isolate flex min-h-svh w-full bg-background amber-50 max-lg:flex-col lg:b g-zinc-100 dark:bg-zinc-900 dark:lg:bg-zinc-950">
-                <header className="flex items-center px-4 lg:hidden sticky top-0 bg-background dark:bg-zinc-900 z-50">
-                    <div className="py-2.5 flex items-center">
-                        <span className="relative">
-                            <ToggleSideBarButton />
-                        </span>
-                            <SchoolYearButton role={userAuth.role} />
-                    </div>
+            <main className="grow ring-inset z-0 flex-col relative overflow-hidden flex">
+                <div className="h-12 flex items-center px-4 mb-5 sticky top-0 z-30 bg-background">
+                    <ToggleSideBarButton />
 
-                    <div className="min-w-0 flex-1">
-                        <HeaderNavigation user={userAuth} />
-                    </div>
-                </header>
+                    <SchoolYearButton role={userAuth.role} />
 
-                <main className="flex flex-1 flex-col">
-                    <div className="grow bg-background lg:ring-zinc-950/5 dark:bg-zinc-900 dark:lg:ring-white/10">
-                        <div className="h-11 mt-2 flex items-center max-lg:hidden px-4 mb-5">
-                            <ToggleSideBarButton />
+                    <HeaderNavigation user={userAuth} iconSizes="size-8" />
+                </div>
 
-                            <SchoolYearButton role={userAuth.role} />
-
-                            <HeaderNavigation
-                                user={userAuth}
-                                iconSizes="size-8"
-                            />
-                        </div>
-                        <div className="p-5 lg:p-8 lg:pt-0 h-auto">
-                            <div
-                                className={cn(
-                                    "mx-auto max-w-6xl",
-                                    isLoading &&
-                                        "flex flex-col h-[calc(100vh-7.5rem)]"
-                                )}
-                            >
-                                <Loading>
-                                    <header className="text-secondary-foreground">
-                                        {header}
-                                    </header>
-                                    {children}
-                                </Loading>
-                            </div>
-                        </div>
-                    </div>
-                </main>
-
-                {createPortal(<Toaster />, document.body)}
-
-                {showScrollUp && (
-                    <div className="fixed z-[100] bottom-4 right-5">
-                        <Button
-                            size="icon"
-                            variant="outline"
-                            onClick={scrollToTop}
-                            className="shadow-md"
-                        >
-                            <ChevronUp className="size-6" />
-                        </Button>
-                    </div>
-                )}
-            </div>
+                <div className="pt-2 p-6 grow ring-inset flex flex-col">
+                    <Loading>
+                        <header className="text-secondary-foreground">
+                            {header}
+                        </header>
+                        {children}
+                    </Loading>
+                </div>
+            </main>
         </SidebarProvider>
     );
 }
 
 export const ToggleSideBarButton = (props: { className?: string }) => {
     const {
-        state,
         toggleSidebar,
     } = useSidebar();
 
@@ -351,8 +308,7 @@ export const ToggleSideBarButton = (props: { className?: string }) => {
             variant={"outline"}
             onClick={toggleSidebar}
         >
-            {state == "expanded" && <PanelLeftClose className="size-4" />}
-            {state == "collapsed" && <PanelLeft className="size-4" />}
+            <PanelLeft className="size-4" />
         </Button>
     );
 };
@@ -544,7 +500,7 @@ const SchoolYearButton = (props: { role: ROLES }) => {
         <>
             {props.role == "HR" ? (
                 <Fragment>
-                    <Menubar className="p-0 overflow-hidden h-9 ml-3 shadow-sm">
+                    <Menubar className="p-0 overflow-hidden h-9 ml-3 shadow-sm bg-background">
                         <MenubarMenu>
                             <MenubarTrigger
                                 className="h-full items-center text-sm cursor-pointer disabled:pointer-events-none"

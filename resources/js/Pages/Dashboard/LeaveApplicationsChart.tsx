@@ -53,7 +53,7 @@ const LeaveApplicationsChart: React.FC<Props> = ({ leaveApplications, appliedLea
     }, [leaveApplications]);
 
     return (
-        <div className="mt-4 md:mt-8 mx-auto">
+        <div className="mt-4 md:mt-8 mx-auto w-full">
             <Charts chartData={Leaves} appliedLeavesOfPersonnel={appliedLeavesOfPersonnel} syList={syList} onSelectSy={onSelectSy} loading={loading} sy={sy} />
         </div>
     );

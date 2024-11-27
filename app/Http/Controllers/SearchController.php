@@ -25,6 +25,7 @@ class SearchController extends Controller
     {
         return Inertia::render("Search/Search", [
             "personnels" => User::orderBy('last_name')
+                ->whereNot('role', 'HR')
                 ->get(['id', 'first_name', 'middle_name', 'last_name', 'position', 'department', 'leave_credits', 'avatar']),
         ]);
     }

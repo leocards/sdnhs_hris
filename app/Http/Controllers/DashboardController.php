@@ -28,9 +28,12 @@ class DashboardController extends Controller
         if (in_array(Auth::user()->role, ['HR'])) {
             return Inertia::render("Dashboard", [
                 "totalEmployee" => [
-                    "recent" => User::whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),
-                    "recent_deduction" => User::whereDate('created_at', '>=', Carbon::now()->subDays(7))->whereNotNull('deleted_at')->count(),
-                    "total" => User::count()
+                    "recent" => User::whereDate('created_at', '>=', Carbon::now()->subDays(7))->whereNot('role', 'HR')->count(),
+                    "recent_deduction" => User::whereDate('created_at', '>=', Carbon::now()->subDays(7))
+                        ->whereNot('role', 'HR')
+                        ->whereNotNull('deleted_at')
+                        ->count(),
+                    "total" => User::whereNot('role', 'HR')->count()
                 ],
                 "approved" => [
                     "recent" => Leave::where('principal_status', 'Approved')->where('hr_status', 'Approved')->whereDate('created_at', '>=', Carbon::now()->subDays(7))->count(),

@@ -95,6 +95,14 @@ const ApplicationForLeavePDF = ({
                 </div>
                 <div className="ml-auto flex gap-2">
                     <Button
+                        onClick={() => setShowMedical(true)}
+                        className="gap-2"
+                        variant="ghost"
+                        disabled={(leave?.leave_type !== "Sick Leave" && leave?.leave_type !== "Maternity Leave")}
+                    >
+                        <span>View medical</span>
+                    </Button>
+                    <Button
                         onClick={() => {
                             if (
                                 leave.hr_status !== "Pending" ||
@@ -130,6 +138,7 @@ const ApplicationForLeavePDF = ({
                     >
                         <Download className="size-5" />
                     </Button>
+
 
                     {(leave?.leave_type === "Sick Leave" ||
                         auth.user.role === "HR" ||

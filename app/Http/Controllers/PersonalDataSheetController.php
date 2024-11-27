@@ -36,17 +36,24 @@ class PersonalDataSheetController extends Controller
     {
         if(Auth::user()->role == "HR") {
             $status = $request->query('status')??"pending";
+            $view = $request->query('view');
 
             if($status !== "pending" && $status !== "approved") abort(404);
 
             return Inertia::render('PDS/PersonalDataSheets', [
                 "pageData" => User::whereHas('pdsPersonalInformation', function ($query) use ($status) {
-                        $query->where('is_approved', $status === "pending" ? null : true);
-                    })
-                    ->with('pdsPersonalInformation:id,user_id,created_at')
-                    ->orderBy('last_name', 'asc')
-                    ->get(),
-                "status" => $status
+                    $query->where('is_approved', $status === "pending" ? null : true);
+                })
+                ->with('pdsPersonalInformation:id,user_id,updated_at')
+                ->orderBy(function ($query) {
+                    $query->select('updated_at')
+                        ->from('p_d_s_personal_information')
+                        ->whereColumn('p_d_s_personal_information.user_id', 'users.id')
+                        ->limit(1); // Ensures only one updated_at value per user
+                }, 'asc')
+                ->get(),
+                "status" => $status,
+                "view" => $view
             ]);
         }
 
@@ -171,6 +178,11 @@ class PersonalDataSheetController extends Controller
                 ]
             );
 
+            if($request->piid) {
+                $pds_pi->is_approved = null;
+                $pds_pi->save();
+            }
+
             $pds_pi->addresses()->updateOrCreate([
                 'address_type' => 'permanent',
                 'same' => $request->permanentaddress['isSameResidential'],
@@ -203,7 +215,7 @@ class PersonalDataSheetController extends Controller
                 'from_user_id' => Auth::id(),
                 'message' => ' updated '.$pronoun.' PDS personal information.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -266,7 +278,11 @@ class PersonalDataSheetController extends Controller
                 ]
             );
 
+            $isUpdate = false;
+
             foreach ($request->children as $key => $value) {
+                if($value['childid']) $isUpdate = true;
+
                 PDSFamilyBackground::updateOrCreate(
                     ['id' => $value['childid']],
                     [
@@ -278,6 +294,13 @@ class PersonalDataSheetController extends Controller
                 );
             }
 
+            $notifMessage = "";
+
+            if($request->spouse['spouseid'] || $request->father['fatherid'] || $request->mother['motherid'] || $isUpdate) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = " updated ";
+            } else $notifMessage = " added ";
+
             if (!empty($request->deletedChild))
                 PDSFamilyBackground::whereIn('id', $request->deletedChild)->delete();
 
@@ -288,9 +311,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS family background.',
+                'message' => $notifMessage.$pronoun.' PDS family background.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -314,7 +337,13 @@ class PersonalDataSheetController extends Controller
         try {
             function createEducationalBackground(string $type, array $data)
             {
+                $isUpdated = false;
+
                 foreach($data as $value) {
+                    if($value['ebid'] && !$isUpdated) {
+                        $isUpdated = true;
+                    }
+
                     PDSEducationalBackground::updateOrCreate(
                         ['id' => $value['ebid']],
                         [
@@ -330,17 +359,25 @@ class PersonalDataSheetController extends Controller
                         ]
                     );
                 }
+
+                return $isUpdated;
             }
 
-            createEducationalBackground('elementary', $request->elementary);
+            $elementaryIsUpdate = createEducationalBackground('elementary', $request->elementary);
 
-            createEducationalBackground('secondary', $request->secondary);
+            $secondaryIsUpdate = createEducationalBackground('secondary', $request->secondary);
 
-            createEducationalBackground('vocational', $request->vocational);
+            $vocationalIsUpdate = createEducationalBackground('vocational', $request->vocational);
 
-            createEducationalBackground('college', $request->college);
+            $collegeIsUpdate = createEducationalBackground('college', $request->college);
 
-            createEducationalBackground('graduate', $request->graduatestudies);
+            $graduateIsUpdate = createEducationalBackground('graduate', $request->graduatestudies);
+
+            $notifMessage = "";
+            if ($elementaryIsUpdate || $secondaryIsUpdate || $vocationalIsUpdate || $collegeIsUpdate || $graduateIsUpdate) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = ' updated ';
+            } else $notifMessage = " added ";
 
             $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
@@ -349,9 +386,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS educational background.',
+                'message' => $notifMessage.$pronoun.' PDS educational background.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -376,7 +413,10 @@ class PersonalDataSheetController extends Controller
             $cs = $request->cs;
             $deleted = $request->deletedCS;
 
+            $isUpdated = false;
             foreach ($cs as $value) {
+                if($value['csid']) $isUpdated = true;
+
                 PDSCivilServiceEligibility::updateOrCreate(
                     ['id' => $value['csid']],
                     [
@@ -391,8 +431,16 @@ class PersonalDataSheetController extends Controller
                 );
             }
 
-            if (!empty($deleted))
+            if (!empty($deleted)) {
+                $isUpdated = true;
                 PDSCivilServiceEligibility::whereIn('id', $deleted)->delete();
+            }
+
+            $notifMessage = "";
+            if ($isUpdated) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = ' updated ';
+            } else $notifMessage = " added ";
 
             $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
@@ -401,9 +449,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS civil service eligibility.',
+                'message' => $notifMessage.$pronoun.' PDS civil service eligibility.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -429,7 +477,10 @@ class PersonalDataSheetController extends Controller
             $cs = $request->we;
             $deleted = $request->deletedWE;
 
+            $isUpdated = false;
             foreach ($cs as $value) {
+                if($value['weid']) $isUpdated = true;
+
                 PDSWorkExperience::updateOrCreate(
                     ['id' => $value['weid']],
                     [
@@ -446,8 +497,16 @@ class PersonalDataSheetController extends Controller
                 );
             }
 
-            if (!empty($deleted))
+            if (!empty($deleted)){
+                $isUpdated = true;
                 PDSWorkExperience::whereIn('id', $deleted)->delete();
+            }
+
+            $notifMessage = "";
+            if ($isUpdated) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = ' updated ';
+            } else $notifMessage = " added ";
 
             $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
@@ -456,9 +515,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS work experience.',
+                'message' => $notifMessage.$pronoun.' PDS work experience.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -484,7 +543,10 @@ class PersonalDataSheetController extends Controller
             $cs = $request->vw;
             $deleted = $request->deletedVW;
 
+            $isUpdated = false;
             foreach ($cs as $value) {
+                if($value['vwid']) $isUpdated = true;
+
                 PDSVoluntaryWork::updateOrCreate(
                     ['id' => $value['vwid']],
                     [
@@ -498,8 +560,16 @@ class PersonalDataSheetController extends Controller
                 );
             }
 
-            if (!empty($deleted))
+            if (!empty($deleted)) {
                 PDSVoluntaryWork::whereIn('id', $deleted)->delete();
+                $isUpdated = true;
+            }
+
+            $notifMessage = "";
+            if ($isUpdated) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = ' updated ';
+            } else $notifMessage = " added ";
 
             $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
@@ -508,9 +578,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS voluntary work or involvement in civic / non-government / people / voluntary organization/s.',
+                'message' => $notifMessage.$pronoun.' PDS voluntary work or involvement in civic / non-government / people / voluntary organization/s.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -536,7 +606,10 @@ class PersonalDataSheetController extends Controller
             $cs = $request->ld;
             $deleted = $request->deletedLD;
 
+            $isUpdated = false;
             foreach ($cs as $value) {
+                if($value['ldid']) $isUpdated = true;
+
                 PDSLearningDevelopment::updateOrCreate(
                     ['id' => $value['ldid']],
                     [
@@ -551,8 +624,16 @@ class PersonalDataSheetController extends Controller
                 );
             }
 
-            if (!empty($deleted))
+            if (!empty($deleted)) {
                 PDSLearningDevelopment::whereIn('id', $deleted)->delete();
+                $isUpdated = true;
+            }
+
+            $notifMessage = "";
+            if ($isUpdated) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = ' updated ';
+            } else $notifMessage = " added ";
 
             $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
@@ -561,9 +642,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS learning and development (L&D) interventions/training programs attended.',
+                'message' => $notifMessage.$pronoun.' PDS learning and development (L&D) interventions/training programs attended.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -591,7 +672,11 @@ class PersonalDataSheetController extends Controller
             $nonacademicrecognition = $request->nonacademicrecognition;
             $deleted = $request->deletedOI;
 
+            $isUpdated = false;
+
             foreach ($skill as $value) {
+                if($value['oiid']) $isUpdated = true;
+
                 PDSOtherInformation::updateOrCreate(
                     ['id' => $value['oiid']],
                     [
@@ -603,6 +688,8 @@ class PersonalDataSheetController extends Controller
             }
 
             foreach ($nonacademicrecognition as $value) {
+                if($value['oiid'] && !$isUpdated) $isUpdated = true;
+
                 PDSOtherInformation::updateOrCreate(
                     ['id' => $value['oiid']],
                     [
@@ -614,6 +701,8 @@ class PersonalDataSheetController extends Controller
             }
 
             foreach ($membership as $value) {
+                if($value['oiid'] && !$isUpdated) $isUpdated = true;
+
                 PDSOtherInformation::updateOrCreate(
                     ['id' => $value['oiid']],
                     [
@@ -624,8 +713,16 @@ class PersonalDataSheetController extends Controller
                 );
             }
 
-            if (!empty($deleted))
+            if (!empty($deleted)) {
                 PDSOtherInformation::whereIn('id', $deleted)->delete();
+                if(!$isUpdated) $isUpdated = true;
+            }
+
+            $notifMessage = "";
+            if ($isUpdated) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = ' updated ';
+            } else $notifMessage = " added ";
 
             $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
@@ -634,9 +731,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS other information.',
+                'message' => $notifMessage.$pronoun.' PDS other information.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {
@@ -660,7 +757,11 @@ class PersonalDataSheetController extends Controller
         try {
             $c4 = $request->all();
 
+            $isUpdated = false;
+
             foreach ($c4 as $key => $value) {
+                if(!$isUpdated && $value['choicea']['c4id']) $isUpdated = true;
+
                 if ($key === "q34") {
                     $this->storeCs4Data($value['choicea']['c4id'], '34', 'a', $value['choicea']['choices']);
                     $this->storeCs4Data($value['choiceb']['c4id'], '34', 'b', $value['choiceb']['choices'], $value['choiceb']['details']);
@@ -705,6 +806,12 @@ class PersonalDataSheetController extends Controller
                 }
             }
 
+            $notifMessage = "";
+            if ($isUpdated) {
+                PDSPersonalInformation::where('user_id', Auth::id())->update(['is_approved' => null]);
+                $notifMessage = ' updated ';
+            } else $notifMessage = " added ";
+
             $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
             $pronoun = $userSender->sex == "Male" ? "his" : "her";
@@ -712,9 +819,9 @@ class PersonalDataSheetController extends Controller
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' updated '.$pronoun.' PDS C4.',
+                'message' => $notifMessage.$pronoun.' PDS C4.',
                 'type' => 'profile',
-                'go_to_link' => route('general-search.view', [$userSender->id]).'?view=PDS'
+                'go_to_link' => route('myapprovals.pds').'?view='.Auth::id()
             ]);
 
             if($notificationResponse) {

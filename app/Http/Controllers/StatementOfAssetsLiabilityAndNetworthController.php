@@ -90,6 +90,10 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 "isjoint" => $request->isjoint,
             ]);
 
+            if($idToUpdate) {
+                $saln->isApproved = null;
+            }
+
             if ($request->spouse['familyname'])
                 $saln->salnSpouse()->updateOrCreate(
                     ['id' => $request->spouse['spouseid']],
@@ -193,13 +197,14 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 }
             }
 
-            $userSender = User::find(Auth::id());
             $hr = User::where('role', 'HR')->first();
+
+            $notifMessage = $idToUpdate ? ' updated the SALN as of ' : ' uploaded a SALN as of ';
 
             $notificationResponse = Notifications::create([
                 'user_id' => $hr->id,
                 'from_user_id' => Auth::id(),
-                'message' => ' uploaded a SALN as of ' . Carbon::parse($request->asof)->format('M d, Y'),
+                'message' => $notifMessage . Carbon::parse($request->asof)->format('M d, Y'),
                 'type' => 'profile',
                 'go_to_link' => route('myapprovals.saln').'?open='.Auth::id()
             ]);

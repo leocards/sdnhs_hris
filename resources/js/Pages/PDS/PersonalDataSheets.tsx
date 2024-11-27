@@ -14,19 +14,20 @@ type PERSONALDATASHEETTYPE = {
     avatar: string;
     pds_personal_information: {
         id: number;
-        created_at: string;
+        updated_at: string;
     };
 };
 
 type Props = {
     pageData: Array<PERSONALDATASHEETTYPE>;
     status: string;
+    view: string;
 } & PageProps;
 
-const PersonalDataSheets: React.FC<Props> = ({ auth, pageData, status }) => {
+const PersonalDataSheets: React.FC<Props> = ({ auth, pageData, status, view }) => {
     const [loading, setLoading] = useState(false);
-    const [selectedPds, setSelectedPds] = useState<number|null>(null);
-    const [showPds, setShowPds] = useState(false)
+    const [selectedPds, setSelectedPds] = useState<number|null>(view?!isNaN(parseInt(view))?parseInt(view):null:null);
+    const [showPds, setShowPds] = useState(view?!isNaN(parseInt(view))?true:false:false)
 
     useEffect(() => {
         let onFinishLitener = router.on("finish", () => {
@@ -65,7 +66,7 @@ const PersonalDataSheets: React.FC<Props> = ({ auth, pageData, status }) => {
             <div className="divide-y max-w-3xl mx-auto mt-10 min-h-[22rem]">
                 <div className="grid grid-cols-[1fr,12rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Name</div>
-                    <div className="text-center">Date</div>
+                    <div className="text-center">Date modified</div>
                 </div>
 
                 {(pageData.length === 0 && !loading) && (
@@ -97,7 +98,7 @@ const PersonalDataSheets: React.FC<Props> = ({ auth, pageData, status }) => {
                             } ${data.middle_name ?? ""}`}</div>
                             <div className="text-center">
                                 {format(
-                                    data.pds_personal_information.created_at,
+                                    data.pds_personal_information.updated_at,
                                     "LLLL d, y"
                                 )}
                             </div>

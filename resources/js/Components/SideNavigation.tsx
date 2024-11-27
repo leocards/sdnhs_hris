@@ -34,11 +34,12 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from "./ui/collapsible";
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { router, usePage } from "@inertiajs/react";
 import { ROLES } from "@/types";
 import { cn } from "@/lib/utils";
 import { ToggleSideBarButton } from "@/Layouts/AuthenticatedLayout";
+import useWindowSize from "@/hooks/useWindowResize";
 
 type Props = {
     role: ROLES;
@@ -49,12 +50,19 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
     const { url } = usePage();
     const queryParams = new URL(window.location.href).searchParams;
     const personnel = queryParams.get("personnel");
+    const width = useWindowSize()
 
     const {
         state,
         isMobile,
         toggleSidebar,
     } = useSidebar();
+
+    const sidebarVariant = useMemo(() => {
+        if(url.startsWith("/myreports/saln")) {
+
+        }
+    }, [width, state])
 
     const navigateToTab = (nav: string, _query?: Record<string, unknown>) => {
         router.get(

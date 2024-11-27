@@ -147,7 +147,7 @@ const ApplicationForLeavePDF = ({
                                     setShowMedical(true);
                                 }
                             }}
-                            isSickLeave={leave?.leave_type === "Sick Leave"}
+                            isSickLeave={leave?.leave_type === "Sick Leave" || leave?.leave_type === "Maternity Leave"}
                             isResponded={
                                 (auth.user.role === "HR" &&
                                     leave.hr_status !== "Pending") ||
@@ -155,7 +155,7 @@ const ApplicationForLeavePDF = ({
                                     leave.principal_status !== "Pending")
                             }
                             hasMedical={leave.medical_certificate}
-                            isOwner={leave.user.id === auth.user.id}
+                            isOwner={(leave.user.id === auth.user.id)}
                             withResponse={["HR", "HOD"].includes(
                                 auth.user.role
                             )}
@@ -207,6 +207,7 @@ const ApplicationForLeavePDF = ({
                 }}
                 onClose={setUploadMedical}
             />
+
             <ViewMedical
                 show={showMedical}
                 data={{

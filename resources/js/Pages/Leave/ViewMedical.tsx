@@ -4,7 +4,13 @@ import { Button } from "@/Components/ui/button";
 
 type Data = {
     leave_id?: number | null;
-    medical: string;
+    medical: {
+        id: number
+        file_path: string
+        file_name: string
+        leave_id: number
+        updated_at: string
+    };
     user: { id: number | null; first_name: string; last_name: string };
 };
 
@@ -23,7 +29,7 @@ export default function ViewMedical({ show, data, onClose }: ViewMedicalProps) {
                     className="bg-muted rounded-md overflow-hidden"
                 >
                     <img
-                        src={data.medical?.replace("public", "/storage")}
+                        src={data?.medical?.file_path?.replace("public", "/storage")}
                         alt=""
                         className="object-contain h-full w-full"
                     />

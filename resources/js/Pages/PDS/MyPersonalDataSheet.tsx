@@ -13,7 +13,7 @@ const MyPersonalDataSheet: React.FC<Props> = ({ auth, userinfo, isApprovedPds })
         <Authenticated
             userAuth={auth.user}
             header={
-                <h2 className="font-semibold text-xl leading-tight">
+                <h2 className="font-semibold text-xl leading-tight capitalize">
                     (PDS) Personal data sheet
                 </h2>
             }

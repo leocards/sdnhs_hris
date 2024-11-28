@@ -39,7 +39,7 @@ const Index: React.FC<Props> = ({ auth, ipcr, principal, hr, ipcr_years, sy, syL
         <Authenticated
             userAuth={auth.user}
             header={
-                <h2 className="font-semibold text-xl leading-tight">List of personnel</h2>
+                <h2 className="font-semibold text-xl leading-tight">List of IPCR</h2>
             }
         >
             <Head title="My Reports/SALN" />

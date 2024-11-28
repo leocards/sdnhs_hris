@@ -41,7 +41,7 @@ const Index: React.FC<Props> = ({ auth, saln, principal, hr, saln_years }) => {
         <Authenticated
             userAuth={auth.user}
             header={
-                <h2 className="font-semibold text-xl leading-tight">List of personnel</h2>
+                <h2 className="font-semibold text-xl leading-tight">List of SALN</h2>
             }
         >
             <Head title="My Reports/SALN" />

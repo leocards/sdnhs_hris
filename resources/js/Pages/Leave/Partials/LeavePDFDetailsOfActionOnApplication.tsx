@@ -221,11 +221,11 @@ const LeavePDFDetailsOfActionOnApplication = (
                         </div>
                     </div>
 
-                    <div className="flex px-2 gap-3">
-                        <div className="mt-4 mb-2 w-[60%] mx-auto">
+                    <div className={cn("flex px-2 gap-3", isDownload && "pt-2.5")}>
+                        <div className="mt-4 mb-2 w-[60%] mx-auto relative">
                             <div
                                 className={cn(
-                                    "h-4 text-center font-bold uppercase border-b border-black"
+                                    "h-4 text-center font-bold uppercase"
                                 )}
                             >
                                 <div
@@ -234,6 +234,7 @@ const LeavePDFDetailsOfActionOnApplication = (
                                     NEO CARLO R. MAGNO
                                 </div>
                             </div>
+                            <hr className={cn("border-t border-black", (isDownload && "absolute w-full top-3"))} />
                             <div
                                 className={cn(
                                     "text-center",
@@ -245,10 +246,10 @@ const LeavePDFDetailsOfActionOnApplication = (
                                 </div>
                             </div>
                         </div>
-                        <div className="mt-4 mb-2 w-[60%] mx-auto">
+                        <div className="mt-4 mb-2 w-[60%] mx-auto relative">
                             <div
                                 className={cn(
-                                    "h-4 text-center font-bold uppercase border-b border-black"
+                                    "h-4 text-center font-bold uppercase"
                                 )}
                             >
                                 <div
@@ -257,6 +258,7 @@ const LeavePDFDetailsOfActionOnApplication = (
                                     RAUL E. GACUS
                                 </div>
                             </div>
+                            <hr className={cn("border-t border-black", (isDownload && "absolute w-full top-3"))} />
                             <div
                                 className={cn(
                                     "text-center",
@@ -309,16 +311,15 @@ const LeavePDFDetailsOfActionOnApplication = (
                             )}
                         </div>
 
-                        <div className="w-[80%] mx-auto mt-auto mb-2">
+                        <div className={cn("w-[80%] mx-auto mt-auto", isDownload ? "mb-3.5" : "mb-2")}>
                             <div
                                 className={cn(
                                     "h-fit text-center font-bold uppercase"
                                 )}
                             >
-                                <div className={cn(isDownload && "-mt-3")}>
+                                <div className={cn(isDownload && "-mt-5")}>
                                     <div>{principal?.name}</div>
                                     <div className="capitalize font-normal">{principal?.position}</div>
-                                    {/* Postion */}
                                 </div>
                             </div>
                             <div

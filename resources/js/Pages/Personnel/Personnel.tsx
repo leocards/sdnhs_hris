@@ -231,7 +231,7 @@ function Personnel({
                         onClick={() => router.get(route("personnel.new", [personnel]))}
                     >
                         <UserRoundPlus className="size-5" />
-                        <span className="sm:block hidden">New personnel</span>
+                        <span className="sm:block hidden">New Personnel</span>
                     </Button>
                 )}
             </div>

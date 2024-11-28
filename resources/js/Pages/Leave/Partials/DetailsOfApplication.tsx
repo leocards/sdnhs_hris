@@ -531,10 +531,12 @@ const DetailsOfApplication: React.FC<FormProps> = ({ form }) => {
                                 if (
                                     form.getValues(
                                         "leavetype.type"
-                                    ) !== "Maternity Leave"
+                                    ) !== "Maternity Leave" && form.getValues("leavetype.type") != "Sick Leave"
                                 ){
                                     return isWeekend(date) || toDay.getTime() < now.getTime()
-                                }else return false
+                                } else if(form.getValues("leavetype.type") == "Sick Leave")
+                                    return isWeekend(date)
+                                else return false
                             }}
                         />
 

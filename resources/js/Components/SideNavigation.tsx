@@ -88,7 +88,7 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
                             isActive={activeTab == "general-search"}
                         >
                             <Search className={cn(state == "expanded" ? "!size-5" : "stroke-[2.7px]")} />
-                            <span className="text-nowrap overflow-x-hidden">General search</span>
+                            <span className="text-nowrap overflow-x-hidden">General Search</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
                 </SidebarMenu>
@@ -325,7 +325,7 @@ const SideNavigation: React.FC<Props> = ({ role }) => {
                                         }}
                                     >
                                         <FilePieChart className={cn(state == "expanded" ? "!size-5" : "stroke-[2.7px]")} />
-                                        <span className="text-nowrap overflow-x-hidden">My reports</span>
+                                        <span className="text-nowrap overflow-x-hidden">My Reports</span>
 
                                         <ChevronRight className="ml-auto group-data-[state=open]:rotate-90 transition-all duration-150 ease-in-out" />
                                     </SidebarMenuButton>

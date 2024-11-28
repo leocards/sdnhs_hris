@@ -106,7 +106,7 @@ const SALNPage: React.FC<Prop> = ({ auth, saln, status, open }) => {
 
             <div className="divide-y mx-auto mt-10 min-h-[22rem] max-w-4xl w-full">
                 <div className={cn(
-                    "grid py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60",
+                    "grid py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60 capitalize",
                     auth.user.role == "HR" && status == "pending" ? "grid-cols-[1fr,12rem,8rem]" : "grid-cols-[1fr,12rem]"
                 )}>
                     <div className="">Name</div>

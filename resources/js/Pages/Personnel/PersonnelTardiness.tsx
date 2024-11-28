@@ -158,7 +158,7 @@ function PersonnelTardiness({
             </div>
 
             <div className="divide-y min-h-[22rem] flex flex-col ">
-                <div className="grid grid-cols-[repeat(4,1fr),3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
+                <div className="grid grid-cols-[repeat(4,1fr),3rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60 capitalize">
                     <div className="">Name</div>
                     <div className="">Days present</div>
                     <div className="">Days absent</div>

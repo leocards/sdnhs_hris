@@ -53,7 +53,7 @@ function Tardiness({
             }
         >
             <div className="divide-y min-h-[22rem] flex flex-col mt-8">
-                <div className="grid grid-cols-[repeat(3,1fr)] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
+                <div className="grid grid-cols-[repeat(3,1fr)] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60 capitalize">
                     <div className="">Days present</div>
                     <div className="">Days absent</div>
                     <div className="">School year</div>

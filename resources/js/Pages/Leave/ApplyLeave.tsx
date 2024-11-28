@@ -140,7 +140,7 @@ const ApplyLeave = ({ auth, salary, applied, isMyLeave }: PageProps & Props) => 
                         ) : ("leave") : ("leave")
                     }
                     links={[
-                        { link: "leave.apply", linkname: "Apply for leave" },
+                        { link: "leave.apply", linkname: "Apply for Leave" },
                     ]}
                     _query={isMyLeave ? {
                         myleave: isMyLeave
@@ -162,12 +162,6 @@ const ApplyLeave = ({ auth, salary, applied, isMyLeave }: PageProps & Props) => 
                         </div>
 
                         <DetailsOfApplication form={form} />
-
-                        {/* <div className="font-medium uppercase text-lg mb-5 mt-8 text-center">
-                            Details of Action on Application
-                        </div> */}
-
-                        {/* <DetailsOfActionOnApplication form={form} /> */}
 
                         {form.watch("leavetype.type") === "Maternity Leave" && (
                         <FormField

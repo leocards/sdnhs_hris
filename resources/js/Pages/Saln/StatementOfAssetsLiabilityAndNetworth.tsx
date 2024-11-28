@@ -95,8 +95,8 @@ const Saln: React.FC<Props> = ({ auth, success, saln, status }) => {
                 <div className="grid grid-cols-[repeat(4,1fr),5rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
                     <div className="">Assets</div>
                     <div className="">Liabilities</div>
-                    <div className="">Net worth</div>
-                    <div className="">As of</div>
+                    <div className="">Networth</div>
+                    <div className="">As Of</div>
                     <div className=""></div>
                 </div>
 

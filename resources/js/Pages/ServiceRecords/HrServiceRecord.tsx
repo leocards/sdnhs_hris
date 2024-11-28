@@ -77,7 +77,7 @@ const HrServiceRecord: React.FC<Props> = ({ auth, pageData, status }) => {
             </div>
 
             <div className="divide-y mx-auto mt-10 min-h-[22rem] max-w-5xl w-full">
-                <div className="grid grid-cols-[1fr,1fr,12rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
+                <div className="grid grid-cols-[1fr,1fr,12rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60 capitalize">
                     <div className="">Personnel name</div>
                     <div className="">Name</div>
                     <div className="text-center">Date</div>

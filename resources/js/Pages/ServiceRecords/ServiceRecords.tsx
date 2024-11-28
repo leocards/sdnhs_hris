@@ -109,7 +109,7 @@ function ServiceRecords({
             userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl text-gray-800 leading-tight">
-                    Service records
+                    Service Records
                 </h2>
             }
         >

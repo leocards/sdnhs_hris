@@ -19,7 +19,7 @@ const Index: React.FC<Props> = ({ auth, list, sy}) => {
         <Authenticated
             userAuth={auth.user}
             header={
-                <h2 className="font-semibold text-xl leading-tight">List of personnel</h2>
+                <h2 className="font-semibold text-xl leading-tight">List of Personnel</h2>
             }
         >
             <Head title="My Reports/Personnel" />

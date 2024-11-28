@@ -122,7 +122,7 @@ const ListOfSALN = ({ saln, principal, hr, saln_years }: Props) => {
                                 <div className="">Name</div>
                                 <div className="">TIN</div>
                                 <div className="">Position</div>
-                                <div className="">Net worth</div>
+                                <div className="">Networth</div>
                                 <div className="">
                                     If spouse is with government service, Please
                                     indicate Name of Spouse/Employer/Address

@@ -284,7 +284,7 @@ function Leave({
 
             <div className="divide-y min-h-[22rem]">
                 <div className={cn(
-                    "grid",
+                    "grid capitalize",
                     (auth.user.role == "HR" || (auth.user.role == "HOD" && !isMyLeave)) ? "grid-cols-[repeat(5,1fr),3rem]" : "grid-cols-[repeat(4,1fr),3rem]",
                     "py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60"
                 )}>

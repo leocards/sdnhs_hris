@@ -121,20 +121,6 @@ function Dashboard({
         >
             <Head title="Dashboard" />
 
-            {/* <div className="mt-5 flex gap-3 items-center">
-                {auth.user.role == "HR" && (<div>
-                    <Button size={"icon"} className="size-7" variant={"outline"} onClick={() => setNewSY(true)}>
-                        {!sy && <Plus className="size-4" />}
-                        {sy && <PencilLine className="size-4" />}
-                    </Button>
-                </div>)}
-                {auth.user.role == "HR" && !sy ? (
-                    <div>Please set your school year</div>
-                ) : sy && (<div className="rounded-md text-lg font-semibold bg- yellow-500 py-2 text-yellow-700">
-                    Welcome to school year <span className="text-xl">{sy ? `${format(sy.start, 'y')}-${format(sy.end, 'y')}` : ""}</span>
-                </div>)}
-            </div> */}
-
             <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                 {["HR"].includes(auth.user.role) ? (
                     <div className="border-t border-teal-600 bg-teal-100 dark:bg-teal-800/50 pt-4 space-y-1.5 p-2">

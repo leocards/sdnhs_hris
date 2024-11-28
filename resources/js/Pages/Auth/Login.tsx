@@ -105,7 +105,7 @@ export default function Login({ status, onForgotPass }: { status?: string | expi
                 Human Resource Information System
             </div>
 
-            <div className="bg-white p-4 rounded-lg shadow-sm">
+            <div className="bg-white dark:bg-secondary/50 p-4 rounded-lg shadow-sm">
                 <div className="font-clashdisplay text-2xl font font-semibold [@media(max-width:985px)]:hidden">
                     Log in to your account
                 </div>
@@ -212,7 +212,7 @@ export default function Login({ status, onForgotPass }: { status?: string | expi
                         />
 
                         <Button
-                            className="w-full sm:h-12 !mt-8"
+                            className="w-full sm:h-12 !mt-8 dark:!bg-white/10"
                             disabled={processing}
                         >
                             {processing ? (

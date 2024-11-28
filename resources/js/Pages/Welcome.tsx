@@ -16,7 +16,7 @@ export default function Welcome({ status }: { status?: string | expired }) {
                     <Processing is_processing={loading} className="text-foreground" classNameSpinner="bg-foreground" backdrop="" label="Please wait..." />
                 </div>
             ) : (<div className="grid [@media(min-width:985px)]:grid-cols-5 min-h-screen">
-                <div className="col-span-3 [@media(max-width:985px)]:hidden flex items-center p-8 bg-primary">
+                <div className="col-span-3 [@media(max-width:985px)]:hidden flex items-center p-8 bg-primary dark:bg-fuchsia-950">
                     <div className="[@media(min-width:1030px)]:flex items-center mx-auto">
                         <img
                             src="/storage/assets/sdnhs-logo.png"

@@ -63,7 +63,7 @@ const Notes = () => {
                     onClick={() => setShowNewNote(true)}
                 >
                     <Plus className="size-4" />
-                    <span>Add note</span>
+                    <span>Add Note</span>
                 </Button>
             </div>
             <ScrollArea>

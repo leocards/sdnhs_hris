@@ -437,7 +437,7 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                         <div className="text-sm flex items-center ml-2 mr-1 max-lg:hidden text-left">
                             <div>
                                 <div>{`${user.first_name} ${user.last_name}`}</div>
-                                <div className="text-xs">{`${user.email}`}</div>
+                                <div className="text-xs">{`SDNHS-${user.position??user.role}`}</div>
                             </div>
                             <div className="h-fit ml-2">
                                 <ChevronDown className="size-4" />

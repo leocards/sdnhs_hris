@@ -50,44 +50,56 @@ export default function SearchedEmployee({
         <Authenticated userAuth={auth.user}>
             <Head title="Search" />
 
-            <div className="mb-8">
+            <div className="mb-8 max-sm:flex">
                 <Button
-                    className="gap-3 ml-auto"
+                    className="gap-3"
                     variant="ghost"
                     onClick={() => router.get(route("general-search"))}
                 >
                     <Undo2 className="size-4" />
                     <span>Back</span>
                 </Button>
+                <Button
+                    className="gap-3 ml-auto sm:hidden"
+                    variant="ghost"
+                    onClick={() =>
+                        router.get(route("messages", { _query: {
+                            user: user.id
+                        } }))
+                    }
+                >
+                    <MessageCircle className="size-4" />
+                    <span>Message</span>
+                </Button>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center max-sm:flex-col gap-3">
                 <AvatarProfile src={user.avatar} className="size-16" />
                 <div>
-                    <div className="flex items-center">
-                        <Label className="w-28 flex items-center">
-                            Name <span className="ml-auto mr-3">:</span>{" "}
+                    <div className="flex sm:items-center max-sm:flex-col max-sm:text-center">
+                        <Label className="w-28 flex items-center max-sm:hidden">
+                            Name <span className="ml-auto mr-3 max-sm:hidden">:</span>{" "}
                         </Label>
                         <div className="font-semibold text-lg">{`${
                             user.first_name
                         } ${user.middle_name ?? ""} ${user.last_name}`}</div>
                     </div>
-                    <div className="flex items-center">
-                        <Label className="w-28 flex items-center">
-                            Role <span className="ml-auto mr-3">:</span>{" "}
+                    <div className="flex sm:items-center max-sm:flex-col max-sm:text-center">
+                        <Label className="w-28 flex items-center max-sm:hidden">
+                            Role <span className="ml-auto mr-3 max-sm:hidden">:</span>{" "}
                         </Label>
                         <div>{user.role}</div>
                     </div>
-                    <div className="flex items-center">
-                        <Label className="w-28 flex items-center">
-                            Position <span className="ml-auto mr-3">:</span>{" "}
+                    <div className="flex sm:items-center max-sm:flex-col max-sm:text-center">
+                        <Label className="w-28 flex items-center max-sm:hidden">
+                            Position <span className="ml-auto mr-3 max-sm:hidden">:</span>{" "}
                         </Label>
                         <div>{user.position}</div>
                     </div>
                 </div>
 
                 <Button
-                    className="gap-3 ml-auto"
+                    className="gap-3 ml-auto max-sm:hidden"
                     variant="ghost"
                     onClick={() =>
                         router.get(route("messages", { _query: {

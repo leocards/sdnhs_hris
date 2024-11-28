@@ -97,6 +97,7 @@ function Dashboard({
                 <h2 className="font-semibold text-xl leading-tight">
                     Welcome, {auth.user.first_name + " " + auth.user.last_name}
                     <div className="text-sm font-medium">{format(new Date(), 'LLLL d, y')}</div>
+                    <div className="text-sm font-medium">{format(new Date(), 'hh:mm aaa')}</div>
                 </h2>
             }
         >

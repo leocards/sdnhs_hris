@@ -8,7 +8,7 @@ import ActiveLeave from "./Dashboard/ActiveLeave";
 import PersonnelList from "./Dashboard/PersonnelList";
 import PageListProvider from "@/hooks/pageListProvider";
 import NewSchoolYear from "./Dashboard/NewSchoolYear";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import { PencilLine, Plus } from "lucide-react";
 
@@ -75,10 +75,13 @@ function Dashboard({
     appliedLeavesOfPersonnel,
     syList,
 }: DashboardProps) {
-    const [newSY, setNewSY] = useState(false)
     const [applications, setApplications] = useState(leaveApplications)
     const [appliedLeaves, setAppliedLeaves] = useState(appliedLeavesOfPersonnel)
     const [loading, setLoading] = useState(false)
+    const [dateTime, setDateTime] = useState({
+        date: format(new Date(), 'LLLL d, y'),
+        time: format(new Date(), 'hh:mm aaa')
+    })
 
     const getLeaveApplications = (sy: string) => {
         setLoading(true)
@@ -90,14 +93,29 @@ function Dashboard({
             }).finally(() => setLoading(false))
     }
 
+    useEffect(() => {
+        let timeInterval = Math.abs((new Date().getSeconds() - 60) * 1000)
+
+        const setTimePerMinute = () => {
+            setDateTime({
+                date: format(new Date(), 'LLLL d, y'),
+                time: format(new Date(), 'hh:mm aaa')
+            })
+        }
+
+        const setIntervalDateTime = setInterval(setTimePerMinute, timeInterval)
+
+        return () => clearInterval(setIntervalDateTime)
+    }, [dateTime])
+
     return (
         <AuthenticatedLayout
             userAuth={auth.user}
             header={
                 <h2 className="font-semibold text-xl leading-tight">
                     Welcome, {auth.user.first_name + " " + auth.user.last_name}
-                    <div className="text-sm font-medium">{format(new Date(), 'LLLL d, y')}</div>
-                    <div className="text-sm font-medium">{format(new Date(), 'hh:mm aaa')}</div>
+                    <div className="text-sm font-medium">{dateTime.date}</div>
+                    <div className="text-sm font-medium">{dateTime.time}</div>
                 </h2>
             }
         >

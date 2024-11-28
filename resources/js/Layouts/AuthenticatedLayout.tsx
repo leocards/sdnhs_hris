@@ -106,7 +106,7 @@ export default function Authenticated({
         };
     }, []);
 
-    // dispalys meesage toaster
+    // dispalys message toaster
     useEffect(() => {
         if (message) {
             toast({
@@ -253,7 +253,6 @@ export default function Authenticated({
             }
 
             // setNotifications([newNotification]);
-            console.log(newNotification);
         }
     }, [newNotification]);
 

@@ -184,19 +184,15 @@ const MessageProvider: React.FC<ProviderProps> = ({ children }) => {
         if(isAuth)
             window.Echo.join('hris')
                 .here((users: ACTIVEUSERSLIST) => {
-                    console.log('here', users)
                     setActiveUsers(users)
                 })
                 .joining((user: ACTIVEUSERSTYPE) => {
-                    console.log('joining', user)
-
                     let active_user = activeUsers.find((au) => au.id === user.id)
 
                     if(!active_user)
                         setActiveUsers([...activeUsers, user])
                 })
                 .leaving((user: ACTIVEUSERSTYPE) => {
-                    console.log('leaving', user)
                     let active_users = [...activeUsers]
 
                     let active_user_index = active_users.findIndex((aui) => aui.id === user.id)

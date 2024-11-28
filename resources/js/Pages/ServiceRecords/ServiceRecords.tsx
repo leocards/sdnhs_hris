@@ -136,7 +136,7 @@ function ServiceRecords({
                     onClick={() => setIsUploadCertificate(true)}
                 >
                     <Upload className="size-5" />
-                    <span>Upload certificate</span>
+                    <span>Upload Certificate</span>
                 </Button>
             </div>
 

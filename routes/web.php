@@ -137,6 +137,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('saln')->group(function () {
             Route::controller(StatementOfAssetsLiabilityAndNetworthController::class)->group(function () {
                 Route::get('/', 'index')->name('myapprovals.saln');
+                Route::post('/approve/{saln}', 'setApproveSaln')->middleware(['role:HR'])->name('myapprovals.saln.approve');
             });
         });
 
@@ -145,7 +146,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
                 Route::get('/', 'index')->name('myapprovals.service-records');
             });
         });
-    });
+    })->middleware(['role:HR,HOD']);
 
     Route::prefix('myreports')->group(function () {
         Route::controller(ReportController::class)->group(function () {
@@ -235,7 +236,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/view/{saln}', 'jsonSalnView')->name('saln.json.view');
 
             Route::post('/save/{idToUpdate?}', 'store')->name('saln.save');
-            Route::post('/approve/{saln}', 'setApproveSaln')->middleware(['role:HR'])->name('saln.approve');
         });
     });
 });

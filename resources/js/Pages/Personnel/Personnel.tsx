@@ -155,19 +155,19 @@ function Personnel({
 
             <div className="my-7 grid gap-3 [@media(min-width:428px)]:gap-5 [@media(min-width:428px)]:grid-cols-2 [@media(min-width:1280px)]:!grid-cols-4">
                 <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-rose-600 bg-rose-100 dark:bg-rose-800/50 p-2">
-                    <div className="font-medium text-rose-700 dark:text-rose-400">Junior HS personnel</div>
+                    <div className="font-medium text-rose-700 dark:text-rose-400">Junior HS Personnel</div>
                     <div className="md:text-xl text-lg font-semibold text-rose-700 dark:text-rose-400">
                         {statistics.jhs} Personnel
                     </div>
                 </div>
                 <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-teal-600 bg-teal-100 dark:bg-teal-800/50 p-2">
-                    <div className="font-medium text-teal-700 dark:text-teal-400">Senior HS personnel</div>
+                    <div className="font-medium text-teal-700 dark:text-teal-400">Senior HS Personnel</div>
                     <div className="md:text-xl text-lg font-semibold text-teal-700 dark:text-teal-400">
                         {statistics.shs} Personnel
                     </div>
                 </div>
                 <div className="border-t md:pt-4 pt-2 md:space-y-1.5 space-y-1 border-indigo-600 bg-indigo-100 dark:bg-indigo-800/50 p-2">
-                    <div className="font-medium text-indigo-700 dark:text-indigo-400">Accounting personnel</div>
+                    <div className="font-medium text-indigo-700 dark:text-indigo-400">Accounting Personnel</div>
                     <div className="md:text-xl text-lg font-semibold text-indigo-700 dark:text-indigo-400">
                         {statistics.accounting} Personnel
                     </div>

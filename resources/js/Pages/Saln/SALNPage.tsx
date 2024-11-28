@@ -5,10 +5,15 @@ import { router } from "@inertiajs/react";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import ViewSalnPersonnel from "../Personnel/ViewSalnPersonnel";
+import { useToast } from "@/Components/ui/use-toast";
+import { Button } from "@/Components/ui/button";
+import { cn } from "@/lib/utils";
+import Processing from "@/Components/Processing";
 
 type SALNTYPE = {
     id: number;
     asof: string;
+    isjoint: string;
     user: {
         id: number;
         first_name: string;
@@ -26,8 +31,40 @@ type Prop = {
 
 const SALNPage: React.FC<Prop> = ({ auth, saln, status, open }) => {
     const [loading, setLoading] = useState(false);
+    const [processing, setProcessing] = useState(false);
     const [selectedSaln, setSelectedSaln] = useState<number | null>(open?parseInt(open):null);
     const [showSaln, setShowSaln] = useState(false);
+    const { toast } = useToast();
+
+    const onApproveSaln = (id: number, isjoint: string) => {
+        setProcessing(true)
+        router.post(
+            route("myapprovals.saln.approve", [id]),
+            {
+                isApprove: true,
+                isjoint: isjoint
+            },
+            {
+                onSuccess: () => {
+                    toast({
+                        variant: "success",
+                        description: "SALN has been approved.",
+                    });
+                },
+                onError: (error) => {
+                    if ("0" in error) {
+                        toast({
+                            variant: "destructive",
+                            description: error[0],
+                        });
+                    }
+                },
+                onFinish: () => {
+                    setProcessing(false);
+                },
+            }
+        );
+    };
 
     useEffect(() => {
         let onFinishListener = router.on("finish", () => {
@@ -67,8 +104,11 @@ const SALNPage: React.FC<Prop> = ({ auth, saln, status, open }) => {
                 />
             </div>
 
-            <div className="divide-y mx-auto mt-10 min-h-[22rem] max-w-3xl w-full">
-                <div className="grid grid-cols-[1fr,12rem] py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60">
+            <div className="divide-y mx-auto mt-10 min-h-[22rem] max-w-4xl w-full">
+                <div className={cn(
+                    "grid py-2 [&>div:first-child]:pl-1 [&>div]:font-medium opacity-60",
+                    auth.user.role == "HR" && status == "pending" ? "grid-cols-[1fr,12rem,8rem]" : "grid-cols-[1fr,12rem]"
+                )}>
                     <div className="">Name</div>
                     <div className="text-center">As of</div>
                 </div>
@@ -90,7 +130,10 @@ const SALNPage: React.FC<Prop> = ({ auth, saln, status, open }) => {
                     saln.map((data, index) => (
                         <div
                             key={index}
-                            className="grid grid-cols-[1fr,12rem] py-3 [&>div:first-child]:pl-1 hover:bg-secondary"
+                            className={cn(
+                                "grid items-center [&>div:first-child]:pl-1 hover:bg-secondary",
+                                auth.user.role == "HR" && status == "pending" ? "grid-cols-[1fr,12rem,8rem] py-2" : "grid-cols-[1fr,12rem] py-3"
+                            )}
                             role="button"
                             onClick={() => {
                                 setSelectedSaln(data.id)
@@ -105,18 +148,19 @@ const SALNPage: React.FC<Prop> = ({ auth, saln, status, open }) => {
                             <div className="text-center">
                                 {format(data.asof, "LLLL d, y")}
                             </div>
+                            {(auth.user.role == "HR" && status == "pending") && (<div className="flex pr-2">
+                                <Button
+                                    className="!bg-green-700 text-xs h-8 ml-auto"
+                                    onClick={() => onApproveSaln(data.id, data.isjoint)}
+                                >
+                                    Approve
+                                </Button>
+                            </div>)}
                         </div>
                     ))}
             </div>
 
-            <ViewSalnPersonnel
-                show={showSaln}
-                id={selectedSaln}
-                onClose={() => {
-                    setShowSaln(false);
-                    setSelectedSaln(null);
-                }}
-            />
+            <Processing is_processing={processing} />
         </Authenticated>
     );
 };

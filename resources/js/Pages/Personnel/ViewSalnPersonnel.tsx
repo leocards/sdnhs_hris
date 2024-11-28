@@ -22,42 +22,10 @@ type Props = {
 } & ModalProps;
 
 const ViewSalnPersonnel: React.FC<Props> = ({ id, show, onClose }) => {
-    const { toast } = useToast();
     const [loading, setLoading] = useState(false);
     const [processing, setProcessing] = useState(false);
 
     const [saln, setSaln] = useState<SALNTYPE | null>(null);
-
-    const onApproveSaln = () => {
-        setProcessing(true)
-        router.post(
-            route("saln.approve", [id]),
-            {
-                isApprove: true,
-                isjoint: saln?.saln?.isjoint
-            },
-            {
-                onSuccess: () => {
-                    toast({
-                        variant: "success",
-                        description: "SALN has been approved.",
-                    });
-                    onClose(false);
-                },
-                onError: (error) => {
-                    if ("0" in error) {
-                        toast({
-                            variant: "destructive",
-                            description: error[0],
-                        });
-                    }
-                },
-                onFinish: () => {
-                    setProcessing(false);
-                },
-            }
-        );
-    };
 
     useEffect(() => {
         if (show) {
@@ -84,12 +52,6 @@ const ViewSalnPersonnel: React.FC<Props> = ({ id, show, onClose }) => {
                 </div>
             ) : (<div className="p-6">
                 <div className="flex items-center mb-4">
-                    <Button
-                        className="!bg-green-700"
-                        onClick={onApproveSaln}
-                    >
-                        Approve
-                    </Button>
                     <Button
                         variant="secondary"
                         className="ml-auto px-6"

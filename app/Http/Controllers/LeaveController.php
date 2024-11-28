@@ -43,8 +43,8 @@ class LeaveController extends Controller
                     })
                     ->when(Auth::user()->role == "HOD" && !$myLeave, function ($query) use ($status) {
                         return $query->where('principal_status', $status)
-                            ->whereNot('user_id', Auth::id())
-                            ->where('hr_status', 'Approved');
+                            ->whereNot('user_id', Auth::id());
+                            // ->where('hr_status', 'Approved');
                     })
                     ->when(Auth::user()->role == "HOD" && $myLeave, function ($query) use ($status) {
                         return $query->where('hr_status', $status)
@@ -329,12 +329,12 @@ class LeaveController extends Controller
 
             // Not hr or principal user
             if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
-                $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
+                $receivers = User::whereIn('role', ['HR'])->get('id');
                 foreach ($receivers as $value) {
                     $notification = Notifications::create([
                         'user_id' => $value['id'],
                         'from_user_id' => Auth::id(),
-                        'message' => " has submitted an Application for leave.",
+                        'message' => " has submitted a leave application.",
                         'type' => 'leave',
                         'go_to_link' => route('myapprovals.leave.view', [$leave->id, Auth::id()])
                     ]);
@@ -393,6 +393,9 @@ class LeaveController extends Controller
         DB::beginTransaction();
         try {
             $notificationResponse = null;
+            $notificationResponseForPrincipal = null;
+
+            $principal = User::where('role', 'HOD')->first();
 
             if ($request->respond === "approved") {
                 // notifications
@@ -406,6 +409,15 @@ class LeaveController extends Controller
                         'type' => 'response',
                         'go_to_link' => route('leave.view', [$leave->id, $user->id])
                     ]);
+
+                    if($principal)
+                        $notificationResponseForPrincipal = Notifications::create([
+                            'user_id' => $principal->id,
+                            'from_user_id' => $user->id,
+                            'message' => ' have submitted a leave application that needs your response.',
+                            'type' => 'leave',
+                            'go_to_link' => route('myapprovals.leave.view', [$leave->id, $user->id])
+                        ]);
 
                 } else {
                     $leave->principal_status = "Approved";
@@ -452,6 +464,15 @@ class LeaveController extends Controller
                         'type' => 'response',
                         'go_to_link' => route('leave.view', [$leave->id, $user->id])
                     ]);
+
+                    if($principal)
+                        $notificationResponseForPrincipal = Notifications::create([
+                            'user_id' => $principal->id,
+                            'from_user_id' => $user->id,
+                            'message' => ' have submitted a leave application that needs your response.',
+                            'type' => 'leave',
+                            'go_to_link' => route('myapprovals.leave.view', [$leave->id, $user->id])
+                        ]);
                 } else {
                     $leave->principal_status = "Rejected";
                     $leave->principal_reject_msg = $request->message;
@@ -474,6 +495,11 @@ class LeaveController extends Controller
             if($notificationResponse) {
                 $notificationResponse->load(['sender']);
                 broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
+            }
+
+            if($notificationResponseForPrincipal) {
+                $notificationResponseForPrincipal->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponseForPrincipal, $notificationResponseForPrincipal->user_id));
             }
 
             if(($userSender->role != "HR" && $user->enable_email_notification) || ($user->role == "HOD" && $userSender->role == "HR" && $user->enable_email_notification))

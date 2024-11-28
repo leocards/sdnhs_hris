@@ -207,7 +207,7 @@ function Leave({
                                         }
                                     }}
                                 >
-                                    Apply for leave
+                                    Apply for Leave
                                 </Button>
                             </div>
                         )}

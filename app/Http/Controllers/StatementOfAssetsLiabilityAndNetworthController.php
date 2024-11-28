@@ -239,7 +239,7 @@ class StatementOfAssetsLiabilityAndNetworthController extends Controller
                 'from_user_id' => Auth::id(),
                 'message' => ': Your SALN has been approved by the HR.',
                 'type' => 'response',
-                'go_to_link' => route('saln').'?open='.$saln->id
+                'go_to_link' => route('saln').'?status=approved'
             ]);
 
             $totalassets = $saln->salnAssets()

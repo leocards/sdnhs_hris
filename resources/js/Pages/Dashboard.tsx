@@ -119,7 +119,7 @@ function Dashboard({
             <div className="mt-4 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                 {["HR"].includes(auth.user.role) ? (
                     <div className="border-t border-teal-600 bg-teal-100 dark:bg-teal-800/50 pt-4 space-y-1.5 p-2">
-                        <div className="font-medium text-teal-700 dark:text-teal-400">Total personnel</div>
+                        <div className="font-medium text-teal-700 dark:text-teal-400">Total Personnel</div>
                         <div className="text-xl font-semibold text-teal-700 dark:text-teal-400">
                             {totalEmployee?.total} Personnel
                         </div>
@@ -136,7 +136,7 @@ function Dashboard({
                     </div>
                 ) : (
                     <div className="border-t border-teal-600 bg-teal-100 dark:bg-teal-800/50 pt-4 space-y-1.5 p-2">
-                        <div className="font-medium text-teal-700 dark:text-teal-400">Credits remaining</div>
+                        <div className="font-medium text-teal-700 dark:text-teal-400">Credits Remaining</div>
                         <div className="text-xl font-semibold text-teal-700 dark:text-teal-400">
                             {auth.user.leave_credits ?? 0} Credit/s
                         </div>
@@ -160,7 +160,7 @@ function Dashboard({
                     </div>
                 )}
                 <div className="border-t border-blue-600 bg-blue-100 dark:bg-blue-800/50 pt-4 space-y-1.5 p-2">
-                    <div className="font-medium text-blue-700 dark:text-blue-400">Approved leave</div>
+                    <div className="font-medium text-blue-700 dark:text-blue-400">Approved Leave</div>
                     <div className="text-xl font-semibold text-blue-700 dark:text-blue-400">
                         {approved.total} Approved
                     </div>
@@ -174,7 +174,7 @@ function Dashboard({
                     )}
                 </div>
                 <div className="border-t border-purple-600 bg-purple-100 dark:bg-purple-800/50 pt-4 space-y-1.5 p-2">
-                    <div className="font-medium text-purple-700 dark:text-purple-400">Pending leave</div>
+                    <div className="font-medium text-purple-700 dark:text-purple-400">Pending Leave</div>
                     <div className="text-xl font-semibold text-purple-700 dark:text-purple-400">
                         {pending.total} Pending
                     </div>
@@ -188,7 +188,7 @@ function Dashboard({
                     )}
                 </div>
                 <div className="border-t border-yellow-600 bg-yellow-100 dark:bg-yellow-800/50 pt-4 space-y-1.5 p-2">
-                    <div className="font-medium text-yellow-700 dark:text-yellow-400">Rejected leave</div>
+                    <div className="font-medium text-yellow-700 dark:text-yellow-400">Rejected Leave</div>
                     <div className="text-xl font-semibold text-yellow-700 dark:text-yellow-400">
                         {reject.total} Rejected
                     </div>

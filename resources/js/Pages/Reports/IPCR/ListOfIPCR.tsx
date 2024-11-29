@@ -144,7 +144,7 @@ const ListOfIPCR = ({ ipcr, principal, hr, ipcr_years, sy }: Props) => {
                                     <div key={index}>
                                         <div className="grid grid-cols-[4rem,repeat(2,1fr),8rem,10rem,8rem] [&>div:not(:nth-child(2))]:text-center [&>div]:py-2">
                                             <div className="">{++index}</div>
-                                            <div className="">{`${list.user?.last_name.toUpperCase()}, ${list.user?.first_name?.toUpperCase()} ${list.user?.middle_name?.toUpperCase()}`}</div>
+                                            <div className="">{`${list.user?.last_name.toUpperCase()}, ${list.user?.first_name?.toUpperCase()} ${list.user?.middle_name?.toUpperCase()||""}`}</div>
                                             <div className="">
                                                 {list.user.position}
                                             </div>

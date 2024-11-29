@@ -27,6 +27,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import NumberInput from "@/Components/NumberInput";
 
 const UPLOADSCHEMA = z
     .object({
@@ -36,7 +37,17 @@ const UPLOADSCHEMA = z
                     id: z.number().default(0),
                     name: z.string(),
                 }),
-                rating: z.string(),
+                rating: z.string() // Start with a string schema
+                    .transform((value) => {
+                        const num = parseFloat(value); // Convert string to number
+                        if (isNaN(num)) {
+                            throw new Error("Invalid number format."); // Handle invalid number conversion
+                        }
+                        return num;
+                    })
+                    .refine((value) => value >= 1 && value <= 5, {
+                        message: "The ratings must be between 1 to 5.",
+                    }),
             })
             .partial(),
         isAdd: z.boolean().optional(),
@@ -156,7 +167,7 @@ export default function UploadIPCR(props: {
                     id: 0,
                     name: "",
                 });
-                form.setValue("add.rating", "");
+                form.setValue("add.rating", undefined);
             }
             form.setValue("sy", year);
         }
@@ -175,11 +186,18 @@ export default function UploadIPCR(props: {
                         onClose({ upload: false, add: false });
                     },
                     onError: (error) => {
-                        console.log(error[0]);
-                        toast({
-                            variant: "destructive",
-                            description: error[0],
-                        });
+                        for (const key in error) {
+                            form.setError(key as keyof IFormUpload, {
+                                type: "manual",
+                                message: error[key],
+                            });
+                        }
+
+                        if("0" in error)
+                            toast({
+                                variant: "destructive",
+                                description: error[0],
+                            });
                     },
                     onFinish: () => {
                         reset();
@@ -354,7 +372,7 @@ export default function UploadIPCR(props: {
                                                     Performance rating
                                                 </FormLabel>
                                                 <FormControl>
-                                                    <Input
+                                                    <NumberInput
                                                         {...field}
                                                         className="form-input"
                                                     />

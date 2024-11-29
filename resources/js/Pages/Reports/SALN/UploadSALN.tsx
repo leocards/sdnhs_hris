@@ -24,6 +24,9 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import NumberInput from "@/Components/NumberInput";
+import { RadioBoxForm } from "@/Pages/Saln/Partials/PersonalInformation";
+import { Label } from "@/Components/ui/label";
+import { SALNType } from "./Index";
 
 const UPLOADSCHEMA = z
     .object({
@@ -34,7 +37,7 @@ const UPLOADSCHEMA = z
             }),
             networth: z.string(),
             spouse: z.string().optional().default(""),
-            isjoint: z.boolean().default(false),
+            isjoint: z.enum(['joint', 'separate', 'none']).optional(),
         }),
         isAdd: z.boolean().optional(),
         file: z
@@ -61,13 +64,30 @@ const UPLOADSCHEMA = z
                     message: requiredError("personnel"),
                     path: ["add.personnelid.name"],
                 });
-            } else if (!data.add.networth) {
+            }
+            if (!data.add.networth) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
                     message: requiredError("net worth"),
                     path: ["add.networth"],
                 });
             }
+            if (!data.add.isjoint) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Please select filing option.",
+                    path: ["add.isjoint"],
+                });
+            }
+
+            if(data.add.isjoint != "none" && !data.add.spouse) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "This field is required when filing option is Joint/Separate Filing.",
+                    path: ["add.spouse"],
+                });
+            }
+
         } else {
             if (!data.file) {
                 ctx.addIssue({
@@ -84,7 +104,7 @@ type IFormUpload = z.infer<typeof UPLOADSCHEMA>;
 export default function UploadSALN(props: {
     show: boolean;
     isAdd?: boolean;
-    isEdit?: any;
+    isEdit?: SALNType | null;
     year?: string;
     onClose: CallableFunction;
 }) {
@@ -101,8 +121,10 @@ export default function UploadSALN(props: {
     const { toast } = useToast();
 
     const watchYear = form.watch('year')
+    const watchIsJoint = form.watch('add.isjoint')
 
     const onFormSubmit = (formData: IFormUpload) => {
+        console.log(formData)
         setIsSubmit(true);
         setData(formData);
         if (isAdd) {
@@ -139,15 +161,15 @@ export default function UploadSALN(props: {
                 );
                 form.setValue("add.networth", props.isEdit?.networth);
                 form.setValue("add.spouse", props.isEdit?.spouse);
-                form.setValue("add.isjoint", !!props.isEdit?.joint);
-                form.setValue("year", props.isEdit?.year);
+                form.setValue("add.isjoint", props.isEdit?.joint ? "none" : (props.isEdit?.joint == 1 ? "joint":"separate") );
+                form.setValue("year", props.isEdit?.year?.toString());
             } else {
                 form.setValue("add.personnelid", {
                     id: 0,
                     name: "",
                 });
                 form.setValue("add.networth", "");
-                form.setValue("add.isjoint", false);
+                form.setValue("add.isjoint", undefined);
                 form.setValue("year", year||"");
             }
         }
@@ -166,11 +188,11 @@ export default function UploadSALN(props: {
                         onClose({ upload: false, add: false });
                     },
                     onError: (error) => {
-                        console.log(error[0]);
-                        toast({
-                            variant: "destructive",
-                            description: error[0],
-                        });
+                        if("0" in error)
+                            toast({
+                                variant: "destructive",
+                                description: error[0],
+                            });
                     },
                     onFinish: () => {
                         reset();
@@ -194,7 +216,6 @@ export default function UploadSALN(props: {
                             }
                         },
                         onError: (error) => {
-                            console.log(error);
                             for (const key in error) {
                                 form.setError(key as keyof IFormUpload, {
                                     type: "manual",
@@ -226,6 +247,17 @@ export default function UploadSALN(props: {
                 setInitialListSALN(data);
             });
     }, [watchYear, year]);
+
+    useEffect(() => {
+        if(form.getValues('isAdd')) {
+            if(watchIsJoint == "none") {
+                if("add" in form.formState.errors) {
+                    if("spouse" in form.formState.errors.add!)
+                        form.clearErrors("add.spouse")
+                }
+            }
+        }
+    }, [watchIsJoint])
 
     return (
         <Modal
@@ -375,27 +407,21 @@ export default function UploadSALN(props: {
                                             </FormItem>
                                         )}
                                     />
-                                    <FormField
-                                        control={form.control}
-                                        name="add.isjoint"
-                                        render={({ field }) => (
-                                            <FormItem className="items-center flex gap-3">
-                                                <FormLabel className="mt-1.5">
-                                                    Please check if it is joint
-                                                    filing
-                                                </FormLabel>
-                                                <FormControl>
-                                                    <Checkbox
-                                                        checked={field.value}
-                                                        onCheckedChange={
-                                                            field.onChange
-                                                        }
-                                                    />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+                                    <div>
+                                        <Label className="required">
+                                            Filing option
+                                        </Label>
+                                        <RadioBoxForm
+                                            form={form}
+                                            label=""
+                                            name="add.isjoint"
+                                            items={[
+                                                {value: "joint", label: "Joint Filing"},
+                                                {value: "separate", label: "Separate Filing"},
+                                                {value: "none", label: "Not Applicable"}
+                                            ]}
+                                        />
+                                    </div>
                                 </div>
                             )}
 

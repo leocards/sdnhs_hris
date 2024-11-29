@@ -58,11 +58,11 @@ class ReportController extends Controller
         return Inertia::render('Reports/IPCR/Index', [
             "ipcr_years" => $ipcr_years,
             "ipcr" => PerformanceRating::with(['user:id,first_name,last_name,middle_name,position,personnel_id'])
-                            ->join('users', 'performance_ratings.user_id', '=', 'users.id')
-                            ->where('performance_ratings.sy', $ipcr_years->first())
-                            ->orderBy('users.last_name')
-                            ->select('performance_ratings.*')
-                            ->get(),
+                ->join('users', 'performance_ratings.user_id', '=', 'users.id')
+                ->where('performance_ratings.sy', $ipcr_years->first())
+                ->orderBy('users.last_name')
+                ->select('performance_ratings.*')
+                ->get(),
             "principal" => User::where('role', 'HOD')->first(['first_name', 'last_name', 'middle_name', 'position', 'email', 'phone_number']),
             "hr" => Auth::user()->role == "HR" ? ["name" => Auth::user()->name, "position" => Auth::user()->position, "email" => Auth::user()->email, "phone_number" => Auth::user()->phone_number] : User::where('role', 'HR')->first(['first_name', 'last_name', 'middle_name', 'position', 'email', 'phone_number']),
             "sy" => SchoolYear::latest()->first(),
@@ -77,8 +77,8 @@ class ReportController extends Controller
         return Inertia::render('Reports/SALN/Index', [
             "saln_years" => $saln_years,
             "saln" => Saln::with(['user' => function ($query) {
-                    $query->select(['id','first_name','last_name','middle_name','position','personnel_id'])->with(['pdsPersonalInformation:id,user_id,tin']);
-                }])
+                $query->select(['id', 'first_name', 'last_name', 'middle_name', 'position', 'personnel_id'])->with(['pdsPersonalInformation:id,user_id,tin']);
+            }])
                 ->where('year', $saln_years->first())
                 ->get(),
             "principal" => User::where('role', 'HOD')->first(['first_name', 'last_name', 'middle_name', 'position', 'email', 'phone_number']),
@@ -102,9 +102,9 @@ class ReportController extends Controller
     {
         return response()->json(
             Saln::with(['user' => function ($query) {
-                    $query->select(['id','first_name','last_name','middle_name','position','personnel_id'])
+                $query->select(['id', 'first_name', 'last_name', 'middle_name', 'position', 'personnel_id'])
                     ->with(['pdsPersonalInformation:id,user_id,tin']);
-                }])
+            }])
                 ->where('year', $year)
                 ->get()
         );
@@ -114,12 +114,12 @@ class ReportController extends Controller
     {
         return response()->json(
             User::whereDoesntHave('performanceRatings', function ($query) use ($sy) {
-               $query->where('sy', $sy);
+                $query->where('sy', $sy);
             })
-            ->whereNot('role', 'HR')
-            ->whereNot('role', 'HOD')
-            ->with('performanceRatings:id')
-            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+                ->whereNot('role', 'HR')
+                ->whereNot('role', 'HOD')
+                ->with('performanceRatings:id')
+                ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
     }
 
@@ -127,12 +127,12 @@ class ReportController extends Controller
     {
         return response()->json(
             User::whereDoesntHave('saln', function ($query) use ($year) {
-               $query->where('year', $year);
+                $query->where('year', $year);
             })
-            ->with('saln:id')
-            ->whereNot('role', 'HR')
-            ->whereNot('role', 'HOD')
-            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+                ->with('saln:id')
+                ->whereNot('role', 'HR')
+                ->whereNot('role', 'HOD')
+                ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
     }
 
@@ -145,11 +145,11 @@ class ReportController extends Controller
             User::when($search, function ($query) use ($search) {
                 $query->searchByFullName($search);
             })->whereDoesntHave('performanceRatings', function ($query) use ($sy) {
-               $query->where('sy', $sy);
+                $query->where('sy', $sy);
             })
-            ->whereNot('role', 'HR')
-            ->with('performanceRatings:id')
-            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+                ->whereNot('role', 'HR')
+                ->with('performanceRatings:id')
+                ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
     }
 
@@ -162,11 +162,11 @@ class ReportController extends Controller
             User::when($search, function ($query) use ($search) {
                 $query->searchByFullName($search);
             })->whereDoesntHave('saln', function ($query) use ($year) {
-               $query->where('year', $year);
+                $query->where('year', $year);
             })
-            ->whereNot('role', 'HR')
-            ->with('performanceRatings:id')
-            ->get(['id', 'first_name', 'middle_name', 'last_name'])
+                ->whereNot('role', 'HR')
+                ->with('performanceRatings:id')
+                ->get(['id', 'first_name', 'middle_name', 'last_name'])
         );
     }
 
@@ -193,7 +193,7 @@ class ReportController extends Controller
                         if (is_int($value[0])) {
                             $searchName = strtolower($value[1]);
                             $searchName = explode(',', $searchName);
-                            $searchName = array_map(function($str) {
+                            $searchName = array_map(function ($str) {
                                 // Remove spaces
                                 $str = preg_replace('/\b\w\.\s*/', '', $str);
 
@@ -207,14 +207,17 @@ class ReportController extends Controller
                                 ->first(['id']);
 
                             // validate if user exist and check if it has already been added otherwise add the rating.
-                            if ($user){
+                            if ($user) {
                                 $existIPCR = PerformanceRating::where('user_id', $user->id)->where('sy', $request->sy)->exists();
-                                if(!$existIPCR)
-                                    PerformanceRating::create([
-                                        'user_id' => $user->id,
-                                        'rating' => $value[3],
-                                        'sy' => $request->sy
-                                    ]);
+
+                                if (floatval($value[3]) <= 1 && floatval($value[3]) >= 5) {
+                                    if (!$existIPCR)
+                                        PerformanceRating::create([
+                                            'user_id' => $user->id,
+                                            'rating' => $value[3],
+                                            'sy' => $request->sy
+                                        ]);
+                                } else throw new Exception('The ratings should be between 1 to 5');
                             }
                         } else {
                             // break the loop if there is no number indicator.
@@ -236,7 +239,6 @@ class ReportController extends Controller
 
             return back()->withErrors($th->getMessage());
         }
-
     }
 
     public function upload_saln(Request $request)
@@ -267,12 +269,12 @@ class ReportController extends Controller
                             // validate if user exist and check if it has already been added otherwise add the saln.
                             if ($user) {
                                 $existIPCR = Saln::where('user_id', $user->id)->where('year', $request->year)->exists();
-                                if(!$existIPCR)
+                                if (!$existIPCR)
                                     Saln::create([
                                         'user_id' => $user->id,
                                         "networth" => $value[6],
                                         "spouse" => $value[7],
-                                        "joint" => $value[8] === "/" ? true : false,
+                                        "joint" => $value[8] === "/" ? 1 : null,
                                         "year" => $request->year
                                     ]);
                             }
@@ -318,7 +320,10 @@ class ReportController extends Controller
                     }
                 }
             ],
-            'add.rating' => ['required']
+            'add.rating' => ['required', 'numeric', 'max:5', 'min:1']
+        ], [
+            "add.rating.max" => "The performance rating may not be greater than 5",
+            "add.rating.min" => "The performance rating may not be lesser than 1"
         ]);
 
         DB::beginTransaction();
@@ -362,7 +367,10 @@ class ReportController extends Controller
             ],
             "add.networth" => ['required'],
             "add.isjoint" => ['boolean'],
-            "year" => ["required", "digits:4"]
+            "year" => ["required", "string", "size:4"],
+            "add.isjoint" => ['required', 'in:joint,separate,none']
+        ], [
+            "add.isjoint.in" => "Please select Joint/Separate Filing or Not Applicable.",
         ]);
 
         DB::beginTransaction();
@@ -372,7 +380,7 @@ class ReportController extends Controller
                 "user_id" => $user->id,
                 "networth" => $request->add['networth'],
                 "spouse" => $request->add['spouse'],
-                "joint" => $request->add['isjoint'],
+                "joint" => $request->add['isjoint'] == "none" ? null : ($request->add['isjoint'] == "joint" ? 1 : 2),
                 "year" => $request->year
             ]);
 

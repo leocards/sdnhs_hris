@@ -211,7 +211,7 @@ const PDFSALN = forwardRef<HTMLDivElement, Props>((props, ref) => {
                                     >
                                         {s.spouse}
                                     </div>
-                                    <div className="text-center">{s.joint?"/":""}</div>
+                                    <div className="text-center">{s.joint && s.joint == 1?"/":""}</div>
                                 </div>
                             ))}
                         </div>

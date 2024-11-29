@@ -7,7 +7,7 @@ import ListOfSALN from "./ListOfSALN";
 export type SALNType = {
     id: number;
     counter?: number;
-    joint: boolean;
+    joint: number;
     networth: string;
     spouse: string;
     user_id: number;

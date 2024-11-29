@@ -301,7 +301,7 @@ const PersonalInformation: React.FC<Props> = ({ form, user, declarant }) => {
     );
 };
 
-const RadioBoxForm: React.FC<{ form: any; name: string; label: string; items: Array<{value:string;label:string;}> }> = ({
+export const RadioBoxForm: React.FC<{ form: any; name: string; label: string; items: Array<{value:string;label:string;}> }> = ({
     form,
     name,
     label,
@@ -331,6 +331,7 @@ const RadioBoxForm: React.FC<{ form: any; name: string; label: string; items: Ar
                             ))}
                         </RadioGroup>
                     </FormControl>
+                    <FormMessage />
                 </FormItem>
             )}
         />

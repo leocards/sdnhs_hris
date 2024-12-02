@@ -52,6 +52,12 @@ class DashboardController extends Controller
                         $query->where('user_id', Auth::id());
                     })
                     ->where('hr_status', 'Approved')
+                    ->where(function ($query) {
+                        $query->whereDate('inclusive_date_from', '<=', Carbon::now()->format('Y-m-d'))
+                            ->whereDate('inclusive_date_to', '>=', Carbon::now()->format('Y-m-d'))
+                            ->orWhereDate('inclusive_date_from', '<=', Carbon::now()->format('Y-m-d'))
+                            ->whereNull('inclusive_date_to');
+                    })
                     ->get(['id', 'user_id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
                 "leaveApplications" => collect([
                     "approved" => Leave::select('leave_type', DB::raw('COUNT(id) as total'))

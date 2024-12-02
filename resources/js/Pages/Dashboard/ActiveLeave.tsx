@@ -24,7 +24,7 @@ type Props = {
 // ring
 
 const getTimeRemains = ({ from, to }: { from: Date; to?: Date }) => {
-    let { days, hours, minutes, seconds } = getRemainingTime(from);
+    let { days, hours, minutes, seconds, isToday } = getRemainingTime(from);
     let endDate = to ? getRemainingTime(to) : null;
 
     if (days > 0) {
@@ -35,8 +35,10 @@ const getTimeRemains = ({ from, to }: { from: Date; to?: Date }) => {
         return `${minutes} min `;
     } else if (seconds > 0) {
         return `a minute `;
-    } else {
-        if (endDate && endDate.seconds > 0) return `active`;
+    } else if(isToday) {
+        return `active`;
+    } else if(endDate) {
+        if (endDate.seconds > 0 || endDate.isToday) return `active`;
     }
 };
 

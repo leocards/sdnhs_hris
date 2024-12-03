@@ -123,7 +123,7 @@ class DashboardController extends Controller
                 ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
             "leaveApplications" => collect([]),
             "sy" => SchoolYear::latest()->first(),
-            "sy_ratings" => PerformanceRating::where('user_id', Auth::id())->whereIn('sy', $school_years)->get(['sy', 'rating'])->map(function ($item) {
+            "sy_ratings" => PerformanceRating::where('user_id', Auth::id())->whereIn('sy', $school_years)->orderBy('sy', 'asc')->get(['sy', 'rating'])->map(function ($item) {
                 // Convert rating to an integer
                 $item->rating = (float) $item->rating;
                 return $item;

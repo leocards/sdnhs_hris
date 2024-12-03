@@ -455,6 +455,8 @@ export const CalendarInput: React.FC<{
     // Function to check if input is a valid date
     const isValidDate = (input: string | Date): boolean => {
         if(typeof input == "string") {
+            if(input == "N/A") return false
+
             const dateRegex = /^(0[1-9]|1[0-2])\/(0[1-9]|[12][0-9]|3[01])\/\d{4}$/;
             if (!dateRegex.test(input)) return false;
 

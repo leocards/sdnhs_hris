@@ -30,6 +30,7 @@ class ReportController extends Controller
     {
         return Inertia::render('Reports/ListOfPersonnel/Index', [
             "sy" => SchoolYear::latest()->first(),
+            "syList" => SchoolYear::latest()->get(),
             "list" => collect([
                 "jhs" => DB::table('users')
                     ->select(DB::raw("CONCAT(UPPER(last_name), ', ', UPPER(first_name), ' ', UPPER(IFNULL(CONCAT(SUBSTRING(middle_name, 1, 1), '. '), ''))) AS name, sex"))

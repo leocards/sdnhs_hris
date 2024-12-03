@@ -28,6 +28,7 @@ import { ChevronDown } from "lucide-react";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import NumberInput from "@/Components/NumberInput";
+import { SYTYPE } from "@/types";
 
 const UPLOADSCHEMA = z
     .object({
@@ -110,7 +111,8 @@ export default function UploadIPCR(props: {
     isAdd?: boolean;
     isEdit?: any;
     onClose: CallableFunction;
-    year: string
+    year: string;
+    yearList: Array<SYTYPE>
 }) {
     const { show, isAdd = false, onClose, year } = props;
     const [isFormAdd, setIsFormAdd] = useState<boolean>(false);
@@ -308,11 +310,11 @@ export default function UploadIPCR(props: {
                                                 <SelectOptionContent>
                                                     <ScrollArea className="h-40">
                                                         <div className="p-1 grid grid-cols-[repeat(auto-fill,minmax(7rem,1fr))] gap-1">
-                                                            {generateSchoolYears((new Date().getFullYear() + 2), (new Date().getFullYear() - 20)).map(
+                                                            {props.yearList.map(
                                                                 (sy, index) => (
                                                                     <SelectOptionItem
                                                                         key={index}
-                                                                        value={sy}
+                                                                        value={sy.sy}
                                                                         className="pr-3"
                                                                     />
                                                                 )

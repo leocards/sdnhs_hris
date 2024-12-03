@@ -1020,7 +1020,7 @@ class PersonalDataSheetController extends Controller
                     'user_id' => $user->id,
                     'family_type' => 'child',
                     'full_name' => $value['name'],
-                    'birthdate' => $value['birthday'] ? Carbon::parse($value['birthday'])->format('Y-m-d') : null,
+                    'birthdate' => $value['birthday'] && $value['birthday'] != "N/A" ? Carbon::parse($value['birthday'])->format('Y-m-d') : null,
                 ]);
         }
 
@@ -1086,7 +1086,7 @@ class PersonalDataSheetController extends Controller
                     'from' => $periodfrom,
                     'to' => $periodto,
                     'highest_earned' => $value[11],
-                    'year_graduated' => $value[12],
+                    'year_graduated' => $value[12] != "N/A" ? $value[12] : null,
                     'honors' => $value[13],
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),

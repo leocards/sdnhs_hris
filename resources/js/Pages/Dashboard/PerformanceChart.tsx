@@ -36,6 +36,8 @@ const PerformanceChart = ({ sy_ratings }: Props) => {
         },
     } satisfies ChartConfig;
 
+    console.log(sy_ratings)
+
     return (
         <Card className="mt-8">
             <CardHeader>
@@ -112,7 +114,7 @@ const PerformanceChart = ({ sy_ratings }: Props) => {
                             School Year/s{" "}
                             {sy_ratings &&
                                 (sy_ratings?.length >= 2
-                                    ? `${sy_ratings[0].sy} - ${sy_ratings[7].sy}`
+                                    ? `${sy_ratings[0].sy} - ${sy_ratings[sy_ratings.length - 1].sy}`
                                     : sy_ratings?.length == 1 &&
                                       sy_ratings[0].sy)}
                         </div>

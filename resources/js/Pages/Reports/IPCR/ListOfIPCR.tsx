@@ -36,7 +36,7 @@ export const equivalent = (rate: number | null): string => {
     return "";
 };
 
-const ListOfIPCR = ({ ipcr, principal, hr, ipcr_years, sy }: Props) => {
+const ListOfIPCR = ({ ipcr, principal, hr, ipcr_years, sy, syList }: Props) => {
     const [showPrint, setShowPrint] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>(
         ipcr_years.length > 0 ? ipcr_years[0] : ""
@@ -204,6 +204,7 @@ const ListOfIPCR = ({ ipcr, principal, hr, ipcr_years, sy }: Props) => {
                     isAdd={showUpload.add}
                     isEdit={isEdit}
                     year={filter ? filter : sy?.sy}
+                    yearList={syList}
                 />
             </div>
 

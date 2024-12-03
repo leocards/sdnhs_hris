@@ -23,7 +23,7 @@ const getCSData = (data: any): any => {
         placeofexaminationconferment: data?.place_examination??"",
         license: {
             number: data?.license_number??"",
-            dateofvalidity: new Date(data?.license_date_validity??null)
+            dateofvalidity: data?.license_date_validity && data?.license_date_validity != "N/A" ? new Date(data?.license_date_validity??null) : data?.license_date_validity
         },
     }
 }

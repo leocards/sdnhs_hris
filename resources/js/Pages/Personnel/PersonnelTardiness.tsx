@@ -163,7 +163,7 @@ function PersonnelTardiness({
                     <div className="">Days present</div>
                     <div className="">Days absent</div>
                     <div className="">SY</div>
-                    <div className=""></div>
+                    <div className="">Edit</div>
                 </div>
 
                 <DataList empty={data.length == 0} loading={loading}>

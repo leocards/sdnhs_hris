@@ -32,6 +32,7 @@ class MedicalCertificateUpdateCommand extends Command
      */
     public function handle()
     {
+        // check personnel that has 3days past due medical certificate
         $leave = Leave::with('user:id,first_name,middle_name,last_name,email')
             ->doesntHave('medical_certificate')
             ->where('leave_type', 'Sick Leave')
@@ -43,9 +44,13 @@ class MedicalCertificateUpdateCommand extends Command
             })
             ->get(['id', 'user_id']);
 
+        // get the hr data
         $hr = User::where('role', 'HR')->first();
 
+        // notify the user that has 3days past due
         $leave->each(function ($leave) use ($hr) {
+
+            // insert notification data
             $notificationResponse = Notifications::create([
                 'user_id' => $leave->user->id,
                 'from_user_id' => $hr->id,
@@ -54,6 +59,7 @@ class MedicalCertificateUpdateCommand extends Command
                 'go_to_link' => route('leave.view', [$leave->id, $leave->user->id])
             ]);
 
+            // send the notification
             if($notificationResponse) {
                 $notificationResponse->load(['sender']);
                 broadcast(new SendNotificationEvent($notificationResponse, $notificationResponse->user_id));
@@ -63,6 +69,7 @@ class MedicalCertificateUpdateCommand extends Command
             $emailToUser = $leave->user->name;
             $hrFrom = $hr->name;
 
+            // send email notification
             Mail::to($emailTo)
                 ->queue(new NotifyMedical($emailToUser, $hrFrom));
         });

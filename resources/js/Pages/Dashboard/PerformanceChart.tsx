@@ -43,7 +43,7 @@ const PerformanceChart = ({ sy_ratings }: Props) => {
             <CardHeader>
                 <CardTitle>Yearly Performance</CardTitle>
                 <CardDescription>
-                    Showing the performance ratings for the last 6 school years
+                    Showing the performance ratings for 7 school years
                 </CardDescription>
             </CardHeader>
             <CardContent>

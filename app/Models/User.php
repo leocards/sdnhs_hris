@@ -43,6 +43,7 @@ class User extends Authenticatable
         'enable_email_note_reminder',
         'avatar',
         'password',
+        'is_retired'
     ];
 
     /**

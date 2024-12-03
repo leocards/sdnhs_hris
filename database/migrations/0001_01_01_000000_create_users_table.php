@@ -39,6 +39,7 @@ return new class extends Migration
             $table->boolean('enable_email_note_reminder')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->boolean('is_retired')->nullable();
             $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();

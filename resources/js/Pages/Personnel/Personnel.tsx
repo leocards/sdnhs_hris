@@ -22,6 +22,7 @@ import {
     Upload,
     UserRoundPlus,
     FolderKanban,
+    UserRoundCog,
 } from "lucide-react";
 import { Fragment, useEffect, useState } from "react";
 import { PersonnelListProps } from "./types";
@@ -384,11 +385,11 @@ const PersonnelRow: React.FC<
                                                 onClick("certificate", user)
                                             }
                                         >
-                                            <FolderKanban
+                                            <UserRoundCog
                                                 className="size-5"
                                                 strokeWidth={1.8}
                                             />
-                                            <div>Service certificate</div>
+                                            <div>Personnel Status</div>
                                         </MenubarItem> */}
                                         <MenubarItem
                                             className="px-4 gap-5"

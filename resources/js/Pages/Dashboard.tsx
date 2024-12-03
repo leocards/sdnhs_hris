@@ -49,6 +49,24 @@ interface DashboardProps extends PageProps {
         leave_type: string
     }>
     syList: Array<{ sy: string }>
+    ratings: {
+        outstanding: Array<{
+            id: number
+            first_name: string
+            middle_name: string
+            last_name: string
+            avatar: string
+            ratings: number
+        }>
+        least_performing: Array<{
+            id: number
+            first_name: string
+            middle_name: string
+            last_name: string
+            avatar: string
+            ratings: number
+        }>
+    }
 }
 
 export default function Index(props: DashboardProps) {
@@ -74,6 +92,7 @@ function Dashboard({
     sy,
     appliedLeavesOfPersonnel,
     syList,
+    ratings
 }: DashboardProps) {
     const [applications, setApplications] = useState(leaveApplications)
     const [appliedLeaves, setAppliedLeaves] = useState(appliedLeavesOfPersonnel)
@@ -224,7 +243,7 @@ function Dashboard({
                         loading={loading}
                         sy={sy?.sy}
                     />
-                    <PersonnelList />
+                    <PersonnelList ratings={ratings} />
                 </>
             )}
 

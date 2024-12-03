@@ -87,22 +87,22 @@ class User extends Authenticatable
      */
     public function name()
     {
-        return $this->first_name. ' ' .$this->last_name;
+        return $this->first_name . ' ' . $this->last_name;
     }
 
     public function completeName()
     {
-        return $this->first_name. ' ' .($this->middle_name ? substr($this->middle_name, 0, 1).'. ' : ' ') . $this->last_name;
+        return $this->first_name . ' ' . ($this->middle_name ? substr($this->middle_name, 0, 1) . '. ' : ' ') . $this->last_name;
     }
 
     public function getNameAttribute()
     {
-        return Str::of($this->first_name . ' ' . ($this->middle_name ? substr($this->middle_name, 0, 1) . '. ' : ''). '' . $this->last_name)->replaceMatches('/\s+/', ' ');
+        return Str::of($this->first_name . ' ' . ($this->middle_name ? substr($this->middle_name, 0, 1) . '. ' : '') . '' . $this->last_name)->replaceMatches('/\s+/', ' ');
     }
 
     public function employeeListName()
     {
-        return Str::rtrim(Str::upper($this->last_name. ', '. $this->first_name. (substr($this->middle_name, 0, 1) ? ' '. substr($this->middle_name, 0, 1) .'. ' : '')));
+        return Str::rtrim(Str::upper($this->last_name . ', ' . $this->first_name . (substr($this->middle_name, 0, 1) ? ' ' . substr($this->middle_name, 0, 1) . '. ' : '')));
     }
 
     protected function getEmployeeListNameAttribute()

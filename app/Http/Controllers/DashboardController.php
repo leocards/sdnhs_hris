@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Leave;
+use App\Models\PerformanceRating;
 use App\Models\SchoolYear;
 use App\Models\ServiceRecord;
 use App\Models\User;
@@ -20,7 +21,6 @@ class DashboardController extends Controller
     function __construct()
     {
         $this->latestSy = SchoolYear::latest()->first();
-
     }
 
     public function index()
@@ -85,7 +85,8 @@ class DashboardController extends Controller
                     ->latest('created_at')
                     ->get(),
                 "sy" => SchoolYear::latest()->first(),
-                "syList" => SchoolYear::all()
+                "syList" => SchoolYear::all(),
+                "ratings" => $this->getMostOutstandingPersonnel()
             ]);
         }
 
@@ -118,7 +119,8 @@ class DashboardController extends Controller
         ]);
     }
 
-    public function leaveApplicationsJson($sy) {
+    public function leaveApplicationsJson($sy)
+    {
         try {
             return response()->json(collect([
                 "leaveApplications" => collect([
@@ -158,8 +160,8 @@ class DashboardController extends Controller
         $sy = SchoolYear::latest()->first();
 
         $list = User::with(['leaveApplications' => function ($query) use ($sy) {
-                $query->select(['user_id', 'leave_type'])->where('sy', $sy->sy)->distinct('leave_type');
-            }])
+            $query->select(['user_id', 'leave_type'])->where('sy', $sy->sy)->distinct('leave_type');
+        }])
             ->whereNot('role', 'HR')
             ->when($search, function ($query) use ($search) {
                 $query->where('first_name', 'LIKE', "%{$search}%")
@@ -185,7 +187,7 @@ class DashboardController extends Controller
             DB::transaction(function () use ($request) {
                 $hasRecent = SchoolYear::latest()->first();
 
-                if($hasRecent && $this->is220BusinessDays($hasRecent->created_at)) {
+                if ($hasRecent && $this->is220BusinessDays($hasRecent->created_at)) {
                     throw new Exception('The current school year has not ended yet.');
                 }
 
@@ -200,7 +202,6 @@ class DashboardController extends Controller
             });
 
             return back()->with('success', 'success');
-
         } catch (\Throwable $th) {
             return back()->withErrors($th->getMessage());
         }
@@ -221,5 +222,22 @@ class DashboardController extends Controller
 
         // Compare the input date with the calculated target date
         return Carbon::parse($date)->isSameDay($targetDate);
+    }
+
+    function getMostOutstandingPersonnel($year = "all")
+    {
+        $users = User::select(['id', 'first_name', 'middle_name', 'last_name', 'avatar'])
+            ->withAvg('performanceRatings as ratings', 'rating')
+            ->where('role', 'Teaching')
+            ->get();
+
+        [$aboveThreshold, $belowThreshold] = $users->partition(function ($user) {
+            return $user->ratings >= 3.5;
+        });
+
+        return collect([
+            'outstanding' => $aboveThreshold->sortByDesc('ratings')->values(),
+            'least_performing' => $belowThreshold->sortByDesc('ratings')->values()
+        ]);
     }
 }

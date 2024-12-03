@@ -11,6 +11,8 @@ import NewSchoolYear from "./Dashboard/NewSchoolYear";
 import { useEffect, useState } from "react";
 import { Button } from "@/Components/ui/button";
 import { PencilLine, Plus } from "lucide-react";
+import GenderProportion from "./Dashboard/GenderProportion";
+import PerformanceChart from "./Dashboard/PerformanceChart";
 
 type Statistics = {
     recent: number;
@@ -67,6 +69,14 @@ interface DashboardProps extends PageProps {
             ratings: number
         }>
     }
+    genderProportion: {
+        Male?: number
+        Female?: number
+    }
+    sy_ratings?: Array<{
+        rating: number
+        sy: string
+    }>
 }
 
 export default function Index(props: DashboardProps) {
@@ -92,7 +102,9 @@ function Dashboard({
     sy,
     appliedLeavesOfPersonnel,
     syList,
-    ratings
+    ratings,
+    genderProportion,
+    sy_ratings
 }: DashboardProps) {
     const [applications, setApplications] = useState(leaveApplications)
     const [appliedLeaves, setAppliedLeaves] = useState(appliedLeavesOfPersonnel)
@@ -233,7 +245,7 @@ function Dashboard({
                 <Notes />
             </div>
 
-            {auth.user.role == "HR" && (
+            {auth.user.role == "HR" ? (
                 <>
                     <LeaveApplicationsChart
                         syList={syList}
@@ -243,8 +255,14 @@ function Dashboard({
                         loading={loading}
                         sy={sy?.sy}
                     />
-                    <PersonnelList ratings={ratings} />
+
+                    <div className="grid grid-cols-1 md:grid-cols-[20rem,1fr] gap-4 mt-8">
+                        <GenderProportion genderProportion={genderProportion} />
+                        <PersonnelList ratings={ratings} />
+                    </div>
                 </>
+            ) : (
+                <PerformanceChart sy_ratings={sy_ratings} />
             )}
 
         </AuthenticatedLayout>

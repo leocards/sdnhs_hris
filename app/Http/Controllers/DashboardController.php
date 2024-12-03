@@ -86,9 +86,16 @@ class DashboardController extends Controller
                     ->get(),
                 "sy" => SchoolYear::latest()->first(),
                 "syList" => SchoolYear::all(),
-                "ratings" => $this->getMostOutstandingPersonnel()
+                "ratings" => $this->getMostOutstandingPersonnel(),
+                "genderProportion" => User::selectRaw('sex, COUNT(*) as count')
+                    ->whereNot('role', 'HR')
+                    ->groupBy('sex')
+                    ->pluck('count', 'sex')
+                    ->toArray()
             ]);
         }
+
+        $school_years = SchoolYear::latest()->limit(7)->get()->pluck('sy');
 
         return Inertia::render("Dashboard", [
             "totalEmployee" => [
@@ -115,7 +122,12 @@ class DashboardController extends Controller
                 ->where('hr_status', 'Approved')
                 ->get(['id', 'leave_type', 'inclusive_date_from', 'inclusive_date_to']),
             "leaveApplications" => collect([]),
-            "sy" => SchoolYear::latest()->first()
+            "sy" => SchoolYear::latest()->first(),
+            "sy_ratings" => PerformanceRating::where('user_id', Auth::id())->whereIn('sy', $school_years)->get(['sy', 'rating'])->map(function ($item) {
+                // Convert rating to an integer
+                $item->rating = (float) $item->rating;
+                return $item;
+            })
         ]);
     }
 
@@ -187,7 +199,7 @@ class DashboardController extends Controller
             DB::transaction(function () use ($request) {
                 $hasRecent = SchoolYear::latest()->first();
 
-                if ($hasRecent && $this->is220BusinessDays($hasRecent->created_at)) {
+                if ($hasRecent && $this->checkIfPreviousSYHasNotEnded($hasRecent->end)) {
                     throw new Exception('The current school year has not ended yet.');
                 }
 
@@ -207,21 +219,13 @@ class DashboardController extends Controller
         }
     }
 
-    function is220BusinessDays($date)
+    function checkIfPreviousSYHasNotEnded($date)
     {
         // Calculate the target date 220 business days ago
-        $targetDate = Carbon::today();
-        $businessDays = 0;
-
-        while ($businessDays < 220) {
-            $targetDate->subDay();
-            if (!$targetDate->isWeekend()) {
-                $businessDays++;
-            }
-        }
+        $currentDate = Carbon::today();
 
         // Compare the input date with the calculated target date
-        return Carbon::parse($date)->isSameDay($targetDate);
+        return $currentDate->lessThanOrEqualTo(Carbon::parse($date));
     }
 
     function getMostOutstandingPersonnel($year = "all")

@@ -14,7 +14,6 @@ import {
     ChartLegend,
     ChartLegendContent,
 } from "@/Components/ui/chart";
-import useWindowSize from "@/hooks/useWindowResize";
 import {
     Card,
     CardContent,
@@ -24,7 +23,6 @@ import {
     CardTitle,
 } from "@/Components/ui/card";
 import Filter from "@/Components/buttons/FilterButton";
-import Processing from "@/Components/Processing";
 
 type Props = {
     chartData: Array<{ type: string; approved: number; rejected: number }>;
@@ -45,7 +43,7 @@ const Charts: React.FC<Props> = ({ chartData, appliedLeavesOfPersonnel, loading,
         },
         rejected: {
             label: "Rejected",
-        },
+        }
     } satisfies ChartConfig;
 
     return (

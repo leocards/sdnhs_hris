@@ -44,8 +44,8 @@ type Props = {
 
 const PersonnelList: React.FC<Props> = ({ ratings }) => {
     return (
-        <div className="mt-4">
-            <div className="border rounded-md mt-4 p-2">
+        <div className="">
+            <div className="border rounded-md p-2 shadow-sm">
                 <Tabs defaultValue="Outstanding" className="w-full flex flex-col">
                     <TabsList className="mb-5 w-fit">
                         <TabsTrigger value="Outstanding">Outstanding</TabsTrigger>
@@ -60,11 +60,10 @@ const PersonnelList: React.FC<Props> = ({ ratings }) => {
                             <div className="px-3 text-center">No records</div>
                         )}
                         {ratings.outstanding.map((rating, index) => (
-                            <div className="p-2 px-3 flex items-center gap-3" key={index}>
+                            <div className="p-2 px-3 flex items-center gap-3 hover:bg-seconday" key={index}>
                                 <AvatarProfile className="size-9" src={rating.avatar} />
                                 <div className="line-clamp-1">{`${rating.last_name}, ${rating.first_name} ${rating.middle_name ? rating.middle_name?.charAt(0).toUpperCase()+'.' : ""}`}</div>
-                                <div className="h-fit border-t border-dashed border-primary grow"></div>
-                                <Label className="">{rating.ratings}</Label>
+                                <Label className="ml-auto">{rating.ratings}</Label>
                             </div>
                         ))}
                     </TabsContent>
@@ -73,11 +72,10 @@ const PersonnelList: React.FC<Props> = ({ ratings }) => {
                             <div className="px-3 text-center">No records</div>
                         )}
                         {ratings.least_performing.map((rating, index) => (
-                            <div className="p-2 px-3 flex items-center gap-3" key={index}>
+                            <div className="p-2 px-3 flex items-center gap-3 hover:bg-seconday" key={index}>
                                 <AvatarProfile className="size-9" src={rating.avatar} />
                                 <div className="line-clamp-1">{`${rating.last_name}, ${rating.first_name} ${rating.middle_name ? rating.middle_name?.charAt(0) : ""}`}</div>
-                                <div className="h-fit border-t border-dashed border-primary grow"></div>
-                                <Label className="">{rating.ratings}</Label>
+                                <Label className="ml-auto">{rating.ratings}</Label>
                             </div>
                         ))}
                     </TabsContent>

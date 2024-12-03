@@ -70,6 +70,10 @@ const NotificationProvider: React.FC<ProviderProps> = ({ children }) => {
 
                     setUnreadNotifications(unread)
                 })
+
+        if(isAuth) {
+            
+        }
     }, [isAuth])
 
     return (

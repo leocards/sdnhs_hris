@@ -12,7 +12,7 @@ export type MedicalType = {
 
 type Data = {
     leave_id?: number | null;
-    medical: MedicalType|null;
+    medical: MedicalType|string|null;
     user: { id: number | null; first_name: string; last_name: string };
 };
 
@@ -23,6 +23,8 @@ type ViewMedicalProps = {
 };
 
 export default function ViewMedical({ show, data, onClose }: ViewMedicalProps) {
+    const src = typeof data?.medical == 'string' ? data?.medical?.replace("public", "/storage") : data?.medical?.file_path?.replace("public", "/storage")
+
     return (
         <Modal show={show} onClose={() => onClose(false)}>
             <div className="p-6">
@@ -31,7 +33,7 @@ export default function ViewMedical({ show, data, onClose }: ViewMedicalProps) {
                     className="bg-muted rounded-md overflow-hidden"
                 >
                     <img
-                        src={data?.medical?.file_path?.replace("public", "/storage")}
+                        src={src}
                         alt=""
                         className="object-contain h-full w-full"
                     />

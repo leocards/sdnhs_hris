@@ -542,7 +542,7 @@ class LeaveController extends Controller
                 $notification = null;
 
                 if (!in_array(Auth::user()->role, ['HR', 'HOD'])) {
-                    $receivers = User::whereIn('role', ['HR', 'HOD'])->get('id');
+                    $receivers = User::whereIn('role', ['HR'])->get('id');
                     foreach ($receivers as $value) {
                         $notification = Notifications::create([
                             'user_id' => $value['id'],
@@ -553,7 +553,7 @@ class LeaveController extends Controller
                         ]);
                     }
                 } else {
-                    $receivers = User::whereIn('role', ['HR', 'HOD'])->where('id', '!=', Auth::id())->get('id');
+                    $receivers = User::whereIn('role', ['HR'])->where('id', '!=', Auth::id())->get('id');
                     foreach ($receivers as $value) {
                         $notification = Notifications::create([
                             'user_id' => $value['id'],

@@ -98,6 +98,7 @@ class PersonalDataSheetController extends Controller
 
         return Inertia::render('PDS/MyPersonalDataSheet', [
             'userinfo' => $pds,
+            'isApprovedPds' => PDSPersonalInformation::where('user_id', Auth::id())->first()->value('is_approved')
         ]);
     }
 

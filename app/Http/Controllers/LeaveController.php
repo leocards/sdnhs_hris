@@ -60,18 +60,19 @@ class LeaveController extends Controller
 
         return Inertia::render('Leave/Leave', [
             "pageData" => Leave::with(['user:id,first_name,last_name,avatar'])
-                ->with('medical_certificate')
-                ->where('user_id', Auth::id())
-                ->when($status == 'pending', function ($query) {
+            ->with('medical_certificate')
+            ->where('user_id', Auth::id()) // Enforce user_id condition
+            ->where(function ($query) use ($status) {
+                if ($status == 'pending') {
                     $query->where('hr_status', "pending")
-                        ->orWhere('principal_status', "pending");
-                })
-                ->when($status != 'pending', function ($query) use ($status) {
+                          ->orWhere('principal_status', "pending");
+                } else {
                     $query->where('hr_status', $status)
-                        ->orWhere('principal_status', $status);
-                })
-                ->orderBy('updated_at', 'desc')
-                ->paginate(50),
+                          ->orWhere('principal_status', $status);
+                }
+            })
+            ->orderBy('updated_at', 'desc')
+            ->paginate(50),
             "status" => $status,
             "isMyLeave" => false
         ]);
@@ -169,6 +170,7 @@ class LeaveController extends Controller
                         })
                         ->select('leaves.*');
                 })
+                ->where('user_id', Auth::id())
                 ->paginate(50)
         );
     }

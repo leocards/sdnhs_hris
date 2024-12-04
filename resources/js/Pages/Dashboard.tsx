@@ -262,7 +262,7 @@ function Dashboard({
                     </div>
                 </>
             ) : (
-                <PerformanceChart sy_ratings={sy_ratings} />
+                auth.user.role != "HOD" && <PerformanceChart sy_ratings={sy_ratings} />
             )}
 
         </AuthenticatedLayout>

@@ -43,8 +43,8 @@ class LeaveController extends Controller
                     })
                     ->when(Auth::user()->role == "HOD" && !$myLeave, function ($query) use ($status) {
                         return $query->where('principal_status', $status)
-                            ->whereNot('user_id', Auth::id());
-                            // ->where('hr_status', 'Approved');
+                            ->whereNot('user_id', Auth::id())
+                            ->whereNot('hr_status', 'Pending');
                     })
                     ->when(Auth::user()->role == "HOD" && $myLeave, function ($query) use ($status) {
                         return $query->where('hr_status', $status)

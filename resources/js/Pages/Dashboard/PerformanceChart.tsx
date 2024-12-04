@@ -36,8 +36,6 @@ const PerformanceChart = ({ sy_ratings }: Props) => {
         },
     } satisfies ChartConfig;
 
-    console.log(sy_ratings)
-
     return (
         <Card className="mt-8">
             <CardHeader>

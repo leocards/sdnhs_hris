@@ -135,7 +135,7 @@ const ListOfIPCR = ({ ipcr, principal, hr, ipcr_years, sy, syList }: Props) => {
                         <div className="">Position</div>
                         <div className="">Performance Rating</div>
                         <div className="">Adjectival Equivalent</div>
-                        <div className=""></div>
+                        <div className="">Edit</div>
                     </div>
                     {ipcrList.length > 0 && !loading && (
                         <ScrollArea className="h-[30rem]">

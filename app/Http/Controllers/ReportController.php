@@ -211,11 +211,11 @@ class ReportController extends Controller
                             if ($user) {
                                 $existIPCR = PerformanceRating::where('user_id', $user->id)->where('sy', $request->sy)->exists();
 
-                                if (floatval($value[3]) <= 1 && floatval($value[3]) >= 5) {
+                                if (floatval($value[3]) >= 1 || floatval($value[3]) <= 5) {
                                     if (!$existIPCR)
                                         PerformanceRating::create([
                                             'user_id' => $user->id,
-                                            'rating' => $value[3],
+                                            'rating' => $value[3]??0,
                                             'sy' => $request->sy
                                         ]);
                                 } else throw new Exception('The ratings should be between 1 to 5');

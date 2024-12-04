@@ -98,7 +98,7 @@ class PersonalDataSheetController extends Controller
 
         return Inertia::render('PDS/MyPersonalDataSheet', [
             'userinfo' => $pds,
-            'isApprovedPds' => PDSPersonalInformation::where('user_id', Auth::id())->first()->value('is_approved')
+            'isApprovedPds' => PDSPersonalInformation::where('user_id', Auth::id())->first()?->value('is_approved')
         ]);
     }
 
@@ -128,6 +128,19 @@ class PersonalDataSheetController extends Controller
             $this->getC2Data($data["C2"], $user);
             $this->getC3Data($data["C3"], $user);
             $this->getC4Data($data["C4"], $user);
+
+            $notificationResponse = Notifications::create([
+                'user_id' => $user->id,
+                'from_user_id' => Auth::id(),
+                'message' => ': HR has uploaded your PDS.',
+                'type' => 'profile',
+                'go_to_link' => route('pds')
+            ]);
+
+            if($notificationResponse) {
+                $notificationResponse->load(['sender']);
+                broadcast(new SendNotificationEvent($notificationResponse, $user->id));
+            }
 
             DB::commit();
 

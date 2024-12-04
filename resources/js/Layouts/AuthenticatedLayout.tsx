@@ -49,6 +49,7 @@ import {
     MenubarTrigger,
 } from "@/Components/ui/menubar";
 import NewSchoolYear from "@/Pages/Dashboard/NewSchoolYear";
+import Processing from "@/Components/Processing";
 
 export default function Authenticated({
     userAuth,
@@ -322,6 +323,7 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
     const { url } = usePage();
     const { unreadmessages } = useMessage();
     const { unreadNotifications } = useNotification();
+    const [isSigningOut, setIsSigningOut] = useState(false)
 
     return (
         <nav className="flex flex-1 items-center gap-4 max-lg:py-2.5">
@@ -480,7 +482,12 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                             <CloseButton
                                 as="li"
                                 className="hover:bg-primary hover:text-primary-foreground"
-                                onClick={() => router.post(route("logout"))}
+                                onClick={() => {
+                                    setIsSigningOut(true)
+                                    router.post(route("logout"), {}, {
+                                        onFinish: () => setIsSigningOut(false)
+                                    })
+                                }}
                             >
                                 <LogOut className="size-4" strokeWidth={2.4} />{" "}
                                 Sign out
@@ -489,6 +496,8 @@ const HeaderNavigation: React.FC<{ user: User; iconSizes?: string }> = ({
                     </PopoverPanel>
                 </Popover>
             </div>
+
+            <Processing is_processing={isSigningOut} />
         </nav>
     );
 };

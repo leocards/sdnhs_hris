@@ -30,7 +30,7 @@ type NotificationProviderState = {
     setIsAuthNotification: (isAuth: boolean) => void,
 
     unreadNotifications: number;
-    setUnreadNotifications: (unread: number) => void
+    setUnreadNotifications: (unread: number, isReset?: boolean) => void
 }
 
 type ProviderProps = {
@@ -56,8 +56,8 @@ const NotificationProvider: React.FC<ProviderProps> = ({ children }) => {
         setIsAuthNotification,
 
         unreadNotifications,
-        setUnreadNotifications: (unread: number) => {
-            setUnreadNotifications(unreadNotifications + unread)
+        setUnreadNotifications: (unread: number, isReset?: boolean) => {
+            setUnreadNotifications(isReset ? 0 : unreadNotifications + unread)
         },
     }
 
@@ -70,10 +70,6 @@ const NotificationProvider: React.FC<ProviderProps> = ({ children }) => {
 
                     setUnreadNotifications(unread)
                 })
-
-        if(isAuth) {
-            
-        }
     }, [isAuth])
 
     return (

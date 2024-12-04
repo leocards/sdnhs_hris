@@ -134,7 +134,7 @@ const ListOfSALN = ({ saln, principal, hr, saln_years }: Props) => {
                             <div className="">
                                 Please check (/) if Joint Filing
                             </div>
-                            <div className=""></div>
+                            <div className="">Edit</div>
                         </div>
 
                         {loading && (

@@ -42,7 +42,7 @@ const Index: React.FC<Props> = ({ auth, ipcr, principal, hr, ipcr_years, sy, syL
                 <h2 className="font-semibold text-xl leading-tight">List of IPCR</h2>
             }
         >
-            <Head title="My Reports/SALN" />
+            <Head title="My Reports/IPCR" />
 
             <ListOfIPCR
                 ipcr={ipcr}

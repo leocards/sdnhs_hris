@@ -97,7 +97,7 @@ const Saln: React.FC<Props> = ({ auth, success, saln, status }) => {
                     <div className="">Liabilities</div>
                     <div className="">Networth</div>
                     <div className="">As Of</div>
-                    <div className=""></div>
+                    <div className="">Action</div>
                 </div>
 
                 <DataList empty={data.length === 0} loading={loading}>

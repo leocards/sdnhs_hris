@@ -53,7 +53,6 @@ export default function Login({ status, onForgotPass }: { status?: string | expi
     };
 
     useEffect(() => {
-        console.log(status);
         return () => {
             reset("password");
         };

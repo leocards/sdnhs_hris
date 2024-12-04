@@ -1,11 +1,18 @@
 import Login from "./Auth/Login";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Processing from "@/Components/Processing";
+import { useNotification } from "@/hooks/NotificationProvider";
 
 type expired = { expired: string };
 
 export default function Welcome({ status }: { status?: string | expired }) {
     const [loading, setLoading] = useState(false)
+    const { setUnreadNotifications, setIsAuthNotification } = useNotification()
+
+    useEffect(() => {
+        setUnreadNotifications(0, true)
+        setIsAuthNotification(false)
+    }, [])
 
     return (
         <>

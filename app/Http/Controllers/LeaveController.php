@@ -244,7 +244,7 @@ class LeaveController extends Controller
             }
 
             if($sex == "Male") {
-                if($request->leavetype['type'] == "Maternity Leave" && $request->leavetype['type'] == "Special Leave Benefits for Women")
+                if($request->leavetype['type'] == "Maternity Leave" || $request->leavetype['type'] == "Special Leave Benefits for Women")
                     throw new Exception("You are not yet allowed to use this type of leave");
             }
 
